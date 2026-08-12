@@ -167,7 +167,7 @@
         
         <div class="grupo-formulario" style="margin-top: 10px;">
             <label>Código Escaneado:</label>
-            <input type="text" id="codigo-qr-resultado" placeholder="Aún no se ha escaneado nada..." readonly style="background-color: #e9ecef;">
+            <input type="text" id="codigo-qr-resultado" placeholder="Aún no se ha escaneado nada..." readonly style="background-color: #e9ecef; font-weight: bold; color: #0d6efd;">
         </div>
         <!-- FIN SECCIÓN QR -->
 
@@ -195,11 +195,34 @@
         let usuarioLogueado = null;
         let tipoMovimientoActual = "Baja";
         let temporizadorInactividad; 
-        
-        // Variable para el motor de la cámara
         let lectorQr; 
 
-        // --- SISTEMA DE INACTIVIDAD ---
+        // --- SISTEMA DE SONIDO DEL ESCÁNER (NUEVO) ---
+        function reproducirSonidoBip() {
+            try {
+                // Creamos un contexto de audio en el navegador
+                const contextoAudio = new (window.AudioContext || window.webkitAudioContext)();
+                const oscilador = contextoAudio.createOscillator();
+                const controlVolumen = contextoAudio.createGain();
+
+                oscilador.type = 'sine'; // Sonido suave
+                oscilador.frequency.value = 800; // Frecuencia alta (tono de escáner)
+                
+                oscilador.connect(controlVolumen);
+                controlVolumen.connect(contextoAudio.destination);
+                
+                // Hace que el sonido dure exactamente 0.15 segundos
+                controlVolumen.gain.setValueAtTime(1, contextoAudio.currentTime);
+                controlVolumen.gain.exponentialRampToValueAtTime(0.001, contextoAudio.currentTime + 0.15);
+                
+                oscilador.start(contextoAudio.currentTime);
+                oscilador.stop(contextoAudio.currentTime + 0.15);
+            } catch (error) {
+                console.log("El navegador no soporta el sonido automático.");
+            }
+        }
+        // ---------------------------------------------
+
         function reiniciarTemporizador() {
             clearTimeout(temporizadorInactividad);
             if(usuarioLogueado) {
@@ -298,31 +321,29 @@
             }
         }
 
-        // --- LÓGICA DE LA CÁMARA QR ---
         function iniciarCamara() {
-            // Mostrar la caja de la cámara
             document.getElementById('caja-camara').classList.remove('oculto');
             
-            // Iniciar el motor si no existe
             if(!lectorQr) {
                 lectorQr = new Html5Qrcode("caja-camara");
             }
 
-            // Encender la cámara trasera (environment)
             lectorQr.start(
                 { facingMode: "environment" }, 
                 { fps: 10, qrbox: { width: 250, height: 250 } },
                 (codigoDecodificado) => {
-                    // ¡Éxito! Leyó un código
+                    // ¡ÉXITO! Aquí se dispara el sonido
+                    reproducirSonidoBip(); 
+                    
                     document.getElementById('codigo-qr-resultado').value = codigoDecodificado;
-                    detenerCamara(); // Apagamos la cámara automáticamente
-                    reiniciarTemporizador(); // Reiniciamos el reloj para que no se le cierre
+                    detenerCamara(); 
+                    reiniciarTemporizador(); 
                 },
                 (error) => {
-                    // Errores de lectura (el escáner falló en un frame, se ignora)
+                    // Errores de lectura invisibles
                 }
             ).catch(err => {
-                alert("Error al abrir la cámara. Asegúrate de dar permisos de cámara o probarlo subido a internet (HTTPS).");
+                alert("Error al abrir la cámara.");
                 document.getElementById('caja-camara').classList.add('oculto');
             });
         }
@@ -332,14 +353,13 @@
                 lectorQr.stop().then(() => {
                     document.getElementById('caja-camara').classList.add('oculto');
                 }).catch(err => {
-                    console.log("No se pudo detener la cámara", err);
+                    console.log("No se pudo detener la cámara");
                 });
             }
         }
-        // ------------------------------
 
         function cancelarFormulario() {
-            detenerCamara(); // Apagar la cámara si le dan a cancelar
+            detenerCamara(); 
             document.getElementById('nombre-dueno').value = "";
             document.getElementById('nombre-perro').value = "";
             document.getElementById('raza-paciente').value = "";
@@ -366,7 +386,7 @@
         }
 
         function guardarRegistro() {
-            detenerCamara(); // Apagar cámara por si acaso
+            detenerCamara(); 
             const fechaYHoraActual = new Date().toLocaleString('es-MX');
             const dueno = document.getElementById('nombre-dueno').value;
             const perro = document.getElementById('nombre-perro').value;
@@ -381,8 +401,8 @@
             const resumen = `¡Datos listos para Firebase!\n\n` +
                             `Movimiento: ${tipoMovimientoActual}\n` +
                             `Atendió: ${usuarioLogueado.nombre}\n` +
-                            `Código Escaneado: ${codigo}\n` +
-                            `Fecha y Hora: ${fechaYHoraActual}\n` +
+                            `Código: ${codigo}\n` +
+                            `Fecha/Hora: ${fechaYHoraActual}\n` +
                             `Dueño: ${dueno}\n` +
                             `Paciente: ${perro} (Raza: ${raza})`;
 
