@@ -31,6 +31,7 @@
         .btn-menu:active { background: #e9ecef; }
         .btn-qr { background: #e3f2fd; color: #0d6efd; border: 2px dashed #0d6efd; }
         .btn-guardar { background: #198754; color: white; }
+        .btn-guardar-rojo { background: #dc3545; color: white; }
         .btn-cancelar { background: transparent; color: #dc3545; margin-top: 5px; }
         .caja-camara { width: 100%; border-radius: 8px; overflow: hidden; margin-bottom: 15px; border: 2px solid #333; }
         .oculto { display: none !important; }
@@ -71,13 +72,15 @@
         
         <button id="btn-movimiento" class="btn btn-menu" onclick="abrirFormulario()">📉 Registrar Baja o Devolución</button>
         <button id="btn-alta-inventario" class="btn btn-menu oculto" onclick="abrirInventario()">📦 Ingresar Lotes Nuevos</button>
+        <!-- NUEVO BOTÓN: BAJA DE LOTE -->
+        <button id="btn-baja-inventario" class="btn btn-menu oculto" onclick="abrirBajaInventario()">📉 Bajar Lote (Sin paciente)</button>
         <button id="btn-historial" class="btn btn-menu oculto" onclick="abrirHistorial()">📋 Ver Historial</button>
         <button id="btn-usuarios" class="btn btn-menu oculto" onclick="abrirUsuarios()">👥 Administrar Usuarios</button>
         
         <button class="btn btn-cancelar" onclick="cerrarSesion()">Cerrar Sesión</button>
     </div>
 
-    <!-- PANTALLA 3: BAJA / DEVOLUCIÓN -->
+    <!-- PANTALLA 3: BAJA / DEVOLUCIÓN (CON PACIENTE) -->
     <div id="pantalla-registro-baja" class="contenedor oculto">
         <div class="header-usuario" id="texto-registro-usuario"></div>
         <div class="selector-movimiento">
@@ -123,13 +126,33 @@
         
         <div class="grupo-formulario"><label>Nombre del Medicamento:</label><input type="text" id="nombre-inventario" placeholder="Ej. Desparasitante Canino"></div>
         <div class="grupo-formulario"><label>Descripción:</label><input type="text" id="descripcion-inventario" placeholder="Ej. 500mg, Caja con 10 tabletas"></div>
-        <div class="grupo-formulario"><label>Cantidad de piezas (Lote):</label><input type="number" id="cantidad-inventario" placeholder="Ej. 10"></div>
+        <div class="grupo-formulario"><label>Cantidad de piezas que ingresan:</label><input type="number" id="cantidad-inventario" placeholder="Ej. 10"></div>
         
-        <br><button class="btn btn-guardar" onclick="guardarEnInventario()">Guardar Lote</button>
+        <br><button class="btn btn-guardar" onclick="guardarEnInventario()">Guardar Alta de Lote</button>
         <button class="btn btn-cancelar" onclick="cancelarVolver()">Cancelar</button>
     </div>
 
-    <!-- PANTALLA 6: ADMINISTRAR USUARIOS -->
+    <!-- PANTALLA 6: BAJA DE LOTE / INVENTARIO (NUEVA) -->
+    <div id="pantalla-baja-inventario" class="contenedor oculto">
+        <h2 style="color: #333; margin-top: 0; font-size: 1.3em;">📉 Baja de Lote (Sin paciente)</h2>
+        
+        <button type="button" class="btn btn-qr" onclick="iniciarCamara('caja-camara-baja-inv', 'qr-baja-inv')">📷 Escanear Medicamento (QR)</button>
+        <div id="caja-camara-baja-inv" class="caja-camara oculto"></div>
+        
+        <div class="grupo-formulario" style="margin-top: 10px;">
+            <label>Código del Medicamento (Lote):</label>
+            <input type="text" id="qr-baja-inv" placeholder="Escanea o teclea el código..." style="font-weight: bold; color: #dc3545;">
+        </div>
+        
+        <div class="grupo-formulario"><label>Nombre del Medicamento:</label><input type="text" id="nombre-baja-inv" placeholder="Ej. Desparasitante Canino"></div>
+        <div class="grupo-formulario"><label>Motivo de la baja:</label><input type="text" id="motivo-baja-inv" placeholder="Ej. Caducidad, uso interno, merma..."></div>
+        <div class="grupo-formulario"><label>Cantidad de piezas a descontar:</label><input type="number" id="cantidad-baja-inv" placeholder="Ej. 5"></div>
+        
+        <br><button class="btn btn-guardar btn-guardar-rojo" onclick="guardarBajaInventario()">Registrar Baja de Lote</button>
+        <button class="btn btn-cancelar" onclick="cancelarVolver()">Cancelar</button>
+    </div>
+
+    <!-- PANTALLA 7: ADMINISTRAR USUARIOS -->
     <div id="pantalla-usuarios" class="contenedor oculto" style="max-width: 550px;">
         <h2 style="color: #333; margin-top: 0;">👥 Administrar Usuarios</h2>
         
@@ -250,11 +273,13 @@
             document.getElementById('texto-registro-usuario').innerText = `Atendiendo: ${usuarioLogueado.nombre}`;
             
             document.getElementById('btn-alta-inventario').classList.add('oculto');
+            document.getElementById('btn-baja-inventario').classList.add('oculto');
             document.getElementById('btn-historial').classList.add('oculto');
             document.getElementById('btn-usuarios').classList.add('oculto');
 
             if(usuarioLogueado.rol === "Gerente") {
                 document.getElementById('btn-alta-inventario').classList.remove('oculto');
+                document.getElementById('btn-baja-inventario').classList.remove('oculto');
                 document.getElementById('btn-historial').classList.remove('oculto');
                 document.getElementById('btn-usuarios').classList.remove('oculto');
             } else if(usuarioLogueado.rol === "Sub-Gerente") {
@@ -266,6 +291,7 @@
             usuarioLogueado = null; clearTimeout(temporizadorInactividad); limpiarPin();
             document.getElementById('pantalla-historial').classList.add('oculto');
             document.getElementById('pantalla-inventario').classList.add('oculto');
+            document.getElementById('pantalla-baja-inventario').classList.add('oculto');
             document.getElementById('pantalla-usuarios').classList.add('oculto');
             document.getElementById('pantalla-menu').classList.add('oculto');
             document.getElementById('pantalla-registro-baja').classList.add('oculto');
@@ -300,28 +326,29 @@
         }
 
         function limpiarFormularioBaja() {
-            document.getElementById('nombre-dueno').value = "";
-            document.getElementById('nombre-perro').value = "";
-            document.getElementById('raza-paciente').value = "";
-            document.getElementById('codigo-qr-resultado').value = "";
+            document.getElementById('nombre-dueno').value = ""; document.getElementById('nombre-perro').value = "";
+            document.getElementById('raza-paciente').value = ""; document.getElementById('codigo-qr-resultado').value = "";
         }
-
         function limpiarFormularioInventario() {
-            document.getElementById('qr-inventario').value = "";
-            document.getElementById('nombre-inventario').value = "";
-            document.getElementById('descripcion-inventario').value = "";
-            document.getElementById('cantidad-inventario').value = "";
+            document.getElementById('qr-inventario').value = ""; document.getElementById('nombre-inventario').value = "";
+            document.getElementById('descripcion-inventario').value = ""; document.getElementById('cantidad-inventario').value = "";
+        }
+        function limpiarFormularioBajaInventario() {
+            document.getElementById('qr-baja-inv').value = ""; document.getElementById('nombre-baja-inv').value = "";
+            document.getElementById('motivo-baja-inv').value = ""; document.getElementById('cantidad-baja-inv').value = "";
         }
 
         function cancelarVolver() {
             detenerCamara(); 
             limpiarFormularioBaja();
             limpiarFormularioInventario();
+            limpiarFormularioBajaInventario();
 
             if (usuarioLogueado && usuarioLogueado.rol === "Empleado") { cerrarSesion(); } 
             else { 
                 document.getElementById('pantalla-registro-baja').classList.add('oculto');
                 document.getElementById('pantalla-inventario').classList.add('oculto');
+                document.getElementById('pantalla-baja-inventario').classList.add('oculto');
                 document.getElementById('pantalla-menu').classList.remove('oculto');
             }
         }
@@ -347,8 +374,7 @@
             const dueno = document.getElementById('nombre-dueno').value; const perro = document.getElementById('nombre-perro').value;
             const raza = document.getElementById('raza-paciente').value; const codigo = document.getElementById('codigo-qr-resultado').value;
             
-            // EL SEGURO DE ESPACIOS VACÍOS
-            if(!dueno || !perro || !raza || !codigo) { alert("⚠️ Por favor ingresa el código y llena todos los campos para poder guardar."); return; }
+            if(!dueno || !perro || !raza || !codigo) { alert("⚠️ Por favor ingresa el código y llena todos los campos para guardar."); return; }
 
             db.collection("Historial").add({
                 movimiento: tipoMovimientoActual, usuarioAtendio: usuarioLogueado.nombre, codigoMedicamento: codigo,
@@ -356,7 +382,7 @@
                 fechaReal: firebase.firestore.FieldValue.serverTimestamp() 
             }).then(() => {
                 alert("✅ Registro guardado exitosamente.");
-                limpiarFormularioBaja(); // Solo limpia las casillas, pero te deja en la pantalla
+                limpiarFormularioBaja(); 
             }).catch(e => alert("Error al guardar."));
         }
 
@@ -394,24 +420,44 @@
             const descripcion = document.getElementById('descripcion-inventario').value;
             const cantidad = document.getElementById('cantidad-inventario').value;
             
-            // EL SEGURO DE ESPACIOS VACÍOS
-            if(!qr || !nombre || !descripcion || !cantidad) { alert("⚠️ Por favor ingresa el código y llena todos los datos para poder guardar el lote."); return; }
+            if(!qr || !nombre || !descripcion || !cantidad) { alert("⚠️ Por favor ingresa el código y llena todos los datos."); return; }
 
             db.collection("Inventario").add({
-                codigoQR: qr, 
-                medicamento: nombre, 
-                descripcion: descripcion,
-                cantidad: parseInt(cantidad), 
-                registradoPor: usuarioLogueado.nombre,
-                fechaTexto: new Date().toLocaleString('es-MX'), 
+                tipoMovimiento: "Alta de Lote",
+                codigoQR: qr, medicamento: nombre, descripcion: descripcion, cantidad: parseInt(cantidad), 
+                registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), 
                 fechaReal: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
                 alert("✅ Lote agregado al Inventario correctamente.");
-                limpiarFormularioInventario(); // Solo limpia las casillas, pero te deja en la pantalla
+                limpiarFormularioInventario(); 
             }).catch(e => alert("Error al guardar en inventario."));
         }
 
-        // --- MÓDULO 4: ADMINISTRAR USUARIOS ---
+        // --- MÓDULO 4: BAJA DE LOTE (SIN PACIENTE) ---
+        function abrirBajaInventario() {
+            cambiarPantalla('pantalla-menu', 'pantalla-baja-inventario');
+        }
+        function guardarBajaInventario() {
+            detenerCamara();
+            const qr = document.getElementById('qr-baja-inv').value;
+            const nombre = document.getElementById('nombre-baja-inv').value;
+            const motivo = document.getElementById('motivo-baja-inv').value;
+            const cantidad = document.getElementById('cantidad-baja-inv').value;
+            
+            if(!qr || !nombre || !motivo || !cantidad) { alert("⚠️ Por favor ingresa el código y llena todos los datos para registrar la baja."); return; }
+
+            db.collection("Inventario").add({
+                tipoMovimiento: "Baja de Lote",
+                codigoQR: qr, medicamento: nombre, descripcion: motivo, cantidad: -Math.abs(parseInt(cantidad)), 
+                registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), 
+                fechaReal: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                alert("✅ Baja de lote registrada correctamente.");
+                limpiarFormularioBajaInventario(); 
+            }).catch(e => alert("Error al guardar la baja."));
+        }
+
+        // --- MÓDULO 5: ADMINISTRAR USUARIOS ---
         function abrirUsuarios() {
             cambiarPantalla('pantalla-menu', 'pantalla-usuarios');
             cargarListaUsuarios();
