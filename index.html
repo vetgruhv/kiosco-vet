@@ -90,9 +90,10 @@
         <div id="caja-camara-baja" class="caja-camara oculto"></div>
         
         <div class="grupo-formulario" style="margin-top: 10px;">
-            <label>Código Escaneado:</label>
-            <input type="text" id="codigo-qr-resultado" placeholder="Esperando código..." readonly style="background-color: #e9ecef; font-weight: bold; color: #0d6efd;">
+            <label>Código del Medicamento:</label>
+            <input type="text" id="codigo-qr-resultado" placeholder="Escanea o teclea el código..." style="font-weight: bold; color: #0d6efd;">
         </div>
+        
         <div class="grupo-formulario"><label>Nombre del Dueño:</label><input type="text" id="nombre-dueno" placeholder="Ej. Juan Pérez"></div>
         <div class="grupo-formulario"><label>Nombre del Perro/Paciente:</label><input type="text" id="nombre-perro" placeholder="Ej. Firulais"></div>
         <div class="grupo-formulario"><label>Raza del paciente:</label><input type="text" id="raza-paciente" placeholder="Ej. Chihuahua..."></div>
@@ -116,10 +117,14 @@
         <div id="caja-camara-inventario" class="caja-camara oculto"></div>
         
         <div class="grupo-formulario" style="margin-top: 10px;">
-            <label>Código QR Escaneado:</label>
-            <input type="text" id="qr-inventario" placeholder="Esperando código..." readonly style="background-color: #e9ecef; font-weight: bold; color: #198754;">
+            <label>Código del Medicamento (Lote):</label>
+            <input type="text" id="qr-inventario" placeholder="Escanea o teclea el código..." style="font-weight: bold; color: #198754;">
         </div>
-        <div class="grupo-formulario"><label>Nombre del Medicamento / Descripción:</label><input type="text" id="nombre-inventario" placeholder="Ej. Desparasitante Canino 500mg"></div>
+        
+        <div class="grupo-formulario"><label>Nombre del Medicamento:</label><input type="text" id="nombre-inventario" placeholder="Ej. Desparasitante Canino"></div>
+        <!-- CASILLA NUEVA SEPARADA -->
+        <div class="grupo-formulario"><label>Descripción:</label><input type="text" id="descripcion-inventario" placeholder="Ej. 500mg, Caja con 10 tabletas"></div>
+        
         <div class="grupo-formulario"><label>Cantidad de piezas (Lote):</label><input type="number" id="cantidad-inventario" placeholder="Ej. 10"></div>
         
         <br><button class="btn btn-guardar" onclick="guardarEnInventario()">Guardar Lote</button>
@@ -130,7 +135,6 @@
     <div id="pantalla-usuarios" class="contenedor oculto" style="max-width: 550px;">
         <h2 style="color: #333; margin-top: 0;">👥 Administrar Usuarios</h2>
         
-        <!-- Formulario para agregar nuevo usuario -->
         <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
             <h4 style="margin-top: 0; color: #0d6efd; text-align: left;">Agregar Nuevo Personal</h4>
             <div class="grupo-formulario"><label>Nombre:</label><input type="text" id="nuevo-usuario-nombre" placeholder="Ej. María"></div>
@@ -146,7 +150,6 @@
             <button class="btn btn-guardar" style="padding: 10px;" onclick="crearUsuario()">+ Agregar Usuario</button>
         </div>
 
-        <!-- Lista de usuarios actuales -->
         <h4 style="margin-bottom: 10px; color: #333; text-align: left;">Usuarios Activos:</h4>
         <div id="lista-usuarios-firebase" style="max-height: 250px; overflow-y: auto; padding-right: 5px;"></div>
         
@@ -216,13 +219,12 @@
             document.getElementById(idMostrar).classList.remove('oculto');
         }
 
-        // --- LÓGICA DE INICIO DE SESIÓN CON NUBE (ACTUALIZADO) ---
+        // --- LÓGICA DE INICIO DE SESIÓN CON NUBE ---
         function validarPin() {
-            // Buscamos el PIN directamente en Firebase
             db.collection("Usuarios").doc(pinActual).get().then((doc) => {
                 if(doc.exists) {
                     usuarioLogueado = doc.data();
-                    usuarioLogueado.pin = pinActual; // Guardamos su pin temporalmente
+                    usuarioLogueado.pin = pinActual; 
                     
                     configurarTextosYPermisos();
                     reiniciarTemporizador(); 
@@ -230,7 +232,6 @@
                     if(usuarioLogueado.rol === "Empleado") { abrirFormulario(); } 
                     else { cambiarPantalla('pantalla-login', 'pantalla-menu'); }
                 } else {
-                    // Si la base de datos está vacía, subimos los de prueba automáticamente la primera vez
                     if(pinActual === "1111" || pinActual === "2222" || pinActual === "3333") {
                         const baseLocal = {
                             "1111": { nombre: "Ana", rol: "Gerente" },
@@ -238,7 +239,7 @@
                             "3333": { nombre: "Luis", rol: "Empleado" }
                         };
                         db.collection("Usuarios").doc(pinActual).set(baseLocal[pinActual]).then(() => {
-                            validarPin(); // Reintentamos iniciar sesión
+                            validarPin(); 
                         });
                     } else {
                         alert("PIN incorrecto o usuario inexistente."); limpiarPin();
@@ -306,10 +307,12 @@
 
         function cancelarVolver() {
             detenerCamara(); 
+            // Limpiar formulario Bajas
             document.getElementById('nombre-dueno').value = ""; document.getElementById('nombre-perro').value = "";
             document.getElementById('raza-paciente').value = ""; document.getElementById('codigo-qr-resultado').value = "";
+            // Limpiar formulario Inventario (ahora con el campo descripcion)
             document.getElementById('qr-inventario').value = ""; document.getElementById('nombre-inventario').value = "";
-            document.getElementById('cantidad-inventario').value = "";
+            document.getElementById('descripcion-inventario').value = ""; document.getElementById('cantidad-inventario').value = "";
 
             if (usuarioLogueado && usuarioLogueado.rol === "Empleado") { cerrarSesion(); } 
             else { 
@@ -339,7 +342,7 @@
             detenerCamara(); 
             const dueno = document.getElementById('nombre-dueno').value; const perro = document.getElementById('nombre-perro').value;
             const raza = document.getElementById('raza-paciente').value; const codigo = document.getElementById('codigo-qr-resultado').value;
-            if(!dueno || !perro || !raza || !codigo) { alert("Escanea el QR y llena los campos."); return; }
+            if(!dueno || !perro || !raza || !codigo) { alert("Ingresa el código del medicamento y llena los campos."); return; }
 
             db.collection("Historial").add({
                 movimiento: tipoMovimientoActual, usuarioAtendio: usuarioLogueado.nombre, codigoMedicamento: codigo,
@@ -367,14 +370,14 @@
                             <div class="th-header"><strong style="color: ${color}; font-size: 1.1em;">${d.movimiento}</strong><span style="color: #6c757d;">${d.fechaTexto}</span></div>
                             <div class="th-cuerpo"><strong>Paciente:</strong> ${d.nombrePaciente} (${d.razaPaciente})</div>
                             <div class="th-cuerpo"><strong>Dueño:</strong> ${d.nombreDueno}</div>
-                            <div class="th-cuerpo"><strong>QR:</strong> ${d.codigoMedicamento}</div>
+                            <div class="th-cuerpo"><strong>QR/Código:</strong> ${d.codigoMedicamento}</div>
                             <div class="th-pie">Atendió: <strong>${d.usuarioAtendio}</strong></div>
                         </div>`;
                 });
             }).catch(e => contenedorLista.innerHTML = '<p style="color: red;">Error al cargar datos.</p>');
         }
 
-        // --- MÓDULO 3: LOTES NUEVOS / INVENTARIO ---
+        // --- MÓDULO 3: LOTES NUEVOS / INVENTARIO (MODIFICADO) ---
         function abrirInventario() {
             cambiarPantalla('pantalla-menu', 'pantalla-inventario');
         }
@@ -382,13 +385,19 @@
             detenerCamara();
             const qr = document.getElementById('qr-inventario').value;
             const nombre = document.getElementById('nombre-inventario').value;
+            const descripcion = document.getElementById('descripcion-inventario').value; // Nueva variable
             const cantidad = document.getElementById('cantidad-inventario').value;
             
-            if(!qr || !nombre || !cantidad) { alert("Por favor escanea y llena todos los datos."); return; }
+            if(!qr || !nombre || !descripcion || !cantidad) { alert("Por favor ingresa un código y llena todos los datos."); return; }
 
             db.collection("Inventario").add({
-                codigoQR: qr, medicamento: nombre, cantidad: parseInt(cantidad), registradoPor: usuarioLogueado.nombre,
-                fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp()
+                codigoQR: qr, 
+                medicamento: nombre, 
+                descripcion: descripcion, // Se envía a Firebase
+                cantidad: parseInt(cantidad), 
+                registradoPor: usuarioLogueado.nombre,
+                fechaTexto: new Date().toLocaleString('es-MX'), 
+                fechaReal: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
                 alert("✅ Lote agregado al Inventario correctamente.");
                 cancelarVolver();
