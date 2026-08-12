@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiosco Veterinario</title>
+    
+    <!-- LIBRERÍA PARA LEER QR -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <style>
+        /* --- ESTILOS VISUALES (CSS) --- */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f0f2f5; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+        }
+        
+        .contenedor { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1); 
+            width: 90%; 
+            max-width: 450px; 
+            text-align: center; 
+            margin: 20px 0;
+        }
+
+        /* --- DISEÑO DEL TECLADO --- */
+        .pantalla-pin { 
+            font-size: 2.5em; 
+            letter-spacing: 15px; 
+            margin-bottom: 25px; 
+            padding: 15px; 
+            width: 100%; 
+            text-align: center; 
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef; 
+            border-radius: 10px; 
+            box-sizing: border-box; 
+            color: #333;
+        }
+        
+        .cuadricula-teclas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        
+        .tecla { 
+            padding: 25px 0; 
+            font-size: 1.8em; 
+            background: #ffffff; 
+            border: 1px solid #dee2e6; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            cursor: pointer; 
+            transition: 0.1s; 
+            color: #333;
+        }
+        .tecla:active { background: #e9ecef; transform: translateY(2px); }
+        .tecla-borrar { background: #ffe3e3; color: #dc3545; border-color: #ffc9c9; }
+        
+        /* --- DISEÑO DEL FORMULARIO Y MENÚ --- */
+        .header-usuario {
+            background: #e3f2fd;
+            color: #0d6efd;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .selector-movimiento { display: flex; gap: 10px; margin-bottom: 20px; }
+        .btn-mov {
+            flex: 1; padding: 12px 5px; border: 2px solid #ced4da;
+            background: white; color: #6c757d; border-radius: 8px;
+            font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.95em;
+        }
+        .btn-mov.activo-baja { background: #0d6efd; color: white; border-color: #0d6efd; }
+        .btn-mov.activo-alta { background: #198754; color: white; border-color: #198754; }
+
+        .grupo-formulario { margin-bottom: 15px; text-align: left; }
+        .grupo-formulario label { display: block; font-weight: bold; margin-bottom: 5px; color: #495057; font-size: 0.9em; }
+        .grupo-formulario input { 
+            width: 100%; padding: 10px; font-size: 1em;
+            border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box; 
+        }
+        
+        .btn { 
+            width: 100%; padding: 15px; font-size: 1.1em; border: none; 
+            border-radius: 8px; cursor: pointer; margin-top: 10px; 
+            font-weight: bold; transition: 0.2s;
+        }
+        
+        .btn-menu { background: #f8f9fa; color: #333; border: 1px solid #dee2e6; margin-bottom: 10px; }
+        .btn-menu:active { background: #e9ecef; }
+        .btn-qr { background: #e3f2fd; color: #0d6efd; border: 2px dashed #0d6efd; }
+        .btn-guardar { background: #198754; color: white; }
+        .btn-cancelar { background: transparent; color: #dc3545; margin-top: 5px; }
+        
+        /* DISEÑO DE LA CÁMARA */
+        #caja-camara {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            border: 2px solid #333;
+        }
+
+        .oculto { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- PANTALLA 1: TECLADO KIOSCO -->
+    <div id="pantalla-login" class="contenedor">
+        <h2 style="color: #333; margin-top: 0;">Ingresa tu PIN</h2>
+        <input type="password" id="input-pin" class="pantalla-pin" readonly>
+        
+        <div class="cuadricula-teclas">
+            <button class="tecla" onclick="agregarNumero('1')">1</button>
+            <button class="tecla" onclick="agregarNumero('2')">2</button>
+            <button class="tecla" onclick="agregarNumero('3')">3</button>
+            <button class="tecla" onclick="agregarNumero('4')">4</button>
+            <button class="tecla" onclick="agregarNumero('5')">5</button>
+            <button class="tecla" onclick="agregarNumero('6')">6</button>
+            <button class="tecla" onclick="agregarNumero('7')">7</button>
+            <button class="tecla" onclick="agregarNumero('8')">8</button>
+            <button class="tecla" onclick="agregarNumero('9')">9</button>
+            <button class="tecla tecla-borrar" onclick="limpiarPin()">C</button>
+            <button class="tecla" onclick="agregarNumero('0')">0</button>
+            <button style="background: transparent; border: none;"></button>
+        </div>
+    </div>
+
+    <!-- PANTALLA 2: MENÚ PRINCIPAL DINÁMICO -->
+    <div id="pantalla-menu" class="contenedor oculto">
+        <div class="header-usuario" id="texto-bienvenida">Bienvenido</div>
+        <h3 style="color: #333; margin-top: 0;">¿Qué deseas hacer?</h3>
+        
+        <button id="btn-movimiento" class="btn btn-menu" onclick="abrirFormulario()">📉 Registrar Baja o Devolución</button>
+        <button id="btn-alta-inventario" class="btn btn-menu oculto" onclick="abrirConstruccion('Alta de Lotes Nuevos')">📦 Ingresar Lotes Nuevos</button>
+        <button id="btn-historial" class="btn btn-menu oculto" onclick="abrirConstruccion('Historial')">📋 Ver Historial</button>
+        <button id="btn-usuarios" class="btn btn-menu oculto" onclick="abrirConstruccion('Administrar Usuarios')">👥 Administrar Usuarios</button>
+        
+        <button class="btn btn-cancelar" onclick="cerrarSesion()">Cerrar Sesión</button>
+    </div>
+
+    <!-- PANTALLA 3: FORMULARIO DE BAJA / DEVOLUCIÓN -->
+    <div id="pantalla-registro-baja" class="contenedor oculto">
+        <div class="header-usuario" id="texto-registro-usuario"></div>
+        
+        <div class="selector-movimiento">
+            <button type="button" id="toggle-baja" class="btn-mov activo-baja" onclick="cambiarTipoMovimiento('Baja')">📉 Baja (Entregar)</button>
+            <button type="button" id="toggle-alta" class="btn-mov" onclick="cambiarTipoMovimiento('Devolución')">🔄 Devolución</button>
+        </div>
+
+        <h2 id="titulo-formulario" style="color: #333; margin-top: 0; font-size: 1.3em;">Nueva Baja</h2>
+        
+        <!-- SECCIÓN DEL ESCÁNER QR -->
+        <button type="button" class="btn btn-qr" onclick="iniciarCamara()">📷 Escanear Medicamento (QR)</button>
+        
+        <div id="caja-camara" class="oculto"></div>
+        
+        <div class="grupo-formulario" style="margin-top: 10px;">
+            <label>Código Escaneado:</label>
+            <input type="text" id="codigo-qr-resultado" placeholder="Aún no se ha escaneado nada..." readonly style="background-color: #e9ecef;">
+        </div>
+        <!-- FIN SECCIÓN QR -->
+
+        <div class="grupo-formulario">
+            <label>Nombre del Dueño:</label>
+            <input type="text" id="nombre-dueno" placeholder="Ej. Juan Pérez">
+        </div>
+        <div class="grupo-formulario">
+            <label>Nombre del Perro/Paciente:</label>
+            <input type="text" id="nombre-perro" placeholder="Ej. Firulais">
+        </div>
+        <div class="grupo-formulario">
+            <label>Raza del paciente:</label>
+            <input type="text" id="raza-paciente" placeholder="Ej. Chihuahua, Husky...">
+        </div>
+        
+        <br>
+        <button class="btn btn-guardar" onclick="guardarRegistro()">Guardar y Terminar</button>
+        <button class="btn btn-cancelar" onclick="cancelarFormulario()">Cancelar</button>
+    </div>
+
+    <!-- --- LÓGICA VISUAL (JAVASCRIPT) --- -->
+    <script>
+        let pinActual = "";
+        let usuarioLogueado = null;
+        let tipoMovimientoActual = "Baja";
+        let temporizadorInactividad; 
+        
+        // Variable para el motor de la cámara
+        let lectorQr; 
+
+        // --- SISTEMA DE INACTIVIDAD ---
+        function reiniciarTemporizador() {
+            clearTimeout(temporizadorInactividad);
+            if(usuarioLogueado) {
+                temporizadorInactividad = setTimeout(() => {
+                    alert("Por seguridad, la sesión se cerró tras 10 minutos de inactividad.");
+                    cancelarFormulario(); 
+                }, 600000); 
+            }
+        }
+
+        window.onload = function() {
+            document.body.addEventListener('click', reiniciarTemporizador);
+            document.body.addEventListener('keypress', reiniciarTemporizador);
+        }
+
+        const baseDeDatosUsuarios = {
+            "1111": { nombre: "Ana", rol: "Gerente" },
+            "2222": { nombre: "Carlos", rol: "Sub-Gerente" },
+            "3333": { nombre: "Luis", rol: "Empleado" }
+        };
+
+        function agregarNumero(numero) {
+            if(pinActual.length >= 4) return; 
+            pinActual += numero;
+            document.getElementById('input-pin').value = pinActual;
+            if (pinActual.length === 4) {
+                setTimeout(() => { validarPin(); }, 200);
+            }
+        }
+
+        function limpiarPin() { pinActual = ""; document.getElementById('input-pin').value = ""; }
+
+        function validarPin() {
+            const usuarioEncontrado = baseDeDatosUsuarios[pinActual];
+            if(usuarioEncontrado) {
+                usuarioLogueado = usuarioEncontrado; 
+                configurarTextosYPermisos();
+                reiniciarTemporizador(); 
+
+                if(usuarioLogueado.rol === "Empleado") {
+                    abrirFormulario();
+                } else {
+                    cambiarPantalla('pantalla-login', 'pantalla-menu');
+                }
+            } else {
+                alert("PIN incorrecto.");
+                limpiarPin();
+            }
+        }
+
+        function configurarTextosYPermisos() {
+            document.getElementById('texto-bienvenida').innerText = `Hola, ${usuarioLogueado.nombre}`;
+            document.getElementById('texto-registro-usuario').innerText = `Atendiendo: ${usuarioLogueado.nombre}`;
+            document.getElementById('btn-alta-inventario').classList.add('oculto');
+            document.getElementById('btn-historial').classList.add('oculto');
+            document.getElementById('btn-usuarios').classList.add('oculto');
+
+            if(usuarioLogueado.rol === "Gerente") {
+                document.getElementById('btn-alta-inventario').classList.remove('oculto');
+                document.getElementById('btn-historial').classList.remove('oculto');
+                document.getElementById('btn-usuarios').classList.remove('oculto');
+            } 
+            else if(usuarioLogueado.rol === "Sub-Gerente") {
+                document.getElementById('btn-historial').classList.remove('oculto');
+            }
+        }
+
+        function cambiarPantalla(idOcultar, idMostrar) {
+            document.getElementById(idOcultar).classList.add('oculto');
+            document.getElementById(idMostrar).classList.remove('oculto');
+        }
+
+        function cambiarTipoMovimiento(tipo) {
+            tipoMovimientoActual = tipo;
+            const btnBaja = document.getElementById('toggle-baja');
+            const btnAlta = document.getElementById('toggle-alta');
+            const titulo = document.getElementById('titulo-formulario');
+
+            if(tipo === 'Baja') {
+                btnBaja.classList.add('activo-baja');
+                btnAlta.classList.remove('activo-alta');
+                titulo.innerText = "Nueva Baja";
+            } else {
+                btnAlta.classList.add('activo-alta');
+                btnBaja.classList.remove('activo-baja');
+                titulo.innerText = "Registrar Devolución";
+            }
+        }
+
+        function abrirFormulario() {
+            cambiarTipoMovimiento('Baja'); 
+            if(usuarioLogueado.rol === "Empleado") {
+                cambiarPantalla('pantalla-login', 'pantalla-registro-baja');
+            } else {
+                cambiarPantalla('pantalla-menu', 'pantalla-registro-baja');
+            }
+        }
+
+        // --- LÓGICA DE LA CÁMARA QR ---
+        function iniciarCamara() {
+            // Mostrar la caja de la cámara
+            document.getElementById('caja-camara').classList.remove('oculto');
+            
+            // Iniciar el motor si no existe
+            if(!lectorQr) {
+                lectorQr = new Html5Qrcode("caja-camara");
+            }
+
+            // Encender la cámara trasera (environment)
+            lectorQr.start(
+                { facingMode: "environment" }, 
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                (codigoDecodificado) => {
+                    // ¡Éxito! Leyó un código
+                    document.getElementById('codigo-qr-resultado').value = codigoDecodificado;
+                    detenerCamara(); // Apagamos la cámara automáticamente
+                    reiniciarTemporizador(); // Reiniciamos el reloj para que no se le cierre
+                },
+                (error) => {
+                    // Errores de lectura (el escáner falló en un frame, se ignora)
+                }
+            ).catch(err => {
+                alert("Error al abrir la cámara. Asegúrate de dar permisos de cámara o probarlo subido a internet (HTTPS).");
+                document.getElementById('caja-camara').classList.add('oculto');
+            });
+        }
+
+        function detenerCamara() {
+            if(lectorQr) {
+                lectorQr.stop().then(() => {
+                    document.getElementById('caja-camara').classList.add('oculto');
+                }).catch(err => {
+                    console.log("No se pudo detener la cámara", err);
+                });
+            }
+        }
+        // ------------------------------
+
+        function cancelarFormulario() {
+            detenerCamara(); // Apagar la cámara si le dan a cancelar
+            document.getElementById('nombre-dueno').value = "";
+            document.getElementById('nombre-perro').value = "";
+            document.getElementById('raza-paciente').value = "";
+            document.getElementById('codigo-qr-resultado').value = "";
+            
+            if (usuarioLogueado && usuarioLogueado.rol === "Empleado") {
+                cerrarSesion();
+            } else {
+                cambiarPantalla('pantalla-registro-baja', 'pantalla-menu');
+            }
+        }
+
+        function abrirConstruccion(modulo) {
+            alert(`El módulo de "${modulo}" se conectará en la Fase 2.`);
+        }
+
+        function cerrarSesion() {
+            usuarioLogueado = null;
+            clearTimeout(temporizadorInactividad); 
+            limpiarPin();
+            document.getElementById('pantalla-menu').classList.add('oculto');
+            document.getElementById('pantalla-registro-baja').classList.add('oculto');
+            document.getElementById('pantalla-login').classList.remove('oculto');
+        }
+
+        function guardarRegistro() {
+            detenerCamara(); // Apagar cámara por si acaso
+            const fechaYHoraActual = new Date().toLocaleString('es-MX');
+            const dueno = document.getElementById('nombre-dueno').value;
+            const perro = document.getElementById('nombre-perro').value;
+            const raza = document.getElementById('raza-paciente').value;
+            const codigo = document.getElementById('codigo-qr-resultado').value;
+
+            if(!dueno || !perro || !raza || !codigo) {
+                alert("Por favor escanea el medicamento y llena todos los campos.");
+                return;
+            }
+
+            const resumen = `¡Datos listos para Firebase!\n\n` +
+                            `Movimiento: ${tipoMovimientoActual}\n` +
+                            `Atendió: ${usuarioLogueado.nombre}\n` +
+                            `Código Escaneado: ${codigo}\n` +
+                            `Fecha y Hora: ${fechaYHoraActual}\n` +
+                            `Dueño: ${dueno}\n` +
+                            `Paciente: ${perro} (Raza: ${raza})`;
+
+            alert(resumen);
+            
+            document.getElementById('nombre-dueno').value = "";
+            document.getElementById('nombre-perro').value = "";
+            document.getElementById('raza-paciente').value = "";
+            document.getElementById('codigo-qr-resultado').value = "";
+            cerrarSesion();
+        }
+    </script>
+</body>
+</html>
