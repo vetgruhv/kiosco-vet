@@ -122,9 +122,7 @@
         </div>
         
         <div class="grupo-formulario"><label>Nombre del Medicamento:</label><input type="text" id="nombre-inventario" placeholder="Ej. Desparasitante Canino"></div>
-        <!-- CASILLA NUEVA SEPARADA -->
         <div class="grupo-formulario"><label>Descripción:</label><input type="text" id="descripcion-inventario" placeholder="Ej. 500mg, Caja con 10 tabletas"></div>
-        
         <div class="grupo-formulario"><label>Cantidad de piezas (Lote):</label><input type="number" id="cantidad-inventario" placeholder="Ej. 10"></div>
         
         <br><button class="btn btn-guardar" onclick="guardarEnInventario()">Guardar Lote</button>
@@ -158,7 +156,6 @@
 
     <!-- --- LÓGICA VISUAL Y BASE DE DATOS --- -->
     <script>
-        // TUS LLAVES DE FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyABktLytyy6fBXXDOrJq9B0nErrOzc30a4",
             authDomain: "kioscovet-93eae.firebaseapp.com",
@@ -178,7 +175,6 @@
         let lectorQr; 
         let camaraActivaId = "";
 
-        // --- FUNCIONES BÁSICAS DE NAVEGACIÓN Y SONIDO ---
         function reproducirSonidoBip() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -219,7 +215,6 @@
             document.getElementById(idMostrar).classList.remove('oculto');
         }
 
-        // --- LÓGICA DE INICIO DE SESIÓN CON NUBE ---
         function validarPin() {
             db.collection("Usuarios").doc(pinActual).get().then((doc) => {
                 if(doc.exists) {
@@ -277,7 +272,6 @@
             document.getElementById('pantalla-login').classList.remove('oculto');
         }
 
-        // --- ESCÁNER QR DINÁMICO ---
         function iniciarCamara(idDivCamara, idInputDestino) {
             camaraActivaId = idDivCamara;
             document.getElementById(idDivCamara).classList.remove('oculto');
@@ -305,14 +299,24 @@
             }
         }
 
+        function limpiarFormularioBaja() {
+            document.getElementById('nombre-dueno').value = "";
+            document.getElementById('nombre-perro').value = "";
+            document.getElementById('raza-paciente').value = "";
+            document.getElementById('codigo-qr-resultado').value = "";
+        }
+
+        function limpiarFormularioInventario() {
+            document.getElementById('qr-inventario').value = "";
+            document.getElementById('nombre-inventario').value = "";
+            document.getElementById('descripcion-inventario').value = "";
+            document.getElementById('cantidad-inventario').value = "";
+        }
+
         function cancelarVolver() {
             detenerCamara(); 
-            // Limpiar formulario Bajas
-            document.getElementById('nombre-dueno').value = ""; document.getElementById('nombre-perro').value = "";
-            document.getElementById('raza-paciente').value = ""; document.getElementById('codigo-qr-resultado').value = "";
-            // Limpiar formulario Inventario (ahora con el campo descripcion)
-            document.getElementById('qr-inventario').value = ""; document.getElementById('nombre-inventario').value = "";
-            document.getElementById('descripcion-inventario').value = ""; document.getElementById('cantidad-inventario').value = "";
+            limpiarFormularioBaja();
+            limpiarFormularioInventario();
 
             if (usuarioLogueado && usuarioLogueado.rol === "Empleado") { cerrarSesion(); } 
             else { 
@@ -342,7 +346,9 @@
             detenerCamara(); 
             const dueno = document.getElementById('nombre-dueno').value; const perro = document.getElementById('nombre-perro').value;
             const raza = document.getElementById('raza-paciente').value; const codigo = document.getElementById('codigo-qr-resultado').value;
-            if(!dueno || !perro || !raza || !codigo) { alert("Ingresa el código del medicamento y llena los campos."); return; }
+            
+            // EL SEGURO DE ESPACIOS VACÍOS
+            if(!dueno || !perro || !raza || !codigo) { alert("⚠️ Por favor ingresa el código y llena todos los campos para poder guardar."); return; }
 
             db.collection("Historial").add({
                 movimiento: tipoMovimientoActual, usuarioAtendio: usuarioLogueado.nombre, codigoMedicamento: codigo,
@@ -350,7 +356,7 @@
                 fechaReal: firebase.firestore.FieldValue.serverTimestamp() 
             }).then(() => {
                 alert("✅ Registro guardado exitosamente.");
-                cancelarVolver();
+                limpiarFormularioBaja(); // Solo limpia las casillas, pero te deja en la pantalla
             }).catch(e => alert("Error al guardar."));
         }
 
@@ -377,7 +383,7 @@
             }).catch(e => contenedorLista.innerHTML = '<p style="color: red;">Error al cargar datos.</p>');
         }
 
-        // --- MÓDULO 3: LOTES NUEVOS / INVENTARIO (MODIFICADO) ---
+        // --- MÓDULO 3: LOTES NUEVOS / INVENTARIO ---
         function abrirInventario() {
             cambiarPantalla('pantalla-menu', 'pantalla-inventario');
         }
@@ -385,22 +391,23 @@
             detenerCamara();
             const qr = document.getElementById('qr-inventario').value;
             const nombre = document.getElementById('nombre-inventario').value;
-            const descripcion = document.getElementById('descripcion-inventario').value; // Nueva variable
+            const descripcion = document.getElementById('descripcion-inventario').value;
             const cantidad = document.getElementById('cantidad-inventario').value;
             
-            if(!qr || !nombre || !descripcion || !cantidad) { alert("Por favor ingresa un código y llena todos los datos."); return; }
+            // EL SEGURO DE ESPACIOS VACÍOS
+            if(!qr || !nombre || !descripcion || !cantidad) { alert("⚠️ Por favor ingresa el código y llena todos los datos para poder guardar el lote."); return; }
 
             db.collection("Inventario").add({
                 codigoQR: qr, 
                 medicamento: nombre, 
-                descripcion: descripcion, // Se envía a Firebase
+                descripcion: descripcion,
                 cantidad: parseInt(cantidad), 
                 registradoPor: usuarioLogueado.nombre,
                 fechaTexto: new Date().toLocaleString('es-MX'), 
                 fechaReal: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
                 alert("✅ Lote agregado al Inventario correctamente.");
-                cancelarVolver();
+                limpiarFormularioInventario(); // Solo limpia las casillas, pero te deja en la pantalla
             }).catch(e => alert("Error al guardar en inventario."));
         }
 
@@ -435,7 +442,7 @@
             const pin = document.getElementById('nuevo-usuario-pin').value;
             const rol = document.getElementById('nuevo-usuario-rol').value;
 
-            if(!nombre || !pin || pin.length !== 4) { alert("Ingresa un nombre y un PIN de exactamente 4 números."); return; }
+            if(!nombre || !pin || pin.length !== 4) { alert("⚠️ Ingresa un nombre y un PIN de exactamente 4 números."); return; }
 
             db.collection("Usuarios").doc(pin).set({ nombre: nombre, rol: rol }).then(() => {
                 alert("✅ Usuario creado exitosamente.");
