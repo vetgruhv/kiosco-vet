@@ -25,18 +25,18 @@
         .btn-mov.activo-alta { background: #198754; color: white; border-color: #198754; }
         .grupo-formulario { margin-bottom: 15px; text-align: left; }
         .grupo-formulario label { display: block; font-weight: bold; margin-bottom: 5px; color: #495057; font-size: 0.9em; }
-        .grupo-formulario input { width: 100%; padding: 10px; font-size: 1em; border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box; }
+        .grupo-formulario input, .grupo-formulario select { width: 100%; padding: 10px; font-size: 1em; border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box; }
         .btn { width: 100%; padding: 15px; font-size: 1.1em; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; font-weight: bold; transition: 0.2s; }
         .btn-menu { background: #f8f9fa; color: #333; border: 1px solid #dee2e6; margin-bottom: 10px; }
         .btn-menu:active { background: #e9ecef; }
         .btn-qr { background: #e3f2fd; color: #0d6efd; border: 2px dashed #0d6efd; }
         .btn-guardar { background: #198754; color: white; }
         .btn-cancelar { background: transparent; color: #dc3545; margin-top: 5px; }
-        #caja-camara { width: 100%; border-radius: 8px; overflow: hidden; margin-bottom: 15px; border: 2px solid #333; }
+        .caja-camara { width: 100%; border-radius: 8px; overflow: hidden; margin-bottom: 15px; border: 2px solid #333; }
         .oculto { display: none !important; }
-
-        /* DISEÑO DE LAS TARJETAS DEL HISTORIAL */
-        .tarjeta-historial { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 15px; font-size: 0.95em; text-align: left; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        
+        /* DISEÑO DE LAS TARJETAS */
+        .tarjeta-info { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 15px; font-size: 0.95em; text-align: left; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .th-header { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #e9ecef; padding-bottom: 5px;}
         .th-cuerpo { margin-bottom: 5px; color: #495057; }
         .th-pie { color: #6c757d; font-size: 0.85em; text-align: right; margin-top: 10px; }
@@ -68,17 +68,16 @@
     <div id="pantalla-menu" class="contenedor oculto">
         <div class="header-usuario" id="texto-bienvenida">Bienvenido</div>
         <h3 style="color: #333; margin-top: 0;">¿Qué deseas hacer?</h3>
+        
         <button id="btn-movimiento" class="btn btn-menu" onclick="abrirFormulario()">📉 Registrar Baja o Devolución</button>
-        <button id="btn-alta-inventario" class="btn btn-menu oculto" onclick="abrirConstruccion('Alta de Lotes Nuevos')">📦 Ingresar Lotes Nuevos</button>
-        
-        <!-- BOTÓN ACTUALIZADO PARA ABRIR HISTORIAL -->
+        <button id="btn-alta-inventario" class="btn btn-menu oculto" onclick="abrirInventario()">📦 Ingresar Lotes Nuevos</button>
         <button id="btn-historial" class="btn btn-menu oculto" onclick="abrirHistorial()">📋 Ver Historial</button>
+        <button id="btn-usuarios" class="btn btn-menu oculto" onclick="abrirUsuarios()">👥 Administrar Usuarios</button>
         
-        <button id="btn-usuarios" class="btn btn-menu oculto" onclick="abrirConstruccion('Administrar Usuarios')">👥 Administrar Usuarios</button>
         <button class="btn btn-cancelar" onclick="cerrarSesion()">Cerrar Sesión</button>
     </div>
 
-    <!-- PANTALLA 3: FORMULARIO DE BAJA / DEVOLUCIÓN -->
+    <!-- PANTALLA 3: BAJA / DEVOLUCIÓN -->
     <div id="pantalla-registro-baja" class="contenedor oculto">
         <div class="header-usuario" id="texto-registro-usuario"></div>
         <div class="selector-movimiento">
@@ -86,43 +85,77 @@
             <button type="button" id="toggle-alta" class="btn-mov" onclick="cambiarTipoMovimiento('Devolución')">🔄 Devolución</button>
         </div>
         <h2 id="titulo-formulario" style="color: #333; margin-top: 0; font-size: 1.3em;">Nueva Baja</h2>
-        <button type="button" class="btn btn-qr" onclick="iniciarCamara()">📷 Escanear Medicamento (QR)</button>
-        <div id="caja-camara" class="oculto"></div>
+        
+        <button type="button" class="btn btn-qr" onclick="iniciarCamara('caja-camara-baja', 'codigo-qr-resultado')">📷 Escanear Medicamento (QR)</button>
+        <div id="caja-camara-baja" class="caja-camara oculto"></div>
+        
         <div class="grupo-formulario" style="margin-top: 10px;">
             <label>Código Escaneado:</label>
-            <input type="text" id="codigo-qr-resultado" placeholder="Aún no se ha escaneado nada..." readonly style="background-color: #e9ecef; font-weight: bold; color: #0d6efd;">
+            <input type="text" id="codigo-qr-resultado" placeholder="Esperando código..." readonly style="background-color: #e9ecef; font-weight: bold; color: #0d6efd;">
         </div>
-        <div class="grupo-formulario">
-            <label>Nombre del Dueño:</label>
-            <input type="text" id="nombre-dueno" placeholder="Ej. Juan Pérez">
-        </div>
-        <div class="grupo-formulario">
-            <label>Nombre del Perro/Paciente:</label>
-            <input type="text" id="nombre-perro" placeholder="Ej. Firulais">
-        </div>
-        <div class="grupo-formulario">
-            <label>Raza del paciente:</label>
-            <input type="text" id="raza-paciente" placeholder="Ej. Chihuahua, Husky...">
-        </div>
-        <br>
-        <button class="btn btn-guardar" onclick="guardarEnFirebase()">Guardar y Terminar</button>
-        <button class="btn btn-cancelar" onclick="cancelarFormulario()">Cancelar</button>
+        <div class="grupo-formulario"><label>Nombre del Dueño:</label><input type="text" id="nombre-dueno" placeholder="Ej. Juan Pérez"></div>
+        <div class="grupo-formulario"><label>Nombre del Perro/Paciente:</label><input type="text" id="nombre-perro" placeholder="Ej. Firulais"></div>
+        <div class="grupo-formulario"><label>Raza del paciente:</label><input type="text" id="raza-paciente" placeholder="Ej. Chihuahua..."></div>
+        
+        <br><button class="btn btn-guardar" onclick="guardarEnHistorial()">Guardar y Terminar</button>
+        <button class="btn btn-cancelar" onclick="cancelarVolver()">Cancelar</button>
     </div>
 
-    <!-- PANTALLA 4: HISTORIAL (NUEVA) -->
+    <!-- PANTALLA 4: HISTORIAL -->
     <div id="pantalla-historial" class="contenedor oculto" style="max-width: 550px;">
         <h2 style="color: #333; margin-top: 0;">Historial Reciente</h2>
-        
-        <!-- Aquí se inyectarán las tarjetas de Firebase -->
-        <div id="lista-historial" style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
-            <p style="text-align: center; color: #666;">Cargando datos...</p>
-        </div>
-        
+        <div id="lista-historial" style="max-height: 400px; overflow-y: auto; padding-right: 5px;"><p>Cargando datos...</p></div>
         <button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-historial', 'pantalla-menu')">Volver al Menú</button>
+    </div>
+
+    <!-- PANTALLA 5: LOTES NUEVOS / INVENTARIO -->
+    <div id="pantalla-inventario" class="contenedor oculto">
+        <h2 style="color: #333; margin-top: 0; font-size: 1.3em;">📦 Alta de Lote / Inventario</h2>
+        
+        <button type="button" class="btn btn-qr" onclick="iniciarCamara('caja-camara-inventario', 'qr-inventario')">📷 Escanear Medicamento (QR)</button>
+        <div id="caja-camara-inventario" class="caja-camara oculto"></div>
+        
+        <div class="grupo-formulario" style="margin-top: 10px;">
+            <label>Código QR Escaneado:</label>
+            <input type="text" id="qr-inventario" placeholder="Esperando código..." readonly style="background-color: #e9ecef; font-weight: bold; color: #198754;">
+        </div>
+        <div class="grupo-formulario"><label>Nombre del Medicamento / Descripción:</label><input type="text" id="nombre-inventario" placeholder="Ej. Desparasitante Canino 500mg"></div>
+        <div class="grupo-formulario"><label>Cantidad de piezas (Lote):</label><input type="number" id="cantidad-inventario" placeholder="Ej. 10"></div>
+        
+        <br><button class="btn btn-guardar" onclick="guardarEnInventario()">Guardar Lote</button>
+        <button class="btn btn-cancelar" onclick="cancelarVolver()">Cancelar</button>
+    </div>
+
+    <!-- PANTALLA 6: ADMINISTRAR USUARIOS -->
+    <div id="pantalla-usuarios" class="contenedor oculto" style="max-width: 550px;">
+        <h2 style="color: #333; margin-top: 0;">👥 Administrar Usuarios</h2>
+        
+        <!-- Formulario para agregar nuevo usuario -->
+        <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <h4 style="margin-top: 0; color: #0d6efd; text-align: left;">Agregar Nuevo Personal</h4>
+            <div class="grupo-formulario"><label>Nombre:</label><input type="text" id="nuevo-usuario-nombre" placeholder="Ej. María"></div>
+            <div class="grupo-formulario"><label>PIN de Acceso (4 números):</label><input type="number" id="nuevo-usuario-pin" placeholder="Ej. 4444"></div>
+            <div class="grupo-formulario">
+                <label>Rol del Sistema:</label>
+                <select id="nuevo-usuario-rol">
+                    <option value="Empleado">Empleado (Solo Bajas)</option>
+                    <option value="Sub-Gerente">Sub-Gerente (Bajas + Historial)</option>
+                    <option value="Gerente">Gerente (Acceso Total)</option>
+                </select>
+            </div>
+            <button class="btn btn-guardar" style="padding: 10px;" onclick="crearUsuario()">+ Agregar Usuario</button>
+        </div>
+
+        <!-- Lista de usuarios actuales -->
+        <h4 style="margin-bottom: 10px; color: #333; text-align: left;">Usuarios Activos:</h4>
+        <div id="lista-usuarios-firebase" style="max-height: 250px; overflow-y: auto; padding-right: 5px;"></div>
+        
+        <button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-usuarios', 'pantalla-menu')">Volver al Menú</button>
     </div>
 
     <!-- --- LÓGICA VISUAL Y BASE DE DATOS --- -->
     <script>
+        // TUS LLAVES DE FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyABktLytyy6fBXXDOrJq9B0nErrOzc30a4",
             authDomain: "kioscovet-93eae.firebaseapp.com",
@@ -140,18 +173,19 @@
         let tipoMovimientoActual = "Baja";
         let temporizadorInactividad; 
         let lectorQr; 
+        let camaraActivaId = "";
 
+        // --- FUNCIONES BÁSICAS DE NAVEGACIÓN Y SONIDO ---
         function reproducirSonidoBip() {
             try {
-                const contextoAudio = new (window.AudioContext || window.webkitAudioContext)();
-                const oscilador = contextoAudio.createOscillator();
-                const controlVolumen = contextoAudio.createGain();
-                oscilador.type = 'sine'; oscilador.frequency.value = 800;
-                oscilador.connect(controlVolumen); controlVolumen.connect(contextoAudio.destination);
-                controlVolumen.gain.setValueAtTime(1, contextoAudio.currentTime);
-                controlVolumen.gain.exponentialRampToValueAtTime(0.001, contextoAudio.currentTime + 0.15);
-                oscilador.start(contextoAudio.currentTime); oscilador.stop(contextoAudio.currentTime + 0.15);
-            } catch (error) { console.log("Audio no soportado"); }
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator(); const vol = ctx.createGain();
+                osc.type = 'sine'; osc.frequency.value = 800;
+                osc.connect(vol); vol.connect(ctx.destination);
+                vol.gain.setValueAtTime(1, ctx.currentTime);
+                vol.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+                osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.15);
+            } catch (e) {}
         }
 
         function reiniciarTemporizador() {
@@ -159,7 +193,7 @@
             if(usuarioLogueado) {
                 temporizadorInactividad = setTimeout(() => {
                     alert("Sesión cerrada por 10 minutos de inactividad.");
-                    cancelarFormulario(); 
+                    cancelarVolver(); cerrarSesion();
                 }, 600000); 
             }
         }
@@ -167,12 +201,6 @@
             document.body.addEventListener('click', reiniciarTemporizador);
             document.body.addEventListener('keypress', reiniciarTemporizador);
         }
-
-        const baseDeDatosUsuarios = {
-            "1111": { nombre: "Ana", rol: "Gerente" },
-            "2222": { nombre: "Carlos", rol: "Sub-Gerente" },
-            "3333": { nombre: "Luis", rol: "Empleado" }
-        };
 
         function agregarNumero(numero) {
             if(pinActual.length >= 4) return; 
@@ -183,22 +211,48 @@
 
         function limpiarPin() { pinActual = ""; document.getElementById('input-pin').value = ""; }
 
+        function cambiarPantalla(idOcultar, idMostrar) {
+            document.getElementById(idOcultar).classList.add('oculto');
+            document.getElementById(idMostrar).classList.remove('oculto');
+        }
+
+        // --- LÓGICA DE INICIO DE SESIÓN CON NUBE (ACTUALIZADO) ---
         function validarPin() {
-            const usuarioEncontrado = baseDeDatosUsuarios[pinActual];
-            if(usuarioEncontrado) {
-                usuarioLogueado = usuarioEncontrado; 
-                configurarTextosYPermisos();
-                reiniciarTemporizador(); 
-                if(usuarioLogueado.rol === "Empleado") { abrirFormulario(); } 
-                else { cambiarPantalla('pantalla-login', 'pantalla-menu'); }
-            } else {
-                alert("PIN incorrecto."); limpiarPin();
-            }
+            // Buscamos el PIN directamente en Firebase
+            db.collection("Usuarios").doc(pinActual).get().then((doc) => {
+                if(doc.exists) {
+                    usuarioLogueado = doc.data();
+                    usuarioLogueado.pin = pinActual; // Guardamos su pin temporalmente
+                    
+                    configurarTextosYPermisos();
+                    reiniciarTemporizador(); 
+                    
+                    if(usuarioLogueado.rol === "Empleado") { abrirFormulario(); } 
+                    else { cambiarPantalla('pantalla-login', 'pantalla-menu'); }
+                } else {
+                    // Si la base de datos está vacía, subimos los de prueba automáticamente la primera vez
+                    if(pinActual === "1111" || pinActual === "2222" || pinActual === "3333") {
+                        const baseLocal = {
+                            "1111": { nombre: "Ana", rol: "Gerente" },
+                            "2222": { nombre: "Carlos", rol: "Sub-Gerente" },
+                            "3333": { nombre: "Luis", rol: "Empleado" }
+                        };
+                        db.collection("Usuarios").doc(pinActual).set(baseLocal[pinActual]).then(() => {
+                            validarPin(); // Reintentamos iniciar sesión
+                        });
+                    } else {
+                        alert("PIN incorrecto o usuario inexistente."); limpiarPin();
+                    }
+                }
+            }).catch(error => {
+                alert("Error de conexión a internet."); limpiarPin();
+            });
         }
 
         function configurarTextosYPermisos() {
             document.getElementById('texto-bienvenida').innerText = `Hola, ${usuarioLogueado.nombre}`;
             document.getElementById('texto-registro-usuario').innerText = `Atendiendo: ${usuarioLogueado.nombre}`;
+            
             document.getElementById('btn-alta-inventario').classList.add('oculto');
             document.getElementById('btn-historial').classList.add('oculto');
             document.getElementById('btn-usuarios').classList.add('oculto');
@@ -212,152 +266,180 @@
             }
         }
 
-        function cambiarPantalla(idOcultar, idMostrar) {
-            document.getElementById(idOcultar).classList.add('oculto');
-            document.getElementById(idMostrar).classList.remove('oculto');
+        function cerrarSesion() {
+            usuarioLogueado = null; clearTimeout(temporizadorInactividad); limpiarPin();
+            document.getElementById('pantalla-historial').classList.add('oculto');
+            document.getElementById('pantalla-inventario').classList.add('oculto');
+            document.getElementById('pantalla-usuarios').classList.add('oculto');
+            document.getElementById('pantalla-menu').classList.add('oculto');
+            document.getElementById('pantalla-registro-baja').classList.add('oculto');
+            document.getElementById('pantalla-login').classList.remove('oculto');
         }
 
+        // --- ESCÁNER QR DINÁMICO ---
+        function iniciarCamara(idDivCamara, idInputDestino) {
+            camaraActivaId = idDivCamara;
+            document.getElementById(idDivCamara).classList.remove('oculto');
+            if(!lectorQr) { lectorQr = new Html5Qrcode(idDivCamara); }
+
+            lectorQr.start(
+                { facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } },
+                (codigoDecodificado) => {
+                    reproducirSonidoBip(); 
+                    document.getElementById(idInputDestino).value = codigoDecodificado;
+                    detenerCamara(); reiniciarTemporizador(); 
+                },
+                (error) => {} 
+            ).catch(err => {
+                alert("Error al abrir la cámara."); detenerCamara();
+            });
+        }
+
+        function detenerCamara() {
+            if(lectorQr && camaraActivaId) {
+                lectorQr.stop().then(() => { 
+                    document.getElementById(camaraActivaId).classList.add('oculto');
+                    lectorQr.clear(); lectorQr = null; camaraActivaId = "";
+                }).catch(err => {});
+            }
+        }
+
+        function cancelarVolver() {
+            detenerCamara(); 
+            document.getElementById('nombre-dueno').value = ""; document.getElementById('nombre-perro').value = "";
+            document.getElementById('raza-paciente').value = ""; document.getElementById('codigo-qr-resultado').value = "";
+            document.getElementById('qr-inventario').value = ""; document.getElementById('nombre-inventario').value = "";
+            document.getElementById('cantidad-inventario').value = "";
+
+            if (usuarioLogueado && usuarioLogueado.rol === "Empleado") { cerrarSesion(); } 
+            else { 
+                document.getElementById('pantalla-registro-baja').classList.add('oculto');
+                document.getElementById('pantalla-inventario').classList.add('oculto');
+                document.getElementById('pantalla-menu').classList.remove('oculto');
+            }
+        }
+
+        // --- MÓDULO 1: BAJAS / DEVOLUCIONES ---
+        function abrirFormulario() {
+            cambiarTipoMovimiento('Baja'); 
+            if(usuarioLogueado.rol === "Empleado") { cambiarPantalla('pantalla-login', 'pantalla-registro-baja'); } 
+            else { cambiarPantalla('pantalla-menu', 'pantalla-registro-baja'); }
+        }
         function cambiarTipoMovimiento(tipo) {
             tipoMovimientoActual = tipo;
-            const btnBaja = document.getElementById('toggle-baja');
-            const btnAlta = document.getElementById('toggle-alta');
+            const btnBaja = document.getElementById('toggle-baja'); const btnAlta = document.getElementById('toggle-alta');
             const titulo = document.getElementById('titulo-formulario');
-
             if(tipo === 'Baja') {
                 btnBaja.classList.add('activo-baja'); btnAlta.classList.remove('activo-alta'); titulo.innerText = "Nueva Baja";
             } else {
                 btnAlta.classList.add('activo-alta'); btnBaja.classList.remove('activo-baja'); titulo.innerText = "Registrar Devolución";
             }
         }
+        function guardarEnHistorial() {
+            detenerCamara(); 
+            const dueno = document.getElementById('nombre-dueno').value; const perro = document.getElementById('nombre-perro').value;
+            const raza = document.getElementById('raza-paciente').value; const codigo = document.getElementById('codigo-qr-resultado').value;
+            if(!dueno || !perro || !raza || !codigo) { alert("Escanea el QR y llena los campos."); return; }
 
-        function abrirFormulario() {
-            cambiarTipoMovimiento('Baja'); 
-            if(usuarioLogueado.rol === "Empleado") { cambiarPantalla('pantalla-login', 'pantalla-registro-baja'); } 
-            else { cambiarPantalla('pantalla-menu', 'pantalla-registro-baja'); }
+            db.collection("Historial").add({
+                movimiento: tipoMovimientoActual, usuarioAtendio: usuarioLogueado.nombre, codigoMedicamento: codigo,
+                nombreDueno: dueno, nombrePaciente: perro, razaPaciente: raza, fechaTexto: new Date().toLocaleString('es-MX'),
+                fechaReal: firebase.firestore.FieldValue.serverTimestamp() 
+            }).then(() => {
+                alert("✅ Registro guardado exitosamente.");
+                cancelarVolver();
+            }).catch(e => alert("Error al guardar."));
         }
 
-        // --- LÓGICA DEL HISTORIAL (NUEVA) ---
+        // --- MÓDULO 2: HISTORIAL ---
         function abrirHistorial() {
             cambiarPantalla('pantalla-menu', 'pantalla-historial');
             const contenedorLista = document.getElementById('lista-historial');
             contenedorLista.innerHTML = '<p style="text-align: center; color: #666;">Cargando historial...</p>';
 
-            // Traemos los últimos 50 registros, ordenados del más nuevo al más viejo
-            db.collection("Historial").orderBy("fechaReal", "desc").limit(50).get()
-            .then((querySnapshot) => {
-                contenedorLista.innerHTML = ''; 
-                
-                if(querySnapshot.empty) {
-                    contenedorLista.innerHTML = '<p style="text-align: center; color: #666;">Aún no hay movimientos registrados.</p>';
-                    return;
-                }
-
+            db.collection("Historial").orderBy("fechaReal", "desc").limit(50).get().then((querySnapshot) => {
+                contenedorLista.innerHTML = querySnapshot.empty ? '<p style="text-align: center; color: #666;">Aún no hay movimientos.</p>' : '';
                 querySnapshot.forEach((doc) => {
-                    const datos = doc.data();
-                    const colorMovimiento = datos.movimiento === 'Baja' ? '#0d6efd' : '#198754';
-                    
-                    const tarjeta = `
-                        <div class="tarjeta-historial">
-                            <div class="th-header">
-                                <strong style="color: ${colorMovimiento}; font-size: 1.1em;">${datos.movimiento}</strong>
-                                <span style="color: #6c757d;">${datos.fechaTexto}</span>
-                            </div>
-                            <div class="th-cuerpo"><strong>Paciente:</strong> ${datos.nombrePaciente} (${datos.razaPaciente})</div>
-                            <div class="th-cuerpo"><strong>Dueño:</strong> ${datos.nombreDueno}</div>
-                            <div class="th-cuerpo"><strong>QR Escaneado:</strong> ${datos.codigoMedicamento}</div>
-                            <div class="th-pie">Atendió: <strong>${datos.usuarioAtendio}</strong></div>
-                        </div>
-                    `;
-                    contenedorLista.innerHTML += tarjeta;
+                    const d = doc.data();
+                    const color = d.movimiento === 'Baja' ? '#0d6efd' : '#198754';
+                    contenedorLista.innerHTML += `
+                        <div class="tarjeta-info">
+                            <div class="th-header"><strong style="color: ${color}; font-size: 1.1em;">${d.movimiento}</strong><span style="color: #6c757d;">${d.fechaTexto}</span></div>
+                            <div class="th-cuerpo"><strong>Paciente:</strong> ${d.nombrePaciente} (${d.razaPaciente})</div>
+                            <div class="th-cuerpo"><strong>Dueño:</strong> ${d.nombreDueno}</div>
+                            <div class="th-cuerpo"><strong>QR:</strong> ${d.codigoMedicamento}</div>
+                            <div class="th-pie">Atendió: <strong>${d.usuarioAtendio}</strong></div>
+                        </div>`;
                 });
-            })
-            .catch((error) => {
-                console.error("Error obteniendo el historial: ", error);
-                contenedorLista.innerHTML = '<p style="text-align: center; color: #dc3545;">Ocurrió un error al cargar los datos.</p>';
-            });
-        }
-        // ------------------------------------
-
-        function iniciarCamara() {
-            document.getElementById('caja-camara').classList.remove('oculto');
-            if(!lectorQr) { lectorQr = new Html5Qrcode("caja-camara"); }
-
-            lectorQr.start(
-                { facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } },
-                (codigoDecodificado) => {
-                    reproducirSonidoBip(); 
-                    document.getElementById('codigo-qr-resultado').value = codigoDecodificado;
-                    detenerCamara(); reiniciarTemporizador(); 
-                },
-                (error) => {} 
-            ).catch(err => {
-                alert("Error al abrir la cámara.");
-                document.getElementById('caja-camara').classList.add('oculto');
-            });
+            }).catch(e => contenedorLista.innerHTML = '<p style="color: red;">Error al cargar datos.</p>');
         }
 
-        function detenerCamara() {
-            if(lectorQr) {
-                lectorQr.stop().then(() => { document.getElementById('caja-camara').classList.add('oculto'); }).catch(err => {});
+        // --- MÓDULO 3: LOTES NUEVOS / INVENTARIO ---
+        function abrirInventario() {
+            cambiarPantalla('pantalla-menu', 'pantalla-inventario');
+        }
+        function guardarEnInventario() {
+            detenerCamara();
+            const qr = document.getElementById('qr-inventario').value;
+            const nombre = document.getElementById('nombre-inventario').value;
+            const cantidad = document.getElementById('cantidad-inventario').value;
+            
+            if(!qr || !nombre || !cantidad) { alert("Por favor escanea y llena todos los datos."); return; }
+
+            db.collection("Inventario").add({
+                codigoQR: qr, medicamento: nombre, cantidad: parseInt(cantidad), registradoPor: usuarioLogueado.nombre,
+                fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                alert("✅ Lote agregado al Inventario correctamente.");
+                cancelarVolver();
+            }).catch(e => alert("Error al guardar en inventario."));
+        }
+
+        // --- MÓDULO 4: ADMINISTRAR USUARIOS ---
+        function abrirUsuarios() {
+            cambiarPantalla('pantalla-menu', 'pantalla-usuarios');
+            cargarListaUsuarios();
+        }
+        
+        function cargarListaUsuarios() {
+            const lista = document.getElementById('lista-usuarios-firebase');
+            lista.innerHTML = '<p style="text-align: center; color: #666;">Cargando usuarios...</p>';
+            
+            db.collection("Usuarios").get().then((querySnapshot) => {
+                lista.innerHTML = '';
+                querySnapshot.forEach((doc) => {
+                    const u = doc.data(); const uPin = doc.id;
+                    lista.innerHTML += `
+                        <div class="tarjeta-info" style="display:flex; justify-content: space-between; align-items: center; padding: 10px 15px;">
+                            <div>
+                                <strong>${u.nombre}</strong> <span style="color:#0d6efd; font-size:0.8em;">(${u.rol})</span><br>
+                                <span style="color:#666; font-size:0.8em;">PIN de Acceso: ${uPin}</span>
+                            </div>
+                            <button class="btn-cancelar" style="margin:0; padding:5px 10px; width:auto; border: 1px solid #dc3545; border-radius:5px;" onclick="eliminarUsuario('${uPin}')">Borrar</button>
+                        </div>`;
+                });
+            });
+        }
+
+        function crearUsuario() {
+            const nombre = document.getElementById('nuevo-usuario-nombre').value;
+            const pin = document.getElementById('nuevo-usuario-pin').value;
+            const rol = document.getElementById('nuevo-usuario-rol').value;
+
+            if(!nombre || !pin || pin.length !== 4) { alert("Ingresa un nombre y un PIN de exactamente 4 números."); return; }
+
+            db.collection("Usuarios").doc(pin).set({ nombre: nombre, rol: rol }).then(() => {
+                alert("✅ Usuario creado exitosamente.");
+                document.getElementById('nuevo-usuario-nombre').value = ""; document.getElementById('nuevo-usuario-pin').value = "";
+                cargarListaUsuarios();
+            });
+        }
+
+        function eliminarUsuario(pinBorrar) {
+            if(pinBorrar === usuarioLogueado.pin) { alert("❌ No puedes eliminarte a ti mismo mientras estás adentro del sistema."); return; }
+            if(confirm("¿Estás 100% seguro de que deseas eliminar a este empleado? Ya no podrá iniciar sesión.")) {
+                db.collection("Usuarios").doc(pinBorrar).delete().then(() => { cargarListaUsuarios(); });
             }
-        }
-
-        function cancelarFormulario() {
-            detenerCamara(); 
-            limpiarCampos();
-            if (usuarioLogueado && usuarioLogueado.rol === "Empleado") { cerrarSesion(); } 
-            else { cambiarPantalla('pantalla-registro-baja', 'pantalla-menu'); }
-        }
-
-        function abrirConstruccion(modulo) { alert(`El módulo "${modulo}" se está programando.`); }
-
-        function cerrarSesion() {
-            usuarioLogueado = null; clearTimeout(temporizadorInactividad); limpiarPin();
-            document.getElementById('pantalla-historial').classList.add('oculto');
-            document.getElementById('pantalla-menu').classList.add('oculto');
-            document.getElementById('pantalla-registro-baja').classList.add('oculto');
-            document.getElementById('pantalla-login').classList.remove('oculto');
-        }
-
-        function limpiarCampos() {
-            document.getElementById('nombre-dueno').value = "";
-            document.getElementById('nombre-perro').value = "";
-            document.getElementById('raza-paciente').value = "";
-            document.getElementById('codigo-qr-resultado').value = "";
-        }
-
-        function guardarEnFirebase() {
-            detenerCamara(); 
-            const dueno = document.getElementById('nombre-dueno').value;
-            const perro = document.getElementById('nombre-perro').value;
-            const raza = document.getElementById('raza-paciente').value;
-            const codigo = document.getElementById('codigo-qr-resultado').value;
-            const fechaLocal = new Date().toLocaleString('es-MX');
-
-            if(!dueno || !perro || !raza || !codigo) {
-                alert("Por favor escanea el medicamento y llena todos los campos.");
-                return;
-            }
-
-            db.collection("Historial").add({
-                movimiento: tipoMovimientoActual,
-                usuarioAtendio: usuarioLogueado.nombre,
-                codigoMedicamento: codigo,
-                nombreDueno: dueno,
-                nombrePaciente: perro,
-                razaPaciente: raza,
-                fechaTexto: fechaLocal,
-                fechaReal: firebase.firestore.FieldValue.serverTimestamp() 
-            })
-            .then((docRef) => {
-                alert("✅ ¡Registro guardado exitosamente en tu Base de Datos!");
-                limpiarCampos();
-                cerrarSesion();
-            })
-            .catch((error) => {
-                console.error("Error al guardar: ", error);
-                alert("❌ Hubo un error al guardar. Revisa tu conexión a internet.");
-            });
         }
     </script>
 </body>
