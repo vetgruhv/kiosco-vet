@@ -12,7 +12,7 @@
     <style>
         /* --- ESTILOS VISUALES (CSS) --- */
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .contenedor { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); width: 90%; max-width: 480px; text-align: center; margin: 20px 0; }
+        .contenedor { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); width: 90%; max-width: 500px; text-align: center; margin: 20px 0; max-height: 90vh; overflow-y: auto; }
         .pantalla-pin { font-size: 2.5em; letter-spacing: 15px; margin-bottom: 25px; padding: 15px; width: 100%; text-align: center; background-color: #f8f9fa; border: 2px solid #e9ecef; border-radius: 10px; box-sizing: border-box; color: #333; }
         .cuadricula-teclas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
         .tecla { padding: 25px 0; font-size: 1.8em; background: #ffffff; border: 1px solid #dee2e6; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: pointer; transition: 0.1s; color: #333; }
@@ -25,19 +25,31 @@
         .btn-mov.activo-alta { background: #198754; color: white; border-color: #198754; }
         .grupo-formulario { margin-bottom: 12px; text-align: left; }
         .grupo-formulario label { display: block; font-weight: bold; margin-bottom: 4px; color: #495057; font-size: 0.85em; }
-        .grupo-formulario input, .grupo-formulario select { width: 100%; padding: 10px; font-size: 0.95em; border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box; }
+        .grupo-formulario input, .grupo-formulario select, .grupo-formulario textarea { width: 100%; padding: 10px; font-size: 0.95em; border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box; font-family: inherit; }
         .btn { width: 100%; padding: 15px; font-size: 1.1em; border: none; border-radius: 8px; cursor: pointer; margin-top: 5px; font-weight: bold; transition: 0.2s; }
         .btn-menu { background: #f8f9fa; color: #333; border: 1px solid #dee2e6; margin-bottom: 10px; }
         .btn-menu:active { background: #e9ecef; }
         .btn-qr { background: #e3f2fd; color: #0d6efd; border: 2px dashed #0d6efd; padding: 12px;}
         .btn-guardar { background: #198754; color: white; }
         .btn-guardar-rojo { background: #dc3545; color: white; }
+        .btn-guardar-azul { background: #0d6efd; color: white; }
         .btn-cancelar { background: transparent; color: #dc3545; margin-top: 5px; padding: 10px;}
         .caja-camara { width: 100%; border-radius: 8px; overflow: hidden; margin-bottom: 15px; border: 2px solid #333; }
         .oculto { display: none !important; }
         
         .caja-cobro { background: #fff3cd; padding: 15px; border-radius: 8px; border: 1px solid #ffe69c; margin-bottom: 15px; }
         .tarjeta-info { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 15px; font-size: 0.95em; text-align: left; }
+        
+        /* ESTILOS DE ALERTA DE INVENTARIO */
+        .stock-alerta { border-left: 5px solid #dc3545; background-color: #fff8f8; }
+        .stock-ok { border-left: 5px solid #198754; }
+
+        /* OCULTAR ELEMENTOS AL IMPRIMIR RECETA */
+        @media print {
+            body { background: white; }
+            .btn, .header-usuario { display: none !important; }
+            .contenedor { box-shadow: none; max-width: 100%; margin: 0; padding: 0; }
+        }
     </style>
 </head>
 <body>
@@ -67,17 +79,21 @@
         <div class="header-usuario" id="texto-bienvenida">Bienvenido</div>
         <h3 style="color: #333; margin-top: 0;">¿Qué deseas hacer?</h3>
         
-        <button id="btn-movimiento" class="btn btn-menu" onclick="abrirFormulario()">📉 Realizar Venta / Baja</button>
+        <button id="btn-movimiento" class="btn btn-menu oculto" onclick="abrirFormulario()">🛒 Realizar Venta / Baja</button>
+        <button id="btn-receta" class="btn btn-menu oculto" onclick="abrirReceta()">📝 Generar Receta Médica</button>
+        
+        <button id="btn-ver-inventario" class="btn btn-menu oculto" onclick="abrirVerInventario()">👀 Ver Inventario y Alertas</button>
         <button id="btn-alta-inventario" class="btn btn-menu oculto" onclick="abrirInventario()">📦 Ingresar Lotes Nuevos</button>
         <button id="btn-baja-inventario" class="btn btn-menu oculto" onclick="abrirBajaInventario()">📉 Bajar Lote (Merma/Interno)</button>
-        <button id="btn-historial" class="btn btn-menu oculto" onclick="abrirHistorial()">📋 Ver Historial</button>
+        
+        <button id="btn-historial" class="btn btn-menu oculto" onclick="abrirHistorial()">📋 Ver Historial Ventas</button>
         <button id="btn-usuarios" class="btn btn-menu oculto" onclick="abrirUsuarios()">👥 Administrar Personal</button>
         
         <button class="btn btn-cancelar" onclick="cerrarSesion()">Cerrar Sesión</button>
     </div>
 
     <!-- PANTALLA 3: PUNTO DE VENTA (BAJA) -->
-    <div id="pantalla-registro-baja" class="contenedor oculto" style="max-height: 85vh; overflow-y: auto;">
+    <div id="pantalla-registro-baja" class="contenedor oculto">
         <div class="header-usuario" id="texto-registro-usuario"></div>
         <div class="selector-movimiento">
             <button type="button" id="toggle-baja" class="btn-mov activo-baja" onclick="cambiarTipoMovimiento('Venta/Baja')">🛒 Venta / Baja</button>
@@ -92,7 +108,6 @@
             <input type="text" id="codigo-qr-resultado" placeholder="Escanea o teclea..." style="font-weight: bold; color: #0d6efd;">
         </div>
 
-        <!-- MÓDULO DE PACIENTE / MOSTRADOR -->
         <div style="background: #e9ecef; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
             <label style="font-weight: bold; font-size: 0.9em; cursor: pointer; display: flex; align-items: center; gap: 8px;">
                 <input type="checkbox" id="venta-mostrador" onchange="toggleMostrador()" style="width: 20px; height: 20px;"> 
@@ -106,14 +121,9 @@
             <div class="grupo-formulario"><label>Raza del paciente:</label><input type="text" id="raza-paciente" placeholder="Ej. Chihuahua..."></div>
         </div>
 
-        <!-- MÓDULO DE COBRO Y DESCUENTOS -->
         <div class="caja-cobro">
             <h4 style="margin: 0 0 10px 0; color: #664d03;">💳 Detalles de Cobro</h4>
-            
-            <div class="grupo-formulario"><label>Precio del Artículo/Servicio ($):</label>
-                <input type="number" id="precio-item" placeholder="0.00" oninput="calcularTotal()">
-            </div>
-            
+            <div class="grupo-formulario"><label>Precio del Artículo/Servicio ($):</label><input type="number" id="precio-item" placeholder="0.00" oninput="calcularTotal()"></div>
             <div style="display: flex; gap: 10px;">
                 <div class="grupo-formulario" style="flex: 1;">
                     <label>Tipo Descuento:</label>
@@ -123,24 +133,15 @@
                         <option value="Monto">Monto Fijo ($)</option>
                     </select>
                 </div>
-                <div class="grupo-formulario" style="flex: 1;">
-                    <label>Descuento:</label>
-                    <input type="number" id="valor-descuento" placeholder="0" oninput="calcularTotal()">
-                </div>
+                <div class="grupo-formulario" style="flex: 1;"><label>Descuento:</label><input type="number" id="valor-descuento" placeholder="0" oninput="calcularTotal()"></div>
             </div>
-
             <div class="grupo-formulario">
                 <label>Método de Pago:</label>
                 <select id="metodo-pago">
-                    <option>Efectivo</option>
-                    <option>Tarjeta Débito</option>
-                    <option>Tarjeta Crédito</option>
-                    <option>Terminal Clip</option>
-                    <option>American Express</option>
-                    <option>Sin Cobro (Servicio Interno)</option>
+                    <option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option>
+                    <option>Terminal Clip</option><option>American Express</option><option>Sin Cobro (Servicio Interno)</option>
                 </select>
             </div>
-
             <h2 style="margin: 10px 0 0 0; color: #198754; text-align: right;">Total: $<span id="total-cobrar">0.00</span></h2>
         </div>
         
@@ -148,68 +149,46 @@
         <button class="btn btn-cancelar" onclick="cancelarVolver()">Cancelar</button>
     </div>
 
-    <!-- (MANTENEMOS LAS OTRAS PANTALLAS OCULTAS AQUÍ, IGUAL QUE ANTES) -->
-    <!-- PANTALLA 4: HISTORIAL -->
-    <div id="pantalla-historial" class="contenedor oculto" style="max-width: 550px;">
-        <h2 style="color: #333; margin-top: 0;">Historial de Ventas/Bajas</h2>
-        <div id="lista-historial" style="max-height: 400px; overflow-y: auto; padding-right: 5px;"></div>
-        <button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-historial', 'pantalla-menu')">Volver al Menú</button>
-    </div>
-
-    <!-- PANTALLA 5: INVENTARIO -->
-    <div id="pantalla-inventario" class="contenedor oculto">
-        <h2 style="color: #333; margin-top: 0; font-size: 1.3em;">📦 Alta de Lote</h2>
-        <button type="button" class="btn btn-qr" onclick="iniciarCamara('caja-camara-inventario', 'qr-inventario')">📷 Escanear (QR)</button>
-        <div id="caja-camara-inventario" class="caja-camara oculto"></div>
-        <div class="grupo-formulario"><label>Código QR:</label><input type="text" id="qr-inventario"></div>
-        <div class="grupo-formulario"><label>Medicamento:</label><input type="text" id="nombre-inventario"></div>
-        <div class="grupo-formulario"><label>Descripción:</label><input type="text" id="descripcion-inventario"></div>
-        <div class="grupo-formulario"><label>Cantidad:</label><input type="number" id="cantidad-inventario"></div>
-        <button class="btn btn-guardar" onclick="guardarEnInventario()">Guardar Alta</button>
-        <button class="btn btn-cancelar" onclick="cancelarVolver()">Cancelar</button>
-    </div>
-
-    <!-- PANTALLA 6: BAJA DE LOTE -->
-    <div id="pantalla-baja-inventario" class="contenedor oculto">
-        <h2 style="color: #333; margin-top: 0; font-size: 1.3em;">📉 Baja de Lote (Merma)</h2>
-        <div class="grupo-formulario"><label>Código QR:</label><input type="text" id="qr-baja-inv"></div>
-        <div class="grupo-formulario"><label>Medicamento:</label><input type="text" id="nombre-baja-inv"></div>
-        <div class="grupo-formulario"><label>Motivo:</label><input type="text" id="motivo-baja-inv"></div>
-        <div class="grupo-formulario"><label>Cantidad a descontar:</label><input type="number" id="cantidad-baja-inv"></div>
-        <button class="btn btn-guardar btn-guardar-rojo" onclick="guardarBajaInventario()">Registrar Baja</button>
-        <button class="btn btn-cancelar" onclick="cancelarVolver()">Cancelar</button>
-    </div>
-
-    <!-- PANTALLA 7: USUARIOS -->
-    <div id="pantalla-usuarios" class="contenedor oculto" style="max-width: 550px;">
-        <h2 style="color: #333; margin-top: 0;">👥 Administrar Personal</h2>
-        <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-            <div class="grupo-formulario"><label>Nombre:</label><input type="text" id="nuevo-usuario-nombre"></div>
-            <div class="grupo-formulario"><label>PIN (4 números):</label><input type="number" id="nuevo-usuario-pin"></div>
-            <div class="grupo-formulario">
-                <label>Rol del Sistema:</label>
-                <select id="nuevo-usuario-rol">
-                    <option value="Doctor">Doctor (Solo Ventas/Bajas)</option>
-                    <option value="Sub-Gerente">Sub-Gerente (Ventas + Historial)</option>
-                    <option value="Gerente">Gerente (Acceso Total)</option>
-                </select>
-            </div>
-            <button class="btn btn-guardar" onclick="crearUsuario()">+ Agregar Usuario</button>
+    <!-- PANTALLA NUEVA: GENERAR RECETA MÉDICA -->
+    <div id="pantalla-recetas" class="contenedor oculto">
+        <h2 style="color: #0d6efd; margin-top: 0; font-size: 1.4em;">📝 Receta Médica</h2>
+        <div class="grupo-formulario"><label>Dueño:</label><input type="text" id="receta-dueno" placeholder="Nombre del propietario"></div>
+        <div class="grupo-formulario"><label>Paciente (Nombre y Raza):</label><input type="text" id="receta-paciente" placeholder="Ej. Max - Golden Retriever"></div>
+        
+        <div style="display: flex; gap: 10px;">
+            <div class="grupo-formulario" style="flex: 1;"><label>Peso (Kg):</label><input type="text" id="receta-peso" placeholder="Ej. 12.5"></div>
+            <div class="grupo-formulario" style="flex: 1;"><label>Temp (°C):</label><input type="text" id="receta-temp" placeholder="Ej. 38.5"></div>
         </div>
-        <div id="lista-usuarios-firebase" style="max-height: 250px; overflow-y: auto;"></div>
-        <button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-usuarios', 'pantalla-menu')">Volver al Menú</button>
+
+        <div class="grupo-formulario">
+            <label>Prescripción Médica (Medicamento y Dosis):</label>
+            <textarea id="receta-texto" rows="6" placeholder="Ej. 1. Amoxicilina 250mg - 1 tableta cada 12 hrs por 5 días..."></textarea>
+        </div>
+        
+        <button class="btn btn-guardar-azul" onclick="guardarEImprimirReceta()">Guardar e Imprimir Receta</button>
+        <button class="btn btn-cancelar" onclick="cancelarVolver()">Cerrar</button>
     </div>
+
+    <!-- PANTALLA NUEVA: VER INVENTARIO Y ALERTAS -->
+    <div id="pantalla-ver-inventario" class="contenedor oculto">
+        <h2 style="color: #333; margin-top: 0;">📦 Inventario Actual</h2>
+        <p style="font-size: 0.85em; color: #666; text-align: left; margin-bottom: 15px;">
+            <span style="color: #dc3545; font-weight: bold;">🔴 Rojo:</span> Menos de 5 piezas (Falta poco).<br>
+            <span style="color: #198754; font-weight: bold;">🟢 Verde:</span> Stock suficiente.
+        </p>
+        <div id="lista-stock-firebase" style="max-height: 400px; overflow-y: auto; padding-right: 5px;"></div>
+        <button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-ver-inventario', 'pantalla-menu')">Volver al Menú</button>
+    </div>
+
+    <!-- (PANTALLAS DE HISTORIAL, ALTA Y BAJA DE INVENTARIO Y USUARIOS MINIMIZADAS PARA AHORRO DE ESPACIO) -->
+    <div id="pantalla-historial" class="contenedor oculto"><h2 style="color: #333; margin-top: 0;">Historial de Ventas</h2><div id="lista-historial" style="max-height: 400px; overflow-y: auto;"></div><button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-historial', 'pantalla-menu')">Volver</button></div>
+    <div id="pantalla-inventario" class="contenedor oculto"><h2 style="color: #333; margin-top: 0;">📦 Alta de Lote</h2><button type="button" class="btn btn-qr" onclick="iniciarCamara('caja-camara-inventario', 'qr-inventario')">📷 Escanear (QR)</button><div id="caja-camara-inventario" class="caja-camara oculto"></div><div class="grupo-formulario"><label>Código QR:</label><input type="text" id="qr-inventario"></div><div class="grupo-formulario"><label>Medicamento:</label><input type="text" id="nombre-inventario"></div><div class="grupo-formulario"><label>Descripción:</label><input type="text" id="descripcion-inventario"></div><div class="grupo-formulario"><label>Cantidad:</label><input type="number" id="cantidad-inventario"></div><button class="btn btn-guardar" onclick="guardarEnInventario()">Guardar Alta</button><button class="btn btn-cancelar" onclick="cancelarVolver()">Cancelar</button></div>
+    <div id="pantalla-baja-inventario" class="contenedor oculto"><h2 style="color: #333; margin-top: 0;">📉 Baja de Lote</h2><div class="grupo-formulario"><label>Código QR:</label><input type="text" id="qr-baja-inv"></div><div class="grupo-formulario"><label>Medicamento:</label><input type="text" id="nombre-baja-inv"></div><div class="grupo-formulario"><label>Motivo:</label><input type="text" id="motivo-baja-inv"></div><div class="grupo-formulario"><label>Cantidad a descontar:</label><input type="number" id="cantidad-baja-inv"></div><button class="btn btn-guardar btn-guardar-rojo" onclick="guardarBajaInventario()">Registrar Baja</button><button class="btn btn-cancelar" onclick="cancelarVolver()">Cancelar</button></div>
+    <div id="pantalla-usuarios" class="contenedor oculto"><h2 style="color: #333; margin-top: 0;">👥 Administrar Personal</h2><div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px;"><div class="grupo-formulario"><label>Nombre:</label><input type="text" id="nuevo-usuario-nombre"></div><div class="grupo-formulario"><label>PIN (4 números):</label><input type="number" id="nuevo-usuario-pin"></div><div class="grupo-formulario"><label>Rol:</label><select id="nuevo-usuario-rol"><option value="Doctor">Doctor</option><option value="Sub-Gerente">Sub-Gerente</option><option value="Gerente">Gerente</option></select></div><button class="btn btn-guardar" onclick="crearUsuario()">+ Agregar Usuario</button></div><div id="lista-usuarios-firebase" style="max-height: 250px; overflow-y: auto;"></div><button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-usuarios', 'pantalla-menu')">Volver al Menú</button></div>
 
     <!-- LÓGICA JAVASCRIPT -->
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyABktLytyy6fBXXDOrJq9B0nErrOzc30a4",
-            authDomain: "kioscovet-93eae.firebaseapp.com",
-            projectId: "kioscovet-93eae",
-            storageBucket: "kioscovet-93eae.firebasestorage.app",
-            messagingSenderId: "571603121447",
-            appId: "1:571603121447:web:ad4a7d439050ec82812502"
-        };
+        const firebaseConfig = { apiKey: "AIzaSyABktLytyy6fBXXDOrJq9B0nErrOzc30a4", authDomain: "kioscovet-93eae.firebaseapp.com", projectId: "kioscovet-93eae", storageBucket: "kioscovet-93eae.firebasestorage.app", messagingSenderId: "571603121447", appId: "1:571603121447:web:ad4a7d439050ec82812502" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore(); 
 
@@ -229,7 +208,7 @@
                 if(doc.exists) {
                     usuarioLogueado = doc.data(); usuarioLogueado.pin = pinActual; 
                     configurarTextosYPermisos(); reiniciarTemporizador(); 
-                    if(usuarioLogueado.rol === "Doctor") { abrirFormulario(); } else { cambiarPantalla('pantalla-login', 'pantalla-menu'); }
+                    cambiarPantalla('pantalla-login', 'pantalla-menu');
                 } else {
                     if(pinActual === "1111" || pinActual === "2222" || pinActual === "3333") {
                         const baseLocal = { "1111": { nombre: "Ana", rol: "Gerente" }, "2222": { nombre: "Carlos", rol: "Sub-Gerente" }, "3333": { nombre: "Luis", rol: "Doctor" } };
@@ -241,15 +220,22 @@
 
         function configurarTextosYPermisos() {
             document.getElementById('texto-bienvenida').innerText = `Hola, ${usuarioLogueado.nombre}`;
-            document.getElementById('texto-registro-usuario').innerText = `Doctor/a: ${usuarioLogueado.nombre}`;
+            // Botones comunes
+            document.getElementById('btn-movimiento').classList.remove('oculto');
+            document.getElementById('btn-receta').classList.remove('oculto');
             
-            document.getElementById('btn-alta-inventario').classList.add('oculto'); document.getElementById('btn-baja-inventario').classList.add('oculto');
-            document.getElementById('btn-historial').classList.add('oculto'); document.getElementById('btn-usuarios').classList.add('oculto');
+            // Ocultar botones gerenciales por defecto
+            document.getElementById('btn-ver-inventario').classList.add('oculto'); document.getElementById('btn-alta-inventario').classList.add('oculto');
+            document.getElementById('btn-baja-inventario').classList.add('oculto'); document.getElementById('btn-historial').classList.add('oculto');
+            document.getElementById('btn-usuarios').classList.add('oculto');
 
             if(usuarioLogueado.rol === "Gerente") {
-                document.getElementById('btn-alta-inventario').classList.remove('oculto'); document.getElementById('btn-baja-inventario').classList.remove('oculto');
-                document.getElementById('btn-historial').classList.remove('oculto'); document.getElementById('btn-usuarios').classList.remove('oculto');
-            } else if(usuarioLogueado.rol === "Sub-Gerente") { document.getElementById('btn-historial').classList.remove('oculto'); }
+                document.getElementById('btn-ver-inventario').classList.remove('oculto'); document.getElementById('btn-alta-inventario').classList.remove('oculto');
+                document.getElementById('btn-baja-inventario').classList.remove('oculto'); document.getElementById('btn-historial').classList.remove('oculto');
+                document.getElementById('btn-usuarios').classList.remove('oculto');
+            } else if(usuarioLogueado.rol === "Sub-Gerente") { 
+                document.getElementById('btn-ver-inventario').classList.remove('oculto'); document.getElementById('btn-historial').classList.remove('oculto'); 
+            }
         }
 
         function cerrarSesion() { usuarioLogueado = null; clearTimeout(temporizadorInactividad); limpiarPin(); document.querySelectorAll('.contenedor').forEach(el => el.classList.add('oculto')); document.getElementById('pantalla-login').classList.remove('oculto'); }
@@ -266,98 +252,93 @@
 
         function cancelarVolver() {
             detenerCamara(); 
-            document.querySelectorAll('input').forEach(input => { if(input.type !== 'checkbox' && input.type !== 'password') input.value = ''; });
+            document.querySelectorAll('input, textarea').forEach(input => { if(input.type !== 'checkbox' && input.type !== 'password') input.value = ''; });
             document.getElementById('total-cobrar').innerText = "0.00"; document.getElementById('venta-mostrador').checked = false; toggleMostrador();
             
-            if (usuarioLogueado && usuarioLogueado.rol === "Doctor") { cerrarSesion(); } 
-            else { document.querySelectorAll('.contenedor').forEach(el => el.classList.add('oculto')); document.getElementById('pantalla-menu').classList.remove('oculto'); }
+            document.querySelectorAll('.contenedor').forEach(el => el.classList.add('oculto')); 
+            document.getElementById('pantalla-menu').classList.remove('oculto'); 
         }
 
-        // --- MÓDULO PUNTO DE VENTA (NUEVO) ---
-        function abrirFormulario() { cambiarTipoMovimiento('Venta/Baja'); if(usuarioLogueado.rol === "Doctor") { cambiarPantalla('pantalla-login', 'pantalla-registro-baja'); } else { cambiarPantalla('pantalla-menu', 'pantalla-registro-baja'); } }
-        
-        function cambiarTipoMovimiento(tipo) {
-            tipoMovimientoActual = tipo;
-            if(tipo === 'Venta/Baja') { document.getElementById('toggle-baja').classList.add('activo-baja'); document.getElementById('toggle-alta').classList.remove('activo-alta'); document.getElementById('titulo-formulario').innerText = "Nueva Venta / Baja"; } 
-            else { document.getElementById('toggle-alta').classList.add('activo-alta'); document.getElementById('toggle-baja').classList.remove('activo-baja'); document.getElementById('titulo-formulario').innerText = "Registrar Devolución"; }
-        }
-
-        function toggleMostrador() {
-            const esMostrador = document.getElementById('venta-mostrador').checked;
-            if(esMostrador) {
-                document.getElementById('campos-paciente').classList.add('oculto');
-                document.getElementById('nombre-dueno').value = "Público General"; document.getElementById('nombre-perro').value = "N/A"; document.getElementById('raza-paciente').value = "N/A";
-            } else {
-                document.getElementById('campos-paciente').classList.remove('oculto');
-                document.getElementById('nombre-dueno').value = ""; document.getElementById('nombre-perro').value = ""; document.getElementById('raza-paciente').value = "";
-            }
-        }
-
-        function calcularTotal() {
-            let precio = parseFloat(document.getElementById('precio-item').value) || 0;
-            const tipoDesc = document.getElementById('tipo-descuento').value;
-            const valorDesc = parseFloat(document.getElementById('valor-descuento').value) || 0;
-            
-            if(tipoDesc === 'Porcentaje') { totalCobroCalculado = precio - (precio * (valorDesc / 100)); } 
-            else if (tipoDesc === 'Monto') { totalCobroCalculado = precio - valorDesc; } 
-            else { totalCobroCalculado = precio; }
-
-            if(totalCobroCalculado < 0) totalCobroCalculado = 0;
-            document.getElementById('total-cobrar').innerText = totalCobroCalculado.toFixed(2);
-        }
+        // --- MÓDULO PUNTO DE VENTA ---
+        function abrirFormulario() { cambiarTipoMovimiento('Venta/Baja'); cambiarPantalla('pantalla-menu', 'pantalla-registro-baja'); }
+        function cambiarTipoMovimiento(tipo) { tipoMovimientoActual = tipo; if(tipo === 'Venta/Baja') { document.getElementById('toggle-baja').classList.add('activo-baja'); document.getElementById('toggle-alta').classList.remove('activo-alta'); document.getElementById('titulo-formulario').innerText = "Nueva Venta / Baja"; } else { document.getElementById('toggle-alta').classList.add('activo-alta'); document.getElementById('toggle-baja').classList.remove('activo-baja'); document.getElementById('titulo-formulario').innerText = "Registrar Devolución"; } }
+        function toggleMostrador() { const esMostrador = document.getElementById('venta-mostrador').checked; if(esMostrador) { document.getElementById('campos-paciente').classList.add('oculto'); document.getElementById('nombre-dueno').value = "Público General"; document.getElementById('nombre-perro').value = "N/A"; document.getElementById('raza-paciente').value = "N/A"; } else { document.getElementById('campos-paciente').classList.remove('oculto'); document.getElementById('nombre-dueno').value = ""; document.getElementById('nombre-perro').value = ""; document.getElementById('raza-paciente').value = ""; } }
+        function calcularTotal() { let precio = parseFloat(document.getElementById('precio-item').value) || 0; const tipoDesc = document.getElementById('tipo-descuento').value; const valorDesc = parseFloat(document.getElementById('valor-descuento').value) || 0; if(tipoDesc === 'Porcentaje') { totalCobroCalculado = precio - (precio * (valorDesc / 100)); } else if (tipoDesc === 'Monto') { totalCobroCalculado = precio - valorDesc; } else { totalCobroCalculado = precio; } if(totalCobroCalculado < 0) totalCobroCalculado = 0; document.getElementById('total-cobrar').innerText = totalCobroCalculado.toFixed(2); }
 
         function guardarEnHistorial() {
-            detenerCamara(); 
-            const codigo = document.getElementById('codigo-qr-resultado').value;
-            const dueno = document.getElementById('nombre-dueno').value; const perro = document.getElementById('nombre-perro').value; const raza = document.getElementById('raza-paciente').value;
-            const precio = document.getElementById('precio-item').value || 0; const metodoPago = document.getElementById('metodo-pago').value;
-            const tipoDesc = document.getElementById('tipo-descuento').value; const valorDesc = document.getElementById('valor-descuento').value || 0;
+            detenerCamara(); const codigo = document.getElementById('codigo-qr-resultado').value; const dueno = document.getElementById('nombre-dueno').value; const perro = document.getElementById('nombre-perro').value; const raza = document.getElementById('raza-paciente').value; const precio = document.getElementById('precio-item').value || 0; const metodoPago = document.getElementById('metodo-pago').value; const tipoDesc = document.getElementById('tipo-descuento').value; const valorDesc = document.getElementById('valor-descuento').value || 0;
 
             if(!codigo) { alert("⚠️ Por favor ingresa el código del producto/servicio."); return; }
             if(!document.getElementById('venta-mostrador').checked && (!dueno || !perro)) { alert("⚠️ Llena los datos del paciente o marca 'Venta a Mostrador'."); return; }
 
             db.collection("Historial_Cobros").add({
                 movimiento: tipoMovimientoActual, atendio: usuarioLogueado.nombre, codigoConcepto: codigo,
-                paciente: perro, dueno: dueno, raza: raza, precioOriginal: parseFloat(precio),
-                tipoDescuento: tipoDesc, valorDescuento: parseFloat(valorDesc), totalCobrado: totalCobroCalculado,
-                metodoPago: metodoPago, ventaMostrador: document.getElementById('venta-mostrador').checked,
-                fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() 
+                paciente: perro, dueno: dueno, raza: raza, precioOriginal: parseFloat(precio), tipoDescuento: tipoDesc, valorDescuento: parseFloat(valorDesc), totalCobrado: totalCobroCalculado, metodoPago: metodoPago, ventaMostrador: document.getElementById('venta-mostrador').checked, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() 
             }).then(() => {
                 alert(`✅ Cobro de $${totalCobroCalculado.toFixed(2)} registrado con éxito.`);
                 document.getElementById('codigo-qr-resultado').value = ""; document.getElementById('precio-item').value = ""; document.getElementById('valor-descuento').value = ""; document.getElementById('total-cobrar').innerText = "0.00";
-                if(!document.getElementById('venta-mostrador').checked) { document.getElementById('nombre-dueno').value = ""; document.getElementById('nombre-perro').value = ""; document.getElementById('raza-paciente').value = ""; }
             }).catch(e => alert("Error al procesar el cobro."));
         }
 
-        // --- MÓDULO 2: HISTORIAL (Lectura Simple) ---
-        function abrirHistorial() {
-            cambiarPantalla('pantalla-menu', 'pantalla-historial');
-            const lista = document.getElementById('lista-historial'); lista.innerHTML = '<p>Cargando historial...</p>';
-            db.collection("Historial_Cobros").orderBy("fechaReal", "desc").limit(50).get().then((q) => {
-                lista.innerHTML = q.empty ? '<p>Aún no hay ventas.</p>' : '';
+        // --- MÓDULO RECETAS (NUEVO) ---
+        function abrirReceta() { cambiarPantalla('pantalla-menu', 'pantalla-recetas'); }
+        
+        function guardarEImprimirReceta() {
+            const dueno = document.getElementById('receta-dueno').value; const paciente = document.getElementById('receta-paciente').value;
+            const peso = document.getElementById('receta-peso').value; const temp = document.getElementById('receta-temp').value;
+            const texto = document.getElementById('receta-texto').value;
+
+            if(!dueno || !paciente || !texto) { alert("⚠️ Llena al menos Dueño, Paciente y la Prescripción."); return; }
+
+            db.collection("Historial_Recetas").add({
+                doctor: usuarioLogueado.nombre, dueno: dueno, paciente: paciente, peso: peso, temperatura: temp,
+                prescripcion: texto, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                window.print(); // Abre la ventana de impresión del navegador
+                alert("✅ Receta guardada en el historial.");
+                cancelarVolver();
+            }).catch(e => alert("Error al guardar la receta."));
+        }
+
+        // --- MÓDULO VER INVENTARIO Y ALERTAS (NUEVO) ---
+        function abrirVerInventario() {
+            cambiarPantalla('pantalla-menu', 'pantalla-ver-inventario');
+            const lista = document.getElementById('lista-stock-firebase');
+            lista.innerHTML = '<p>Buscando inventario en la nube...</p>';
+
+            db.collection("Inventario").get().then((q) => {
+                lista.innerHTML = q.empty ? '<p>No hay inventario registrado.</p>' : '';
                 q.forEach((doc) => {
-                    const d = doc.data(); const color = d.movimiento === 'Devolución de Cliente' ? '#dc3545' : '#0d6efd';
+                    const d = doc.data(); 
+                    // Si la cantidad es menor a 5, clase stock-alerta (rojo), si no, stock-ok (verde)
+                    const claseAlerta = d.cantidad < 5 ? 'stock-alerta' : 'stock-ok';
+                    const mensajeAlerta = d.cantidad < 5 ? `<span style="color: #dc3545; font-weight: bold; font-size: 0.85em;">¡Falta poco stock!</span>` : '';
+
                     lista.innerHTML += `
-                        <div class="tarjeta-info">
-                            <div class="th-header"><strong style="color: ${color};">${d.movimiento}</strong><span style="color:#666; font-size:0.9em;">${d.fechaTexto}</span></div>
-                            <div class="th-cuerpo"><strong>Concepto:</strong> ${d.codigoConcepto}</div>
-                            <div class="th-cuerpo"><strong>Cobro:</strong> $${parseFloat(d.totalCobrado).toFixed(2)} (${d.metodoPago})</div>
-                            ${d.ventaMostrador ? `<div class="th-cuerpo" style="color:#198754;">🛒 Venta Público General</div>` : `<div class="th-cuerpo"><strong>Paciente:</strong> ${d.paciente} - <strong>Dueño:</strong> ${d.dueno}</div>`}
-                            <div class="th-pie">Doctor/a: <strong>${d.atendio}</strong></div>
+                        <div class="tarjeta-info ${claseAlerta}">
+                            <div class="th-header">
+                                <strong>${d.medicamento}</strong> 
+                                <span style="font-size: 1.2em; font-weight: bold;">Quedan: ${d.cantidad}</span>
+                            </div>
+                            <div class="th-cuerpo"><strong>Cód:</strong> ${d.codigoQR}</div>
+                            <div class="th-cuerpo" style="font-size: 0.85em; color: #666;">${d.descripcion || 'Sin descripción'}</div>
+                            ${mensajeAlerta}
                         </div>`;
                 });
             });
         }
 
-        // --- MÓDULOS DE INVENTARIO Y USUARIOS (MINIMIZADOS PARA AHORRAR ESPACIO) ---
-        function abrirInventario() { cambiarPantalla('pantalla-menu', 'pantalla-inventario'); }
-        function abrirBajaInventario() { cambiarPantalla('pantalla-menu', 'pantalla-baja-inventario'); }
-        function abrirUsuarios() { cambiarPantalla('pantalla-menu', 'pantalla-usuarios'); cargarListaUsuarios(); }
+        // --- FUNCIONES SECUNDARIAS ---
+        function abrirHistorial() { cambiarPantalla('pantalla-menu', 'pantalla-historial'); const lista = document.getElementById('lista-historial'); lista.innerHTML = '<p>Cargando...</p>'; db.collection("Historial_Cobros").orderBy("fechaReal", "desc").limit(50).get().then((q) => { lista.innerHTML = q.empty ? '<p>No hay ventas.</p>' : ''; q.forEach((doc) => { const d = doc.data(); const color = d.movimiento === 'Devolución de Cliente' ? '#dc3545' : '#0d6efd'; lista.innerHTML += `<div class="tarjeta-info"><div class="th-header"><strong style="color: ${color};">${d.movimiento}</strong><span style="color:#666; font-size:0.9em;">${d.fechaTexto}</span></div><div class="th-cuerpo"><strong>Concepto:</strong> ${d.codigoConcepto}</div><div class="th-cuerpo"><strong>Cobro:</strong> $${parseFloat(d.totalCobrado).toFixed(2)} (${d.metodoPago})</div>${d.ventaMostrador ? `<div class="th-cuerpo" style="color:#198754;">🛒 Venta Público General</div>` : `<div class="th-cuerpo"><strong>Paciente:</strong> ${d.paciente}</div>`}<div class="th-pie">Doctor/a: <strong>${d.atendio}</strong></div></div>`; }); }); }
         
-        function guardarEnInventario() { /* Lógica conservada (ver código arriba) */ alert("Función activa, actualizando base de datos."); cancelarVolver(); }
-        function guardarBajaInventario() { /* Lógica conservada */ alert("Función activa."); cancelarVolver(); }
-        function cargarListaUsuarios() { /* Lógica conservada */ document.getElementById('lista-usuarios-firebase').innerHTML = "<p>Usuarios listos en base de datos...</p>"; }
-        function crearUsuario() { /* Lógica conservada */ alert("Usuario Creado."); }
+        function abrirInventario() { cambiarPantalla('pantalla-menu', 'pantalla-inventario'); }
+        function guardarEnInventario() { const q = document.getElementById('qr-inventario').value; const n = document.getElementById('nombre-inventario').value; const c = document.getElementById('cantidad-inventario').value; if(!q || !n || !c) return alert("⚠️ Llena todo."); db.collection("Inventario").add({ codigoQR: q, medicamento: n, cantidad: parseInt(c), registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { alert("✅ Lote agregado."); cancelarVolver(); }); }
+        
+        function abrirBajaInventario() { cambiarPantalla('pantalla-menu', 'pantalla-baja-inventario'); }
+        function guardarBajaInventario() { const q = document.getElementById('qr-baja-inv').value; const n = document.getElementById('nombre-baja-inv').value; const c = document.getElementById('cantidad-baja-inv').value; if(!q || !n || !c) return alert("⚠️ Llena todo."); db.collection("Inventario").add({ codigoQR: q, medicamento: n, cantidad: -Math.abs(parseInt(c)), registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { alert("✅ Baja registrada."); cancelarVolver(); }); }
+        
+        function abrirUsuarios() { cambiarPantalla('pantalla-menu', 'pantalla-usuarios'); document.getElementById('lista-usuarios-firebase').innerHTML = "<p>Usuarios en base de datos.</p>"; }
+        function crearUsuario() { alert("Función activa."); }
     </script>
 </body>
 </html>
