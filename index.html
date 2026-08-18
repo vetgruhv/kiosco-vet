@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Veterinario POS</title>
+    <title>Sistema Veterinario ERP & POS</title>
     
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -18,14 +18,17 @@
         .tecla { padding: 25px 0; font-size: 1.8em; background: #ffffff; border: 1px solid #dee2e6; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: pointer; transition: 0.1s; color: #333; }
         .tecla:active { background: #e9ecef; transform: translateY(2px); }
         .tecla-borrar { background: #ffe3e3; color: #dc3545; border-color: #ffc9c9; }
+        
         .header-usuario { background: #e3f2fd; color: #0d6efd; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; font-size: 1.1em; }
         .selector-movimiento { display: flex; gap: 10px; margin-bottom: 15px; }
         .btn-mov { flex: 1; padding: 10px 5px; border: 2px solid #ced4da; background: white; color: #6c757d; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.9em; }
-        .btn-mov.activo-baja { background: #0d6efd; color: white; border-color: #0d6efd; }
+        .btn-mov.activo-baja, .btn-filtro.activo { background: #0d6efd; color: white; border-color: #0d6efd; }
         .btn-mov.activo-alta { background: #198754; color: white; border-color: #198754; }
+        
         .grupo-formulario { margin-bottom: 12px; text-align: left; }
         .grupo-formulario label { display: block; font-weight: bold; margin-bottom: 4px; color: #495057; font-size: 0.85em; }
         .grupo-formulario input, .grupo-formulario select, .grupo-formulario textarea { width: 100%; padding: 10px; font-size: 0.95em; border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box; font-family: inherit; }
+        
         .btn { width: 100%; padding: 15px; font-size: 1.1em; border: none; border-radius: 8px; cursor: pointer; margin-top: 5px; font-weight: bold; transition: 0.2s; }
         .btn-menu { background: #f8f9fa; color: #333; border: 1px solid #dee2e6; margin-bottom: 10px; }
         .btn-menu:active { background: #e9ecef; }
@@ -34,20 +37,24 @@
         .btn-guardar-rojo { background: #dc3545; color: white; }
         .btn-guardar-azul { background: #0d6efd; color: white; }
         .btn-cancelar { background: transparent; color: #dc3545; margin-top: 5px; padding: 10px;}
+        .btn-filtro { flex: 1; padding: 8px; border: 1px solid #0d6efd; background: white; color: #0d6efd; border-radius: 5px; cursor: pointer; font-weight: bold;}
+        
         .caja-camara { width: 100%; border-radius: 8px; overflow: hidden; margin-bottom: 15px; border: 2px solid #333; }
         .oculto { display: none !important; }
         
         .caja-cobro { background: #fff3cd; padding: 15px; border-radius: 8px; border: 1px solid #ffe69c; margin-bottom: 15px; }
         .tarjeta-info { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 15px; font-size: 0.95em; text-align: left; }
         
-        /* ESTILOS DE ALERTA DE INVENTARIO */
         .stock-alerta { border-left: 5px solid #dc3545; background-color: #fff8f8; }
         .stock-ok { border-left: 5px solid #198754; }
+        
+        .th-header { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #e9ecef; padding-bottom: 5px;}
+        .th-cuerpo { margin-bottom: 5px; color: #495057; }
+        .th-pie { color: #6c757d; font-size: 0.85em; text-align: right; margin-top: 10px; }
 
-        /* OCULTAR ELEMENTOS AL IMPRIMIR RECETA */
         @media print {
             body { background: white; }
-            .btn, .header-usuario { display: none !important; }
+            .btn, .header-usuario, .ocultar-impresion { display: none !important; }
             .contenedor { box-shadow: none; max-width: 100%; margin: 0; padding: 0; }
         }
     </style>
@@ -77,19 +84,22 @@
     <!-- PANTALLA 2: MENÚ PRINCIPAL -->
     <div id="pantalla-menu" class="contenedor oculto">
         <div class="header-usuario" id="texto-bienvenida">Bienvenido</div>
-        <h3 style="color: #333; margin-top: 0;">¿Qué deseas hacer?</h3>
         
-        <button id="btn-movimiento" class="btn btn-menu oculto" onclick="abrirFormulario()">🛒 Realizar Venta / Baja</button>
+        <h4 style="color: #666; margin: 10px 0 5px 0; text-align: left;">Operaciones:</h4>
+        <button id="btn-movimiento" class="btn btn-menu oculto" onclick="abrirFormulario()">🛒 Punto de Venta / Baja</button>
         <button id="btn-receta" class="btn btn-menu oculto" onclick="abrirReceta()">📝 Generar Receta Médica</button>
         
+        <h4 id="titulo-gerencia" style="color: #666; margin: 15px 0 5px 0; text-align: left;" class="oculto">Administración y Reportes:</h4>
+        <button id="btn-corte" class="btn btn-menu oculto" onclick="abrirCorteCaja('dia')" style="background-color: #e8f4f8; border-color: #0dcaf0; color: #055160;">💰 Corte de Caja y Descuentos</button>
         <button id="btn-ver-inventario" class="btn btn-menu oculto" onclick="abrirVerInventario()">👀 Ver Inventario y Alertas</button>
         <button id="btn-alta-inventario" class="btn btn-menu oculto" onclick="abrirInventario()">📦 Ingresar Lotes Nuevos</button>
         <button id="btn-baja-inventario" class="btn btn-menu oculto" onclick="abrirBajaInventario()">📉 Bajar Lote (Merma/Interno)</button>
         
-        <button id="btn-historial" class="btn btn-menu oculto" onclick="abrirHistorial()">📋 Ver Historial Ventas</button>
+        <button id="btn-historial" class="btn btn-menu oculto" onclick="abrirHistorial()">📋 Historial de Ventas</button>
+        <button id="btn-historial-recetas" class="btn btn-menu oculto" onclick="abrirHistorialRecetas()">📋 Historial de Recetas</button>
         <button id="btn-usuarios" class="btn btn-menu oculto" onclick="abrirUsuarios()">👥 Administrar Personal</button>
         
-        <button class="btn btn-cancelar" onclick="cerrarSesion()">Cerrar Sesión</button>
+        <button class="btn btn-cancelar" style="margin-top:20px;" onclick="cerrarSesion()">Cerrar Sesión</button>
     </div>
 
     <!-- PANTALLA 3: PUNTO DE VENTA (BAJA) -->
@@ -149,7 +159,7 @@
         <button class="btn btn-cancelar" onclick="cancelarVolver()">Cancelar</button>
     </div>
 
-    <!-- PANTALLA NUEVA: GENERAR RECETA MÉDICA -->
+    <!-- PANTALLA 4: RECETA MÉDICA -->
     <div id="pantalla-recetas" class="contenedor oculto">
         <h2 style="color: #0d6efd; margin-top: 0; font-size: 1.4em;">📝 Receta Médica</h2>
         <div class="grupo-formulario"><label>Dueño:</label><input type="text" id="receta-dueno" placeholder="Nombre del propietario"></div>
@@ -165,11 +175,33 @@
             <textarea id="receta-texto" rows="6" placeholder="Ej. 1. Amoxicilina 250mg - 1 tableta cada 12 hrs por 5 días..."></textarea>
         </div>
         
-        <button class="btn btn-guardar-azul" onclick="guardarEImprimirReceta()">Guardar e Imprimir Receta</button>
-        <button class="btn btn-cancelar" onclick="cancelarVolver()">Cerrar</button>
+        <button class="btn btn-guardar-azul ocultar-impresion" onclick="guardarEImprimirReceta()">Guardar e Imprimir Receta</button>
+        <button class="btn btn-cancelar ocultar-impresion" onclick="cancelarVolver()">Cerrar</button>
     </div>
 
-    <!-- PANTALLA NUEVA: VER INVENTARIO Y ALERTAS -->
+    <!-- PANTALLA 5: CORTE DE CAJA Y REPORTES -->
+    <div id="pantalla-corte-caja" class="contenedor oculto">
+        <h2 style="color: #333; margin-top: 0;">💰 Corte de Caja</h2>
+        
+        <div style="display: flex; gap: 5px; margin-bottom: 20px;">
+            <button id="filtro-dia" class="btn-filtro activo" onclick="abrirCorteCaja('dia')">Día</button>
+            <button id="filtro-semana" class="btn-filtro" onclick="abrirCorteCaja('semana')">Semana</button>
+            <button id="filtro-mes" class="btn-filtro" onclick="abrirCorteCaja('mes')">Mes</button>
+        </div>
+
+        <div id="resumen-corte" style="background:#f8f9fa; border-radius:8px; padding:15px; margin-bottom:20px; text-align:center; border: 1px solid #dee2e6;">
+            <h3 style="margin:0; color:#666;">Total Cobrado:</h3>
+            <h1 style="margin:5px 0; color:#198754; font-size:2.5em;">$<span id="corte-gran-total">0.00</span></h1>
+            <p style="margin:0; color:#dc3545; font-weight:bold;">Total Descuentos: $<span id="corte-gran-descuento">0.00</span></p>
+        </div>
+
+        <h4 style="text-align: left; margin-bottom: 10px; color: #333;">Desglose por Doctor/a:</h4>
+        <div id="lista-corte-caja" style="max-height: 300px; overflow-y: auto; padding-right: 5px;"></div>
+        
+        <button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-corte-caja', 'pantalla-menu')">Volver al Menú</button>
+    </div>
+
+    <!-- PANTALLA 6: VER INVENTARIO Y ALERTAS -->
     <div id="pantalla-ver-inventario" class="contenedor oculto">
         <h2 style="color: #333; margin-top: 0;">📦 Inventario Actual</h2>
         <p style="font-size: 0.85em; color: #666; text-align: left; margin-bottom: 15px;">
@@ -180,22 +212,84 @@
         <button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-ver-inventario', 'pantalla-menu')">Volver al Menú</button>
     </div>
 
-    <!-- (PANTALLAS DE HISTORIAL, ALTA Y BAJA DE INVENTARIO Y USUARIOS MINIMIZADAS PARA AHORRO DE ESPACIO) -->
-    <div id="pantalla-historial" class="contenedor oculto"><h2 style="color: #333; margin-top: 0;">Historial de Ventas</h2><div id="lista-historial" style="max-height: 400px; overflow-y: auto;"></div><button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-historial', 'pantalla-menu')">Volver</button></div>
-    <div id="pantalla-inventario" class="contenedor oculto"><h2 style="color: #333; margin-top: 0;">📦 Alta de Lote</h2><button type="button" class="btn btn-qr" onclick="iniciarCamara('caja-camara-inventario', 'qr-inventario')">📷 Escanear (QR)</button><div id="caja-camara-inventario" class="caja-camara oculto"></div><div class="grupo-formulario"><label>Código QR:</label><input type="text" id="qr-inventario"></div><div class="grupo-formulario"><label>Medicamento:</label><input type="text" id="nombre-inventario"></div><div class="grupo-formulario"><label>Descripción:</label><input type="text" id="descripcion-inventario"></div><div class="grupo-formulario"><label>Cantidad:</label><input type="number" id="cantidad-inventario"></div><button class="btn btn-guardar" onclick="guardarEnInventario()">Guardar Alta</button><button class="btn btn-cancelar" onclick="cancelarVolver()">Cancelar</button></div>
-    <div id="pantalla-baja-inventario" class="contenedor oculto"><h2 style="color: #333; margin-top: 0;">📉 Baja de Lote</h2><div class="grupo-formulario"><label>Código QR:</label><input type="text" id="qr-baja-inv"></div><div class="grupo-formulario"><label>Medicamento:</label><input type="text" id="nombre-baja-inv"></div><div class="grupo-formulario"><label>Motivo:</label><input type="text" id="motivo-baja-inv"></div><div class="grupo-formulario"><label>Cantidad a descontar:</label><input type="number" id="cantidad-baja-inv"></div><button class="btn btn-guardar btn-guardar-rojo" onclick="guardarBajaInventario()">Registrar Baja</button><button class="btn btn-cancelar" onclick="cancelarVolver()">Cancelar</button></div>
-    <div id="pantalla-usuarios" class="contenedor oculto"><h2 style="color: #333; margin-top: 0;">👥 Administrar Personal</h2><div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px;"><div class="grupo-formulario"><label>Nombre:</label><input type="text" id="nuevo-usuario-nombre"></div><div class="grupo-formulario"><label>PIN (4 números):</label><input type="number" id="nuevo-usuario-pin"></div><div class="grupo-formulario"><label>Rol:</label><select id="nuevo-usuario-rol"><option value="Doctor">Doctor</option><option value="Sub-Gerente">Sub-Gerente</option><option value="Gerente">Gerente</option></select></div><button class="btn btn-guardar" onclick="crearUsuario()">+ Agregar Usuario</button></div><div id="lista-usuarios-firebase" style="max-height: 250px; overflow-y: auto;"></div><button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-usuarios', 'pantalla-menu')">Volver al Menú</button></div>
+    <!-- PANTALLA 7: HISTORIAL DE VENTAS -->
+    <div id="pantalla-historial" class="contenedor oculto">
+        <h2 style="color: #333; margin-top: 0;">📋 Historial de Ventas</h2>
+        <div id="lista-historial" style="max-height: 400px; overflow-y: auto;"></div>
+        <button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-historial', 'pantalla-menu')">Volver</button>
+    </div>
+    
+    <!-- PANTALLA 8: HISTORIAL DE RECETAS -->
+    <div id="pantalla-historial-recetas" class="contenedor oculto">
+        <h2 style="color: #333; margin-top: 0;">📋 Historial de Recetas</h2>
+        <div id="lista-historial-recetas" style="max-height: 400px; overflow-y: auto;"></div>
+        <button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-historial-recetas', 'pantalla-menu')">Volver</button>
+    </div>
 
-    <!-- LÓGICA JAVASCRIPT -->
+    <!-- PANTALLA 9: ALTA INVENTARIO -->
+    <div id="pantalla-inventario" class="contenedor oculto">
+        <h2 style="color: #333; margin-top: 0;">📦 Alta de Lote</h2>
+        <button type="button" class="btn btn-qr" onclick="iniciarCamara('caja-camara-inventario', 'qr-inventario')">📷 Escanear (QR)</button>
+        <div id="caja-camara-inventario" class="caja-camara oculto"></div>
+        <div class="grupo-formulario"><label>Código QR / Nombre:</label><input type="text" id="qr-inventario"></div>
+        <div class="grupo-formulario"><label>Medicamento:</label><input type="text" id="nombre-inventario"></div>
+        <div class="grupo-formulario"><label>Descripción / Gramaje:</label><input type="text" id="descripcion-inventario"></div>
+        <div class="grupo-formulario"><label>Cantidad de piezas ingresando:</label><input type="number" id="cantidad-inventario"></div>
+        <button class="btn btn-guardar" onclick="guardarEnInventario()">Guardar Alta</button>
+        <button class="btn btn-cancelar" onclick="cancelarVolver()">Cancelar</button>
+    </div>
+
+    <!-- PANTALLA 10: BAJA INVENTARIO -->
+    <div id="pantalla-baja-inventario" class="contenedor oculto">
+        <h2 style="color: #333; margin-top: 0;">📉 Baja de Lote (Interno)</h2>
+        <div class="grupo-formulario"><label>Código QR / Nombre:</label><input type="text" id="qr-baja-inv"></div>
+        <div class="grupo-formulario"><label>Medicamento:</label><input type="text" id="nombre-baja-inv"></div>
+        <div class="grupo-formulario"><label>Motivo:</label><input type="text" id="motivo-baja-inv"></div>
+        <div class="grupo-formulario"><label>Cantidad a descontar:</label><input type="number" id="cantidad-baja-inv"></div>
+        <button class="btn btn-guardar btn-guardar-rojo" onclick="guardarBajaInventario()">Registrar Baja</button>
+        <button class="btn btn-cancelar" onclick="cancelarVolver()">Cancelar</button>
+    </div>
+
+    <!-- PANTALLA 11: USUARIOS -->
+    <div id="pantalla-usuarios" class="contenedor oculto">
+        <h2 style="color: #333; margin-top: 0;">👥 Administrar Personal</h2>
+        <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <div class="grupo-formulario"><label>Nombre:</label><input type="text" id="nuevo-usuario-nombre"></div>
+            <div class="grupo-formulario"><label>PIN (4 números):</label><input type="number" id="nuevo-usuario-pin"></div>
+            <div class="grupo-formulario">
+                <label>Rol del Sistema:</label>
+                <select id="nuevo-usuario-rol">
+                    <option value="Doctor">Doctor (Solo Ventas/Bajas)</option>
+                    <option value="Sub-Gerente">Sub-Gerente (Ventas + Historiales)</option>
+                    <option value="Gerente">Gerente (Acceso Total + Cortes)</option>
+                </select>
+            </div>
+            <button class="btn btn-guardar" onclick="crearUsuario()">+ Agregar Usuario</button>
+        </div>
+        <div id="lista-usuarios-firebase" style="max-height: 250px; overflow-y: auto;"></div>
+        <button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-usuarios', 'pantalla-menu')">Volver al Menú</button>
+    </div>
+
+    <!-- === LÓGICA MAESTRA JAVASCRIPT === -->
     <script>
-        const firebaseConfig = { apiKey: "AIzaSyABktLytyy6fBXXDOrJq9B0nErrOzc30a4", authDomain: "kioscovet-93eae.firebaseapp.com", projectId: "kioscovet-93eae", storageBucket: "kioscovet-93eae.firebasestorage.app", messagingSenderId: "571603121447", appId: "1:571603121447:web:ad4a7d439050ec82812502" };
+        // 1. CONEXIÓN A FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyABktLytyy6fBXXDOrJq9B0nErrOzc30a4",
+            authDomain: "kioscovet-93eae.firebaseapp.com",
+            projectId: "kioscovet-93eae",
+            storageBucket: "kioscovet-93eae.firebasestorage.app",
+            messagingSenderId: "571603121447",
+            appId: "1:571603121447:web:ad4a7d439050ec82812502"
+        };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore(); 
 
-        let pinActual = ""; let usuarioLogueado = null; let tipoMovimientoActual = "Venta/Baja"; let temporizadorInactividad; let lectorQr; let camaraActivaId = ""; let totalCobroCalculado = 0;
+        // 2. VARIABLES GLOBALES
+        let pinActual = ""; let usuarioLogueado = null; let tipoMovimientoActual = "Venta/Baja"; 
+        let temporizadorInactividad; let lectorQr; let camaraActivaId = ""; let totalCobroCalculado = 0;
 
+        // 3. SEGURIDAD Y NAVEGACIÓN BÁSICA
         function reproducirSonidoBip() { try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); const osc = ctx.createOscillator(); const vol = ctx.createGain(); osc.type = 'sine'; osc.frequency.value = 800; osc.connect(vol); vol.connect(ctx.destination); vol.gain.setValueAtTime(1, ctx.currentTime); vol.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15); osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.15); } catch (e) {} }
-
         function reiniciarTemporizador() { clearTimeout(temporizadorInactividad); if(usuarioLogueado) { temporizadorInactividad = setTimeout(() => { alert("Sesión cerrada por inactividad."); cancelarVolver(); cerrarSesion(); }, 600000); } }
         window.onload = function() { document.body.addEventListener('click', reiniciarTemporizador); document.body.addEventListener('keypress', reiniciarTemporizador); }
 
@@ -203,6 +297,7 @@
         function limpiarPin() { pinActual = ""; document.getElementById('input-pin').value = ""; }
         function cambiarPantalla(idOcultar, idMostrar) { document.getElementById(idOcultar).classList.add('oculto'); document.getElementById(idMostrar).classList.remove('oculto'); }
 
+        // 4. LOGIN CON PERMISOS
         function validarPin() {
             db.collection("Usuarios").doc(pinActual).get().then((doc) => {
                 if(doc.exists) {
@@ -210,6 +305,7 @@
                     configurarTextosYPermisos(); reiniciarTemporizador(); 
                     cambiarPantalla('pantalla-login', 'pantalla-menu');
                 } else {
+                    // Creación automática para pruebas si la base de datos está vacía
                     if(pinActual === "1111" || pinActual === "2222" || pinActual === "3333") {
                         const baseLocal = { "1111": { nombre: "Ana", rol: "Gerente" }, "2222": { nombre: "Carlos", rol: "Sub-Gerente" }, "3333": { nombre: "Luis", rol: "Doctor" } };
                         db.collection("Usuarios").doc(pinActual).set(baseLocal[pinActual]).then(validarPin);
@@ -220,27 +316,28 @@
 
         function configurarTextosYPermisos() {
             document.getElementById('texto-bienvenida').innerText = `Hola, ${usuarioLogueado.nombre}`;
-            // Botones comunes
+            
+            // Mostrar los básicos para Doctor
             document.getElementById('btn-movimiento').classList.remove('oculto');
             document.getElementById('btn-receta').classList.remove('oculto');
             
-            // Ocultar botones gerenciales por defecto
-            document.getElementById('btn-ver-inventario').classList.add('oculto'); document.getElementById('btn-alta-inventario').classList.add('oculto');
-            document.getElementById('btn-baja-inventario').classList.add('oculto'); document.getElementById('btn-historial').classList.add('oculto');
-            document.getElementById('btn-usuarios').classList.add('oculto');
+            // Ocultar gerenciales por defecto
+            const adminBotones = ['btn-corte', 'btn-ver-inventario', 'btn-alta-inventario', 'btn-baja-inventario', 'btn-historial', 'btn-historial-recetas', 'btn-usuarios', 'titulo-gerencia'];
+            adminBotones.forEach(id => document.getElementById(id).classList.add('oculto'));
 
             if(usuarioLogueado.rol === "Gerente") {
-                document.getElementById('btn-ver-inventario').classList.remove('oculto'); document.getElementById('btn-alta-inventario').classList.remove('oculto');
-                document.getElementById('btn-baja-inventario').classList.remove('oculto'); document.getElementById('btn-historial').classList.remove('oculto');
-                document.getElementById('btn-usuarios').classList.remove('oculto');
+                adminBotones.forEach(id => document.getElementById(id).classList.remove('oculto'));
             } else if(usuarioLogueado.rol === "Sub-Gerente") { 
-                document.getElementById('btn-ver-inventario').classList.remove('oculto'); document.getElementById('btn-historial').classList.remove('oculto'); 
+                document.getElementById('titulo-gerencia').classList.remove('oculto');
+                document.getElementById('btn-ver-inventario').classList.remove('oculto');
+                document.getElementById('btn-historial').classList.remove('oculto');
+                document.getElementById('btn-historial-recetas').classList.remove('oculto');
             }
         }
 
         function cerrarSesion() { usuarioLogueado = null; clearTimeout(temporizadorInactividad); limpiarPin(); document.querySelectorAll('.contenedor').forEach(el => el.classList.add('oculto')); document.getElementById('pantalla-login').classList.remove('oculto'); }
 
-        // --- CÁMARA ---
+        // 5. CÁMARA ESCÁNER
         function iniciarCamara(idDiv, idDestino) {
             camaraActivaId = idDiv; document.getElementById(idDiv).classList.remove('oculto');
             if(!lectorQr) { lectorQr = new Html5Qrcode(idDiv); }
@@ -259,11 +356,19 @@
             document.getElementById('pantalla-menu').classList.remove('oculto'); 
         }
 
-        // --- MÓDULO PUNTO DE VENTA ---
-        function abrirFormulario() { cambiarTipoMovimiento('Venta/Baja'); cambiarPantalla('pantalla-menu', 'pantalla-registro-baja'); }
-        function cambiarTipoMovimiento(tipo) { tipoMovimientoActual = tipo; if(tipo === 'Venta/Baja') { document.getElementById('toggle-baja').classList.add('activo-baja'); document.getElementById('toggle-alta').classList.remove('activo-alta'); document.getElementById('titulo-formulario').innerText = "Nueva Venta / Baja"; } else { document.getElementById('toggle-alta').classList.add('activo-alta'); document.getElementById('toggle-baja').classList.remove('activo-baja'); document.getElementById('titulo-formulario').innerText = "Registrar Devolución"; } }
+        // 6. PUNTO DE VENTA (COBROS)
+        function abrirFormulario() { cambiarTipoMovimiento('Venta/Baja'); cambiarPantalla('pantalla-menu', 'pantalla-registro-baja'); document.getElementById('texto-registro-usuario').innerText = `Atendiendo: ${usuarioLogueado.nombre}`; }
+        function cambiarTipoMovimiento(tipo) { tipoMovimientoActual = tipo; if(tipo === 'Venta/Baja') { document.getElementById('toggle-baja').classList.add('activo-baja'); document.getElementById('toggle-alta').classList.remove('activo-alta'); } else { document.getElementById('toggle-alta').classList.add('activo-alta'); document.getElementById('toggle-baja').classList.remove('activo-baja'); } }
         function toggleMostrador() { const esMostrador = document.getElementById('venta-mostrador').checked; if(esMostrador) { document.getElementById('campos-paciente').classList.add('oculto'); document.getElementById('nombre-dueno').value = "Público General"; document.getElementById('nombre-perro').value = "N/A"; document.getElementById('raza-paciente').value = "N/A"; } else { document.getElementById('campos-paciente').classList.remove('oculto'); document.getElementById('nombre-dueno').value = ""; document.getElementById('nombre-perro').value = ""; document.getElementById('raza-paciente').value = ""; } }
-        function calcularTotal() { let precio = parseFloat(document.getElementById('precio-item').value) || 0; const tipoDesc = document.getElementById('tipo-descuento').value; const valorDesc = parseFloat(document.getElementById('valor-descuento').value) || 0; if(tipoDesc === 'Porcentaje') { totalCobroCalculado = precio - (precio * (valorDesc / 100)); } else if (tipoDesc === 'Monto') { totalCobroCalculado = precio - valorDesc; } else { totalCobroCalculado = precio; } if(totalCobroCalculado < 0) totalCobroCalculado = 0; document.getElementById('total-cobrar').innerText = totalCobroCalculado.toFixed(2); }
+        
+        function calcularTotal() { 
+            let precio = parseFloat(document.getElementById('precio-item').value) || 0; 
+            const tipoDesc = document.getElementById('tipo-descuento').value; 
+            const valorDesc = parseFloat(document.getElementById('valor-descuento').value) || 0; 
+            if(tipoDesc === 'Porcentaje') { totalCobroCalculado = precio - (precio * (valorDesc / 100)); } 
+            else if (tipoDesc === 'Monto') { totalCobroCalculado = precio - valorDesc; } else { totalCobroCalculado = precio; } 
+            if(totalCobroCalculado < 0) totalCobroCalculado = 0; document.getElementById('total-cobrar').innerText = totalCobroCalculado.toFixed(2); 
+        }
 
         function guardarEnHistorial() {
             detenerCamara(); const codigo = document.getElementById('codigo-qr-resultado').value; const dueno = document.getElementById('nombre-dueno').value; const perro = document.getElementById('nombre-perro').value; const raza = document.getElementById('raza-paciente').value; const precio = document.getElementById('precio-item').value || 0; const metodoPago = document.getElementById('metodo-pago').value; const tipoDesc = document.getElementById('tipo-descuento').value; const valorDesc = document.getElementById('valor-descuento').value || 0;
@@ -271,74 +376,131 @@
             if(!codigo) { alert("⚠️ Por favor ingresa el código del producto/servicio."); return; }
             if(!document.getElementById('venta-mostrador').checked && (!dueno || !perro)) { alert("⚠️ Llena los datos del paciente o marca 'Venta a Mostrador'."); return; }
 
+            // Guardamos con 'timestamp' para que los Cortes de Caja funcionen perfecto
             db.collection("Historial_Cobros").add({
                 movimiento: tipoMovimientoActual, atendio: usuarioLogueado.nombre, codigoConcepto: codigo,
-                paciente: perro, dueno: dueno, raza: raza, precioOriginal: parseFloat(precio), tipoDescuento: tipoDesc, valorDescuento: parseFloat(valorDesc), totalCobrado: totalCobroCalculado, metodoPago: metodoPago, ventaMostrador: document.getElementById('venta-mostrador').checked, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() 
+                paciente: perro, dueno: dueno, raza: raza, precioOriginal: parseFloat(precio), tipoDescuento: tipoDesc, valorDescuento: parseFloat(valorDesc), totalCobrado: totalCobroCalculado, metodoPago: metodoPago, ventaMostrador: document.getElementById('venta-mostrador').checked, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now(), fechaReal: firebase.firestore.FieldValue.serverTimestamp() 
             }).then(() => {
                 alert(`✅ Cobro de $${totalCobroCalculado.toFixed(2)} registrado con éxito.`);
                 document.getElementById('codigo-qr-resultado').value = ""; document.getElementById('precio-item').value = ""; document.getElementById('valor-descuento').value = ""; document.getElementById('total-cobrar').innerText = "0.00";
             }).catch(e => alert("Error al procesar el cobro."));
         }
 
-        // --- MÓDULO RECETAS (NUEVO) ---
+        // 7. MÓDULO RECETAS MÉDICAS
         function abrirReceta() { cambiarPantalla('pantalla-menu', 'pantalla-recetas'); }
-        
         function guardarEImprimirReceta() {
             const dueno = document.getElementById('receta-dueno').value; const paciente = document.getElementById('receta-paciente').value;
-            const peso = document.getElementById('receta-peso').value; const temp = document.getElementById('receta-temp').value;
-            const texto = document.getElementById('receta-texto').value;
+            const peso = document.getElementById('receta-peso').value; const temp = document.getElementById('receta-temp').value; const texto = document.getElementById('receta-texto').value;
 
             if(!dueno || !paciente || !texto) { alert("⚠️ Llena al menos Dueño, Paciente y la Prescripción."); return; }
 
             db.collection("Historial_Recetas").add({
                 doctor: usuarioLogueado.nombre, dueno: dueno, paciente: paciente, peso: peso, temperatura: temp,
-                prescripcion: texto, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp()
+                prescripcion: texto, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now(), fechaReal: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
-                window.print(); // Abre la ventana de impresión del navegador
-                alert("✅ Receta guardada en el historial.");
+                window.print(); // Abre diálogo de impresión
                 cancelarVolver();
             }).catch(e => alert("Error al guardar la receta."));
         }
 
-        // --- MÓDULO VER INVENTARIO Y ALERTAS (NUEVO) ---
+        // 8. CORTE DE CAJA Y REPORTES (GERENCIAL)
+        function abrirCorteCaja(periodo) {
+            cambiarPantalla('pantalla-menu', 'pantalla-corte-caja');
+            
+            // Actualizar botones de filtro
+            document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('activo'));
+            document.getElementById(`filtro-${periodo}`).classList.add('activo');
+
+            const lista = document.getElementById('lista-corte-caja');
+            lista.innerHTML = '<p>Procesando datos...</p>';
+
+            let limiteTiempo = Date.now();
+            if(periodo === 'dia') limiteTiempo -= (24 * 60 * 60 * 1000); // Últimas 24h
+            if(periodo === 'semana') limiteTiempo -= (7 * 24 * 60 * 60 * 1000); // Últimos 7 días
+            if(periodo === 'mes') limiteTiempo -= (30 * 24 * 60 * 60 * 1000); // Últimos 30 días
+
+            db.collection("Historial_Cobros").orderBy("timestamp", "desc").limit(1000).get().then(q => {
+                let resumen = {};
+                let granTotal = 0; let granDescuento = 0;
+
+                q.forEach(doc => {
+                    const d = doc.data();
+                    if(d.timestamp >= limiteTiempo) {
+                        if(!resumen[d.atendio]) resumen[d.atendio] = { ventas: 0, total: 0, descuentos: 0 };
+                        
+                        resumen[d.atendio].ventas += 1;
+                        resumen[d.atendio].total += (d.totalCobrado || 0);
+                        
+                        // Calcular descuento real en dinero para el reporte
+                        let descReal = 0;
+                        if(d.tipoDescuento === 'Monto') descReal = d.valorDescuento;
+                        else if (d.tipoDescuento === 'Porcentaje') descReal = d.precioOriginal * (d.valorDescuento / 100);
+                        
+                        resumen[d.atendio].descuentos += descReal;
+                        
+                        granTotal += (d.totalCobrado || 0);
+                        granDescuento += descReal;
+                    }
+                });
+
+                document.getElementById('corte-gran-total').innerText = granTotal.toFixed(2);
+                document.getElementById('corte-gran-descuento').innerText = granDescuento.toFixed(2);
+
+                if(Object.keys(resumen).length === 0) {
+                    lista.innerHTML = '<p>No se encontraron movimientos en este periodo.</p>'; return;
+                }
+
+                let html = '';
+                for(let doctor in resumen) {
+                    let r = resumen[doctor];
+                    html += `
+                    <div class="tarjeta-info">
+                        <div class="th-header"><strong style="color:#0d6efd; font-size:1.1em;">👨‍⚕️ ${doctor}</strong></div>
+                        <div class="th-cuerpo"><strong>Tratamientos/Ventas:</strong> ${r.ventas}</div>
+                        <div class="th-cuerpo"><strong>Cobrado a caja:</strong> $${r.total.toFixed(2)}</div>
+                        <div class="th-cuerpo" style="color:#dc3545;"><strong>Descuentos otorgados:</strong> $${r.descuentos.toFixed(2)}</div>
+                    </div>`;
+                }
+                lista.innerHTML = html;
+            }).catch(e => { lista.innerHTML = '<p style="color:red;">Error al cargar datos.</p>'; });
+        }
+
+        // 9. VER INVENTARIO Y ALERTAS
         function abrirVerInventario() {
             cambiarPantalla('pantalla-menu', 'pantalla-ver-inventario');
-            const lista = document.getElementById('lista-stock-firebase');
-            lista.innerHTML = '<p>Buscando inventario en la nube...</p>';
-
+            const lista = document.getElementById('lista-stock-firebase'); lista.innerHTML = '<p>Buscando inventario...</p>';
             db.collection("Inventario").get().then((q) => {
                 lista.innerHTML = q.empty ? '<p>No hay inventario registrado.</p>' : '';
                 q.forEach((doc) => {
                     const d = doc.data(); 
-                    // Si la cantidad es menor a 5, clase stock-alerta (rojo), si no, stock-ok (verde)
                     const claseAlerta = d.cantidad < 5 ? 'stock-alerta' : 'stock-ok';
                     const mensajeAlerta = d.cantidad < 5 ? `<span style="color: #dc3545; font-weight: bold; font-size: 0.85em;">¡Falta poco stock!</span>` : '';
-
                     lista.innerHTML += `
                         <div class="tarjeta-info ${claseAlerta}">
-                            <div class="th-header">
-                                <strong>${d.medicamento}</strong> 
-                                <span style="font-size: 1.2em; font-weight: bold;">Quedan: ${d.cantidad}</span>
-                            </div>
+                            <div class="th-header"><strong>${d.medicamento}</strong> <span style="font-size: 1.2em; font-weight: bold;">Quedan: ${d.cantidad}</span></div>
                             <div class="th-cuerpo"><strong>Cód:</strong> ${d.codigoQR}</div>
-                            <div class="th-cuerpo" style="font-size: 0.85em; color: #666;">${d.descripcion || 'Sin descripción'}</div>
+                            <div class="th-cuerpo" style="font-size: 0.85em; color: #666;">${d.descripcion || ''}</div>
                             ${mensajeAlerta}
                         </div>`;
                 });
             });
         }
 
-        // --- FUNCIONES SECUNDARIAS ---
-        function abrirHistorial() { cambiarPantalla('pantalla-menu', 'pantalla-historial'); const lista = document.getElementById('lista-historial'); lista.innerHTML = '<p>Cargando...</p>'; db.collection("Historial_Cobros").orderBy("fechaReal", "desc").limit(50).get().then((q) => { lista.innerHTML = q.empty ? '<p>No hay ventas.</p>' : ''; q.forEach((doc) => { const d = doc.data(); const color = d.movimiento === 'Devolución de Cliente' ? '#dc3545' : '#0d6efd'; lista.innerHTML += `<div class="tarjeta-info"><div class="th-header"><strong style="color: ${color};">${d.movimiento}</strong><span style="color:#666; font-size:0.9em;">${d.fechaTexto}</span></div><div class="th-cuerpo"><strong>Concepto:</strong> ${d.codigoConcepto}</div><div class="th-cuerpo"><strong>Cobro:</strong> $${parseFloat(d.totalCobrado).toFixed(2)} (${d.metodoPago})</div>${d.ventaMostrador ? `<div class="th-cuerpo" style="color:#198754;">🛒 Venta Público General</div>` : `<div class="th-cuerpo"><strong>Paciente:</strong> ${d.paciente}</div>`}<div class="th-pie">Doctor/a: <strong>${d.atendio}</strong></div></div>`; }); }); }
-        
+        // 10. HISTORIALES SIMPLES (VENTAS Y RECETAS)
+        function abrirHistorial() { cambiarPantalla('pantalla-menu', 'pantalla-historial'); const lista = document.getElementById('lista-historial'); lista.innerHTML = '<p>Cargando...</p>'; db.collection("Historial_Cobros").orderBy("fechaReal", "desc").limit(50).get().then((q) => { lista.innerHTML = q.empty ? '<p>No hay ventas.</p>' : ''; q.forEach((doc) => { const d = doc.data(); const color = d.movimiento === 'Devolución de Cliente' ? '#dc3545' : '#0d6efd'; lista.innerHTML += `<div class="tarjeta-info"><div class="th-header"><strong style="color: ${color};">${d.movimiento}</strong><span style="color:#666; font-size:0.9em;">${d.fechaTexto}</span></div><div class="th-cuerpo"><strong>Concepto:</strong> ${d.codigoConcepto}</div><div class="th-cuerpo"><strong>Cobro:</strong> $${parseFloat(d.totalCobrado).toFixed(2)} (${d.metodoPago})</div>${d.ventaMostrador ? `<div class="th-cuerpo" style="color:#198754;">🛒 Venta Público General</div>` : `<div class="th-cuerpo"><strong>Paciente:</strong> ${d.paciente} - <strong>Dueño:</strong> ${d.dueno}</div>`}<div class="th-pie">Doctor/a: <strong>${d.atendio}</strong></div></div>`; }); }); }
+        function abrirHistorialRecetas() { cambiarPantalla('pantalla-menu', 'pantalla-historial-recetas'); const lista = document.getElementById('lista-historial-recetas'); lista.innerHTML = '<p>Cargando...</p>'; db.collection("Historial_Recetas").orderBy("fechaReal", "desc").limit(30).get().then((q) => { lista.innerHTML = q.empty ? '<p>No hay recetas.</p>' : ''; q.forEach((doc) => { const d = doc.data(); lista.innerHTML += `<div class="tarjeta-info"><div class="th-header"><strong style="color: #0d6efd;">Paciente: ${d.paciente}</strong><span style="color:#666; font-size:0.9em;">${d.fechaTexto}</span></div><div class="th-cuerpo"><strong>Dueño:</strong> ${d.dueno}</div><div class="th-cuerpo"><strong>Prescripción:</strong> ${d.prescripcion}</div><div class="th-pie">Doctor/a: <strong>${d.doctor}</strong></div></div>`; }); }); }
+
+        // 11. INGRESO Y BAJA DE INVENTARIO
         function abrirInventario() { cambiarPantalla('pantalla-menu', 'pantalla-inventario'); }
-        function guardarEnInventario() { const q = document.getElementById('qr-inventario').value; const n = document.getElementById('nombre-inventario').value; const c = document.getElementById('cantidad-inventario').value; if(!q || !n || !c) return alert("⚠️ Llena todo."); db.collection("Inventario").add({ codigoQR: q, medicamento: n, cantidad: parseInt(c), registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { alert("✅ Lote agregado."); cancelarVolver(); }); }
+        function guardarEnInventario() { const q = document.getElementById('qr-inventario').value; const n = document.getElementById('nombre-inventario').value; const d = document.getElementById('descripcion-inventario').value; const c = document.getElementById('cantidad-inventario').value; if(!q || !n || !c) return alert("⚠️ Llena todo."); db.collection("Inventario").doc(q).set({ codigoQR: q, medicamento: n, descripcion: d, cantidad: parseInt(c), registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { alert("✅ Lote actualizado."); cancelarVolver(); }); }
         
         function abrirBajaInventario() { cambiarPantalla('pantalla-menu', 'pantalla-baja-inventario'); }
-        function guardarBajaInventario() { const q = document.getElementById('qr-baja-inv').value; const n = document.getElementById('nombre-baja-inv').value; const c = document.getElementById('cantidad-baja-inv').value; if(!q || !n || !c) return alert("⚠️ Llena todo."); db.collection("Inventario").add({ codigoQR: q, medicamento: n, cantidad: -Math.abs(parseInt(c)), registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { alert("✅ Baja registrada."); cancelarVolver(); }); }
-        
-        function abrirUsuarios() { cambiarPantalla('pantalla-menu', 'pantalla-usuarios'); document.getElementById('lista-usuarios-firebase').innerHTML = "<p>Usuarios en base de datos.</p>"; }
-        function crearUsuario() { alert("Función activa."); }
+        function guardarBajaInventario() { const q = document.getElementById('qr-baja-inv').value; const c = document.getElementById('cantidad-baja-inv').value; if(!q || !c) return alert("⚠️ Llena código y cantidad."); db.collection("Inventario").doc(q).get().then(doc => { if(doc.exists) { let actual = doc.data().cantidad; db.collection("Inventario").doc(q).update({ cantidad: actual - Math.abs(parseInt(c)) }).then(() => { alert("✅ Descuento de stock registrado."); cancelarVolver(); }); } else { alert("El medicamento no existe en inventario."); } }); }
+
+        // 12. ADMINISTRAR USUARIOS
+        function abrirUsuarios() { cambiarPantalla('pantalla-menu', 'pantalla-usuarios'); const lista = document.getElementById('lista-usuarios-firebase'); lista.innerHTML = '<p>Cargando usuarios...</p>'; db.collection("Usuarios").get().then((q) => { lista.innerHTML = ''; q.forEach((doc) => { const u = doc.data(); const uPin = doc.id; lista.innerHTML += `<div class="tarjeta-info" style="display:flex; justify-content: space-between; align-items: center; padding: 10px 15px;"><div><strong>${u.nombre}</strong> <span style="color:#0d6efd; font-size:0.8em;">(${u.rol})</span><br><span style="color:#666; font-size:0.8em;">PIN de Acceso: ${uPin}</span></div><button class="btn-cancelar" style="margin:0; padding:5px 10px; width:auto; border: 1px solid #dc3545; border-radius:5px;" onclick="eliminarUsuario('${uPin}')">Borrar</button></div>`; }); }); }
+        function crearUsuario() { const n = document.getElementById('nuevo-usuario-nombre').value; const p = document.getElementById('nuevo-usuario-pin').value; const r = document.getElementById('nuevo-usuario-rol').value; if(!n || !p || p.length !== 4) return alert("⚠️ Ingresa un nombre y PIN de 4 números."); db.collection("Usuarios").doc(p).set({ nombre: n, rol: r }).then(() => { alert("✅ Usuario creado."); document.getElementById('nuevo-usuario-nombre').value = ""; document.getElementById('nuevo-usuario-pin').value = ""; abrirUsuarios(); }); }
+        function eliminarUsuario(pinBorrar) { if(pinBorrar === usuarioLogueado.pin) return alert("❌ No puedes eliminarte a ti mismo."); if(confirm("¿Seguro de eliminar?")) { db.collection("Usuarios").doc(pinBorrar).delete().then(() => { abrirUsuarios(); }); } }
     </script>
 </body>
 </html>
