@@ -29,6 +29,12 @@
         .btn-menu:active { transform: translateY(0); }
         .btn-menu .emoji { font-size: 2.2em; margin-bottom: 10px; }
         
+        /* Alerta de Inventario en el Menú */
+        .alerta-banner { background-color: #fff3cd; border-left: 6px solid #ffc107; border-radius: 10px; padding: 15px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: left; }
+        .alerta-banner h4 { margin: 0 0 10px 0; color: #856404; font-size: 1.1em; display: flex; align-items: center; gap: 8px; }
+        .alerta-banner ul { margin: 0; padding-left: 20px; color: #664d03; font-size: 0.9em; }
+        .alerta-banner li { margin-bottom: 5px; }
+
         /* Formularios a dos columnas */
         .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
         .form-row .grupo-formulario { margin-bottom: 0; flex: 1; }
@@ -46,11 +52,12 @@
         .btn-guardar-azul { background: #0d6efd; color: white; box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3); }
         .btn-cancelar { background: transparent; color: #dc3545; margin-top: 10px; border: 2px solid #ffe3e3; }
         .btn-cancelar:hover { background: #fff0f0; }
+        .btn-filtro { flex: 1; padding: 8px; border: 1px solid #0d6efd; background: white; color: #0d6efd; border-radius: 5px; cursor: pointer; font-weight: bold;}
         
         /* Selector Alta/Baja */
         .selector-movimiento { display: flex; gap: 10px; margin-bottom: 20px; background: #f8f9fa; padding: 5px; border-radius: 12px; }
         .btn-mov { flex: 1; padding: 12px 5px; border: none; background: transparent; color: #6c757d; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.95em; }
-        .btn-mov.activo-baja { background: #0d6efd; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .btn-mov.activo-baja, .btn-filtro.activo-baja { background: #0d6efd; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .btn-mov.activo-alta { background: #198754; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         
         /* Cajas de cobro y alertas */
@@ -62,10 +69,14 @@
         .caja-camara { width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 15px; border: 3px solid #333; }
         .oculto { display: none !important; }
 
+        .th-header { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #e9ecef; padding-bottom: 5px;}
+        .th-cuerpo { margin-bottom: 5px; color: #495057; }
+        .th-pie { color: #6c757d; font-size: 0.85em; text-align: right; margin-top: 10px; }
+
         /* Estilos de Impresión */
         @media print {
             body { background: white; color: black; }
-            .btn, .header-usuario, .ocultar-impresion, .menu-grid, .caja-cobro { display: none !important; }
+            .btn, .header-usuario, .ocultar-impresion, .menu-grid, .caja-cobro, .alerta-banner { display: none !important; }
             .contenedor { box-shadow: none; max-width: 100%; margin: 0; padding: 0; border: none; }
             input, textarea { border: none !important; border-bottom: 1px solid #ccc !important; border-radius: 0 !important; background: transparent !important; }
         }
@@ -97,6 +108,14 @@
     <div id="pantalla-menu" class="contenedor oculto">
         <div class="header-usuario" id="texto-bienvenida">Bienvenido</div>
         
+        <!-- NOTIFICACIÓN DE INVENTARIO (Se carga automáticamente) -->
+        <div id="alerta-inventario-menu" class="alerta-banner oculto">
+            <h4>⚠️ Atención: Productos por agotarse</h4>
+            <ul id="lista-alertas-menu">
+                <!-- Aquí se inyectan las alertas desde JavaScript -->
+            </ul>
+        </div>
+
         <h4 style="color: #adb5bd; margin: 0 0 15px 0; text-align: left; text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px;">Operaciones Médicas</h4>
         <div class="menu-grid">
             <button id="btn-movimiento" class="btn-menu oculto" onclick="abrirFormulario()">
@@ -136,7 +155,6 @@
     <div id="pantalla-registro-baja" class="contenedor oculto">
         <div class="header-usuario" id="texto-registro-usuario" style="background: linear-gradient(135deg, #198754, #146c43);"></div>
         
-        <!-- SELECTOR DE TIPO (Se oculta para Doctores mediante JS) -->
         <div class="selector-movimiento" id="contenedor-selector-mov">
             <button type="button" id="toggle-baja" class="btn-mov activo-baja" onclick="cambiarTipoMovimiento('Venta/Baja')">🛒 Venta / Baja</button>
             <button type="button" id="toggle-alta" class="btn-mov" onclick="cambiarTipoMovimiento('Devolución de Cliente')">🔄 Devolución</button>
@@ -249,7 +267,7 @@
     <div id="pantalla-ver-inventario" class="contenedor oculto">
         <h2 style="color: #333; margin-top: 0; text-align: left;">📦 Inventario Actual</h2>
         <p style="font-size: 0.85em; color: #666; text-align: left; margin-bottom: 20px; background: #f8f9fa; padding: 10px; border-radius: 8px;">
-            <span style="color: #dc3545; font-weight: bold;">🔴 Rojo:</span> Menos de 5 piezas.<br>
+            <span style="color: #dc3545; font-weight: bold;">🔴 Rojo:</span> Stock Bajo.<br>
             <span style="color: #198754; font-weight: bold;">🟢 Verde:</span> Stock suficiente.
         </p>
         <div id="lista-stock-firebase" style="max-height: 450px; overflow-y: auto; padding-right: 5px;"></div>
@@ -271,9 +289,19 @@
         <div class="grupo-formulario"><label>Código QR / Nombre:</label><input type="text" id="qr-inventario" style="font-weight: bold;"></div>
         <div class="grupo-formulario"><label>Medicamento:</label><input type="text" id="nombre-inventario"></div>
         
+        <div class="grupo-formulario"><label>Descripción / Gramaje:</label><input type="text" id="descripcion-inventario"></div>
+        
+        <!-- SECCIÓN NUEVA: UNIDADES DE MEDIDA -->
         <div class="form-row">
-            <div class="grupo-formulario"><label>Descripción / Gramaje:</label><input type="text" id="descripcion-inventario"></div>
-            <div class="grupo-formulario"><label>Piezas a ingresar:</label><input type="number" id="cantidad-inventario"></div>
+            <div class="grupo-formulario"><label>Cantidad:</label><input type="number" id="cantidad-inventario" placeholder="Ej. 10"></div>
+            <div class="grupo-formulario">
+                <label>Unidad de Medida:</label>
+                <select id="unidad-inventario">
+                    <option value="Piezas">Pieza(s)</option>
+                    <option value="Cajas">Caja(s)</option>
+                    <option value="Mililitros (ml)">Mililitro(s) (ml)</option>
+                </select>
+            </div>
         </div>
         
         <button class="btn btn-guardar" onclick="guardarEnInventario()">Guardar Alta</button>
@@ -285,10 +313,19 @@
         <h2 style="color: #dc3545; margin-top: 0; text-align: left;">📉 Baja de Lote (Interno)</h2>
         <div class="grupo-formulario"><label>Código QR / Nombre:</label><input type="text" id="qr-baja-inv" style="font-weight: bold; color: #dc3545;"></div>
         <div class="grupo-formulario"><label>Medicamento:</label><input type="text" id="nombre-baja-inv"></div>
+        <div class="grupo-formulario"><label>Motivo:</label><input type="text" id="motivo-baja-inv" placeholder="Ej. Caducidad, uso interno"></div>
         
         <div class="form-row">
-            <div class="grupo-formulario"><label>Motivo:</label><input type="text" id="motivo-baja-inv" placeholder="Ej. Caducidad"></div>
-            <div class="grupo-formulario"><label>Descontar (Piezas):</label><input type="number" id="cantidad-baja-inv"></div>
+            <div class="grupo-formulario"><label>Descontar (Cantidad):</label><input type="number" id="cantidad-baja-inv" placeholder="Ej. 2"></div>
+            <!-- SECCIÓN NUEVA: UNIDADES DE MEDIDA -->
+            <div class="grupo-formulario">
+                <label>Unidad:</label>
+                <select id="unidad-baja-inv">
+                    <option value="Piezas">Pieza(s)</option>
+                    <option value="Cajas">Caja(s)</option>
+                    <option value="Mililitros (ml)">Mililitro(s) (ml)</option>
+                </select>
+            </div>
         </div>
         
         <button class="btn btn-guardar btn-guardar-rojo" onclick="guardarBajaInventario()">Registrar Baja</button>
@@ -347,9 +384,18 @@
 
         function agregarNumero(n) { if(pinActual.length >= 4) return; pinActual += n; document.getElementById('input-pin').value = pinActual; if (pinActual.length === 4) { setTimeout(validarPin, 200); } }
         function limpiarPin() { pinActual = ""; document.getElementById('input-pin').value = ""; }
-        function cambiarPantalla(idOcultar, idMostrar) { document.getElementById(idOcultar).classList.add('oculto'); document.getElementById(idMostrar).classList.remove('oculto'); }
+        
+        function cambiarPantalla(idOcultar, idMostrar) { 
+            document.getElementById(idOcultar).classList.add('oculto'); 
+            document.getElementById(idMostrar).classList.remove('oculto'); 
+            
+            // Si regresamos al menú, refrescar las alertas de inventario automáticamente
+            if (idMostrar === 'pantalla-menu') {
+                revisarAlertasInventario();
+            }
+        }
 
-        // 4. LOGIN CON PERMISOS Y DISEÑO DINÁMICO
+        // 4. LOGIN CON PERMISOS
         function validarPin() {
             db.collection("Usuarios").doc(pinActual).get().then((doc) => {
                 if(doc.exists) {
@@ -376,13 +422,13 @@
             const adminBotones = ['btn-corte', 'btn-ver-inventario', 'btn-alta-inventario', 'btn-baja-inventario', 'btn-historial', 'btn-usuarios', 'titulo-gerencia'];
             adminBotones.forEach(id => document.getElementById(id).classList.add('oculto'));
             
-            // CONFIGURACIÓN DE DEVOLUCIONES (El requerimiento clave)
+            // CONFIGURACIÓN DE DEVOLUCIONES
             if(usuarioLogueado.rol === "Doctor") {
-                document.getElementById('toggle-alta').classList.add('oculto'); // Oculta botón devolución
-                document.getElementById('toggle-baja').style.borderRadius = "8px"; // Ajusta borde
-                cambiarTipoMovimiento('Venta/Baja'); // Fuerza siempre Venta
+                document.getElementById('toggle-alta').classList.add('oculto'); 
+                document.getElementById('toggle-baja').style.borderRadius = "8px"; 
+                cambiarTipoMovimiento('Venta/Baja'); 
             } else {
-                document.getElementById('toggle-alta').classList.remove('oculto'); // Muestra devolución para Gerentes
+                document.getElementById('toggle-alta').classList.remove('oculto'); 
             }
 
             if(usuarioLogueado.rol === "Gerente") {
@@ -396,7 +442,34 @@
 
         function cerrarSesion() { usuarioLogueado = null; clearTimeout(temporizadorInactividad); limpiarPin(); document.querySelectorAll('.contenedor').forEach(el => el.classList.add('oculto')); document.getElementById('pantalla-login').classList.remove('oculto'); }
 
-        // 5. CÁMARA ESCÁNER
+        // 5. NUEVO: ALERTAS DE INVENTARIO EN EL MENÚ
+        function revisarAlertasInventario() {
+            const cajaAlerta = document.getElementById('alerta-inventario-menu');
+            const lista = document.getElementById('lista-alertas-menu');
+            lista.innerHTML = '';
+            
+            db.collection("Inventario").get().then(q => {
+                let hayAlertas = false;
+                q.forEach(doc => {
+                    const d = doc.data();
+                    // Lógica inteligente: Si es "Mililitros", avisa si quedan 20 o menos. Para piezas o cajas, avisa a los 5.
+                    let limite = (d.unidad === 'Mililitros (ml)') ? 20 : 5; 
+                    
+                    if (d.cantidad <= limite) {
+                        hayAlertas = true;
+                        lista.innerHTML += `<li><strong>${d.medicamento}</strong>: Quedan ${d.cantidad} ${d.unidad || 'Unidades'}</li>`;
+                    }
+                });
+                
+                if(hayAlertas) {
+                    cajaAlerta.classList.remove('oculto');
+                } else {
+                    cajaAlerta.classList.add('oculto');
+                }
+            }).catch(e => console.log("Error cargando alertas"));
+        }
+
+        // 6. CÁMARA ESCÁNER
         function iniciarCamara(idDiv, idDestino) {
             camaraActivaId = idDiv; document.getElementById(idDiv).classList.remove('oculto');
             if(!lectorQr) { lectorQr = new Html5Qrcode(idDiv); }
@@ -412,10 +485,10 @@
             document.getElementById('total-cobrar').innerText = "0.00"; document.getElementById('venta-mostrador').checked = false; toggleMostrador();
             
             document.querySelectorAll('.contenedor').forEach(el => el.classList.add('oculto')); 
-            document.getElementById('pantalla-menu').classList.remove('oculto'); 
+            cambiarPantalla('pantalla-registro-baja', 'pantalla-menu'); // Forzamos refresh visual
         }
 
-        // 6. PUNTO DE VENTA (COBROS)
+        // 7. PUNTO DE VENTA (COBROS)
         function abrirFormulario() { cambiarTipoMovimiento('Venta/Baja'); cambiarPantalla('pantalla-menu', 'pantalla-registro-baja'); document.getElementById('texto-registro-usuario').innerText = `👨‍⚕️ Atendiendo: ${usuarioLogueado.nombre}`; }
         function cambiarTipoMovimiento(tipo) { 
             tipoMovimientoActual = tipo; 
@@ -453,7 +526,7 @@
             }).catch(e => alert("Error al procesar el cobro."));
         }
 
-        // 7. MÓDULO RECETAS MÉDICAS
+        // 8. MÓDULO RECETAS MÉDICAS
         function abrirReceta() { cambiarPantalla('pantalla-menu', 'pantalla-recetas'); }
         function guardarEImprimirReceta() {
             const dueno = document.getElementById('receta-dueno').value; const paciente = document.getElementById('receta-paciente').value;
@@ -465,12 +538,12 @@
                 doctor: usuarioLogueado.nombre, dueno: dueno, paciente: paciente, peso: peso, temperatura: temp,
                 prescripcion: texto, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now(), fechaReal: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
-                window.print(); // Abre diálogo de impresión nativo
+                window.print(); 
                 cancelarVolver();
             }).catch(e => alert("Error al guardar la receta."));
         }
 
-        // 8. CORTE DE CAJA Y REPORTES (GERENCIAL)
+        // 9. CORTE DE CAJA Y REPORTES (GERENCIAL)
         function abrirCorteCaja(periodo) {
             cambiarPantalla('pantalla-menu', 'pantalla-corte-caja');
             
@@ -495,7 +568,6 @@
                         if(!resumen[d.atendio]) resumen[d.atendio] = { ventas: 0, total: 0, descuentos: 0 };
                         
                         resumen[d.atendio].ventas += 1;
-                        // Si es devolución, se resta del total
                         let montoFinal = d.movimiento === 'Devolución de Cliente' ? -(d.totalCobrado || 0) : (d.totalCobrado || 0);
                         resumen[d.atendio].total += montoFinal;
                         
@@ -542,21 +614,27 @@
             }).catch(e => { lista.innerHTML = '<p style="color:red; text-align:center;">Error al cargar datos.</p>'; });
         }
 
-        // 9. VER INVENTARIO Y ALERTAS
+        // 10. VER INVENTARIO Y ALERTAS VISUALES
         function abrirVerInventario() {
             cambiarPantalla('pantalla-menu', 'pantalla-ver-inventario');
             const lista = document.getElementById('lista-stock-firebase'); lista.innerHTML = '<p style="text-align:center;">Buscando inventario...</p>';
+            
             db.collection("Inventario").get().then((q) => {
                 lista.innerHTML = q.empty ? '<p style="text-align:center;">No hay inventario registrado.</p>' : '';
                 q.forEach((doc) => {
                     const d = doc.data(); 
-                    const claseAlerta = d.cantidad < 5 ? 'stock-alerta' : 'stock-ok';
-                    const mensajeAlerta = d.cantidad < 5 ? `<div style="margin-top:8px; padding:5px; background:#fff0f0; color:#dc3545; border-radius:5px; text-align:center; font-size:0.85em; font-weight:bold;">¡Falta poco stock! Resurtir pronto.</div>` : '';
+                    
+                    let limite = (d.unidad === 'Mililitros (ml)') ? 20 : 5; 
+                    const claseAlerta = d.cantidad <= limite ? 'stock-alerta' : 'stock-ok';
+                    const mensajeAlerta = d.cantidad <= limite ? `<div style="margin-top:8px; padding:5px; background:#fff0f0; color:#dc3545; border-radius:5px; text-align:center; font-size:0.85em; font-weight:bold;">¡Falta poco stock! Resurtir pronto.</div>` : '';
+                    
                     lista.innerHTML += `
                         <div class="tarjeta-info ${claseAlerta}">
                             <div class="th-header">
                                 <strong style="font-size:1.1em;">${d.medicamento}</strong> 
-                                <span style="font-size: 1.3em; font-weight: bold; background:#f8f9fa; padding:2px 10px; border-radius:8px;">${d.cantidad} <span style="font-size:0.6em; font-weight:normal;">pzas</span></span>
+                                <span style="font-size: 1.2em; font-weight: bold; background:#f8f9fa; padding:2px 10px; border-radius:8px; color: ${d.cantidad <= limite ? '#dc3545' : '#198754'};">
+                                    ${d.cantidad} <span style="font-size:0.6em; font-weight:normal; color:#666;">${d.unidad || 'U.'}</span>
+                                </span>
                             </div>
                             <div class="th-cuerpo" style="color:#0d6efd; font-family:monospace;">${d.codigoQR}</div>
                             <div class="th-cuerpo" style="font-size: 0.9em; color: #666;">${d.descripcion || ''}</div>
@@ -566,17 +644,32 @@
             });
         }
 
-        // 10. HISTORIAL DE VENTAS SIMPLE
+        // 11. HISTORIAL DE VENTAS SIMPLE
         function abrirHistorial() { cambiarPantalla('pantalla-menu', 'pantalla-historial'); const lista = document.getElementById('lista-historial'); lista.innerHTML = '<p style="text-align:center;">Cargando...</p>'; db.collection("Historial_Cobros").orderBy("fechaReal", "desc").limit(50).get().then((q) => { lista.innerHTML = q.empty ? '<p style="text-align:center;">No hay ventas recientes.</p>' : ''; q.forEach((doc) => { const d = doc.data(); const color = d.movimiento === 'Devolución de Cliente' ? '#dc3545' : '#198754'; const icon = d.movimiento === 'Devolución de Cliente' ? '🔄' : '💰'; lista.innerHTML += `<div class="tarjeta-info" style="border-left: 4px solid ${color};"><div class="th-header"><strong style="color: ${color};">${icon} ${d.movimiento}</strong><span style="color:#adb5bd; font-size:0.85em;">${d.fechaTexto}</span></div><div class="th-cuerpo" style="margin-top:10px;"><strong>Concepto:</strong> <span style="color:#0d6efd;">${d.codigoConcepto}</span></div><div class="th-cuerpo"><strong>Cobro:</strong> <span style="font-size:1.1em; font-weight:bold; color:${color};">$${parseFloat(d.totalCobrado).toFixed(2)}</span> <span style="font-size:0.85em; color:#666;">(${d.metodoPago})</span></div>${d.ventaMostrador ? `<div class="th-cuerpo" style="margin-top:8px; padding:5px; background:#e9ecef; border-radius:5px; text-align:center; font-size:0.85em; color:#495057;">🛒 Venta Mostrador General</div>` : `<div class="th-cuerpo" style="margin-top:8px; padding:5px; background:#f0f9ff; border-radius:5px; font-size:0.9em;">🐾 <strong>Paciente:</strong> ${d.paciente} <br>👤 <strong>Dueño:</strong> ${d.dueno}</div>`}<div class="th-pie" style="margin-top:12px; border-top:1px dashed #e9ecef; padding-top:8px;">Atendió: <strong>${d.atendio}</strong></div></div>`; }); }); }
 
-        // 11. INGRESO Y BAJA DE INVENTARIO
+        // 12. INGRESO Y BAJA DE INVENTARIO (CON UNIDADES)
         function abrirInventario() { cambiarPantalla('pantalla-menu', 'pantalla-inventario'); }
-        function guardarEnInventario() { const q = document.getElementById('qr-inventario').value; const n = document.getElementById('nombre-inventario').value; const d = document.getElementById('descripcion-inventario').value; const c = document.getElementById('cantidad-inventario').value; if(!q || !n || !c) return alert("⚠️ Llena el código, nombre y cantidad."); db.collection("Inventario").doc(q).set({ codigoQR: q, medicamento: n, descripcion: d, cantidad: parseInt(c), registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { alert("✅ Lote guardado con éxito."); cancelarVolver(); }); }
+        function guardarEnInventario() { 
+            const q = document.getElementById('qr-inventario').value; const n = document.getElementById('nombre-inventario').value; const d = document.getElementById('descripcion-inventario').value; const c = document.getElementById('cantidad-inventario').value; const u = document.getElementById('unidad-inventario').value; 
+            if(!q || !n || !c) return alert("⚠️ Llena el código, nombre y cantidad."); 
+            db.collection("Inventario").doc(q).set({ 
+                codigoQR: q, medicamento: n, descripcion: d, cantidad: parseInt(c), unidad: u, registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() 
+            }).then(() => { alert("✅ Lote guardado con éxito."); cancelarVolver(); }); 
+        }
         
         function abrirBajaInventario() { cambiarPantalla('pantalla-menu', 'pantalla-baja-inventario'); }
-        function guardarBajaInventario() { const q = document.getElementById('qr-baja-inv').value; const c = document.getElementById('cantidad-baja-inv').value; if(!q || !c) return alert("⚠️ Llena código y cantidad."); db.collection("Inventario").doc(q).get().then(doc => { if(doc.exists) { let actual = doc.data().cantidad; db.collection("Inventario").doc(q).update({ cantidad: actual - Math.abs(parseInt(c)) }).then(() => { alert("✅ Descuento de stock registrado."); cancelarVolver(); }); } else { alert("❌ El medicamento no existe en inventario."); } }); }
+        function guardarBajaInventario() { 
+            const q = document.getElementById('qr-baja-inv').value; const c = document.getElementById('cantidad-baja-inv').value; const u = document.getElementById('unidad-baja-inv').value;
+            if(!q || !c) return alert("⚠️ Llena código y cantidad."); 
+            db.collection("Inventario").doc(q).get().then(doc => { 
+                if(doc.exists) { 
+                    let actual = doc.data().cantidad; 
+                    db.collection("Inventario").doc(q).update({ cantidad: actual - Math.abs(parseInt(c)) }).then(() => { alert(`✅ Se descontaron ${c} ${u} de stock.`); cancelarVolver(); }); 
+                } else { alert("❌ El medicamento no existe en inventario."); } 
+            }); 
+        }
 
-        // 12. ADMINISTRAR USUARIOS
+        // 13. ADMINISTRAR USUARIOS
         function abrirUsuarios() { cambiarPantalla('pantalla-menu', 'pantalla-usuarios'); const lista = document.getElementById('lista-usuarios-firebase'); lista.innerHTML = '<p style="text-align:center;">Cargando usuarios...</p>'; db.collection("Usuarios").get().then((q) => { lista.innerHTML = ''; q.forEach((doc) => { const u = doc.data(); const uPin = doc.id; lista.innerHTML += `<div class="tarjeta-info" style="display:flex; justify-content: space-between; align-items: center; padding: 15px;"><div style="line-height:1.4;"><strong style="font-size:1.1em;">${u.nombre}</strong> <span style="background:#e3f2fd; color:#0d6efd; padding:2px 8px; border-radius:12px; font-size:0.75em; font-weight:bold; margin-left:5px;">${u.rol}</span><br><span style="color:#6c757d; font-size:0.85em;">PIN: <strong style="color:#333;">${uPin}</strong></span></div><button class="btn-cancelar" style="margin:0; padding:8px 15px; width:auto; border-radius:8px;" onclick="eliminarUsuario('${uPin}')">Borrar</button></div>`; }); }); }
         function crearUsuario() { const n = document.getElementById('nuevo-usuario-nombre').value; const p = document.getElementById('nuevo-usuario-pin').value; const r = document.getElementById('nuevo-usuario-rol').value; if(!n || !p || p.length !== 4) return alert("⚠️ Ingresa un nombre y un PIN de exactamente 4 números."); db.collection("Usuarios").doc(p).set({ nombre: n, rol: r }).then(() => { alert("✅ Usuario creado."); document.getElementById('nuevo-usuario-nombre').value = ""; document.getElementById('nuevo-usuario-pin').value = ""; abrirUsuarios(); }); }
         function eliminarUsuario(pinBorrar) { if(pinBorrar === usuarioLogueado.pin) return alert("❌ No puedes eliminarte a ti mismo."); if(confirm(`¿Seguro de eliminar este acceso (${pinBorrar})?`)) { db.collection("Usuarios").doc(pinBorrar).delete().then(() => { abrirUsuarios(); }); } }
