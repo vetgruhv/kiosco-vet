@@ -10,52 +10,64 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
     <style>
-        /* --- ESTILOS VISUALES (CSS) --- */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .contenedor { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); width: 90%; max-width: 500px; text-align: center; margin: 20px 0; max-height: 90vh; overflow-y: auto; }
-        .pantalla-pin { font-size: 2.5em; letter-spacing: 15px; margin-bottom: 25px; padding: 15px; width: 100%; text-align: center; background-color: #f8f9fa; border: 2px solid #e9ecef; border-radius: 10px; box-sizing: border-box; color: #333; }
+        /* --- ESTILOS VISUALES MEJORADOS (MODERNO Y LIMPIO) --- */
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f0f2f5; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; }
+        .contenedor { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); width: 95%; max-width: 600px; margin: 20px 0; max-height: 90vh; overflow-y: auto; }
+        
+        /* Teclado PIN */
+        .pantalla-pin { font-size: 2.5em; letter-spacing: 15px; margin-bottom: 25px; padding: 15px; width: 100%; text-align: center; background-color: #f8f9fa; border: 2px solid #e9ecef; border-radius: 12px; box-sizing: border-box; color: #333; font-weight: bold; }
         .cuadricula-teclas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .tecla { padding: 25px 0; font-size: 1.8em; background: #ffffff; border: 1px solid #dee2e6; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: pointer; transition: 0.1s; color: #333; }
-        .tecla:active { background: #e9ecef; transform: translateY(2px); }
-        .tecla-borrar { background: #ffe3e3; color: #dc3545; border-color: #ffc9c9; }
+        .tecla { padding: 20px 0; font-size: 1.8em; background: #ffffff; border: 1px solid #dee2e6; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.04); cursor: pointer; transition: all 0.2s; color: #333; font-weight: 500; }
+        .tecla:active { background: #e9ecef; transform: scale(0.95); }
+        .tecla-borrar { background: #fff0f0; color: #dc3545; border-color: #ffc9c9; }
         
-        .header-usuario { background: #e3f2fd; color: #0d6efd; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; font-size: 1.1em; }
-        .selector-movimiento { display: flex; gap: 10px; margin-bottom: 15px; }
-        .btn-mov { flex: 1; padding: 10px 5px; border: 2px solid #ced4da; background: white; color: #6c757d; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.9em; }
-        .btn-mov.activo-baja, .btn-filtro.activo { background: #0d6efd; color: white; border-color: #0d6efd; }
-        .btn-mov.activo-alta { background: #198754; color: white; border-color: #198754; }
+        /* Cabecera y Menú Cuadrícula */
+        .header-usuario { background: linear-gradient(135deg, #0d6efd, #0a58ca); color: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; font-weight: bold; font-size: 1.1em; text-align: center; box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2); }
+        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
+        .btn-menu { padding: 20px 10px; font-size: 0.95em; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 1px solid #e9ecef; background: white; border-radius: 15px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.02); color: #495057; font-weight: 600; }
+        .btn-menu:hover { background: #f8f9fa; transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.08); border-color: #dee2e6; }
+        .btn-menu:active { transform: translateY(0); }
+        .btn-menu .emoji { font-size: 2.2em; margin-bottom: 10px; }
         
-        .grupo-formulario { margin-bottom: 12px; text-align: left; }
-        .grupo-formulario label { display: block; font-weight: bold; margin-bottom: 4px; color: #495057; font-size: 0.85em; }
-        .grupo-formulario input, .grupo-formulario select, .grupo-formulario textarea { width: 100%; padding: 10px; font-size: 0.95em; border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box; font-family: inherit; }
+        /* Formularios a dos columnas */
+        .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
+        .form-row .grupo-formulario { margin-bottom: 0; flex: 1; }
+        .grupo-formulario { margin-bottom: 15px; text-align: left; }
+        .grupo-formulario label { display: block; font-weight: 600; margin-bottom: 6px; color: #495057; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.5px; }
+        .grupo-formulario input, .grupo-formulario select, .grupo-formulario textarea { width: 100%; padding: 12px; font-size: 1em; border: 2px solid #e9ecef; border-radius: 10px; box-sizing: border-box; font-family: inherit; transition: border-color 0.2s; background-color: #fcfcfc; }
+        .grupo-formulario input:focus, .grupo-formulario select:focus, .grupo-formulario textarea:focus { border-color: #0d6efd; outline: none; background-color: #fff; }
         
-        .btn { width: 100%; padding: 15px; font-size: 1.1em; border: none; border-radius: 8px; cursor: pointer; margin-top: 5px; font-weight: bold; transition: 0.2s; }
-        .btn-menu { background: #f8f9fa; color: #333; border: 1px solid #dee2e6; margin-bottom: 10px; }
-        .btn-menu:active { background: #e9ecef; }
-        .btn-qr { background: #e3f2fd; color: #0d6efd; border: 2px dashed #0d6efd; padding: 12px;}
-        .btn-guardar { background: #198754; color: white; }
-        .btn-guardar-rojo { background: #dc3545; color: white; }
-        .btn-guardar-azul { background: #0d6efd; color: white; }
-        .btn-cancelar { background: transparent; color: #dc3545; margin-top: 5px; padding: 10px;}
-        .btn-filtro { flex: 1; padding: 8px; border: 1px solid #0d6efd; background: white; color: #0d6efd; border-radius: 5px; cursor: pointer; font-weight: bold;}
+        /* Botones Generales */
+        .btn { width: 100%; padding: 16px; font-size: 1.1em; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; transition: all 0.2s ease; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn:active { transform: scale(0.98); }
+        .btn-qr { background: #e3f2fd; color: #0d6efd; border: 2px dashed #0d6efd; margin-bottom: 15px;}
+        .btn-guardar { background: #198754; color: white; box-shadow: 0 4px 10px rgba(25, 135, 84, 0.3); margin-top: 10px;}
+        .btn-guardar-rojo { background: #dc3545; color: white; box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3); }
+        .btn-guardar-azul { background: #0d6efd; color: white; box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3); }
+        .btn-cancelar { background: transparent; color: #dc3545; margin-top: 10px; border: 2px solid #ffe3e3; }
+        .btn-cancelar:hover { background: #fff0f0; }
         
-        .caja-camara { width: 100%; border-radius: 8px; overflow: hidden; margin-bottom: 15px; border: 2px solid #333; }
+        /* Selector Alta/Baja */
+        .selector-movimiento { display: flex; gap: 10px; margin-bottom: 20px; background: #f8f9fa; padding: 5px; border-radius: 12px; }
+        .btn-mov { flex: 1; padding: 12px 5px; border: none; background: transparent; color: #6c757d; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.95em; }
+        .btn-mov.activo-baja { background: #0d6efd; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .btn-mov.activo-alta { background: #198754; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        /* Cajas de cobro y alertas */
+        .caja-cobro { background: #fffbf0; padding: 20px; border-radius: 15px; border: 1px solid #ffecb5; margin-bottom: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+        .tarjeta-info { background: #ffffff; border: 1px solid #e9ecef; border-radius: 12px; padding: 18px; margin-bottom: 15px; font-size: 0.95em; text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .stock-alerta { border-left: 6px solid #dc3545; background-color: #fffafb; }
+        .stock-ok { border-left: 6px solid #198754; }
+        
+        .caja-camara { width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 15px; border: 3px solid #333; }
         .oculto { display: none !important; }
-        
-        .caja-cobro { background: #fff3cd; padding: 15px; border-radius: 8px; border: 1px solid #ffe69c; margin-bottom: 15px; }
-        .tarjeta-info { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 15px; font-size: 0.95em; text-align: left; }
-        
-        .stock-alerta { border-left: 5px solid #dc3545; background-color: #fff8f8; }
-        .stock-ok { border-left: 5px solid #198754; }
-        
-        .th-header { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #e9ecef; padding-bottom: 5px;}
-        .th-cuerpo { margin-bottom: 5px; color: #495057; }
-        .th-pie { color: #6c757d; font-size: 0.85em; text-align: right; margin-top: 10px; }
 
+        /* Estilos de Impresión */
         @media print {
-            body { background: white; }
-            .btn, .header-usuario, .ocultar-impresion { display: none !important; }
-            .contenedor { box-shadow: none; max-width: 100%; margin: 0; padding: 0; }
+            body { background: white; color: black; }
+            .btn, .header-usuario, .ocultar-impresion, .menu-grid, .caja-cobro { display: none !important; }
+            .contenedor { box-shadow: none; max-width: 100%; margin: 0; padding: 0; border: none; }
+            input, textarea { border: none !important; border-bottom: 1px solid #ccc !important; border-radius: 0 !important; background: transparent !important; }
         }
     </style>
 </head>
@@ -63,7 +75,7 @@
 
     <!-- PANTALLA 1: LOGIN -->
     <div id="pantalla-login" class="contenedor">
-        <h2 style="color: #333; margin-top: 0;">Ingresa tu PIN</h2>
+        <h2 style="color: #333; margin-top: 0; font-size: 1.8em;">🔐 Ingresa tu PIN</h2>
         <input type="password" id="input-pin" class="pantalla-pin" readonly>
         <div class="cuadricula-teclas">
             <button class="tecla" onclick="agregarNumero('1')">1</button>
@@ -81,61 +93,86 @@
         </div>
     </div>
 
-    <!-- PANTALLA 2: MENÚ PRINCIPAL -->
+    <!-- PANTALLA 2: MENÚ PRINCIPAL MEJORADO -->
     <div id="pantalla-menu" class="contenedor oculto">
         <div class="header-usuario" id="texto-bienvenida">Bienvenido</div>
         
-        <h4 style="color: #666; margin: 10px 0 5px 0; text-align: left;">Operaciones:</h4>
-        <button id="btn-movimiento" class="btn btn-menu oculto" onclick="abrirFormulario()">🛒 Punto de Venta / Baja</button>
-        <button id="btn-receta" class="btn btn-menu oculto" onclick="abrirReceta()">📝 Generar Receta Médica</button>
+        <h4 style="color: #adb5bd; margin: 0 0 15px 0; text-align: left; text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px;">Operaciones Médicas</h4>
+        <div class="menu-grid">
+            <button id="btn-movimiento" class="btn-menu oculto" onclick="abrirFormulario()">
+                <span class="emoji">🛒</span> <span>Punto de Venta</span>
+            </button>
+            <button id="btn-receta" class="btn-menu oculto" onclick="abrirReceta()">
+                <span class="emoji">📝</span> <span>Generar Receta</span>
+            </button>
+        </div>
         
-        <h4 id="titulo-gerencia" style="color: #666; margin: 15px 0 5px 0; text-align: left;" class="oculto">Administración y Reportes:</h4>
-        <button id="btn-corte" class="btn btn-menu oculto" onclick="abrirCorteCaja('dia')" style="background-color: #e8f4f8; border-color: #0dcaf0; color: #055160;">💰 Corte de Caja y Descuentos</button>
-        <button id="btn-ver-inventario" class="btn btn-menu oculto" onclick="abrirVerInventario()">👀 Ver Inventario y Alertas</button>
-        <button id="btn-alta-inventario" class="btn btn-menu oculto" onclick="abrirInventario()">📦 Ingresar Lotes Nuevos</button>
-        <button id="btn-baja-inventario" class="btn btn-menu oculto" onclick="abrirBajaInventario()">📉 Bajar Lote (Merma/Interno)</button>
+        <h4 id="titulo-gerencia" class="oculto" style="color: #adb5bd; margin: 20px 0 15px 0; text-align: left; text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px;">Administración (Gerencia)</h4>
+        <div class="menu-grid">
+            <button id="btn-corte" class="btn-menu oculto" onclick="abrirCorteCaja('dia')" style="background-color: #f0f9ff; border-color: #b6e3f4;">
+                <span class="emoji">💰</span> <span style="color: #0dcaf0;">Corte de Caja</span>
+            </button>
+            <button id="btn-ver-inventario" class="btn-menu oculto" onclick="abrirVerInventario()">
+                <span class="emoji">👀</span> <span>Ver Inventario</span>
+            </button>
+            <button id="btn-alta-inventario" class="btn-menu oculto" onclick="abrirInventario()">
+                <span class="emoji">📦</span> <span>Lotes Nuevos</span>
+            </button>
+            <button id="btn-baja-inventario" class="btn-menu oculto" onclick="abrirBajaInventario()">
+                <span class="emoji">📉</span> <span>Merma Interna</span>
+            </button>
+            <button id="btn-historial" class="btn-menu oculto" onclick="abrirHistorial()">
+                <span class="emoji">📋</span> <span>Hist. Ventas</span>
+            </button>
+            <button id="btn-usuarios" class="btn-menu oculto" onclick="abrirUsuarios()">
+                <span class="emoji">👥</span> <span>Personal</span>
+            </button>
+        </div>
         
-        <button id="btn-historial" class="btn btn-menu oculto" onclick="abrirHistorial()">📋 Historial de Ventas</button>
-        <button id="btn-historial-recetas" class="btn btn-menu oculto" onclick="abrirHistorialRecetas()">📋 Historial de Recetas</button>
-        <button id="btn-usuarios" class="btn btn-menu oculto" onclick="abrirUsuarios()">👥 Administrar Personal</button>
-        
-        <button class="btn btn-cancelar" style="margin-top:20px;" onclick="cerrarSesion()">Cerrar Sesión</button>
+        <button class="btn btn-cancelar" style="margin-top:20px; font-size: 1em; padding: 12px;" onclick="cerrarSesion()">Cerrar Sesión</button>
     </div>
 
-    <!-- PANTALLA 3: PUNTO DE VENTA (BAJA) -->
+    <!-- PANTALLA 3: PUNTO DE VENTA -->
     <div id="pantalla-registro-baja" class="contenedor oculto">
-        <div class="header-usuario" id="texto-registro-usuario"></div>
-        <div class="selector-movimiento">
+        <div class="header-usuario" id="texto-registro-usuario" style="background: linear-gradient(135deg, #198754, #146c43);"></div>
+        
+        <!-- SELECTOR DE TIPO (Se oculta para Doctores mediante JS) -->
+        <div class="selector-movimiento" id="contenedor-selector-mov">
             <button type="button" id="toggle-baja" class="btn-mov activo-baja" onclick="cambiarTipoMovimiento('Venta/Baja')">🛒 Venta / Baja</button>
             <button type="button" id="toggle-alta" class="btn-mov" onclick="cambiarTipoMovimiento('Devolución de Cliente')">🔄 Devolución</button>
         </div>
         
+        <h2 id="titulo-formulario" style="color: #333; margin-top: 0; font-size: 1.4em; text-align: left;">Nueva Venta</h2>
+        
         <button type="button" class="btn btn-qr" onclick="iniciarCamara('caja-camara-baja', 'codigo-qr-resultado')">📷 Escanear Producto (QR)</button>
         <div id="caja-camara-baja" class="caja-camara oculto"></div>
         
-        <div class="grupo-formulario" style="margin-top: 10px;">
-            <label>Código o Nombre del Servicio/Medicamento:</label>
-            <input type="text" id="codigo-qr-resultado" placeholder="Escanea o teclea..." style="font-weight: bold; color: #0d6efd;">
+        <div class="grupo-formulario">
+            <label>Código o Nombre del Servicio:</label>
+            <input type="text" id="codigo-qr-resultado" placeholder="Escanea o teclea..." style="font-weight: bold; color: #0d6efd; font-size: 1.1em;">
         </div>
 
-        <div style="background: #e9ecef; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
-            <label style="font-weight: bold; font-size: 0.9em; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                <input type="checkbox" id="venta-mostrador" onchange="toggleMostrador()" style="width: 20px; height: 20px;"> 
-                Es Venta a Mostrador (Público General)
+        <div style="background: #f8f9fa; padding: 12px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #e9ecef;">
+            <label style="font-weight: 600; font-size: 0.95em; cursor: pointer; display: flex; align-items: center; gap: 10px; color: #495057;">
+                <input type="checkbox" id="venta-mostrador" onchange="toggleMostrador()" style="width: 22px; height: 22px; accent-color: #0d6efd;"> 
+                Venta a Público General (Mostrador)
             </label>
         </div>
         
         <div id="campos-paciente">
-            <div class="grupo-formulario"><label>Nombre del Dueño:</label><input type="text" id="nombre-dueno" placeholder="Ej. Juan Pérez"></div>
-            <div class="grupo-formulario"><label>Nombre del Paciente:</label><input type="text" id="nombre-perro" placeholder="Ej. Firulais"></div>
+            <div class="form-row">
+                <div class="grupo-formulario"><label>Nombre del Dueño:</label><input type="text" id="nombre-dueno" placeholder="Ej. Juan Pérez"></div>
+                <div class="grupo-formulario"><label>Paciente:</label><input type="text" id="nombre-perro" placeholder="Ej. Firulais"></div>
+            </div>
             <div class="grupo-formulario"><label>Raza del paciente:</label><input type="text" id="raza-paciente" placeholder="Ej. Chihuahua..."></div>
         </div>
 
         <div class="caja-cobro">
-            <h4 style="margin: 0 0 10px 0; color: #664d03;">💳 Detalles de Cobro</h4>
-            <div class="grupo-formulario"><label>Precio del Artículo/Servicio ($):</label><input type="number" id="precio-item" placeholder="0.00" oninput="calcularTotal()"></div>
-            <div style="display: flex; gap: 10px;">
-                <div class="grupo-formulario" style="flex: 1;">
+            <h4 style="margin: 0 0 15px 0; color: #856404; font-size: 1.1em; border-bottom: 1px solid #ffeeba; padding-bottom: 8px;">💳 Detalles de Cobro</h4>
+            <div class="grupo-formulario"><label>Precio Original ($):</label><input type="number" id="precio-item" placeholder="0.00" oninput="calcularTotal()" style="font-size: 1.1em; font-weight: bold;"></div>
+            
+            <div class="form-row">
+                <div class="grupo-formulario">
                     <label>Tipo Descuento:</label>
                     <select id="tipo-descuento" onchange="calcularTotal()">
                         <option value="Ninguno">Ninguno</option>
@@ -143,131 +180,146 @@
                         <option value="Monto">Monto Fijo ($)</option>
                     </select>
                 </div>
-                <div class="grupo-formulario" style="flex: 1;"><label>Descuento:</label><input type="number" id="valor-descuento" placeholder="0" oninput="calcularTotal()"></div>
+                <div class="grupo-formulario"><label>Descuento:</label><input type="number" id="valor-descuento" placeholder="0" oninput="calcularTotal()"></div>
             </div>
+            
             <div class="grupo-formulario">
                 <label>Método de Pago:</label>
                 <select id="metodo-pago">
                     <option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option>
-                    <option>Terminal Clip</option><option>American Express</option><option>Sin Cobro (Servicio Interno)</option>
+                    <option>Terminal Clip</option><option>American Express</option><option>Transferencia</option><option>Sin Cobro (Servicio Interno)</option>
                 </select>
             </div>
-            <h2 style="margin: 10px 0 0 0; color: #198754; text-align: right;">Total: $<span id="total-cobrar">0.00</span></h2>
+            
+            <h2 style="margin: 15px 0 0 0; color: #198754; text-align: right; font-size: 2em;">Total: $<span id="total-cobrar">0.00</span></h2>
         </div>
         
-        <button class="btn btn-guardar" onclick="guardarEnHistorial()">Realizar Cobro y Guardar</button>
+        <button class="btn btn-guardar" onclick="guardarEnHistorial()">✅ Registrar Cobro</button>
         <button class="btn btn-cancelar" onclick="cancelarVolver()">Cancelar</button>
     </div>
 
     <!-- PANTALLA 4: RECETA MÉDICA -->
     <div id="pantalla-recetas" class="contenedor oculto">
-        <h2 style="color: #0d6efd; margin-top: 0; font-size: 1.4em;">📝 Receta Médica</h2>
-        <div class="grupo-formulario"><label>Dueño:</label><input type="text" id="receta-dueno" placeholder="Nombre del propietario"></div>
-        <div class="grupo-formulario"><label>Paciente (Nombre y Raza):</label><input type="text" id="receta-paciente" placeholder="Ej. Max - Golden Retriever"></div>
+        <h2 style="color: #0d6efd; margin-top: 0; font-size: 1.6em; text-align: left;">📝 Receta Médica</h2>
         
-        <div style="display: flex; gap: 10px;">
-            <div class="grupo-formulario" style="flex: 1;"><label>Peso (Kg):</label><input type="text" id="receta-peso" placeholder="Ej. 12.5"></div>
-            <div class="grupo-formulario" style="flex: 1;"><label>Temp (°C):</label><input type="text" id="receta-temp" placeholder="Ej. 38.5"></div>
+        <div class="form-row">
+            <div class="grupo-formulario"><label>Dueño:</label><input type="text" id="receta-dueno" placeholder="Nombre completo"></div>
+            <div class="grupo-formulario"><label>Paciente:</label><input type="text" id="receta-paciente" placeholder="Ej. Max (Husky)"></div>
+        </div>
+        
+        <div class="form-row">
+            <div class="grupo-formulario"><label>Peso (Kg):</label><input type="text" id="receta-peso" placeholder="Ej. 12.5"></div>
+            <div class="grupo-formulario"><label>Temp (°C):</label><input type="text" id="receta-temp" placeholder="Ej. 38.5"></div>
         </div>
 
         <div class="grupo-formulario">
             <label>Prescripción Médica (Medicamento y Dosis):</label>
-            <textarea id="receta-texto" rows="6" placeholder="Ej. 1. Amoxicilina 250mg - 1 tableta cada 12 hrs por 5 días..."></textarea>
+            <textarea id="receta-texto" rows="8" placeholder="1. Amoxicilina 250mg - 1 tableta cada 12 hrs por 5 días..." style="font-size: 1em;"></textarea>
         </div>
         
-        <button class="btn btn-guardar-azul ocultar-impresion" onclick="guardarEImprimirReceta()">Guardar e Imprimir Receta</button>
+        <button class="btn btn-guardar-azul ocultar-impresion" onclick="guardarEImprimirReceta()">🖨️ Guardar e Imprimir</button>
         <button class="btn btn-cancelar ocultar-impresion" onclick="cancelarVolver()">Cerrar</button>
     </div>
 
-    <!-- PANTALLA 5: CORTE DE CAJA Y REPORTES -->
+    <!-- PANTALLA 5: CORTE DE CAJA -->
     <div id="pantalla-corte-caja" class="contenedor oculto">
-        <h2 style="color: #333; margin-top: 0;">💰 Corte de Caja</h2>
+        <h2 style="color: #333; margin-top: 0; text-align: left;">💰 Corte de Caja</h2>
         
-        <div style="display: flex; gap: 5px; margin-bottom: 20px;">
-            <button id="filtro-dia" class="btn-filtro activo" onclick="abrirCorteCaja('dia')">Día</button>
-            <button id="filtro-semana" class="btn-filtro" onclick="abrirCorteCaja('semana')">Semana</button>
-            <button id="filtro-mes" class="btn-filtro" onclick="abrirCorteCaja('mes')">Mes</button>
+        <div style="display: flex; gap: 8px; margin-bottom: 25px; background: #f8f9fa; padding: 5px; border-radius: 10px;">
+            <button id="filtro-dia" class="btn btn-mov activo-baja" style="padding: 10px;" onclick="abrirCorteCaja('dia')">Día</button>
+            <button id="filtro-semana" class="btn btn-mov" style="padding: 10px;" onclick="abrirCorteCaja('semana')">Semana</button>
+            <button id="filtro-mes" class="btn btn-mov" style="padding: 10px;" onclick="abrirCorteCaja('mes')">Mes</button>
         </div>
 
-        <div id="resumen-corte" style="background:#f8f9fa; border-radius:8px; padding:15px; margin-bottom:20px; text-align:center; border: 1px solid #dee2e6;">
-            <h3 style="margin:0; color:#666;">Total Cobrado:</h3>
-            <h1 style="margin:5px 0; color:#198754; font-size:2.5em;">$<span id="corte-gran-total">0.00</span></h1>
-            <p style="margin:0; color:#dc3545; font-weight:bold;">Total Descuentos: $<span id="corte-gran-descuento">0.00</span></p>
+        <div id="resumen-corte" style="background: linear-gradient(135deg, #198754, #146c43); border-radius: 15px; padding: 25px; margin-bottom: 25px; text-align: center; color: white; box-shadow: 0 5px 15px rgba(25, 135, 84, 0.2);">
+            <h3 style="margin:0; font-weight: normal; font-size: 1.1em;">Total Cobrado (Neto)</h3>
+            <h1 style="margin:10px 0; font-size:3em; font-weight: bold;">$<span id="corte-gran-total">0.00</span></h1>
+            <div style="background: rgba(255,255,255,0.2); display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 0.9em;">
+                Mermas/Descuentos: $<span id="corte-gran-descuento">0.00</span>
+            </div>
         </div>
 
-        <h4 style="text-align: left; margin-bottom: 10px; color: #333;">Desglose por Doctor/a:</h4>
-        <div id="lista-corte-caja" style="max-height: 300px; overflow-y: auto; padding-right: 5px;"></div>
+        <h4 style="text-align: left; margin-bottom: 15px; color: #495057; text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px;">Rendimiento por Doctor:</h4>
+        <div id="lista-corte-caja" style="max-height: 350px; overflow-y: auto; padding-right: 5px;"></div>
         
-        <button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-corte-caja', 'pantalla-menu')">Volver al Menú</button>
+        <button class="btn btn-cancelar" style="margin-top: 20px; border-color: #ced4da; color: #495057;" onclick="cambiarPantalla('pantalla-corte-caja', 'pantalla-menu')">Volver al Menú</button>
     </div>
 
     <!-- PANTALLA 6: VER INVENTARIO Y ALERTAS -->
     <div id="pantalla-ver-inventario" class="contenedor oculto">
-        <h2 style="color: #333; margin-top: 0;">📦 Inventario Actual</h2>
-        <p style="font-size: 0.85em; color: #666; text-align: left; margin-bottom: 15px;">
-            <span style="color: #dc3545; font-weight: bold;">🔴 Rojo:</span> Menos de 5 piezas (Falta poco).<br>
+        <h2 style="color: #333; margin-top: 0; text-align: left;">📦 Inventario Actual</h2>
+        <p style="font-size: 0.85em; color: #666; text-align: left; margin-bottom: 20px; background: #f8f9fa; padding: 10px; border-radius: 8px;">
+            <span style="color: #dc3545; font-weight: bold;">🔴 Rojo:</span> Menos de 5 piezas.<br>
             <span style="color: #198754; font-weight: bold;">🟢 Verde:</span> Stock suficiente.
         </p>
-        <div id="lista-stock-firebase" style="max-height: 400px; overflow-y: auto; padding-right: 5px;"></div>
-        <button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-ver-inventario', 'pantalla-menu')">Volver al Menú</button>
+        <div id="lista-stock-firebase" style="max-height: 450px; overflow-y: auto; padding-right: 5px;"></div>
+        <button class="btn btn-cancelar" style="margin-top: 20px; border-color: #ced4da; color: #495057;" onclick="cambiarPantalla('pantalla-ver-inventario', 'pantalla-menu')">Volver al Menú</button>
     </div>
 
     <!-- PANTALLA 7: HISTORIAL DE VENTAS -->
     <div id="pantalla-historial" class="contenedor oculto">
-        <h2 style="color: #333; margin-top: 0;">📋 Historial de Ventas</h2>
-        <div id="lista-historial" style="max-height: 400px; overflow-y: auto;"></div>
-        <button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-historial', 'pantalla-menu')">Volver</button>
-    </div>
-    
-    <!-- PANTALLA 8: HISTORIAL DE RECETAS -->
-    <div id="pantalla-historial-recetas" class="contenedor oculto">
-        <h2 style="color: #333; margin-top: 0;">📋 Historial de Recetas</h2>
-        <div id="lista-historial-recetas" style="max-height: 400px; overflow-y: auto;"></div>
-        <button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-historial-recetas', 'pantalla-menu')">Volver</button>
+        <h2 style="color: #333; margin-top: 0; text-align: left;">📋 Historial de Ventas</h2>
+        <div id="lista-historial" style="max-height: 450px; overflow-y: auto; padding-right: 5px;"></div>
+        <button class="btn btn-cancelar" style="margin-top: 20px; border-color: #ced4da; color: #495057;" onclick="cambiarPantalla('pantalla-historial', 'pantalla-menu')">Volver al Menú</button>
     </div>
 
-    <!-- PANTALLA 9: ALTA INVENTARIO -->
+    <!-- PANTALLA 8: ALTA INVENTARIO -->
     <div id="pantalla-inventario" class="contenedor oculto">
-        <h2 style="color: #333; margin-top: 0;">📦 Alta de Lote</h2>
+        <h2 style="color: #333; margin-top: 0; text-align: left;">📦 Alta de Lote Nuevo</h2>
         <button type="button" class="btn btn-qr" onclick="iniciarCamara('caja-camara-inventario', 'qr-inventario')">📷 Escanear (QR)</button>
         <div id="caja-camara-inventario" class="caja-camara oculto"></div>
-        <div class="grupo-formulario"><label>Código QR / Nombre:</label><input type="text" id="qr-inventario"></div>
+        <div class="grupo-formulario"><label>Código QR / Nombre:</label><input type="text" id="qr-inventario" style="font-weight: bold;"></div>
         <div class="grupo-formulario"><label>Medicamento:</label><input type="text" id="nombre-inventario"></div>
-        <div class="grupo-formulario"><label>Descripción / Gramaje:</label><input type="text" id="descripcion-inventario"></div>
-        <div class="grupo-formulario"><label>Cantidad de piezas ingresando:</label><input type="number" id="cantidad-inventario"></div>
+        
+        <div class="form-row">
+            <div class="grupo-formulario"><label>Descripción / Gramaje:</label><input type="text" id="descripcion-inventario"></div>
+            <div class="grupo-formulario"><label>Piezas a ingresar:</label><input type="number" id="cantidad-inventario"></div>
+        </div>
+        
         <button class="btn btn-guardar" onclick="guardarEnInventario()">Guardar Alta</button>
         <button class="btn btn-cancelar" onclick="cancelarVolver()">Cancelar</button>
     </div>
 
-    <!-- PANTALLA 10: BAJA INVENTARIO -->
+    <!-- PANTALLA 9: BAJA INVENTARIO -->
     <div id="pantalla-baja-inventario" class="contenedor oculto">
-        <h2 style="color: #333; margin-top: 0;">📉 Baja de Lote (Interno)</h2>
-        <div class="grupo-formulario"><label>Código QR / Nombre:</label><input type="text" id="qr-baja-inv"></div>
+        <h2 style="color: #dc3545; margin-top: 0; text-align: left;">📉 Baja de Lote (Interno)</h2>
+        <div class="grupo-formulario"><label>Código QR / Nombre:</label><input type="text" id="qr-baja-inv" style="font-weight: bold; color: #dc3545;"></div>
         <div class="grupo-formulario"><label>Medicamento:</label><input type="text" id="nombre-baja-inv"></div>
-        <div class="grupo-formulario"><label>Motivo:</label><input type="text" id="motivo-baja-inv"></div>
-        <div class="grupo-formulario"><label>Cantidad a descontar:</label><input type="number" id="cantidad-baja-inv"></div>
+        
+        <div class="form-row">
+            <div class="grupo-formulario"><label>Motivo:</label><input type="text" id="motivo-baja-inv" placeholder="Ej. Caducidad"></div>
+            <div class="grupo-formulario"><label>Descontar (Piezas):</label><input type="number" id="cantidad-baja-inv"></div>
+        </div>
+        
         <button class="btn btn-guardar btn-guardar-rojo" onclick="guardarBajaInventario()">Registrar Baja</button>
         <button class="btn btn-cancelar" onclick="cancelarVolver()">Cancelar</button>
     </div>
 
-    <!-- PANTALLA 11: USUARIOS -->
+    <!-- PANTALLA 10: USUARIOS -->
     <div id="pantalla-usuarios" class="contenedor oculto">
-        <h2 style="color: #333; margin-top: 0;">👥 Administrar Personal</h2>
-        <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-            <div class="grupo-formulario"><label>Nombre:</label><input type="text" id="nuevo-usuario-nombre"></div>
-            <div class="grupo-formulario"><label>PIN (4 números):</label><input type="number" id="nuevo-usuario-pin"></div>
+        <h2 style="color: #333; margin-top: 0; text-align: left;">👥 Administrar Personal</h2>
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 15px; margin-bottom: 25px; border: 1px solid #e9ecef;">
+            <h4 style="margin-top: 0; color: #0d6efd; text-align: left;">Agregar Nuevo</h4>
+            
+            <div class="form-row">
+                <div class="grupo-formulario"><label>Nombre:</label><input type="text" id="nuevo-usuario-nombre"></div>
+                <div class="grupo-formulario"><label>PIN (4 dígitos):</label><input type="number" id="nuevo-usuario-pin"></div>
+            </div>
+            
             <div class="grupo-formulario">
                 <label>Rol del Sistema:</label>
                 <select id="nuevo-usuario-rol">
-                    <option value="Doctor">Doctor (Solo Ventas/Bajas)</option>
-                    <option value="Sub-Gerente">Sub-Gerente (Ventas + Historiales)</option>
-                    <option value="Gerente">Gerente (Acceso Total + Cortes)</option>
+                    <option value="Doctor">Doctor (Solo Ventas/Recetas)</option>
+                    <option value="Sub-Gerente">Sub-Gerente (Ventas + Devoluciones + Historiales)</option>
+                    <option value="Gerente">Gerente (Acceso Total + Cortes de Caja)</option>
                 </select>
             </div>
-            <button class="btn btn-guardar" onclick="crearUsuario()">+ Agregar Usuario</button>
+            <button class="btn btn-guardar-azul" onclick="crearUsuario()">+ Agregar Usuario</button>
         </div>
-        <div id="lista-usuarios-firebase" style="max-height: 250px; overflow-y: auto;"></div>
-        <button class="btn btn-menu" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-usuarios', 'pantalla-menu')">Volver al Menú</button>
+        
+        <h4 style="margin-bottom: 15px; color: #495057; text-align: left; text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px;">Personal Activo:</h4>
+        <div id="lista-usuarios-firebase" style="max-height: 250px; overflow-y: auto; padding-right: 5px;"></div>
+        <button class="btn btn-cancelar" style="margin-top: 20px; border-color: #ced4da; color: #495057;" onclick="cambiarPantalla('pantalla-usuarios', 'pantalla-menu')">Volver al Menú</button>
     </div>
 
     <!-- === LÓGICA MAESTRA JAVASCRIPT === -->
@@ -297,7 +349,7 @@
         function limpiarPin() { pinActual = ""; document.getElementById('input-pin').value = ""; }
         function cambiarPantalla(idOcultar, idMostrar) { document.getElementById(idOcultar).classList.add('oculto'); document.getElementById(idMostrar).classList.remove('oculto'); }
 
-        // 4. LOGIN CON PERMISOS
+        // 4. LOGIN CON PERMISOS Y DISEÑO DINÁMICO
         function validarPin() {
             db.collection("Usuarios").doc(pinActual).get().then((doc) => {
                 if(doc.exists) {
@@ -305,7 +357,6 @@
                     configurarTextosYPermisos(); reiniciarTemporizador(); 
                     cambiarPantalla('pantalla-login', 'pantalla-menu');
                 } else {
-                    // Creación automática para pruebas si la base de datos está vacía
                     if(pinActual === "1111" || pinActual === "2222" || pinActual === "3333") {
                         const baseLocal = { "1111": { nombre: "Ana", rol: "Gerente" }, "2222": { nombre: "Carlos", rol: "Sub-Gerente" }, "3333": { nombre: "Luis", rol: "Doctor" } };
                         db.collection("Usuarios").doc(pinActual).set(baseLocal[pinActual]).then(validarPin);
@@ -321,9 +372,18 @@
             document.getElementById('btn-movimiento').classList.remove('oculto');
             document.getElementById('btn-receta').classList.remove('oculto');
             
-            // Ocultar gerenciales por defecto
-            const adminBotones = ['btn-corte', 'btn-ver-inventario', 'btn-alta-inventario', 'btn-baja-inventario', 'btn-historial', 'btn-historial-recetas', 'btn-usuarios', 'titulo-gerencia'];
+            // Ocultar botones gerenciales y de devolución por defecto
+            const adminBotones = ['btn-corte', 'btn-ver-inventario', 'btn-alta-inventario', 'btn-baja-inventario', 'btn-historial', 'btn-usuarios', 'titulo-gerencia'];
             adminBotones.forEach(id => document.getElementById(id).classList.add('oculto'));
+            
+            // CONFIGURACIÓN DE DEVOLUCIONES (El requerimiento clave)
+            if(usuarioLogueado.rol === "Doctor") {
+                document.getElementById('toggle-alta').classList.add('oculto'); // Oculta botón devolución
+                document.getElementById('toggle-baja').style.borderRadius = "8px"; // Ajusta borde
+                cambiarTipoMovimiento('Venta/Baja'); // Fuerza siempre Venta
+            } else {
+                document.getElementById('toggle-alta').classList.remove('oculto'); // Muestra devolución para Gerentes
+            }
 
             if(usuarioLogueado.rol === "Gerente") {
                 adminBotones.forEach(id => document.getElementById(id).classList.remove('oculto'));
@@ -331,7 +391,6 @@
                 document.getElementById('titulo-gerencia').classList.remove('oculto');
                 document.getElementById('btn-ver-inventario').classList.remove('oculto');
                 document.getElementById('btn-historial').classList.remove('oculto');
-                document.getElementById('btn-historial-recetas').classList.remove('oculto');
             }
         }
 
@@ -357,8 +416,17 @@
         }
 
         // 6. PUNTO DE VENTA (COBROS)
-        function abrirFormulario() { cambiarTipoMovimiento('Venta/Baja'); cambiarPantalla('pantalla-menu', 'pantalla-registro-baja'); document.getElementById('texto-registro-usuario').innerText = `Atendiendo: ${usuarioLogueado.nombre}`; }
-        function cambiarTipoMovimiento(tipo) { tipoMovimientoActual = tipo; if(tipo === 'Venta/Baja') { document.getElementById('toggle-baja').classList.add('activo-baja'); document.getElementById('toggle-alta').classList.remove('activo-alta'); } else { document.getElementById('toggle-alta').classList.add('activo-alta'); document.getElementById('toggle-baja').classList.remove('activo-baja'); } }
+        function abrirFormulario() { cambiarTipoMovimiento('Venta/Baja'); cambiarPantalla('pantalla-menu', 'pantalla-registro-baja'); document.getElementById('texto-registro-usuario').innerText = `👨‍⚕️ Atendiendo: ${usuarioLogueado.nombre}`; }
+        function cambiarTipoMovimiento(tipo) { 
+            tipoMovimientoActual = tipo; 
+            if(tipo === 'Venta/Baja') { 
+                document.getElementById('toggle-baja').classList.add('activo-baja'); document.getElementById('toggle-alta').classList.remove('activo-alta'); 
+                document.getElementById('titulo-formulario').innerText = "Nueva Venta / Servicio"; 
+            } else { 
+                document.getElementById('toggle-alta').classList.add('activo-alta'); document.getElementById('toggle-baja').classList.remove('activo-baja'); 
+                document.getElementById('titulo-formulario').innerText = "Registrar Devolución (Solo Gerencia)"; 
+            } 
+        }
         function toggleMostrador() { const esMostrador = document.getElementById('venta-mostrador').checked; if(esMostrador) { document.getElementById('campos-paciente').classList.add('oculto'); document.getElementById('nombre-dueno').value = "Público General"; document.getElementById('nombre-perro').value = "N/A"; document.getElementById('raza-paciente').value = "N/A"; } else { document.getElementById('campos-paciente').classList.remove('oculto'); document.getElementById('nombre-dueno').value = ""; document.getElementById('nombre-perro').value = ""; document.getElementById('raza-paciente').value = ""; } }
         
         function calcularTotal() { 
@@ -376,7 +444,6 @@
             if(!codigo) { alert("⚠️ Por favor ingresa el código del producto/servicio."); return; }
             if(!document.getElementById('venta-mostrador').checked && (!dueno || !perro)) { alert("⚠️ Llena los datos del paciente o marca 'Venta a Mostrador'."); return; }
 
-            // Guardamos con 'timestamp' para que los Cortes de Caja funcionen perfecto
             db.collection("Historial_Cobros").add({
                 movimiento: tipoMovimientoActual, atendio: usuarioLogueado.nombre, codigoConcepto: codigo,
                 paciente: perro, dueno: dueno, raza: raza, precioOriginal: parseFloat(precio), tipoDescuento: tipoDesc, valorDescuento: parseFloat(valorDesc), totalCobrado: totalCobroCalculado, metodoPago: metodoPago, ventaMostrador: document.getElementById('venta-mostrador').checked, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now(), fechaReal: firebase.firestore.FieldValue.serverTimestamp() 
@@ -398,7 +465,7 @@
                 doctor: usuarioLogueado.nombre, dueno: dueno, paciente: paciente, peso: peso, temperatura: temp,
                 prescripcion: texto, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now(), fechaReal: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
-                window.print(); // Abre diálogo de impresión
+                window.print(); // Abre diálogo de impresión nativo
                 cancelarVolver();
             }).catch(e => alert("Error al guardar la receta."));
         }
@@ -407,21 +474,20 @@
         function abrirCorteCaja(periodo) {
             cambiarPantalla('pantalla-menu', 'pantalla-corte-caja');
             
-            // Actualizar botones de filtro
-            document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('activo'));
-            document.getElementById(`filtro-${periodo}`).classList.add('activo');
+            document.querySelectorAll('.btn-filtro').forEach(b => { b.classList.remove('activo-baja'); b.style.background="transparent"; b.style.color="#6c757d"; });
+            const btnActivo = document.getElementById(`filtro-${periodo}`);
+            btnActivo.classList.add('activo-baja'); btnActivo.style.background="#0d6efd"; btnActivo.style.color="white";
 
             const lista = document.getElementById('lista-corte-caja');
-            lista.innerHTML = '<p>Procesando datos...</p>';
+            lista.innerHTML = '<p style="text-align:center;">Procesando datos...</p>';
 
             let limiteTiempo = Date.now();
-            if(periodo === 'dia') limiteTiempo -= (24 * 60 * 60 * 1000); // Últimas 24h
-            if(periodo === 'semana') limiteTiempo -= (7 * 24 * 60 * 60 * 1000); // Últimos 7 días
-            if(periodo === 'mes') limiteTiempo -= (30 * 24 * 60 * 60 * 1000); // Últimos 30 días
+            if(periodo === 'dia') limiteTiempo -= (24 * 60 * 60 * 1000); 
+            if(periodo === 'semana') limiteTiempo -= (7 * 24 * 60 * 60 * 1000); 
+            if(periodo === 'mes') limiteTiempo -= (30 * 24 * 60 * 60 * 1000); 
 
             db.collection("Historial_Cobros").orderBy("timestamp", "desc").limit(1000).get().then(q => {
-                let resumen = {};
-                let granTotal = 0; let granDescuento = 0;
+                let resumen = {}; let granTotal = 0; let granDescuento = 0;
 
                 q.forEach(doc => {
                     const d = doc.data();
@@ -429,16 +495,16 @@
                         if(!resumen[d.atendio]) resumen[d.atendio] = { ventas: 0, total: 0, descuentos: 0 };
                         
                         resumen[d.atendio].ventas += 1;
-                        resumen[d.atendio].total += (d.totalCobrado || 0);
+                        // Si es devolución, se resta del total
+                        let montoFinal = d.movimiento === 'Devolución de Cliente' ? -(d.totalCobrado || 0) : (d.totalCobrado || 0);
+                        resumen[d.atendio].total += montoFinal;
                         
-                        // Calcular descuento real en dinero para el reporte
                         let descReal = 0;
                         if(d.tipoDescuento === 'Monto') descReal = d.valorDescuento;
                         else if (d.tipoDescuento === 'Porcentaje') descReal = d.precioOriginal * (d.valorDescuento / 100);
                         
                         resumen[d.atendio].descuentos += descReal;
-                        
-                        granTotal += (d.totalCobrado || 0);
+                        granTotal += montoFinal;
                         granDescuento += descReal;
                     }
                 });
@@ -447,60 +513,73 @@
                 document.getElementById('corte-gran-descuento').innerText = granDescuento.toFixed(2);
 
                 if(Object.keys(resumen).length === 0) {
-                    lista.innerHTML = '<p>No se encontraron movimientos en este periodo.</p>'; return;
+                    lista.innerHTML = '<p style="text-align:center; color:#666;">No hay movimientos en este periodo.</p>'; return;
                 }
 
                 let html = '';
                 for(let doctor in resumen) {
                     let r = resumen[doctor];
                     html += `
-                    <div class="tarjeta-info">
-                        <div class="th-header"><strong style="color:#0d6efd; font-size:1.1em;">👨‍⚕️ ${doctor}</strong></div>
-                        <div class="th-cuerpo"><strong>Tratamientos/Ventas:</strong> ${r.ventas}</div>
-                        <div class="th-cuerpo"><strong>Cobrado a caja:</strong> $${r.total.toFixed(2)}</div>
-                        <div class="th-cuerpo" style="color:#dc3545;"><strong>Descuentos otorgados:</strong> $${r.descuentos.toFixed(2)}</div>
+                    <div class="tarjeta-info" style="border-left: 4px solid #0d6efd;">
+                        <div class="th-header"><strong style="color:#333; font-size:1.1em;">👨‍⚕️ ${doctor}</strong></div>
+                        <div style="display:flex; justify-content:space-between; margin-top:10px;">
+                            <div style="text-align:center; flex:1;">
+                                <div style="font-size:0.8em; color:#666; text-transform:uppercase;">Ventas</div>
+                                <strong>${r.ventas}</strong>
+                            </div>
+                            <div style="text-align:center; flex:1; border-left:1px solid #eee; border-right:1px solid #eee;">
+                                <div style="font-size:0.8em; color:#666; text-transform:uppercase;">Cobrado</div>
+                                <strong style="color:#198754;">$${r.total.toFixed(2)}</strong>
+                            </div>
+                            <div style="text-align:center; flex:1;">
+                                <div style="font-size:0.8em; color:#666; text-transform:uppercase;">Descuentos</div>
+                                <strong style="color:#dc3545;">$${r.descuentos.toFixed(2)}</strong>
+                            </div>
+                        </div>
                     </div>`;
                 }
                 lista.innerHTML = html;
-            }).catch(e => { lista.innerHTML = '<p style="color:red;">Error al cargar datos.</p>'; });
+            }).catch(e => { lista.innerHTML = '<p style="color:red; text-align:center;">Error al cargar datos.</p>'; });
         }
 
         // 9. VER INVENTARIO Y ALERTAS
         function abrirVerInventario() {
             cambiarPantalla('pantalla-menu', 'pantalla-ver-inventario');
-            const lista = document.getElementById('lista-stock-firebase'); lista.innerHTML = '<p>Buscando inventario...</p>';
+            const lista = document.getElementById('lista-stock-firebase'); lista.innerHTML = '<p style="text-align:center;">Buscando inventario...</p>';
             db.collection("Inventario").get().then((q) => {
-                lista.innerHTML = q.empty ? '<p>No hay inventario registrado.</p>' : '';
+                lista.innerHTML = q.empty ? '<p style="text-align:center;">No hay inventario registrado.</p>' : '';
                 q.forEach((doc) => {
                     const d = doc.data(); 
                     const claseAlerta = d.cantidad < 5 ? 'stock-alerta' : 'stock-ok';
-                    const mensajeAlerta = d.cantidad < 5 ? `<span style="color: #dc3545; font-weight: bold; font-size: 0.85em;">¡Falta poco stock!</span>` : '';
+                    const mensajeAlerta = d.cantidad < 5 ? `<div style="margin-top:8px; padding:5px; background:#fff0f0; color:#dc3545; border-radius:5px; text-align:center; font-size:0.85em; font-weight:bold;">¡Falta poco stock! Resurtir pronto.</div>` : '';
                     lista.innerHTML += `
                         <div class="tarjeta-info ${claseAlerta}">
-                            <div class="th-header"><strong>${d.medicamento}</strong> <span style="font-size: 1.2em; font-weight: bold;">Quedan: ${d.cantidad}</span></div>
-                            <div class="th-cuerpo"><strong>Cód:</strong> ${d.codigoQR}</div>
-                            <div class="th-cuerpo" style="font-size: 0.85em; color: #666;">${d.descripcion || ''}</div>
+                            <div class="th-header">
+                                <strong style="font-size:1.1em;">${d.medicamento}</strong> 
+                                <span style="font-size: 1.3em; font-weight: bold; background:#f8f9fa; padding:2px 10px; border-radius:8px;">${d.cantidad} <span style="font-size:0.6em; font-weight:normal;">pzas</span></span>
+                            </div>
+                            <div class="th-cuerpo" style="color:#0d6efd; font-family:monospace;">${d.codigoQR}</div>
+                            <div class="th-cuerpo" style="font-size: 0.9em; color: #666;">${d.descripcion || ''}</div>
                             ${mensajeAlerta}
                         </div>`;
                 });
             });
         }
 
-        // 10. HISTORIALES SIMPLES (VENTAS Y RECETAS)
-        function abrirHistorial() { cambiarPantalla('pantalla-menu', 'pantalla-historial'); const lista = document.getElementById('lista-historial'); lista.innerHTML = '<p>Cargando...</p>'; db.collection("Historial_Cobros").orderBy("fechaReal", "desc").limit(50).get().then((q) => { lista.innerHTML = q.empty ? '<p>No hay ventas.</p>' : ''; q.forEach((doc) => { const d = doc.data(); const color = d.movimiento === 'Devolución de Cliente' ? '#dc3545' : '#0d6efd'; lista.innerHTML += `<div class="tarjeta-info"><div class="th-header"><strong style="color: ${color};">${d.movimiento}</strong><span style="color:#666; font-size:0.9em;">${d.fechaTexto}</span></div><div class="th-cuerpo"><strong>Concepto:</strong> ${d.codigoConcepto}</div><div class="th-cuerpo"><strong>Cobro:</strong> $${parseFloat(d.totalCobrado).toFixed(2)} (${d.metodoPago})</div>${d.ventaMostrador ? `<div class="th-cuerpo" style="color:#198754;">🛒 Venta Público General</div>` : `<div class="th-cuerpo"><strong>Paciente:</strong> ${d.paciente} - <strong>Dueño:</strong> ${d.dueno}</div>`}<div class="th-pie">Doctor/a: <strong>${d.atendio}</strong></div></div>`; }); }); }
-        function abrirHistorialRecetas() { cambiarPantalla('pantalla-menu', 'pantalla-historial-recetas'); const lista = document.getElementById('lista-historial-recetas'); lista.innerHTML = '<p>Cargando...</p>'; db.collection("Historial_Recetas").orderBy("fechaReal", "desc").limit(30).get().then((q) => { lista.innerHTML = q.empty ? '<p>No hay recetas.</p>' : ''; q.forEach((doc) => { const d = doc.data(); lista.innerHTML += `<div class="tarjeta-info"><div class="th-header"><strong style="color: #0d6efd;">Paciente: ${d.paciente}</strong><span style="color:#666; font-size:0.9em;">${d.fechaTexto}</span></div><div class="th-cuerpo"><strong>Dueño:</strong> ${d.dueno}</div><div class="th-cuerpo"><strong>Prescripción:</strong> ${d.prescripcion}</div><div class="th-pie">Doctor/a: <strong>${d.doctor}</strong></div></div>`; }); }); }
+        // 10. HISTORIAL DE VENTAS SIMPLE
+        function abrirHistorial() { cambiarPantalla('pantalla-menu', 'pantalla-historial'); const lista = document.getElementById('lista-historial'); lista.innerHTML = '<p style="text-align:center;">Cargando...</p>'; db.collection("Historial_Cobros").orderBy("fechaReal", "desc").limit(50).get().then((q) => { lista.innerHTML = q.empty ? '<p style="text-align:center;">No hay ventas recientes.</p>' : ''; q.forEach((doc) => { const d = doc.data(); const color = d.movimiento === 'Devolución de Cliente' ? '#dc3545' : '#198754'; const icon = d.movimiento === 'Devolución de Cliente' ? '🔄' : '💰'; lista.innerHTML += `<div class="tarjeta-info" style="border-left: 4px solid ${color};"><div class="th-header"><strong style="color: ${color};">${icon} ${d.movimiento}</strong><span style="color:#adb5bd; font-size:0.85em;">${d.fechaTexto}</span></div><div class="th-cuerpo" style="margin-top:10px;"><strong>Concepto:</strong> <span style="color:#0d6efd;">${d.codigoConcepto}</span></div><div class="th-cuerpo"><strong>Cobro:</strong> <span style="font-size:1.1em; font-weight:bold; color:${color};">$${parseFloat(d.totalCobrado).toFixed(2)}</span> <span style="font-size:0.85em; color:#666;">(${d.metodoPago})</span></div>${d.ventaMostrador ? `<div class="th-cuerpo" style="margin-top:8px; padding:5px; background:#e9ecef; border-radius:5px; text-align:center; font-size:0.85em; color:#495057;">🛒 Venta Mostrador General</div>` : `<div class="th-cuerpo" style="margin-top:8px; padding:5px; background:#f0f9ff; border-radius:5px; font-size:0.9em;">🐾 <strong>Paciente:</strong> ${d.paciente} <br>👤 <strong>Dueño:</strong> ${d.dueno}</div>`}<div class="th-pie" style="margin-top:12px; border-top:1px dashed #e9ecef; padding-top:8px;">Atendió: <strong>${d.atendio}</strong></div></div>`; }); }); }
 
         // 11. INGRESO Y BAJA DE INVENTARIO
         function abrirInventario() { cambiarPantalla('pantalla-menu', 'pantalla-inventario'); }
-        function guardarEnInventario() { const q = document.getElementById('qr-inventario').value; const n = document.getElementById('nombre-inventario').value; const d = document.getElementById('descripcion-inventario').value; const c = document.getElementById('cantidad-inventario').value; if(!q || !n || !c) return alert("⚠️ Llena todo."); db.collection("Inventario").doc(q).set({ codigoQR: q, medicamento: n, descripcion: d, cantidad: parseInt(c), registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { alert("✅ Lote actualizado."); cancelarVolver(); }); }
+        function guardarEnInventario() { const q = document.getElementById('qr-inventario').value; const n = document.getElementById('nombre-inventario').value; const d = document.getElementById('descripcion-inventario').value; const c = document.getElementById('cantidad-inventario').value; if(!q || !n || !c) return alert("⚠️ Llena el código, nombre y cantidad."); db.collection("Inventario").doc(q).set({ codigoQR: q, medicamento: n, descripcion: d, cantidad: parseInt(c), registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { alert("✅ Lote guardado con éxito."); cancelarVolver(); }); }
         
         function abrirBajaInventario() { cambiarPantalla('pantalla-menu', 'pantalla-baja-inventario'); }
-        function guardarBajaInventario() { const q = document.getElementById('qr-baja-inv').value; const c = document.getElementById('cantidad-baja-inv').value; if(!q || !c) return alert("⚠️ Llena código y cantidad."); db.collection("Inventario").doc(q).get().then(doc => { if(doc.exists) { let actual = doc.data().cantidad; db.collection("Inventario").doc(q).update({ cantidad: actual - Math.abs(parseInt(c)) }).then(() => { alert("✅ Descuento de stock registrado."); cancelarVolver(); }); } else { alert("El medicamento no existe en inventario."); } }); }
+        function guardarBajaInventario() { const q = document.getElementById('qr-baja-inv').value; const c = document.getElementById('cantidad-baja-inv').value; if(!q || !c) return alert("⚠️ Llena código y cantidad."); db.collection("Inventario").doc(q).get().then(doc => { if(doc.exists) { let actual = doc.data().cantidad; db.collection("Inventario").doc(q).update({ cantidad: actual - Math.abs(parseInt(c)) }).then(() => { alert("✅ Descuento de stock registrado."); cancelarVolver(); }); } else { alert("❌ El medicamento no existe en inventario."); } }); }
 
         // 12. ADMINISTRAR USUARIOS
-        function abrirUsuarios() { cambiarPantalla('pantalla-menu', 'pantalla-usuarios'); const lista = document.getElementById('lista-usuarios-firebase'); lista.innerHTML = '<p>Cargando usuarios...</p>'; db.collection("Usuarios").get().then((q) => { lista.innerHTML = ''; q.forEach((doc) => { const u = doc.data(); const uPin = doc.id; lista.innerHTML += `<div class="tarjeta-info" style="display:flex; justify-content: space-between; align-items: center; padding: 10px 15px;"><div><strong>${u.nombre}</strong> <span style="color:#0d6efd; font-size:0.8em;">(${u.rol})</span><br><span style="color:#666; font-size:0.8em;">PIN de Acceso: ${uPin}</span></div><button class="btn-cancelar" style="margin:0; padding:5px 10px; width:auto; border: 1px solid #dc3545; border-radius:5px;" onclick="eliminarUsuario('${uPin}')">Borrar</button></div>`; }); }); }
-        function crearUsuario() { const n = document.getElementById('nuevo-usuario-nombre').value; const p = document.getElementById('nuevo-usuario-pin').value; const r = document.getElementById('nuevo-usuario-rol').value; if(!n || !p || p.length !== 4) return alert("⚠️ Ingresa un nombre y PIN de 4 números."); db.collection("Usuarios").doc(p).set({ nombre: n, rol: r }).then(() => { alert("✅ Usuario creado."); document.getElementById('nuevo-usuario-nombre').value = ""; document.getElementById('nuevo-usuario-pin').value = ""; abrirUsuarios(); }); }
-        function eliminarUsuario(pinBorrar) { if(pinBorrar === usuarioLogueado.pin) return alert("❌ No puedes eliminarte a ti mismo."); if(confirm("¿Seguro de eliminar?")) { db.collection("Usuarios").doc(pinBorrar).delete().then(() => { abrirUsuarios(); }); } }
+        function abrirUsuarios() { cambiarPantalla('pantalla-menu', 'pantalla-usuarios'); const lista = document.getElementById('lista-usuarios-firebase'); lista.innerHTML = '<p style="text-align:center;">Cargando usuarios...</p>'; db.collection("Usuarios").get().then((q) => { lista.innerHTML = ''; q.forEach((doc) => { const u = doc.data(); const uPin = doc.id; lista.innerHTML += `<div class="tarjeta-info" style="display:flex; justify-content: space-between; align-items: center; padding: 15px;"><div style="line-height:1.4;"><strong style="font-size:1.1em;">${u.nombre}</strong> <span style="background:#e3f2fd; color:#0d6efd; padding:2px 8px; border-radius:12px; font-size:0.75em; font-weight:bold; margin-left:5px;">${u.rol}</span><br><span style="color:#6c757d; font-size:0.85em;">PIN: <strong style="color:#333;">${uPin}</strong></span></div><button class="btn-cancelar" style="margin:0; padding:8px 15px; width:auto; border-radius:8px;" onclick="eliminarUsuario('${uPin}')">Borrar</button></div>`; }); }); }
+        function crearUsuario() { const n = document.getElementById('nuevo-usuario-nombre').value; const p = document.getElementById('nuevo-usuario-pin').value; const r = document.getElementById('nuevo-usuario-rol').value; if(!n || !p || p.length !== 4) return alert("⚠️ Ingresa un nombre y un PIN de exactamente 4 números."); db.collection("Usuarios").doc(p).set({ nombre: n, rol: r }).then(() => { alert("✅ Usuario creado."); document.getElementById('nuevo-usuario-nombre').value = ""; document.getElementById('nuevo-usuario-pin').value = ""; abrirUsuarios(); }); }
+        function eliminarUsuario(pinBorrar) { if(pinBorrar === usuarioLogueado.pin) return alert("❌ No puedes eliminarte a ti mismo."); if(confirm(`¿Seguro de eliminar este acceso (${pinBorrar})?`)) { db.collection("Usuarios").doc(pinBorrar).delete().then(() => { abrirUsuarios(); }); } }
     </script>
 </body>
 </html>
