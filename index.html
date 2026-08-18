@@ -84,6 +84,9 @@
 </head>
 <body>
 
+    <!-- LISTA OCULTA DE AUTOCOMPLETADO (Se llena automáticamente) -->
+    <datalist id="lista-medicamentos"></datalist>
+
     <!-- PANTALLA 1: LOGIN -->
     <div id="pantalla-login" class="contenedor">
         <h2 style="color: #333; margin-top: 0; font-size: 1.8em;">🔐 Ingresa tu PIN</h2>
@@ -108,12 +111,9 @@
     <div id="pantalla-menu" class="contenedor oculto">
         <div class="header-usuario" id="texto-bienvenida">Bienvenido</div>
         
-        <!-- NOTIFICACIÓN DE INVENTARIO (Se carga automáticamente) -->
         <div id="alerta-inventario-menu" class="alerta-banner oculto">
             <h4>⚠️ Atención: Productos por agotarse</h4>
-            <ul id="lista-alertas-menu">
-                <!-- Aquí se inyectan las alertas desde JavaScript -->
-            </ul>
+            <ul id="lista-alertas-menu"></ul>
         </div>
 
         <h4 style="color: #adb5bd; margin: 0 0 15px 0; text-align: left; text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px;">Operaciones Médicas</h4>
@@ -165,9 +165,10 @@
         <button type="button" class="btn btn-qr" onclick="iniciarCamara('caja-camara-baja', 'codigo-qr-resultado')">📷 Escanear Producto (QR)</button>
         <div id="caja-camara-baja" class="caja-camara oculto"></div>
         
+        <!-- AUTOCOMPLETADO AÑADIDO (list="lista-medicamentos") -->
         <div class="grupo-formulario">
-            <label>Código o Nombre del Servicio:</label>
-            <input type="text" id="codigo-qr-resultado" placeholder="Escanea o teclea..." style="font-weight: bold; color: #0d6efd; font-size: 1.1em;">
+            <label>Código o Nombre del Servicio/Medicamento:</label>
+            <input type="text" id="codigo-qr-resultado" list="lista-medicamentos" placeholder="Teclea el nombre o escanea..." style="font-weight: bold; color: #0d6efd; font-size: 1.1em;">
         </div>
 
         <div style="background: #f8f9fa; padding: 12px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #e9ecef;">
@@ -291,7 +292,6 @@
         
         <div class="grupo-formulario"><label>Descripción / Gramaje:</label><input type="text" id="descripcion-inventario"></div>
         
-        <!-- SECCIÓN NUEVA: UNIDADES DE MEDIDA -->
         <div class="form-row">
             <div class="grupo-formulario"><label>Cantidad:</label><input type="number" id="cantidad-inventario" placeholder="Ej. 10"></div>
             <div class="grupo-formulario">
@@ -311,13 +311,15 @@
     <!-- PANTALLA 9: BAJA INVENTARIO -->
     <div id="pantalla-baja-inventario" class="contenedor oculto">
         <h2 style="color: #dc3545; margin-top: 0; text-align: left;">📉 Baja de Lote (Interno)</h2>
-        <div class="grupo-formulario"><label>Código QR / Nombre:</label><input type="text" id="qr-baja-inv" style="font-weight: bold; color: #dc3545;"></div>
-        <div class="grupo-formulario"><label>Medicamento:</label><input type="text" id="nombre-baja-inv"></div>
+        <!-- AUTOCOMPLETADO AÑADIDO AQUÍ TAMBIÉN -->
+        <div class="grupo-formulario">
+            <label>Código QR / Nombre:</label>
+            <input type="text" id="qr-baja-inv" list="lista-medicamentos" placeholder="Teclea el nombre o escanea..." style="font-weight: bold; color: #dc3545;">
+        </div>
         <div class="grupo-formulario"><label>Motivo:</label><input type="text" id="motivo-baja-inv" placeholder="Ej. Caducidad, uso interno"></div>
         
         <div class="form-row">
             <div class="grupo-formulario"><label>Descontar (Cantidad):</label><input type="number" id="cantidad-baja-inv" placeholder="Ej. 2"></div>
-            <!-- SECCIÓN NUEVA: UNIDADES DE MEDIDA -->
             <div class="grupo-formulario">
                 <label>Unidad:</label>
                 <select id="unidad-baja-inv">
@@ -389,18 +391,18 @@
             document.getElementById(idOcultar).classList.add('oculto'); 
             document.getElementById(idMostrar).classList.remove('oculto'); 
             
-            // Si regresamos al menú, refrescar las alertas de inventario automáticamente
             if (idMostrar === 'pantalla-menu') {
                 revisarAlertasInventario();
             }
         }
 
-        // 4. LOGIN CON PERMISOS
+        // 4. LOGIN Y PERMISOS
         function validarPin() {
             db.collection("Usuarios").doc(pinActual).get().then((doc) => {
                 if(doc.exists) {
                     usuarioLogueado = doc.data(); usuarioLogueado.pin = pinActual; 
                     configurarTextosYPermisos(); reiniciarTemporizador(); 
+                    cargarSugerenciasInventario(); // <--- LLAMADA A AUTOCOMPLETADO
                     cambiarPantalla('pantalla-login', 'pantalla-menu');
                 } else {
                     if(pinActual === "1111" || pinActual === "2222" || pinActual === "3333") {
@@ -413,16 +415,12 @@
 
         function configurarTextosYPermisos() {
             document.getElementById('texto-bienvenida').innerText = `Hola, ${usuarioLogueado.nombre}`;
-            
-            // Mostrar los básicos para Doctor
             document.getElementById('btn-movimiento').classList.remove('oculto');
             document.getElementById('btn-receta').classList.remove('oculto');
             
-            // Ocultar botones gerenciales y de devolución por defecto
             const adminBotones = ['btn-corte', 'btn-ver-inventario', 'btn-alta-inventario', 'btn-baja-inventario', 'btn-historial', 'btn-usuarios', 'titulo-gerencia'];
             adminBotones.forEach(id => document.getElementById(id).classList.add('oculto'));
             
-            // CONFIGURACIÓN DE DEVOLUCIONES
             if(usuarioLogueado.rol === "Doctor") {
                 document.getElementById('toggle-alta').classList.add('oculto'); 
                 document.getElementById('toggle-baja').style.borderRadius = "8px"; 
@@ -442,34 +440,54 @@
 
         function cerrarSesion() { usuarioLogueado = null; clearTimeout(temporizadorInactividad); limpiarPin(); document.querySelectorAll('.contenedor').forEach(el => el.classList.add('oculto')); document.getElementById('pantalla-login').classList.remove('oculto'); }
 
-        // 5. NUEVO: ALERTAS DE INVENTARIO EN EL MENÚ
+        // 5. NUEVO: CARGAR AUTOCOMPLETADO (DATALIST)
+        function cargarSugerenciasInventario() {
+            const datalist = document.getElementById('lista-medicamentos');
+            if(!datalist) return;
+            datalist.innerHTML = '';
+            
+            db.collection("Inventario").get().then((q) => {
+                q.forEach((doc) => {
+                    const d = doc.data();
+                    // Crea una sugerencia que se ve así: "Paracetamol - 12345"
+                    datalist.innerHTML += `<option value="${d.medicamento} - ${d.codigoQR}">Stock: ${d.cantidad} ${d.unidad || 'U.'}</option>`;
+                });
+            }).catch(e => console.log("Error cargando autocompletado."));
+        }
+
+        // 6. ALERTAS DE INVENTARIO
         function revisarAlertasInventario() {
             const cajaAlerta = document.getElementById('alerta-inventario-menu');
             const lista = document.getElementById('lista-alertas-menu');
             lista.innerHTML = '';
             
             db.collection("Inventario").get().then(q => {
-                let hayAlertas = false;
+                let itemsAlerta = [];
                 q.forEach(doc => {
                     const d = doc.data();
-                    // Lógica inteligente: Si es "Mililitros", avisa si quedan 20 o menos. Para piezas o cajas, avisa a los 5.
                     let limite = (d.unidad === 'Mililitros (ml)') ? 20 : 5; 
                     
                     if (d.cantidad <= limite) {
-                        hayAlertas = true;
-                        lista.innerHTML += `<li><strong>${d.medicamento}</strong>: Quedan ${d.cantidad} ${d.unidad || 'Unidades'}</li>`;
+                        itemsAlerta.push(`<strong>${d.medicamento}</strong>: Quedan ${d.cantidad} ${d.unidad || 'U.'}`);
                     }
                 });
                 
-                if(hayAlertas) {
+                if(itemsAlerta.length > 0) {
                     cajaAlerta.classList.remove('oculto');
+                    let html = '';
+                    let maxMostrar = Math.min(3, itemsAlerta.length);
+                    for(let i=0; i < maxMostrar; i++){ html += `<li>${itemsAlerta[i]}</li>`; }
+                    if(itemsAlerta.length > 3) {
+                        html += `<li style="list-style:none; margin-top:10px; font-weight:bold; cursor:pointer; color:#0d6efd; text-decoration:underline;" onclick="abrirVerInventario()">+ ${itemsAlerta.length - 3} productos más (Ver Inventario)</li>`;
+                    }
+                    lista.innerHTML = html;
                 } else {
                     cajaAlerta.classList.add('oculto');
                 }
             }).catch(e => console.log("Error cargando alertas"));
         }
 
-        // 6. CÁMARA ESCÁNER
+        // 7. CÁMARA ESCÁNER
         function iniciarCamara(idDiv, idDestino) {
             camaraActivaId = idDiv; document.getElementById(idDiv).classList.remove('oculto');
             if(!lectorQr) { lectorQr = new Html5Qrcode(idDiv); }
@@ -485,10 +503,10 @@
             document.getElementById('total-cobrar').innerText = "0.00"; document.getElementById('venta-mostrador').checked = false; toggleMostrador();
             
             document.querySelectorAll('.contenedor').forEach(el => el.classList.add('oculto')); 
-            cambiarPantalla('pantalla-registro-baja', 'pantalla-menu'); // Forzamos refresh visual
+            cambiarPantalla('pantalla-registro-baja', 'pantalla-menu'); 
         }
 
-        // 7. PUNTO DE VENTA (COBROS)
+        // 8. PUNTO DE VENTA (COBROS)
         function abrirFormulario() { cambiarTipoMovimiento('Venta/Baja'); cambiarPantalla('pantalla-menu', 'pantalla-registro-baja'); document.getElementById('texto-registro-usuario').innerText = `👨‍⚕️ Atendiendo: ${usuarioLogueado.nombre}`; }
         function cambiarTipoMovimiento(tipo) { 
             tipoMovimientoActual = tipo; 
@@ -526,7 +544,7 @@
             }).catch(e => alert("Error al procesar el cobro."));
         }
 
-        // 8. MÓDULO RECETAS MÉDICAS
+        // 9. MÓDULO RECETAS MÉDICAS
         function abrirReceta() { cambiarPantalla('pantalla-menu', 'pantalla-recetas'); }
         function guardarEImprimirReceta() {
             const dueno = document.getElementById('receta-dueno').value; const paciente = document.getElementById('receta-paciente').value;
@@ -543,7 +561,7 @@
             }).catch(e => alert("Error al guardar la receta."));
         }
 
-        // 9. CORTE DE CAJA Y REPORTES (GERENCIAL)
+        // 10. CORTE DE CAJA Y REPORTES (GERENCIAL)
         function abrirCorteCaja(periodo) {
             cambiarPantalla('pantalla-menu', 'pantalla-corte-caja');
             
@@ -614,7 +632,7 @@
             }).catch(e => { lista.innerHTML = '<p style="color:red; text-align:center;">Error al cargar datos.</p>'; });
         }
 
-        // 10. VER INVENTARIO Y ALERTAS VISUALES
+        // 11. VER INVENTARIO Y ALERTAS VISUALES COMPLETAS
         function abrirVerInventario() {
             cambiarPantalla('pantalla-menu', 'pantalla-ver-inventario');
             const lista = document.getElementById('lista-stock-firebase'); lista.innerHTML = '<p style="text-align:center;">Buscando inventario...</p>';
@@ -644,32 +662,49 @@
             });
         }
 
-        // 11. HISTORIAL DE VENTAS SIMPLE
+        // 12. HISTORIAL DE VENTAS SIMPLE
         function abrirHistorial() { cambiarPantalla('pantalla-menu', 'pantalla-historial'); const lista = document.getElementById('lista-historial'); lista.innerHTML = '<p style="text-align:center;">Cargando...</p>'; db.collection("Historial_Cobros").orderBy("fechaReal", "desc").limit(50).get().then((q) => { lista.innerHTML = q.empty ? '<p style="text-align:center;">No hay ventas recientes.</p>' : ''; q.forEach((doc) => { const d = doc.data(); const color = d.movimiento === 'Devolución de Cliente' ? '#dc3545' : '#198754'; const icon = d.movimiento === 'Devolución de Cliente' ? '🔄' : '💰'; lista.innerHTML += `<div class="tarjeta-info" style="border-left: 4px solid ${color};"><div class="th-header"><strong style="color: ${color};">${icon} ${d.movimiento}</strong><span style="color:#adb5bd; font-size:0.85em;">${d.fechaTexto}</span></div><div class="th-cuerpo" style="margin-top:10px;"><strong>Concepto:</strong> <span style="color:#0d6efd;">${d.codigoConcepto}</span></div><div class="th-cuerpo"><strong>Cobro:</strong> <span style="font-size:1.1em; font-weight:bold; color:${color};">$${parseFloat(d.totalCobrado).toFixed(2)}</span> <span style="font-size:0.85em; color:#666;">(${d.metodoPago})</span></div>${d.ventaMostrador ? `<div class="th-cuerpo" style="margin-top:8px; padding:5px; background:#e9ecef; border-radius:5px; text-align:center; font-size:0.85em; color:#495057;">🛒 Venta Mostrador General</div>` : `<div class="th-cuerpo" style="margin-top:8px; padding:5px; background:#f0f9ff; border-radius:5px; font-size:0.9em;">🐾 <strong>Paciente:</strong> ${d.paciente} <br>👤 <strong>Dueño:</strong> ${d.dueno}</div>`}<div class="th-pie" style="margin-top:12px; border-top:1px dashed #e9ecef; padding-top:8px;">Atendió: <strong>${d.atendio}</strong></div></div>`; }); }); }
 
-        // 12. INGRESO Y BAJA DE INVENTARIO (CON UNIDADES)
+        // 13. INGRESO Y BAJA DE INVENTARIO (CON UNIDADES)
         function abrirInventario() { cambiarPantalla('pantalla-menu', 'pantalla-inventario'); }
         function guardarEnInventario() { 
             const q = document.getElementById('qr-inventario').value; const n = document.getElementById('nombre-inventario').value; const d = document.getElementById('descripcion-inventario').value; const c = document.getElementById('cantidad-inventario').value; const u = document.getElementById('unidad-inventario').value; 
             if(!q || !n || !c) return alert("⚠️ Llena el código, nombre y cantidad."); 
+            
+            // Si creamos uno nuevo, es muy posible que sea un CÓDIGO NUEVO. Para no duplicar el nombre y código en Firestore como ID, simplemente usamos .add() o .doc(q).set(). Vamos a usar set para sobreescribir o actualizar inventario por código QR.
             db.collection("Inventario").doc(q).set({ 
                 codigoQR: q, medicamento: n, descripcion: d, cantidad: parseInt(c), unidad: u, registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() 
-            }).then(() => { alert("✅ Lote guardado con éxito."); cancelarVolver(); }); 
+            }).then(() => { 
+                alert("✅ Lote guardado con éxito."); 
+                cargarSugerenciasInventario(); // Actualizamos la lista de autocompletar
+                cancelarVolver(); 
+            }); 
         }
         
         function abrirBajaInventario() { cambiarPantalla('pantalla-menu', 'pantalla-baja-inventario'); }
         function guardarBajaInventario() { 
-            const q = document.getElementById('qr-baja-inv').value; const c = document.getElementById('cantidad-baja-inv').value; const u = document.getElementById('unidad-baja-inv').value;
+            // En caso de que haya seleccionado del datalist, tomamos lo que esté antes del guión, o intentamos buscar directamente si el doc.id coincide. 
+            // Para simplificar, si usan el lector el ID es exacto. Si escriben el ID exacto, también.
+            // Extraer el código si usaron el autocompletado "Nombre - Codigo":
+            let val = document.getElementById('qr-baja-inv').value;
+            let q = val.includes(" - ") ? val.split(" - ")[1] : val;
+            
+            const c = document.getElementById('cantidad-baja-inv').value; const u = document.getElementById('unidad-baja-inv').value;
             if(!q || !c) return alert("⚠️ Llena código y cantidad."); 
+            
             db.collection("Inventario").doc(q).get().then(doc => { 
                 if(doc.exists) { 
                     let actual = doc.data().cantidad; 
-                    db.collection("Inventario").doc(q).update({ cantidad: actual - Math.abs(parseInt(c)) }).then(() => { alert(`✅ Se descontaron ${c} ${u} de stock.`); cancelarVolver(); }); 
-                } else { alert("❌ El medicamento no existe en inventario."); } 
+                    db.collection("Inventario").doc(q).update({ cantidad: actual - Math.abs(parseInt(c)) }).then(() => { 
+                        alert(`✅ Se descontaron ${c} ${u} de stock.`); 
+                        cargarSugerenciasInventario(); // Actualizamos autocompletar
+                        cancelarVolver(); 
+                    }); 
+                } else { alert("❌ El medicamento o código no existe en el inventario."); } 
             }); 
         }
 
-        // 13. ADMINISTRAR USUARIOS
+        // 14. ADMINISTRAR USUARIOS
         function abrirUsuarios() { cambiarPantalla('pantalla-menu', 'pantalla-usuarios'); const lista = document.getElementById('lista-usuarios-firebase'); lista.innerHTML = '<p style="text-align:center;">Cargando usuarios...</p>'; db.collection("Usuarios").get().then((q) => { lista.innerHTML = ''; q.forEach((doc) => { const u = doc.data(); const uPin = doc.id; lista.innerHTML += `<div class="tarjeta-info" style="display:flex; justify-content: space-between; align-items: center; padding: 15px;"><div style="line-height:1.4;"><strong style="font-size:1.1em;">${u.nombre}</strong> <span style="background:#e3f2fd; color:#0d6efd; padding:2px 8px; border-radius:12px; font-size:0.75em; font-weight:bold; margin-left:5px;">${u.rol}</span><br><span style="color:#6c757d; font-size:0.85em;">PIN: <strong style="color:#333;">${uPin}</strong></span></div><button class="btn-cancelar" style="margin:0; padding:8px 15px; width:auto; border-radius:8px;" onclick="eliminarUsuario('${uPin}')">Borrar</button></div>`; }); }); }
         function crearUsuario() { const n = document.getElementById('nuevo-usuario-nombre').value; const p = document.getElementById('nuevo-usuario-pin').value; const r = document.getElementById('nuevo-usuario-rol').value; if(!n || !p || p.length !== 4) return alert("⚠️ Ingresa un nombre y un PIN de exactamente 4 números."); db.collection("Usuarios").doc(p).set({ nombre: n, rol: r }).then(() => { alert("✅ Usuario creado."); document.getElementById('nuevo-usuario-nombre').value = ""; document.getElementById('nuevo-usuario-pin').value = ""; abrirUsuarios(); }); }
         function eliminarUsuario(pinBorrar) { if(pinBorrar === usuarioLogueado.pin) return alert("❌ No puedes eliminarte a ti mismo."); if(confirm(`¿Seguro de eliminar este acceso (${pinBorrar})?`)) { db.collection("Usuarios").doc(pinBorrar).delete().then(() => { abrirUsuarios(); }); } }
