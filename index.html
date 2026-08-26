@@ -15,12 +15,14 @@
         .contenedor { background: white; padding: 30px; border-radius: 24px; box-shadow: 0 12px 35px rgba(0,0,0,0.06); width: 95%; max-width: 650px; margin: 20px 0; max-height: 90vh; overflow-y: auto; }
         .contenedor-ancho { max-width: 850px; } 
         
+        /* Teclado PIN */
         .pantalla-pin { font-size: 2.5em; letter-spacing: 15px; margin-bottom: 25px; padding: 15px; width: 100%; text-align: center; background-color: #f8f9fa; border: 2px solid #e9ecef; border-radius: 16px; box-sizing: border-box; color: #333; font-weight: bold; }
         .cuadricula-teclas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
         .tecla { padding: 20px 0; font-size: 1.8em; background: #ffffff; border: 1px solid #dee2e6; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #333; font-weight: 500; }
         .tecla:active { background: #e9ecef; transform: scale(0.92); }
         .tecla-borrar { background: #fff0f0; color: #dc3545; border-color: #ffc9c9; }
         
+        /* Cabeceras y Menús */
         .header-usuario { background: linear-gradient(135deg, #0d6efd, #0a58ca); color: white; padding: 18px; border-radius: 16px; margin-bottom: 25px; font-weight: bold; font-size: 1.1em; text-align: center; box-shadow: 0 6px 15px rgba(13, 110, 253, 0.25); }
         .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
         .btn-menu { padding: 20px 10px; font-size: 0.95em; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 1px solid #e9ecef; background: white; border-radius: 16px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.03); color: #495057; font-weight: 600; }
@@ -28,6 +30,7 @@
         
         .alerta-banner { background-color: #fff3cd; border-left: 6px solid #ffc107; border-radius: 12px; padding: 18px; margin-bottom: 20px; text-align: left; }
         
+        /* Formularios a dos columnas */
         .form-row { display: flex; gap: 15px; margin-bottom: 15px; align-items: flex-end; }
         .form-row .grupo-formulario { margin-bottom: 0; flex: 1; }
         .grupo-formulario { margin-bottom: 15px; text-align: left; }
@@ -36,6 +39,7 @@
         .grupo-formulario input:focus, .grupo-formulario select:focus, .grupo-formulario textarea:focus { border-color: #0d6efd; outline: none; background-color: #fff; box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1); }
         .input-buscador { font-size: 1.1em; border: 2px solid #0d6efd !important; background: #fff !important; }
         
+        /* Botones Generales */
         .btn { width: 100%; padding: 16px; font-size: 1.1em; border: none; border-radius: 14px; cursor: pointer; font-weight: bold; transition: all 0.2s ease; display: block; text-align: center; }
         .btn-qr { background: #e3f2fd; color: #0d6efd; border: 2px dashed #0d6efd; margin-bottom: 15px;}
         .btn-guardar { background: #198754; color: white; box-shadow: 0 6px 15px rgba(25, 135, 84, 0.25); margin-top: 10px;}
@@ -60,15 +64,15 @@
         .btn-eliminar-item { background: #ffe3e3; color: #dc3545; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-weight: bold; transition: 0.2s;}
         .btn-eliminar-item:hover { background: #ffc9c9; }
 
-        /* FIRMAS */
-        .firma-card { flex: 1; border: 1px solid #e9ecef; border-radius: 14px; padding: 15px; background: #fff; text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.02);}
-        .firma-title { font-size: 0.85em; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .canvas-firma { border: 2px dashed #ced4da; border-radius: 10px; width: 100%; height: 120px; background: #fafafa; touch-action: none; margin-bottom: 12px; cursor: crosshair;}
+        /* FIRMA DEL CLIENTE */
+        .firma-card { width: 100%; max-width: 450px; margin: 0 auto; border: 1px solid #e9ecef; border-radius: 14px; padding: 15px; background: #fff; text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.02);}
+        .firma-title { font-size: 0.85em; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #198754;}
+        .canvas-firma { border: 2px dashed #ced4da; border-radius: 10px; width: 100%; height: 140px; background: #fafafa; touch-action: none; margin-bottom: 12px; cursor: crosshair;}
         .btn-borrar-firma { border: 1px solid #ffc9c9; background: #fff0f0; color: #dc3545; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-size: 0.85em; margin-bottom: 10px; transition: 0.2s; font-weight: bold;}
         .btn-borrar-firma:active { background: #ffc9c9; transform: scale(0.95);}
         .firma-checkbox { font-size: 0.9em; color: #495057; display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600;}
 
-        /* EXPEDIENTE UNIFICADO & TARJETAS HISTORIAL */
+        /* PANELES DE BÚSQUEDA Y TARJETAS */
         .panel-busqueda { background: #ffffff; padding: 20px; border-radius: 18px; margin-bottom: 25px; border: 1px solid #e9ecef; display: grid; gap: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
         .tarjeta-expediente, .tarjeta-info { border: 1px solid #e9ecef; border-radius: 16px; padding: 20px; margin-bottom: 18px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.03); text-align: left; transition: 0.2s; position: relative; overflow: hidden;}
         .tarjeta-expediente:hover, .tarjeta-info:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.06); transform: translateY(-2px); border-color: #dee2e6; }
@@ -99,6 +103,8 @@
             body { background: white; margin: 0; padding: 0; color: black; }
             .contenedor, .alerta-banner { display: none !important; }
             #zona-impresion { display: block !important; width: 100%; }
+            
+            /* TICKET VÁUCHER OXXO */
             .ticket-print { width: 78mm; font-family: 'Courier New', Courier, monospace; font-size: 12px; margin: 0; padding: 10mm 5mm; text-transform: uppercase; }
             .ticket-print h2 { font-size: 16px; text-align: center; margin: 0 0 5px 0; font-weight: bold; }
             .ticket-print .info-tienda { text-align: center; font-size: 11px; margin-bottom: 10px; line-height: 1.2; }
@@ -111,6 +117,7 @@
             .ticket-print .totales strong { font-size: 14px; }
             .ticket-print .footer { text-align: center; font-size: 11px; margin-top: 15px; border-top: 1px dashed #000; padding-top: 10px; line-height: 1.4; }
             
+            /* RECETA DISEÑO VETGRU */
             .receta-print { width: 100%; max-width: 216mm; height: 140mm; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0 auto; padding: 10mm 15mm; box-sizing: border-box; color: #2c6e8f; }
             .receta-print .cabecera { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5px; }
             .receta-print .logo-area { width: 28%; }
@@ -125,11 +132,11 @@
             
             .receta-print .cuerpo-receta { border: 2px solid #2c6e8f; border-radius: 12px; height: 85mm; padding: 15px; position: relative; margin-top: 10px; display: flex; flex-direction: column;}
             .receta-print .prescripcion-texto { font-size: 13px; color: black; white-space: pre-wrap; flex-grow: 1; }
-            .receta-print .firmas-area { display: flex; justify-content: space-between; margin-top: 10px; position: absolute; bottom: 15px; width: calc(100% - 30px); }
-            .receta-print .firma-bloque { width: 40%; text-align: center; font-size: 11px; }
-            .receta-print .firma-bloque img { max-height: 45px; display: block; margin: 0 auto 5px auto; }
-            .receta-print .firma-linea { border-top: 1px solid #2c6e8f; padding-top: 4px; color: #2c6e8f;}
-            .receta-print .footer-receta { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; font-size: 10px; line-height: 1.4; color: #2c6e8f;}
+            
+            .receta-print .firmas-area { display: flex; justify-content: center; margin-top: 10px; position: absolute; bottom: 15px; width: calc(100% - 30px); }
+            .receta-print .firma-bloque { width: 50%; text-align: center; font-size: 11px; }
+            .receta-print .firma-bloque img { max-height: 50px; display: block; margin: 0 auto 5px auto; }
+            .receta-print .firma-linea { border-top: 1px solid #2c6e8f; padding-top: 4px; color: #2c6e8f; display: inline-block; width: 80%;}
         }
     </style>
 </head>
@@ -191,6 +198,9 @@
             <button id="btn-alta-inventario" class="btn-menu oculto" onclick="abrirInventario()">
                 <span class="emoji">📦</span> <span>Lotes / Servicios</span>
             </button>
+            <button id="btn-hist-inventario" class="btn-menu oculto" onclick="abrirHistorialInventario()">
+                <span class="emoji">🗃️</span> <span>Historial Altas/Mermas</span>
+            </button>
             <button id="btn-baja-inventario" class="btn-menu oculto" onclick="abrirBajaInventario()">
                 <span class="emoji">📉</span> <span>Merma Interna</span>
             </button>
@@ -251,28 +261,36 @@
         <button class="btn btn-cancelar" style="border:none;" onclick="cancelarVolver()">Cancelar Venta</button>
     </div>
 
-    <!-- PANTALLA 4: RECETA MÉDICA -->
+    <!-- PANTALLA 4: RECETA MÉDICA (DISEÑO VETGRU + FIRMA CLIENTE) -->
     <div id="pantalla-recetas" class="contenedor oculto">
         <h2 style="color: #0d6efd; margin-top: 0; font-size: 1.6em; text-align: left;">📝 Receta Médica</h2>
         
-        <div class="form-row"><div class="grupo-formulario"><label>Dueño:</label><input type="text" id="receta-dueno" placeholder="Nombre completo"></div><div class="grupo-formulario"><label>Paciente:</label><input type="text" id="receta-paciente" placeholder="Ej. Max"></div></div>
-        <div class="form-row"><div class="grupo-formulario"><label>Raza:</label><input type="text" id="receta-raza" placeholder="Ej. Husky"></div><div class="grupo-formulario"><label>Sexo:</label><select id="receta-sexo"><option value="">Seleccione</option><option value="Macho">Macho</option><option value="Hembra">Hembra</option></select></div><div class="grupo-formulario"><label>Edad:</label><input type="text" id="receta-edad" placeholder="Ej. 2 años"></div></div>
-        <div class="form-row"><div class="grupo-formulario"><label>Peso (Kg):</label><input type="number" step="0.1" id="receta-peso" placeholder="Ej. 12.5"></div><div class="grupo-formulario"><label>Temp (°C):</label><input type="number" step="0.1" id="receta-temp" placeholder="Ej. 38.5"></div></div>
+        <div class="form-row">
+            <div class="grupo-formulario"><label>Dueño:</label><input type="text" id="receta-dueno" placeholder="Nombre completo"></div>
+            <div class="grupo-formulario"><label>Paciente:</label><input type="text" id="receta-paciente" placeholder="Ej. Max"></div>
+        </div>
+        
+        <div class="form-row">
+            <div class="grupo-formulario"><label>Raza:</label><input type="text" id="receta-raza" placeholder="Ej. Husky"></div>
+            <div class="grupo-formulario"><label>Sexo:</label><select id="receta-sexo"><option value="">Seleccione</option><option value="Macho">Macho</option><option value="Hembra">Hembra</option></select></div>
+            <div class="grupo-formulario"><label>Edad:</label><input type="text" id="receta-edad" placeholder="Ej. 2 años"></div>
+        </div>
+        
+        <div class="form-row">
+            <div class="grupo-formulario"><label>Peso (Kg):</label><input type="number" step="0.1" id="receta-peso" placeholder="Ej. 12.5"></div>
+            <div class="grupo-formulario"><label>Temp (°C):</label><input type="number" step="0.1" id="receta-temp" placeholder="Ej. 38.5"></div>
+        </div>
 
-        <div class="grupo-formulario"><label>Prescripción Médica:</label><textarea id="receta-texto" rows="5" placeholder="Escribe la receta..." style="font-size: 1em;"></textarea></div>
+        <div class="grupo-formulario">
+            <label>Prescripción Médica:</label>
+            <textarea id="receta-texto" rows="5" placeholder="Escribe la receta..." style="font-size: 1em;"></textarea>
+        </div>
 
-        <!-- BOTÓN PARA HABILITAR FIRMAS -->
         <button type="button" id="btn-abrir-firmas" class="btn" style="background:#e3f2fd; color:#0d6efd; border: 2px dashed #0d6efd; margin-bottom: 15px;" onclick="mostrarFirmas()">🖊️ Habilitar Opción de Firmar</button>
 
-        <div id="zona-firmas-oculta" class="form-row oculto">
-            <div class="firma-card">
-                <div class="firma-title" style="color:#0d6efd;">Firma Médico (Opcional)</div>
-                <canvas id="canvas-vet" class="canvas-firma"></canvas>
-                <button type="button" class="btn-borrar-firma" onclick="limpiarFirma('vet')">Borrar</button>
-                <label class="firma-checkbox"><input type="checkbox" id="check-print-vet"> Imprimir en Receta</label>
-            </div>
-            <div class="firma-card">
-                <div class="firma-title" style="color:#198754;">Firma Cliente</div>
+        <div id="zona-firmas-oculta" class="form-row oculto" style="justify-content: center;">
+            <div class="firma-card" style="max-width: 450px;">
+                <div class="firma-title" style="color:#198754;">Firma Cliente (Opcional)</div>
                 <canvas id="canvas-cliente" class="canvas-firma"></canvas>
                 <button type="button" class="btn-borrar-firma" onclick="limpiarFirma('cliente')">Borrar</button>
                 <label class="firma-checkbox"><input type="checkbox" id="check-print-cliente" checked> Imprimir en Receta</label>
@@ -290,10 +308,14 @@
     <div id="pantalla-expediente" class="contenedor contenedor-ancho oculto">
         <h2 style="color: #333; margin-top: 0; text-align: left; font-size: 1.8em;">🗂️ Expediente Clínico Unificado</h2>
         
-        <div class="panel-busqueda" style="grid-template-columns: 1fr; padding: 15px; margin-bottom: 20px;">
-            <div class="grupo-formulario" style="margin:0;">
-                <input type="text" id="buscador-expediente" class="input-buscador" placeholder="🔍 Buscar por Paciente o Dueño..." oninput="buscarExpediente()">
+        <div class="panel-busqueda" style="grid-template-columns: 1fr 1fr 1fr;">
+            <div class="grupo-formulario" style="margin:0; grid-column: span 3;">
+                <label>🔍 Búsqueda por Paciente, Dueño o Producto:</label>
+                <input type="text" id="buscador-expediente" class="input-buscador" placeholder="Escribe para buscar..." oninput="buscarExpediente()">
             </div>
+            <div class="grupo-formulario" style="margin:0;"><label>Filtrar por Tipo:</label><select id="filtro-tipo-exp" onchange="buscarExpediente()"><option value="todos">Todos los registros</option><option value="receta">📝 Solo Recetas</option><option value="cobro">💰 Solo Cobros/Ventas</option></select></div>
+            <div class="grupo-formulario" style="margin:0;"><label>Filtrar por Fecha:</label><select id="filtro-fecha-exp" onchange="buscarExpediente()"><option value="todos">Cualquier fecha</option><option value="hoy">Hoy</option><option value="semana">Últimos 7 días</option><option value="mes">Este mes</option></select></div>
+            <div class="grupo-formulario" style="margin:0; display: flex; align-items: flex-end;"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0;" onclick="cargarExpedienteBase()">🔄 Refrescar Datos</button></div>
         </div>
 
         <div id="lista-expediente" style="max-height: 500px; overflow-y: auto; padding-right: 10px; background: #fafafa; border-radius: 18px; padding: 20px; border: 1px solid #e9ecef;"></div>
@@ -303,30 +325,64 @@
     <!-- PANTALLA 5: CORTE DE CAJA -->
     <div id="pantalla-corte-caja" class="contenedor oculto">
         <h2 style="color: #333; margin-top: 0; text-align: left;">💰 Corte de Caja</h2>
-        <div style="display: flex; gap: 8px; margin-bottom: 20px; background: #f8f9fa; padding: 5px; border-radius: 10px;">
+        <div style="display: flex; gap: 8px; margin-bottom: 25px; background: #f8f9fa; padding: 5px; border-radius: 10px;">
             <button id="filtro-dia" class="btn btn-filtro activo" onclick="abrirCorteCaja('dia')">Día</button>
             <button id="filtro-semana" class="btn btn-filtro" onclick="abrirCorteCaja('semana')">Semana</button>
             <button id="filtro-mes" class="btn btn-filtro" onclick="abrirCorteCaja('mes')">Mes</button>
         </div>
-        
-        <input type="text" placeholder="🔍 Buscar doctor..." oninput="filtrarTarjetas('lista-corte-caja', this.value)" style="width: 100%; padding: 12px; border: 2px solid #ced4da; border-radius: 10px; margin-bottom: 15px; box-sizing: border-box;">
-
+        <div class="grupo-formulario" style="margin-bottom: 20px;">
+            <input type="text" placeholder="🔍 Buscar doctor..." oninput="filtrarTarjetas('lista-corte-caja', this.value)">
+        </div>
         <div id="resumen-corte" style="background: linear-gradient(135deg, #198754, #146c43); border-radius: 18px; padding: 30px; margin-bottom: 25px; text-align: center; color: white; box-shadow: 0 8px 20px rgba(25, 135, 84, 0.2);">
             <h3 style="margin:0; font-weight: normal; font-size: 1.1em; opacity: 0.9;">Total Cobrado (Neto)</h3>
             <h1 style="margin:10px 0; font-size:3.5em; font-weight: bold; letter-spacing: -1px;">$<span id="corte-gran-total">0.00</span></h1>
-            <div style="background: rgba(255,255,255,0.2); display: inline-block; padding: 6px 20px; border-radius: 20px; font-size: 0.95em; font-weight: bold;">Descuentos: $<span id="corte-gran-descuento">0.00</span></div>
+            <div style="background: rgba(255,255,255,0.2); display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 0.95em; font-weight: bold;">Descuentos/Mermas: $<span id="corte-gran-descuento">0.00</span></div>
         </div>
         <h4 style="text-align: left; margin-bottom: 15px; color: #495057; text-transform: uppercase; font-size: 0.85em;">Rendimiento por Doctor:</h4>
         <div id="lista-corte-caja" style="max-height: 350px; overflow-y: auto;"></div>
         <button class="btn btn-cancelar" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-corte-caja', 'pantalla-menu')">Volver</button>
     </div>
 
-    <!-- PANTALLA 6: VER INVENTARIO -->
-    <div id="pantalla-ver-inventario" class="contenedor oculto">
+    <!-- PANTALLA 6: VER INVENTARIO CON FILTROS AVANZADOS -->
+    <div id="pantalla-ver-inventario" class="contenedor contenedor-ancho oculto">
         <h2 style="color: #333; margin-top: 0; text-align: left;">📦 Inventario Actual</h2>
-        <input type="text" placeholder="🔍 Buscar medicamento o código..." oninput="filtrarTarjetas('lista-stock-firebase', this.value)" style="width: 100%; padding: 12px; border: 2px solid #0d6efd; border-radius: 10px; margin-bottom: 15px; box-sizing: border-box; font-size: 1.05em;">
+        
+        <div class="panel-busqueda" style="grid-template-columns: 1fr 1fr 1fr; margin-bottom: 20px; padding: 15px;">
+            <div class="grupo-formulario" style="margin:0; grid-column: span 3;">
+                <label>🔍 Buscar Producto:</label>
+                <input type="text" id="busqueda-inv-texto" class="input-buscador" placeholder="Nombre o código..." oninput="filtrarInventario()">
+            </div>
+            <div class="grupo-formulario" style="margin:0;">
+                <label>Unidad:</label>
+                <select id="busqueda-inv-unidad" onchange="filtrarInventario()">
+                    <option value="todas">Todas</option><option value="Piezas">Piezas</option><option value="Cajas">Cajas</option><option value="Mililitros (ml)">Mililitros (ml)</option>
+                </select>
+            </div>
+            <div class="grupo-formulario" style="margin:0;">
+                <label>Nivel Stock:</label>
+                <select id="busqueda-inv-stock" onchange="filtrarInventario()">
+                    <option value="todos">Todos</option><option value="bajo">🔴 Bajo Stock</option><option value="ok">🟢 Normal</option>
+                </select>
+            </div>
+        </div>
+
         <div id="lista-stock-firebase" style="max-height: 450px; overflow-y: auto; padding-right: 5px;"></div>
         <button class="btn btn-cancelar" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-ver-inventario', 'pantalla-menu')">Volver al Menú</button>
+    </div>
+
+    <!-- PANTALLA 7: HISTORIAL DE INVENTARIO (ALTAS Y MERMAS) -->
+    <div id="pantalla-historial-inventario" class="contenedor contenedor-ancho oculto">
+        <h2 style="color: #333; margin-top: 0; text-align: left;">🗃️ Historial de Altas y Mermas</h2>
+        <div class="panel-busqueda" style="grid-template-columns: 1fr 1fr 1fr; padding: 15px; margin-bottom: 20px;">
+            <div class="grupo-formulario" style="margin:0; grid-column: span 3;">
+                <input type="text" id="buscador-hist-inv" class="input-buscador" placeholder="🔍 Buscar por medicamento, código o usuario..." oninput="buscarHistorialInventario()">
+            </div>
+            <div class="grupo-formulario" style="margin:0;"><label>Tipo de Movimiento:</label><select id="filtro-tipo-hist-inv" onchange="buscarHistorialInventario()"><option value="todos">Todos</option><option value="Alta">📦 Altas (Ingresos)</option><option value="Merma">📉 Mermas (Bajas)</option></select></div>
+            <div class="grupo-formulario" style="margin:0;"><label>Fecha:</label><select id="filtro-fecha-hist-inv" onchange="buscarHistorialInventario()"><option value="todos">Cualquier fecha</option><option value="hoy">Hoy</option><option value="semana">Últimos 7 días</option><option value="mes">Este mes</option></select></div>
+            <div class="grupo-formulario" style="margin:0; display: flex; align-items: flex-end;"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0;" onclick="cargarHistorialInventario()">🔄 Refrescar</button></div>
+        </div>
+        <div id="lista-historial-inventario" style="max-height: 450px; overflow-y: auto; padding-right: 5px;"></div>
+        <button class="btn btn-cancelar" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-historial-inventario', 'pantalla-menu')">Volver al Menú</button>
     </div>
 
     <!-- PANTALLA 8: ALTA INVENTARIO -->
@@ -351,8 +407,8 @@
     <div id="pantalla-baja-inventario" class="contenedor oculto">
         <h2 style="color: #dc3545; margin-top: 0; text-align: left;">📉 Baja de Lote (Merma)</h2>
         <div class="grupo-formulario"><label>Código / Nombre:</label><input type="text" id="qr-baja-inv" list="lista-medicamentos" style="font-weight: bold; color: #dc3545;"></div>
-        <div class="grupo-formulario"><label>Motivo:</label><input type="text" id="motivo-baja-inv" placeholder="Ej. Caducidad"></div>
-        <div class="form-row"><div class="grupo-formulario"><label>Descontar:</label><input type="number" id="cantidad-baja-inv"></div></div>
+        <div class="grupo-formulario"><label>Motivo:</label><input type="text" id="motivo-baja-inv" placeholder="Ej. Caducidad, uso interno..."></div>
+        <div class="form-row"><div class="grupo-formulario"><label>Descontar (Cantidad):</label><input type="number" id="cantidad-baja-inv"></div></div>
         <button class="btn btn-guardar btn-guardar-rojo" onclick="guardarBajaInventario()">Registrar Baja</button>
         <button class="btn btn-cancelar" style="border:none;" onclick="cancelarVolver()">Cancelar</button>
     </div>
@@ -365,7 +421,9 @@
             <div class="grupo-formulario"><label>Rol:</label><select id="nuevo-usuario-rol"><option value="Doctor">Doctor</option><option value="Sub-Gerente">Sub-Gerente</option><option value="Gerente">Gerente</option></select></div>
             <button class="btn btn-guardar-azul" onclick="crearUsuario()">+ Agregar Usuario</button>
         </div>
-        <input type="text" placeholder="🔍 Buscar personal..." oninput="filtrarTarjetas('lista-usuarios-firebase', this.value)" style="width: 100%; padding: 12px; border: 2px solid #ced4da; border-radius: 10px; margin-bottom: 15px; box-sizing: border-box;">
+        <div class="grupo-formulario" style="margin-bottom: 20px;">
+            <input type="text" class="input-buscador" placeholder="🔍 Buscar personal..." oninput="filtrarTarjetas('lista-usuarios-firebase', this.value)">
+        </div>
         <div id="lista-usuarios-firebase" style="max-height: 250px; overflow-y: auto;"></div>
         <button class="btn btn-cancelar" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-usuarios', 'pantalla-menu')">Volver al Menú</button>
     </div>
@@ -376,11 +434,12 @@
         firebase.initializeApp(firebaseConfig); const db = firebase.firestore(); 
 
         let pinActual = ""; let usuarioLogueado = null; let temporizadorInactividad; let lectorQr; let camaraActivaId = ""; 
-        let totalCobroCalculado = 0; let inventarioGlobal = []; let carrito = []; let datosExpediente = []; 
+        let totalCobroCalculado = 0; let inventarioGlobal = []; let carrito = []; 
+        let datosExpediente = []; let datosHistorialInv = [];
 
         // --- LÓGICA DE FIRMAS DIGITALES ---
         let ctxActivo = null; let isDrawing = false; let canvasActivo = false;
-        function resizeCanvases() { ['vet', 'cliente'].forEach(id => { let cv = document.getElementById('canvas-'+id); let parentW = cv.parentElement.clientWidth; cv.width = parentW ? parentW - 4 : 250; }); }
+        function resizeCanvases() { ['cliente'].forEach(id => { let cv = document.getElementById('canvas-'+id); let parentW = cv.parentElement.clientWidth; cv.width = parentW ? parentW - 4 : 250; }); }
         
         function mostrarFirmas() {
             document.getElementById('btn-abrir-firmas').classList.add('oculto'); document.getElementById('zona-firmas-oculta').classList.remove('oculto');
@@ -388,7 +447,7 @@
         }
 
         function initFirmas() {
-            ['vet', 'cliente'].forEach(id => {
+            ['cliente'].forEach(id => {
                 let cv = document.getElementById('canvas-'+id); let cx = cv.getContext('2d');
                 let down = (e) => { e.preventDefault(); isDrawing = true; ctxActivo = cx; cx.beginPath(); const rect = cv.getBoundingClientRect(); const x = e.touches ? e.touches[0].clientX : e.clientX; const y = e.touches ? e.touches[0].clientY : e.clientY; cx.moveTo(x - rect.left, y - rect.top); };
                 let move = (e) => { e.preventDefault(); if(!isDrawing || ctxActivo !== cx) return; const rect = cv.getBoundingClientRect(); const x = e.touches ? e.touches[0].clientX : e.clientX; const y = e.touches ? e.touches[0].clientY : e.clientY; cx.lineWidth = 3; cx.lineCap = 'round'; cx.strokeStyle = '#000'; cx.lineTo(x - rect.left, y - rect.top); cx.stroke(); };
@@ -401,7 +460,7 @@
         function limpiarFirma(id) { let cv = document.getElementById('canvas-'+id); cv.getContext('2d').clearRect(0,0,cv.width,cv.height); }
         initFirmas();
 
-        // FILTRO GLOBAL PARA LISTAS (Buscador instantáneo)
+        // FILTRO GLOBAL PARA LISTAS SIMPLES
         function filtrarTarjetas(idContenedor, texto) {
             let term = texto.toLowerCase(); let tarjetas = document.getElementById(idContenedor).children;
             for(let t of tarjetas) { if(t.classList.contains('tarjeta-info') || t.classList.contains('tarjeta-expediente')) { t.style.display = t.innerText.toLowerCase().includes(term) ? "" : "none"; } }
@@ -427,11 +486,11 @@
         function configurarTextosYPermisos() {
             document.getElementById('texto-bienvenida').innerText = `Hola, ${usuarioLogueado.nombre}`;
             document.getElementById('btn-movimiento').classList.remove('oculto'); document.getElementById('btn-receta').classList.remove('oculto'); document.getElementById('btn-expediente').classList.remove('oculto');
-            const adminBotones = ['btn-corte', 'btn-ver-inventario', 'btn-alta-inventario', 'btn-baja-inventario', 'btn-usuarios', 'titulo-gerencia'];
+            const adminBotones = ['btn-corte', 'btn-ver-inventario', 'btn-alta-inventario', 'btn-hist-inventario', 'btn-baja-inventario', 'btn-usuarios', 'titulo-gerencia'];
             adminBotones.forEach(id => document.getElementById(id).classList.add('oculto'));
             
             if(usuarioLogueado.rol === "Gerente") { adminBotones.forEach(id => document.getElementById(id).classList.remove('oculto')); } 
-            else if(usuarioLogueado.rol === "Sub-Gerente") { document.getElementById('titulo-gerencia').classList.remove('oculto'); document.getElementById('btn-ver-inventario').classList.remove('oculto'); }
+            else if(usuarioLogueado.rol === "Sub-Gerente") { document.getElementById('titulo-gerencia').classList.remove('oculto'); document.getElementById('btn-ver-inventario').classList.remove('oculto'); document.getElementById('btn-hist-inventario').classList.remove('oculto');}
         }
         function cerrarSesion() { usuarioLogueado = null; clearTimeout(temporizadorInactividad); limpiarPin(); document.querySelectorAll('.contenedor').forEach(el => el.classList.add('oculto')); document.getElementById('pantalla-login').classList.remove('oculto'); }
 
@@ -442,7 +501,7 @@
         // CÁMARA Y CANCELAR
         function iniciarCamara(idDiv, idDestino) { camaraActivaId = idDiv; document.getElementById(idDiv).classList.remove('oculto'); if(!lectorQr) { lectorQr = new Html5Qrcode(idDiv); } lectorQr.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (codigo) => { reproducirSonidoBip(); document.getElementById(idDestino).value = codigo; if(idDestino === 'buscador-pos') autocompletarPrecio(); detenerCamara(); reiniciarTemporizador(); }, (err) => {} ).catch(e => { alert("Error de cámara."); detenerCamara(); }); }
         function detenerCamara() { if(lectorQr && camaraActivaId) { lectorQr.stop().then(() => { document.getElementById(camaraActivaId).classList.add('oculto'); lectorQr.clear(); lectorQr = null; camaraActivaId = ""; }).catch(e => {}); } }
-        function cancelarVolver() { detenerCamara(); carrito = []; actualizarCarritoUI(); document.querySelectorAll('input, textarea').forEach(input => { if(input.type !== 'checkbox' && input.type !== 'password') input.value = ''; }); document.getElementById('total-cobrar').innerText = "0.00"; document.getElementById('venta-mostrador').checked = false; toggleMostrador(); document.getElementById('check-print-vet').checked = false; document.getElementById('check-print-cliente').checked = true; document.getElementById('zona-firmas-oculta').classList.add('oculto'); document.getElementById('btn-abrir-firmas').classList.remove('oculto'); canvasActivo = false; document.querySelectorAll('.contenedor').forEach(el => el.classList.add('oculto')); cambiarPantalla('pantalla-registro-baja', 'pantalla-menu'); }
+        function cancelarVolver() { detenerCamara(); carrito = []; actualizarCarritoUI(); document.querySelectorAll('input, textarea').forEach(input => { if(input.type !== 'checkbox' && input.type !== 'password') input.value = ''; }); document.getElementById('total-cobrar').innerText = "0.00"; document.getElementById('venta-mostrador').checked = false; toggleMostrador(); document.getElementById('check-print-cliente').checked = true; document.getElementById('zona-firmas-oculta').classList.add('oculto'); document.getElementById('btn-abrir-firmas').classList.remove('oculto'); canvasActivo = false; document.querySelectorAll('.contenedor').forEach(el => el.classList.add('oculto')); cambiarPantalla('pantalla-registro-baja', 'pantalla-menu'); }
 
         // PUNTO DE VENTA
         function abrirFormulario() { cambiarPantalla('pantalla-menu', 'pantalla-registro-baja'); document.getElementById('texto-registro-usuario').innerText = `👨‍⚕️ Cajero: ${usuarioLogueado.nombre}`; carrito = []; actualizarCarritoUI(); document.getElementById('precio-pos').readOnly = false; document.getElementById('precio-pos').style.backgroundColor = "#fff"; }
@@ -467,23 +526,21 @@
         }
         function descontarInventarioAutomatico(articulosVendidos) { articulosVendidos.forEach(item => { if(item.tipo !== 'Servicio Médico' && item.codigo !== 'S/C') { db.collection("Inventario").doc(item.codigo).get().then(doc => { if(doc.exists) { let actual = doc.data().cantidad; db.collection("Inventario").doc(item.codigo).update({ cantidad: actual - 1 }); } }); } }); }
 
-        // 8. MÓDULO RECETAS
-        function abrirReceta() { cambiarPantalla('pantalla-menu', 'pantalla-recetas'); document.getElementById('btn-abrir-firmas').classList.remove('oculto'); document.getElementById('zona-firmas-oculta').classList.add('oculto'); limpiarFirma('vet'); limpiarFirma('cliente'); canvasActivo=false; }
+        // 8. MÓDULO RECETAS (SOLO FIRMA CLIENTE)
+        function abrirReceta() { cambiarPantalla('pantalla-menu', 'pantalla-recetas'); document.getElementById('btn-abrir-firmas').classList.remove('oculto'); document.getElementById('zona-firmas-oculta').classList.add('oculto'); limpiarFirma('cliente'); canvasActivo=false; }
         function isCanvasBlank(canvas) { const context = canvas.getContext('2d'); const pixelBuffer = new Uint32Array(context.getImageData(0, 0, canvas.width, canvas.height).data.buffer); return !pixelBuffer.some(color => color !== 0); }
 
         function procesarReceta(imprimir) {
             const dueno = document.getElementById('receta-dueno').value; const paciente = document.getElementById('receta-paciente').value; const raza = document.getElementById('receta-raza').value; const edad = document.getElementById('receta-edad').value; const sexo = document.getElementById('receta-sexo').value; const peso = document.getElementById('receta-peso').value; const temp = document.getElementById('receta-temp').value; const texto = document.getElementById('receta-texto').value; 
             
-            let cVet = document.getElementById('canvas-vet'); let cCli = document.getElementById('canvas-cliente');
-            const firmaVetBase64 = (canvasActivo && !isCanvasBlank(cVet)) ? cVet.toDataURL() : "";
+            let cCli = document.getElementById('canvas-cliente');
             const firmaCliBase64 = (canvasActivo && !isCanvasBlank(cCli)) ? cCli.toDataURL() : "";
-            const imprimeVet = document.getElementById('check-print-vet').checked;
             const imprimeCliente = document.getElementById('check-print-cliente').checked;
 
             if(!dueno || !paciente || !texto) { alert("⚠️ Llena al menos Dueño, Paciente y la Prescripción."); return; }
             const folioStr = String(Date.now()).slice(-5); 
 
-            const recetaData = { doctor: usuarioLogueado.nombre, dueno: dueno, paciente: paciente, raza: raza, edad: edad, sexo: sexo, peso: peso, temperatura: temp, prescripcion: texto, firmaVet: firmaVetBase64, firmaCliente: firmaCliBase64, imprimeVet: imprimeVet, imprimeCliente: imprimeCliente, folio: folioStr, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now(), fechaReal: firebase.firestore.FieldValue.serverTimestamp() };
+            const recetaData = { doctor: usuarioLogueado.nombre, dueno: dueno, paciente: paciente, raza: raza, edad: edad, sexo: sexo, peso: peso, temperatura: temp, prescripcion: texto, firmaCliente: firmaCliBase64, imprimeCliente: imprimeCliente, folio: folioStr, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now(), fechaReal: firebase.firestore.FieldValue.serverTimestamp() };
 
             db.collection("Historial_Recetas").add(recetaData).then(() => {
                 if(imprimir) { imprimirHojaReceta(recetaData); } else { alert("✅ Receta guardada en el historial."); }
@@ -492,7 +549,11 @@
         }
 
         // 9. EXPEDIENTE CLÍNICO UNIFICADO (PREMIUM)
-        function abrirExpediente() { cambiarPantalla('pantalla-menu', 'pantalla-expediente'); document.getElementById('buscador-expediente').value = ''; cargarExpedienteBase(); }
+        function abrirExpediente() {
+            cambiarPantalla('pantalla-menu', 'pantalla-expediente'); document.getElementById('buscador-expediente').value = ''; 
+            cargarExpedienteBase();
+        }
+
         function cargarExpedienteBase() {
             document.getElementById('lista-expediente').innerHTML = '<div style="text-align:center; padding:40px;"><h3 style="color:#0d6efd;">⏳ Cargando expedientes...</h3><p style="color:#666;">Sincronizando desde la nube</p></div>';
             Promise.all([ db.collection("Historial_Cobros").orderBy("timestamp", "desc").limit(150).get(), db.collection("Historial_Recetas").orderBy("timestamp", "desc").limit(150).get() ]).then(([cobros, recetas]) => {
@@ -506,19 +567,43 @@
 
         function buscarExpediente() {
             let term = document.getElementById('buscador-expediente').value.toLowerCase();
+            let tipo = document.getElementById('filtro-tipo-exp').value;
+            let fecha = document.getElementById('filtro-fecha-exp').value;
+            let ahora = Date.now();
+
             let filtrados = datosExpediente.filter(d => {
                 let txt = (d.paciente||'') + ' ' + (d.dueno||'') + ' ' + (d.codigoConcepto||'');
-                return txt.toLowerCase().includes(term);
+                let coincideTexto = txt.toLowerCase().includes(term);
+                let coincideTipo = (tipo === 'todos') || (d.tipoRegistro === tipo);
+                let coincideFecha = true;
+                if(fecha === 'hoy') coincideFecha = (ahora - d.timestamp) <= (24 * 60 * 60 * 1000);
+                if(fecha === 'semana') coincideFecha = (ahora - d.timestamp) <= (7 * 24 * 60 * 60 * 1000);
+                if(fecha === 'mes') coincideFecha = (ahora - d.timestamp) <= (30 * 24 * 60 * 60 * 1000);
+
+                return coincideTexto && coincideTipo && coincideFecha;
             });
+
             let html = '';
-            if(filtrados.length === 0) { html = '<div style="text-align:center; padding:30px; color:#888;">🔍 No se encontraron registros con estos filtros.</div>'; } 
-            else {
+            if(filtrados.length === 0) {
+                html = '<div style="text-align:center; padding:30px; color:#888;">🔍 No se encontraron registros con estos filtros.</div>';
+            } else {
                 filtrados.forEach((d) => {
                     if(d.tipoRegistro === 'receta') {
-                        html += `<div class="tarjeta-expediente receta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-receta">📝 Receta</span> ${d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 Dueño: ${d.dueno}</span><span>⚖️ Peso: ${d.peso||'--'}kg</span><span>🌡️ Temp: ${d.temperatura||'--'}°C</span></div><div class="exp-content">${d.prescripcion}</div><div class="exp-footer"><span><strong style="color:#333;">Dr. ${d.doctor}</strong></span><button class="btn-exp-action" onclick="reimprimirDesdeExpediente(${d.timestamp}, 'receta')">🖨️ Ver Receta / Firmas</button></div></div>`;
+                        html += `<div class="tarjeta-expediente receta">
+                            <div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-receta">📝 Receta</span> ${d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div>
+                            <div class="exp-meta"><span>👤 Dueño: ${d.dueno}</span><span>⚖️ Peso: ${d.peso||'--'}kg</span><span>🌡️ Temp: ${d.temperatura||'--'}°C</span></div>
+                            <div class="exp-content">${d.prescripcion}</div>
+                            <div class="exp-footer"><span><strong style="color:#333;">Dr. ${d.doctor}</strong></span><button class="btn-exp-action" onclick="reimprimirDesdeExpediente(${d.timestamp}, 'receta')">🖨️ Ver Receta / Firmas</button></div>
+                        </div>`;
                     } else {
-                        let desc = d.articulos ? d.articulos.map(a=>a.nombre).join(', ') : d.codigoConcepto; let isVenta = d.ventaMostrador;
-                        html += `<div class="tarjeta-expediente venta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰 ${isVenta ? 'Mostrador' : 'Cobro'}</span> ${isVenta ? 'Público General' : d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 Dueño: ${isVenta ? 'N/A' : d.dueno}</span><span>👨‍⚕️ Atendió: ${d.atendio}</span><span>💳 Pago: ${d.metodoPago}</span></div><div class="exp-content" style="color:#146c43; font-weight:500;">🛒 ${desc}</div><div class="exp-footer"><span style="font-size:1.2em; font-weight:bold; color:#198754;">$${parseFloat(d.totalCobrado).toFixed(2)}</span><button class="btn-exp-action btn-venta" onclick="reimprimirDesdeExpediente(${d.timestamp}, 'cobro')">🖨️ Ver Ticket</button></div></div>`;
+                        let desc = d.articulos ? d.articulos.map(a=>a.nombre).join(', ') : d.codigoConcepto;
+                        let isVenta = d.ventaMostrador;
+                        html += `<div class="tarjeta-expediente venta">
+                            <div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰 ${isVenta ? 'Mostrador' : 'Cobro'}</span> ${isVenta ? 'Público General' : d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div>
+                            <div class="exp-meta"><span>👤 Dueño: ${isVenta ? 'N/A' : d.dueno}</span><span>👨‍⚕️ Atendió: ${d.atendio}</span><span>💳 Pago: ${d.metodoPago}</span></div>
+                            <div class="exp-content" style="color:#146c43; font-weight:500;">🛒 ${desc}</div>
+                            <div class="exp-footer"><span style="font-size:1.2em; font-weight:bold; color:#198754;">$${parseFloat(d.totalCobrado).toFixed(2)}</span><button class="btn-exp-action btn-venta" onclick="reimprimirDesdeExpediente(${d.timestamp}, 'cobro')">🖨️ Ver Ticket</button></div>
+                        </div>`;
                     }
                 });
             }
@@ -536,8 +621,7 @@
         }
 
         function imprimirHojaReceta(receta) {
-            let pVet = receta.imprimeVet !== undefined ? receta.imprimeVet : true; let pCli = receta.imprimeCliente !== undefined ? receta.imprimeCliente : true;
-            let htmlFirmaVet = (pVet && receta.firmaVet) ? `<img src="${receta.firmaVet}">` : `<div style="height: 45px;"></div>`;
+            let pCli = receta.imprimeCliente !== undefined ? receta.imprimeCliente : true;
             let htmlFirmaCli = (pCli && receta.firmaCliente) ? `<img src="${receta.firmaCliente}">` : `<div style="height: 45px;"></div>`;
             let fch = receta.fechaTexto ? receta.fechaTexto.split(',')[0] : '';
 
@@ -555,9 +639,11 @@
                 </div>
                 <div class="cuerpo-receta">
                     <div class="prescripcion-texto">${receta.prescripcion}</div>
-                    <div class="firmas-area">
-                        <div class="firma-bloque">${htmlFirmaVet}<div class="firma-linea">MVZ ${receta.doctor}<br>Ced. Prof. Pendiente</div></div>
-                        <div class="firma-bloque">${htmlFirmaCli}<div class="firma-linea">Firma del Propietario</div></div>
+                    <div class="firmas-area" style="justify-content: center;">
+                        <div class="firma-bloque" style="width: 50%;">
+                            ${htmlFirmaCli}
+                            <div class="firma-linea">Firma del Propietario</div>
+                        </div>
                     </div>
                 </div>
                 <div class="footer-receta">
@@ -571,17 +657,83 @@
         // 11. CORTE DE CAJA Y REPORTES
         function abrirCorteCaja(periodo) { cambiarPantalla('pantalla-menu', 'pantalla-corte-caja'); document.querySelectorAll('.btn-filtro').forEach(b => { b.classList.remove('activo'); }); document.getElementById(`filtro-${periodo}`).classList.add('activo'); const lista = document.getElementById('lista-corte-caja'); lista.innerHTML = '<p style="text-align:center;">Procesando datos...</p>'; let limiteTiempo = Date.now(); if(periodo === 'dia') limiteTiempo -= (24 * 60 * 60 * 1000); if(periodo === 'semana') limiteTiempo -= (7 * 24 * 60 * 60 * 1000); if(periodo === 'mes') limiteTiempo -= (30 * 24 * 60 * 60 * 1000); db.collection("Historial_Cobros").orderBy("timestamp", "desc").limit(1000).get().then(q => { let resumen = {}; let granTotal = 0; let granDescuento = 0; q.forEach(doc => { const d = doc.data(); if(d.timestamp >= limiteTiempo) { if(!resumen[d.atendio]) resumen[d.atendio] = { ventas: 0, total: 0, descuentos: 0 }; resumen[d.atendio].ventas += 1; let totalPagado = d.totalCobrado || 0; let descuentoMoneda = (d.subtotal || totalPagado) - totalPagado; resumen[d.atendio].total += totalPagado; resumen[d.atendio].descuentos += descuentoMoneda; granTotal += totalPagado; granDescuento += descuentoMoneda; } }); document.getElementById('corte-gran-total').innerText = granTotal.toFixed(2); document.getElementById('corte-gran-descuento').innerText = granDescuento.toFixed(2); if(Object.keys(resumen).length === 0) { lista.innerHTML = '<p style="text-align:center; color:#666;">No hay movimientos.</p>'; return; } let html = ''; for(let doctor in resumen) { let r = resumen[doctor]; html += `<div class="tarjeta-info" style="border-left: 4px solid #0d6efd;"><div class="th-header"><strong style="color:#333; font-size:1.1em;">👨‍⚕️ ${doctor}</strong></div><div style="display:flex; justify-content:space-between; margin-top:10px;"><div style="text-align:center; flex:1;"><div style="font-size:0.8em; color:#666;">TICKETS</div><strong>${r.ventas}</strong></div><div style="text-align:center; flex:1; border-left:1px solid #eee; border-right:1px solid #eee;"><div style="font-size:0.8em; color:#666;">COBRADO</div><strong style="color:#198754;">$${r.total.toFixed(2)}</strong></div><div style="text-align:center; flex:1;"><div style="font-size:0.8em; color:#666;">DESC.</div><strong style="color:#dc3545;">$${r.descuentos.toFixed(2)}</strong></div></div></div>`; } lista.innerHTML = html; }).catch(e => {}); }
         
-        // 12. VER INVENTARIO
-        function abrirVerInventario() { cambiarPantalla('pantalla-menu', 'pantalla-ver-inventario'); const lista = document.getElementById('lista-stock-firebase'); lista.innerHTML = '<p style="text-align:center;">Buscando inventario...</p>'; db.collection("Inventario").get().then((q) => { lista.innerHTML = q.empty ? '<p style="text-align:center;">No hay inventario registrado.</p>' : ''; q.forEach((doc) => { const d = doc.data(); if(d.tipoArticulo === 'Servicio Médico') return; let limite = (d.unidad === 'Mililitros (ml)') ? 20 : 5; const claseAlerta = d.cantidad <= limite ? 'stock-alerta' : 'stock-ok'; const mensajeAlerta = d.cantidad <= limite ? `<div style="margin-top:8px; padding:5px; background:#fff0f0; color:#dc3545; border-radius:5px; text-align:center; font-size:0.85em; font-weight:bold;">¡Falta poco stock!</div>` : ''; lista.innerHTML += `<div class="tarjeta-info ${claseAlerta}"><div class="th-header"><strong style="font-size:1.1em;">${d.medicamento}</strong> <span style="font-size: 1.2em; font-weight: bold; background:#f8f9fa; padding:2px 10px; border-radius:8px; color: ${d.cantidad <= limite ? '#dc3545' : '#198754'};">${d.cantidad} <span style="font-size:0.6em; font-weight:normal; color:#666;">${d.unidad || 'U.'}</span></span></div><div class="th-cuerpo" style="color:#0d6efd; font-family:monospace;">Cód: ${d.codigoQR} | $${d.precioVenta || 0}</div><div class="th-cuerpo" style="font-size: 0.9em; color: #666;">${d.descripcion || ''}</div>${mensajeAlerta}</div>`; }); }); }
+        // 12. VER INVENTARIO CON FILTROS
+        function abrirVerInventario() { cambiarPantalla('pantalla-menu', 'pantalla-ver-inventario'); document.getElementById('busqueda-inv-texto').value = ''; document.getElementById('busqueda-inv-unidad').value = 'todas'; document.getElementById('busqueda-inv-stock').value = 'todos'; cargarInventarioVista(); }
+        function cargarInventarioVista() {
+            const lista = document.getElementById('lista-stock-firebase'); lista.innerHTML = '<p style="text-align:center;">Buscando inventario...</p>';
+            db.collection("Inventario").get().then((q) => { lista.innerHTML = q.empty ? '<p style="text-align:center;">No hay inventario registrado.</p>' : ''; q.forEach((doc) => { const d = doc.data(); if(d.tipoArticulo === 'Servicio Médico') return; let limite = (d.unidad === 'Mililitros (ml)') ? 20 : 5; const claseAlerta = d.cantidad <= limite ? 'stock-alerta' : 'stock-ok'; const mensajeAlerta = d.cantidad <= limite ? `<div style="margin-top:8px; padding:5px; background:#fff0f0; color:#dc3545; border-radius:5px; text-align:center; font-size:0.85em; font-weight:bold;">¡Falta poco stock!</div>` : ''; lista.innerHTML += `<div class="tarjeta-info ${claseAlerta}" data-unidad="${d.unidad}"><div class="th-header"><strong style="font-size:1.1em;">${d.medicamento}</strong> <span style="font-size: 1.2em; font-weight: bold; background:#f8f9fa; padding:2px 10px; border-radius:8px; color: ${d.cantidad <= limite ? '#dc3545' : '#198754'};">${d.cantidad} <span style="font-size:0.6em; font-weight:normal; color:#666;">${d.unidad || 'U.'}</span></span></div><div class="th-cuerpo" style="color:#0d6efd; font-family:monospace;">Cód: ${d.codigoQR} | $${d.precioVenta || 0}</div><div class="th-cuerpo" style="font-size: 0.9em; color: #666;">${d.descripcion || ''}</div>${mensajeAlerta}</div>`; }); });
+        }
+        function filtrarInventario() {
+            let txt = document.getElementById('busqueda-inv-texto').value.toLowerCase();
+            let uni = document.getElementById('busqueda-inv-unidad').value;
+            let stk = document.getElementById('busqueda-inv-stock').value;
+            let tarjetas = document.getElementById('lista-stock-firebase').children;
+            for(let t of tarjetas) {
+                if(t.tagName !== 'DIV') continue;
+                let matchTxt = t.innerText.toLowerCase().includes(txt);
+                let matchUni = (uni === 'todas') || (t.dataset.unidad === uni);
+                let matchStk = (stk === 'todos') || (stk === 'bajo' && t.classList.contains('stock-alerta')) || (stk === 'ok' && t.classList.contains('stock-ok'));
+                t.style.display = (matchTxt && matchUni && matchStk) ? "" : "none";
+            }
+        }
 
-        // 13. ALTA Y BAJA DE INVENTARIO
+        // 13. HISTORIAL DE ALTAS Y MERMAS (INVENTARIO)
+        function abrirHistorialInventario() { cambiarPantalla('pantalla-menu', 'pantalla-historial-inventario'); document.getElementById('buscador-hist-inv').value = ''; cargarHistorialInventario(); }
+        function cargarHistorialInventario() {
+            document.getElementById('lista-historial-inventario').innerHTML = '<div style="text-align:center; padding:40px;">⏳ Cargando movimientos...</div>';
+            db.collection("Historial_Inventario").orderBy("timestamp", "desc").limit(200).get().then((q) => {
+                datosHistorialInv = [];
+                q.forEach(d => datosHistorialInv.push(d.data()));
+                buscarHistorialInventario();
+            }).catch(e => document.getElementById('lista-historial-inventario').innerHTML = '<p style="color:red; text-align:center;">Error al cargar.</p>');
+        }
+        function buscarHistorialInventario() {
+            let term = document.getElementById('buscador-hist-inv').value.toLowerCase(); let tipo = document.getElementById('filtro-tipo-hist-inv').value; let fecha = document.getElementById('filtro-fecha-hist-inv').value; let ahora = Date.now();
+            let filtrados = datosHistorialInv.filter(d => {
+                let txt = (d.medicamento||'') + ' ' + (d.codigoQR||'') + ' ' + (d.registradoPor||'');
+                let cTxt = txt.toLowerCase().includes(term); let cTipo = (tipo === 'todos') || (d.tipoMovimiento === tipo || d.tipoMovimiento.includes(tipo));
+                let cFch = true; if(fecha === 'hoy') cFch = (ahora - d.timestamp) <= 86400000; if(fecha === 'semana') cFch = (ahora - d.timestamp) <= 604800000; if(fecha === 'mes') cFch = (ahora - d.timestamp) <= 2592000000;
+                return cTxt && cTipo && cFch;
+            });
+            let html = '';
+            if(filtrados.length === 0) html = '<p style="text-align:center; color:#888;">No hay resultados.</p>';
+            filtrados.forEach(d => {
+                let isAlta = (d.tipoMovimiento === 'Alta'); let cl = isAlta ? 'venta' : 'receta'; let bdg = isAlta ? 'badge-venta' : 'badge-receta'; let icon = isAlta ? '📦 Alta' : '📉 Merma';
+                html += `<div class="tarjeta-expediente ${cl}" style="padding:15px;"><div class="exp-header" style="margin-bottom:5px;"><span class="exp-title"><span class="badge-tipo ${bdg}">${icon}</span> ${d.medicamento}</span><span class="exp-date">${d.fechaTexto}</span></div>
+                <div class="exp-content" style="margin-bottom:8px; padding:8px;"><strong>Cód:</strong> ${d.codigoQR} <br><strong>Cantidad:</strong> ${d.cantidad} ${d.unidad||''} ${d.motivo ? `<br><strong>Motivo:</strong> ${d.motivo}` : ''}</div>
+                <div class="exp-footer"><span>Por: ${d.registradoPor}</span></div></div>`;
+            });
+            document.getElementById('lista-historial-inventario').innerHTML = html;
+        }
+
+        // 14. ALTA Y BAJA DE INVENTARIO
         function toggleServicio() { const tipo = document.getElementById('tipo-inventario').value; if(tipo === 'Servicio Médico') { document.getElementById('caja-cantidad-inv').classList.add('oculto'); document.getElementById('caja-unidad-inv').classList.add('oculto'); document.getElementById('cantidad-inventario').value = 9999; } else { document.getElementById('caja-cantidad-inv').classList.remove('oculto'); document.getElementById('caja-unidad-inv').classList.remove('oculto'); document.getElementById('cantidad-inventario').value = ""; } }
         function abrirInventario() { cambiarPantalla('pantalla-menu', 'pantalla-inventario'); toggleServicio(); }
-        function guardarEnInventario() { const q = document.getElementById('qr-inventario').value; const n = document.getElementById('nombre-inventario').value; const d = document.getElementById('descripcion-inventario').value; const c = document.getElementById('cantidad-inventario').value; const u = document.getElementById('unidad-inventario').value; const p = document.getElementById('precio-inventario').value; const t = document.getElementById('tipo-inventario').value; if(!q || !n || !c || !p) return alert("⚠️ Llena código, nombre, precio y cantidad."); db.collection("Inventario").doc(q).set({ tipoArticulo: t, codigoQR: q, medicamento: n, descripcion: d, precioVenta: parseFloat(p), cantidad: parseInt(c), unidad: u, registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { alert("✅ Guardado en Catálogo/Inventario."); cargarSugerenciasInventario(); cancelarVolver(); }); }
+        function guardarEnInventario() { 
+            const q = document.getElementById('qr-inventario').value; const n = document.getElementById('nombre-inventario').value; const d = document.getElementById('descripcion-inventario').value; const c = document.getElementById('cantidad-inventario').value; const u = document.getElementById('unidad-inventario').value; const p = document.getElementById('precio-inventario').value; const t = document.getElementById('tipo-inventario').value; 
+            if(!q || !n || !c || !p) return alert("⚠️ Llena código, nombre, precio y cantidad."); 
+            db.collection("Inventario").doc(q).set({ tipoArticulo: t, codigoQR: q, medicamento: n, descripcion: d, precioVenta: parseFloat(p), cantidad: parseInt(c), unidad: u, registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { 
+                db.collection("Historial_Inventario").add({ tipoMovimiento: "Alta", codigoQR: q, medicamento: n, cantidad: parseInt(c), unidad: u, precio: parseFloat(p), registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now() });
+                alert("✅ Guardado en Catálogo/Inventario."); cargarSugerenciasInventario(); cancelarVolver(); 
+            }); 
+        }
         function abrirBajaInventario() { cambiarPantalla('pantalla-menu', 'pantalla-baja-inventario'); }
-        function guardarBajaInventario() { let val = document.getElementById('qr-baja-inv').value; let q = val.includes(" - ") ? val.split(" - ")[1] : val; const c = document.getElementById('cantidad-baja-inv').value; if(!q || !c) return alert("⚠️ Llena código y cantidad."); db.collection("Inventario").doc(q).get().then(doc => { if(doc.exists) { if(doc.data().tipoArticulo === 'Servicio Médico') return alert("❌ No puedes dar de baja un servicio médico."); let actual = doc.data().cantidad; db.collection("Inventario").doc(q).update({ cantidad: actual - Math.abs(parseInt(c)) }).then(() => { alert(`✅ Se descontaron piezas/ml del stock.`); cargarSugerenciasInventario(); cancelarVolver(); }); } else { alert("❌ El código no existe en el inventario."); } }); }
+        function guardarBajaInventario() { 
+            let val = document.getElementById('qr-baja-inv').value; let q = val.includes(" - ") ? val.split(" - ")[1] : val; const c = document.getElementById('cantidad-baja-inv').value; const m = document.getElementById('motivo-baja-inv').value || 'Sin especificar';
+            if(!q || !c) return alert("⚠️ Llena código y cantidad."); 
+            db.collection("Inventario").doc(q).get().then(doc => { 
+                if(doc.exists) { 
+                    if(doc.data().tipoArticulo === 'Servicio Médico') return alert("❌ No puedes dar de baja un servicio médico."); 
+                    let actual = doc.data().cantidad; 
+                    db.collection("Inventario").doc(q).update({ cantidad: actual - Math.abs(parseInt(c)) }).then(() => { 
+                        db.collection("Historial_Inventario").add({ tipoMovimiento: "Merma", codigoQR: q, medicamento: doc.data().medicamento, motivo: m, cantidad: parseInt(c), unidad: doc.data().unidad, registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now() });
+                        alert(`✅ Se descontaron piezas/ml del stock.`); cargarSugerenciasInventario(); cancelarVolver(); 
+                    }); 
+                } else { alert("❌ El código no existe en el inventario."); } 
+            }); 
+        }
 
-        // 14. ADMINISTRAR USUARIOS
+        // 15. ADMINISTRAR USUARIOS
         function abrirUsuarios() { cambiarPantalla('pantalla-menu', 'pantalla-usuarios'); const lista = document.getElementById('lista-usuarios-firebase'); lista.innerHTML = '<p style="text-align:center;">Cargando usuarios...</p>'; db.collection("Usuarios").get().then((q) => { lista.innerHTML = ''; q.forEach((doc) => { const u = doc.data(); const uPin = doc.id; lista.innerHTML += `<div class="tarjeta-info" style="display:flex; justify-content: space-between; align-items: center; padding: 15px;"><div style="line-height:1.4;"><strong style="font-size:1.1em;">${u.nombre}</strong> <span style="background:#e3f2fd; color:#0d6efd; padding:2px 8px; border-radius:12px; font-size:0.75em; font-weight:bold; margin-left:5px;">${u.rol}</span><br><span style="color:#6c757d; font-size:0.85em;">PIN: <strong style="color:#333;">${uPin}</strong></span></div><button class="btn-cancelar" style="margin:0; padding:8px 15px; width:auto; border-radius:8px;" onclick="eliminarUsuario('${uPin}')">Borrar</button></div>`; }); }); }
         function crearUsuario() { const n = document.getElementById('nuevo-usuario-nombre').value; const p = document.getElementById('nuevo-usuario-pin').value; const r = document.getElementById('nuevo-usuario-rol').value; if(!n || !p || p.length !== 4) return alert("⚠️ Ingresa un nombre y un PIN de exactamente 4 números."); db.collection("Usuarios").doc(p).set({ nombre: n, rol: r }).then(() => { alert("✅ Usuario creado."); document.getElementById('nuevo-usuario-nombre').value = ""; document.getElementById('nuevo-usuario-pin').value = ""; abrirUsuarios(); }); }
         function eliminarUsuario(pinBorrar) { if(pinBorrar === usuarioLogueado.pin) return alert("❌ No puedes eliminarte a ti mismo."); if(confirm(`¿Seguro de eliminar este acceso (${pinBorrar})?`)) { db.collection("Usuarios").doc(pinBorrar).delete().then(() => { abrirUsuarios(); }); } }
