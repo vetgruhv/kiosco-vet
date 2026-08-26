@@ -10,10 +10,10 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
     <style>
-        /* --- ESTILOS VISUALES PREMIUM (MODERNO Y LIMPIO) --- */
+        /* --- ESTILOS VISUALES PREMIUM (MODERNO, LIMPIO Y REDONDEADO) --- */
         body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #eef2f6; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #2b3035; }
         .contenedor { background: white; padding: 30px; border-radius: 24px; box-shadow: 0 12px 35px rgba(0,0,0,0.06); width: 95%; max-width: 650px; margin: 20px 0; max-height: 90vh; overflow-y: auto; }
-        .contenedor-ancho { max-width: 850px; }
+        .contenedor-ancho { max-width: 850px; } 
         
         .pantalla-pin { font-size: 2.5em; letter-spacing: 15px; margin-bottom: 25px; padding: 15px; width: 100%; text-align: center; background-color: #f8f9fa; border: 2px solid #e9ecef; border-radius: 16px; box-sizing: border-box; color: #333; font-weight: bold; }
         .cuadricula-teclas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
@@ -34,6 +34,7 @@
         .grupo-formulario label { display: block; font-weight: 700; margin-bottom: 8px; color: #495057; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.5px;}
         .grupo-formulario input, .grupo-formulario select, .grupo-formulario textarea { width: 100%; padding: 14px; font-size: 1em; border: 2px solid #e9ecef; border-radius: 12px; box-sizing: border-box; font-family: inherit; transition: all 0.2s; background-color: #f8f9fa; color: #333;}
         .grupo-formulario input:focus, .grupo-formulario select:focus, .grupo-formulario textarea:focus { border-color: #0d6efd; outline: none; background-color: #fff; box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1); }
+        .input-buscador { font-size: 1.1em; border: 2px solid #0d6efd !important; background: #fff !important; }
         
         .btn { width: 100%; padding: 16px; font-size: 1.1em; border: none; border-radius: 14px; cursor: pointer; font-weight: bold; transition: all 0.2s ease; display: block; text-align: center; }
         .btn-qr { background: #e3f2fd; color: #0d6efd; border: 2px dashed #0d6efd; margin-bottom: 15px;}
@@ -59,7 +60,7 @@
         .btn-eliminar-item { background: #ffe3e3; color: #dc3545; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-weight: bold; transition: 0.2s;}
         .btn-eliminar-item:hover { background: #ffc9c9; }
 
-        /* FIRMAS NUEVAS */
+        /* FIRMAS */
         .firma-card { flex: 1; border: 1px solid #e9ecef; border-radius: 14px; padding: 15px; background: #fff; text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.02);}
         .firma-title { font-size: 0.85em; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
         .canvas-firma { border: 2px dashed #ced4da; border-radius: 10px; width: 100%; height: 120px; background: #fafafa; touch-action: none; margin-bottom: 12px; cursor: crosshair;}
@@ -67,35 +68,37 @@
         .btn-borrar-firma:active { background: #ffc9c9; transform: scale(0.95);}
         .firma-checkbox { font-size: 0.9em; color: #495057; display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600;}
 
-        /* EXPEDIENTE UNIFICADO */
-        .panel-busqueda { background: #ffffff; padding: 20px; border-radius: 18px; margin-bottom: 25px; border: 1px solid #e9ecef; display: grid; gap: 15px; grid-template-columns: 1fr 1fr 1fr; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
-        .tarjeta-expediente { border: 1px solid #e9ecef; border-radius: 16px; padding: 20px; margin-bottom: 18px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.03); text-align: left; transition: 0.2s; position: relative; overflow: hidden;}
-        .tarjeta-expediente:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.06); transform: translateY(-2px); border-color: #dee2e6; }
+        /* EXPEDIENTE UNIFICADO & TARJETAS HISTORIAL */
+        .panel-busqueda { background: #ffffff; padding: 20px; border-radius: 18px; margin-bottom: 25px; border: 1px solid #e9ecef; display: grid; gap: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .tarjeta-expediente, .tarjeta-info { border: 1px solid #e9ecef; border-radius: 16px; padding: 20px; margin-bottom: 18px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.03); text-align: left; transition: 0.2s; position: relative; overflow: hidden;}
+        .tarjeta-expediente:hover, .tarjeta-info:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.06); transform: translateY(-2px); border-color: #dee2e6; }
         .tarjeta-expediente.receta { border-left: 6px solid #0d6efd; }
-        .tarjeta-expediente.venta { border-left: 6px solid #198754; }
+        .tarjeta-expediente.venta, .tarjeta-info.venta { border-left: 6px solid #198754; }
+        
         .badge-tipo { padding: 5px 10px; border-radius: 8px; font-size: 0.8em; font-weight: bold; margin-right: 10px; display: inline-block;}
         .badge-receta { background: #e3f2fd; color: #0d6efd; }
         .badge-venta { background: #e8f5e9; color: #198754; }
-        .exp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #f1f3f5; padding-bottom: 10px;}
-        .exp-title { font-weight: 800; font-size: 1.1em; color: #2b3035; display: flex; align-items: center;}
-        .exp-date { font-size: 0.85em; color: #888; font-weight: 500;}
-        .exp-meta { font-size: 0.9em; color: #555; margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;}
+        
+        .exp-header, .th-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #f1f3f5; padding-bottom: 10px;}
+        .exp-title, .th-header strong { font-weight: 800; font-size: 1.1em; color: #2b3035; display: flex; align-items: center;}
+        .exp-date, .th-header span { font-size: 0.85em; color: #888; font-weight: 500;}
+        .exp-meta { font-size: 0.9em; color: #555; margin-bottom: 15px; display: flex; gap: 15px; flex-wrap: wrap;}
         .exp-meta span { background: #f8f9fa; padding: 4px 10px; border-radius: 6px; border: 1px solid #e9ecef;}
-        .exp-content { background: #f8f9fa; padding: 15px; border-radius: 12px; font-size: 0.95em; color: #444; white-space: pre-wrap; margin-bottom: 15px; border: 1px solid #f1f3f5; line-height: 1.5;}
-        .exp-footer { display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; color: #666; }
+        .exp-content, .th-cuerpo { background: #f8f9fa; padding: 15px; border-radius: 12px; font-size: 0.95em; color: #444; white-space: pre-wrap; margin-bottom: 15px; border: 1px solid #f1f3f5; line-height: 1.5;}
+        .exp-footer, .th-pie { display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; color: #666; }
+        
         .btn-exp-action { background: #e3f2fd; color: #0d6efd; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s; display: flex; align-items: center; gap: 6px;}
         .btn-exp-action:hover { background: #d0e7ff; transform: translateY(-2px);}
         .btn-exp-action.btn-venta { background: #e8f5e9; color: #198754; }
+        .btn-exp-action.btn-venta:hover { background: #d1e7dd; }
 
-        /* --- ZONA DE IMPRESIÓN --- */
+        /* ZONA DE IMPRESIÓN */
         #zona-impresion { display: none; }
         @media print {
             @page { margin: 0; }
             body { background: white; margin: 0; padding: 0; color: black; }
             .contenedor, .alerta-banner { display: none !important; }
             #zona-impresion { display: block !important; width: 100%; }
-            
-            /* TICKET VÁUCHER OXXO */
             .ticket-print { width: 78mm; font-family: 'Courier New', Courier, monospace; font-size: 12px; margin: 0; padding: 10mm 5mm; text-transform: uppercase; }
             .ticket-print h2 { font-size: 16px; text-align: center; margin: 0 0 5px 0; font-weight: bold; }
             .ticket-print .info-tienda { text-align: center; font-size: 11px; margin-bottom: 10px; line-height: 1.2; }
@@ -108,7 +111,6 @@
             .ticket-print .totales strong { font-size: 14px; }
             .ticket-print .footer { text-align: center; font-size: 11px; margin-top: 15px; border-top: 1px dashed #000; padding-top: 10px; line-height: 1.4; }
             
-            /* RECETA DISEÑO VETGRU */
             .receta-print { width: 100%; max-width: 216mm; height: 140mm; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0 auto; padding: 10mm 15mm; box-sizing: border-box; color: #2c6e8f; }
             .receta-print .cabecera { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5px; }
             .receta-print .logo-area { width: 28%; }
@@ -123,12 +125,10 @@
             
             .receta-print .cuerpo-receta { border: 2px solid #2c6e8f; border-radius: 12px; height: 85mm; padding: 15px; position: relative; margin-top: 10px; display: flex; flex-direction: column;}
             .receta-print .prescripcion-texto { font-size: 13px; color: black; white-space: pre-wrap; flex-grow: 1; }
-            
             .receta-print .firmas-area { display: flex; justify-content: space-between; margin-top: 10px; position: absolute; bottom: 15px; width: calc(100% - 30px); }
             .receta-print .firma-bloque { width: 40%; text-align: center; font-size: 11px; }
             .receta-print .firma-bloque img { max-height: 45px; display: block; margin: 0 auto 5px auto; }
             .receta-print .firma-linea { border-top: 1px solid #2c6e8f; padding-top: 4px; color: #2c6e8f;}
-            
             .receta-print .footer-receta { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; font-size: 10px; line-height: 1.4; color: #2c6e8f;}
         }
     </style>
@@ -205,14 +205,20 @@
     <!-- PANTALLA 3: PUNTO DE VENTA (CARRITO) -->
     <div id="pantalla-registro-baja" class="contenedor oculto">
         <div class="header-usuario" id="texto-registro-usuario" style="background: linear-gradient(135deg, #198754, #146c43);"></div>
-        <h2 style="color: #333; margin-top: 0; font-size: 1.5em; text-align: left;">🛒 Punto de Venta</h2>
+        <h2 id="titulo-formulario" style="color: #333; margin-top: 0; font-size: 1.5em; text-align: left;">🛒 Punto de Venta</h2>
         
         <button type="button" class="btn btn-qr" onclick="iniciarCamara('caja-camara-baja', 'buscador-pos')">📷 Escanear Producto (QR)</button>
         <div id="caja-camara-baja" class="caja-camara oculto"></div>
         
         <div class="form-row">
-            <div class="grupo-formulario" style="flex: 2;"><label>Buscar Producto o Servicio:</label><input type="text" id="buscador-pos" list="lista-medicamentos" placeholder="Teclea nombre o código..." oninput="autocompletarPrecio()" style="font-weight:bold; color:#0d6efd;"></div>
-            <div class="grupo-formulario" style="max-width: 120px;"><label>Precio ($):</label><input type="number" id="precio-pos" placeholder="Manual"></div>
+            <div class="grupo-formulario" style="flex: 2;">
+                <label>Buscar Producto o Servicio:</label>
+                <input type="text" id="buscador-pos" list="lista-medicamentos" placeholder="Teclea nombre o código..." oninput="autocompletarPrecio()" style="font-weight:bold; color:#0d6efd;">
+            </div>
+            <div class="grupo-formulario" style="max-width: 120px;">
+                <label>Precio ($):</label>
+                <input type="number" id="precio-pos" placeholder="Manual">
+            </div>
             <button class="btn btn-guardar-azul" style="width: auto; padding: 12px 20px; border-radius: 12px;" onclick="agregarAlCarrito()">➕</button>
         </div>
 
@@ -234,7 +240,7 @@
         <div class="caja-cobro">
             <h4 style="margin: 0 0 15px 0; color: #856404; font-size: 1.1em; border-bottom: 1px solid #ffeeba; padding-bottom: 8px;">💳 Detalles de Cobro</h4>
             <div class="form-row"><div class="grupo-formulario"><label>Tipo Descuento:</label><select id="tipo-descuento" onchange="calcularTotal()"><option value="Ninguno">Ninguno</option><option value="Porcentaje">Porcentaje (%)</option><option value="Monto">Monto Fijo ($)</option></select></div><div class="grupo-formulario"><label>Descuento:</label><input type="number" id="valor-descuento" placeholder="0" oninput="calcularTotal()"></div></div>
-            <div class="grupo-formulario"><label>Método de Pago:</label><select id="metodo-pago"><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Terminal Clip</option><option>American Express</option><option>Transferencia</option><option>Sin Cobro (Interno)</option></select></div>
+            <div class="grupo-formulario"><label>Método de Pago:</label><select id="metodo-pago"><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Terminal Clip</option><option>American Express</option><option>Transferencia</option><option>Sin Cobro (Interno / Devolución)</option></select></div>
             <h2 style="margin: 15px 0 0 0; color: #198754; text-align: right; font-size: 2.2em;">Total: $<span id="total-cobrar">0.00</span></h2>
         </div>
         
@@ -245,43 +251,31 @@
         <button class="btn btn-cancelar" style="border:none;" onclick="cancelarVolver()">Cancelar Venta</button>
     </div>
 
-    <!-- PANTALLA 4: RECETA MÉDICA (DISEÑO VETGRU + FIRMAS) -->
+    <!-- PANTALLA 4: RECETA MÉDICA -->
     <div id="pantalla-recetas" class="contenedor oculto">
         <h2 style="color: #0d6efd; margin-top: 0; font-size: 1.6em; text-align: left;">📝 Receta Médica</h2>
         
-        <div class="form-row">
-            <div class="grupo-formulario"><label>Dueño:</label><input type="text" id="receta-dueno" placeholder="Nombre completo"></div>
-            <div class="grupo-formulario"><label>Paciente:</label><input type="text" id="receta-paciente" placeholder="Ej. Max"></div>
-        </div>
-        
-        <div class="form-row">
-            <div class="grupo-formulario"><label>Raza:</label><input type="text" id="receta-raza" placeholder="Ej. Husky"></div>
-            <div class="grupo-formulario"><label>Sexo:</label><select id="receta-sexo"><option value="">Seleccione</option><option value="Macho">Macho</option><option value="Hembra">Hembra</option></select></div>
-            <div class="grupo-formulario"><label>Edad:</label><input type="text" id="receta-edad" placeholder="Ej. 2 años"></div>
-        </div>
-        
-        <div class="form-row">
-            <div class="grupo-formulario"><label>Peso (Kg):</label><input type="number" step="0.1" id="receta-peso" placeholder="Ej. 12.5"></div>
-            <div class="grupo-formulario"><label>Temp (°C):</label><input type="number" step="0.1" id="receta-temp" placeholder="Ej. 38.5"></div>
-        </div>
+        <div class="form-row"><div class="grupo-formulario"><label>Dueño:</label><input type="text" id="receta-dueno" placeholder="Nombre completo"></div><div class="grupo-formulario"><label>Paciente:</label><input type="text" id="receta-paciente" placeholder="Ej. Max"></div></div>
+        <div class="form-row"><div class="grupo-formulario"><label>Raza:</label><input type="text" id="receta-raza" placeholder="Ej. Husky"></div><div class="grupo-formulario"><label>Sexo:</label><select id="receta-sexo"><option value="">Seleccione</option><option value="Macho">Macho</option><option value="Hembra">Hembra</option></select></div><div class="grupo-formulario"><label>Edad:</label><input type="text" id="receta-edad" placeholder="Ej. 2 años"></div></div>
+        <div class="form-row"><div class="grupo-formulario"><label>Peso (Kg):</label><input type="number" step="0.1" id="receta-peso" placeholder="Ej. 12.5"></div><div class="grupo-formulario"><label>Temp (°C):</label><input type="number" step="0.1" id="receta-temp" placeholder="Ej. 38.5"></div></div>
 
-        <div class="grupo-formulario">
-            <label>Prescripción Médica:</label>
-            <textarea id="receta-texto" rows="5" placeholder="Escribe la receta..." style="font-size: 1em;"></textarea>
-        </div>
+        <div class="grupo-formulario"><label>Prescripción Médica:</label><textarea id="receta-texto" rows="5" placeholder="Escribe la receta..." style="font-size: 1em;"></textarea></div>
 
-        <div class="form-row">
+        <!-- BOTÓN PARA HABILITAR FIRMAS -->
+        <button type="button" id="btn-abrir-firmas" class="btn" style="background:#e3f2fd; color:#0d6efd; border: 2px dashed #0d6efd; margin-bottom: 15px;" onclick="mostrarFirmas()">🖊️ Habilitar Opción de Firmar</button>
+
+        <div id="zona-firmas-oculta" class="form-row oculto">
             <div class="firma-card">
                 <div class="firma-title" style="color:#0d6efd;">Firma Médico (Opcional)</div>
                 <canvas id="canvas-vet" class="canvas-firma"></canvas>
                 <button type="button" class="btn-borrar-firma" onclick="limpiarFirma('vet')">Borrar</button>
-                <label class="firma-checkbox"><input type="checkbox" id="check-print-vet"> Imprimir</label>
+                <label class="firma-checkbox"><input type="checkbox" id="check-print-vet"> Imprimir en Receta</label>
             </div>
             <div class="firma-card">
                 <div class="firma-title" style="color:#198754;">Firma Cliente</div>
                 <canvas id="canvas-cliente" class="canvas-firma"></canvas>
                 <button type="button" class="btn-borrar-firma" onclick="limpiarFirma('cliente')">Borrar</button>
-                <label class="firma-checkbox"><input type="checkbox" id="check-print-cliente" checked> Imprimir</label>
+                <label class="firma-checkbox"><input type="checkbox" id="check-print-cliente" checked> Imprimir en Receta</label>
             </div>
         </div>
         
@@ -296,14 +290,10 @@
     <div id="pantalla-expediente" class="contenedor contenedor-ancho oculto">
         <h2 style="color: #333; margin-top: 0; text-align: left; font-size: 1.8em;">🗂️ Expediente Clínico Unificado</h2>
         
-        <div class="panel-busqueda">
-            <div class="grupo-formulario" style="margin:0; grid-column: span 3;">
-                <label>🔍 Búsqueda por Paciente, Dueño o Producto:</label>
-                <input type="text" id="buscador-expediente" placeholder="Escribe para buscar..." oninput="buscarExpediente()" style="font-size: 1.1em; border: 2px solid #0d6efd;">
+        <div class="panel-busqueda" style="grid-template-columns: 1fr; padding: 15px; margin-bottom: 20px;">
+            <div class="grupo-formulario" style="margin:0;">
+                <input type="text" id="buscador-expediente" class="input-buscador" placeholder="🔍 Buscar por Paciente o Dueño..." oninput="buscarExpediente()">
             </div>
-            <div class="grupo-formulario" style="margin:0;"><label>Filtrar por Tipo:</label><select id="filtro-tipo-exp" onchange="buscarExpediente()"><option value="todos">Todos los registros</option><option value="receta">📝 Solo Recetas</option><option value="cobro">💰 Solo Cobros/Ventas</option></select></div>
-            <div class="grupo-formulario" style="margin:0;"><label>Filtrar por Fecha:</label><select id="filtro-fecha-exp" onchange="buscarExpediente()"><option value="todos">Cualquier fecha</option><option value="hoy">Hoy</option><option value="semana">Últimos 7 días</option><option value="mes">Este mes</option></select></div>
-            <div class="grupo-formulario" style="margin:0; display: flex; align-items: flex-end;"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0;" onclick="cargarExpedienteBase()">🔄 Refrescar Datos</button></div>
         </div>
 
         <div id="lista-expediente" style="max-height: 500px; overflow-y: auto; padding-right: 10px; background: #fafafa; border-radius: 18px; padding: 20px; border: 1px solid #e9ecef;"></div>
@@ -313,11 +303,14 @@
     <!-- PANTALLA 5: CORTE DE CAJA -->
     <div id="pantalla-corte-caja" class="contenedor oculto">
         <h2 style="color: #333; margin-top: 0; text-align: left;">💰 Corte de Caja</h2>
-        <div style="display: flex; gap: 8px; margin-bottom: 25px; background: #f8f9fa; padding: 5px; border-radius: 10px;">
+        <div style="display: flex; gap: 8px; margin-bottom: 20px; background: #f8f9fa; padding: 5px; border-radius: 10px;">
             <button id="filtro-dia" class="btn btn-filtro activo" onclick="abrirCorteCaja('dia')">Día</button>
             <button id="filtro-semana" class="btn btn-filtro" onclick="abrirCorteCaja('semana')">Semana</button>
             <button id="filtro-mes" class="btn btn-filtro" onclick="abrirCorteCaja('mes')">Mes</button>
         </div>
+        
+        <input type="text" placeholder="🔍 Buscar doctor..." oninput="filtrarTarjetas('lista-corte-caja', this.value)" style="width: 100%; padding: 12px; border: 2px solid #ced4da; border-radius: 10px; margin-bottom: 15px; box-sizing: border-box;">
+
         <div id="resumen-corte" style="background: linear-gradient(135deg, #198754, #146c43); border-radius: 18px; padding: 30px; margin-bottom: 25px; text-align: center; color: white; box-shadow: 0 8px 20px rgba(25, 135, 84, 0.2);">
             <h3 style="margin:0; font-weight: normal; font-size: 1.1em; opacity: 0.9;">Total Cobrado (Neto)</h3>
             <h1 style="margin:10px 0; font-size:3.5em; font-weight: bold; letter-spacing: -1px;">$<span id="corte-gran-total">0.00</span></h1>
@@ -331,6 +324,7 @@
     <!-- PANTALLA 6: VER INVENTARIO -->
     <div id="pantalla-ver-inventario" class="contenedor oculto">
         <h2 style="color: #333; margin-top: 0; text-align: left;">📦 Inventario Actual</h2>
+        <input type="text" placeholder="🔍 Buscar medicamento o código..." oninput="filtrarTarjetas('lista-stock-firebase', this.value)" style="width: 100%; padding: 12px; border: 2px solid #0d6efd; border-radius: 10px; margin-bottom: 15px; box-sizing: border-box; font-size: 1.05em;">
         <div id="lista-stock-firebase" style="max-height: 450px; overflow-y: auto; padding-right: 5px;"></div>
         <button class="btn btn-cancelar" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-ver-inventario', 'pantalla-menu')">Volver al Menú</button>
     </div>
@@ -371,6 +365,7 @@
             <div class="grupo-formulario"><label>Rol:</label><select id="nuevo-usuario-rol"><option value="Doctor">Doctor</option><option value="Sub-Gerente">Sub-Gerente</option><option value="Gerente">Gerente</option></select></div>
             <button class="btn btn-guardar-azul" onclick="crearUsuario()">+ Agregar Usuario</button>
         </div>
+        <input type="text" placeholder="🔍 Buscar personal..." oninput="filtrarTarjetas('lista-usuarios-firebase', this.value)" style="width: 100%; padding: 12px; border: 2px solid #ced4da; border-radius: 10px; margin-bottom: 15px; box-sizing: border-box;">
         <div id="lista-usuarios-firebase" style="max-height: 250px; overflow-y: auto;"></div>
         <button class="btn btn-cancelar" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-usuarios', 'pantalla-menu')">Volver al Menú</button>
     </div>
@@ -383,10 +378,15 @@
         let pinActual = ""; let usuarioLogueado = null; let temporizadorInactividad; let lectorQr; let camaraActivaId = ""; 
         let totalCobroCalculado = 0; let inventarioGlobal = []; let carrito = []; let datosExpediente = []; 
 
-        // --- LÓGICA DE FIRMAS DIGITALES MULTIPLES ---
-        let ctxActivo = null; let isDrawing = false;
-        function resizeCanvases() { ['vet', 'cliente'].forEach(id => { let cv = document.getElementById('canvas-'+id); cv.width = cv.offsetWidth || 250; }); }
+        // --- LÓGICA DE FIRMAS DIGITALES ---
+        let ctxActivo = null; let isDrawing = false; let canvasActivo = false;
+        function resizeCanvases() { ['vet', 'cliente'].forEach(id => { let cv = document.getElementById('canvas-'+id); let parentW = cv.parentElement.clientWidth; cv.width = parentW ? parentW - 4 : 250; }); }
         
+        function mostrarFirmas() {
+            document.getElementById('btn-abrir-firmas').classList.add('oculto'); document.getElementById('zona-firmas-oculta').classList.remove('oculto');
+            setTimeout(resizeCanvases, 50); canvasActivo = true;
+        }
+
         function initFirmas() {
             ['vet', 'cliente'].forEach(id => {
                 let cv = document.getElementById('canvas-'+id); let cx = cv.getContext('2d');
@@ -401,7 +401,13 @@
         function limpiarFirma(id) { let cv = document.getElementById('canvas-'+id); cv.getContext('2d').clearRect(0,0,cv.width,cv.height); }
         initFirmas();
 
-        // 3. SEGURIDAD Y NAVEGACIÓN
+        // FILTRO GLOBAL PARA LISTAS (Buscador instantáneo)
+        function filtrarTarjetas(idContenedor, texto) {
+            let term = texto.toLowerCase(); let tarjetas = document.getElementById(idContenedor).children;
+            for(let t of tarjetas) { if(t.classList.contains('tarjeta-info') || t.classList.contains('tarjeta-expediente')) { t.style.display = t.innerText.toLowerCase().includes(term) ? "" : "none"; } }
+        }
+
+        // SEGURIDAD Y NAVEGACIÓN
         function reproducirSonidoBip() { try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); const osc = ctx.createOscillator(); const vol = ctx.createGain(); osc.type = 'sine'; osc.frequency.value = 800; osc.connect(vol); vol.connect(ctx.destination); vol.gain.setValueAtTime(1, ctx.currentTime); vol.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15); osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.15); } catch (e) {} }
         function reiniciarTemporizador() { clearTimeout(temporizadorInactividad); if(usuarioLogueado) { temporizadorInactividad = setTimeout(() => { alert("Sesión cerrada."); cancelarVolver(); cerrarSesion(); }, 600000); } }
         window.onload = function() { document.body.addEventListener('click', reiniciarTemporizador); document.body.addEventListener('keypress', reiniciarTemporizador); }
@@ -410,7 +416,7 @@
         function limpiarPin() { pinActual = ""; document.getElementById('input-pin').value = ""; }
         function cambiarPantalla(idOcultar, idMostrar) { document.getElementById(idOcultar).classList.add('oculto'); document.getElementById(idMostrar).classList.remove('oculto'); if (idMostrar === 'pantalla-menu') { revisarAlertasInventario(); } }
 
-        // 4. LOGIN Y PERMISOS
+        // LOGIN Y PERMISOS
         function validarPin() {
             db.collection("Usuarios").doc(pinActual).get().then((doc) => {
                 if(doc.exists) { usuarioLogueado = doc.data(); usuarioLogueado.pin = pinActual; configurarTextosYPermisos(); reiniciarTemporizador(); cargarSugerenciasInventario(); cambiarPantalla('pantalla-login', 'pantalla-menu');
@@ -429,16 +435,16 @@
         }
         function cerrarSesion() { usuarioLogueado = null; clearTimeout(temporizadorInactividad); limpiarPin(); document.querySelectorAll('.contenedor').forEach(el => el.classList.add('oculto')); document.getElementById('pantalla-login').classList.remove('oculto'); }
 
-        // 5. AUTOCOMPLETADO Y ALERTAS
+        // AUTOCOMPLETADO Y ALERTAS
         function cargarSugerenciasInventario() { const datalist = document.getElementById('lista-medicamentos'); if(!datalist) return; datalist.innerHTML = ''; inventarioGlobal = []; db.collection("Inventario").get().then((q) => { q.forEach((doc) => { const d = doc.data(); inventarioGlobal.push(d); let icon = d.tipoArticulo === 'Servicio Médico' ? '🩺' : '💊'; datalist.innerHTML += `<option value="${d.medicamento} - ${d.codigoQR}">${icon} $${d.precioVenta || 0}</option>`; }); }); }
         function revisarAlertasInventario() { const cajaAlerta = document.getElementById('alerta-inventario-menu'); const lista = document.getElementById('lista-alertas-menu'); lista.innerHTML = ''; db.collection("Inventario").get().then(q => { let itemsAlerta = []; q.forEach(doc => { const d = doc.data(); if(d.tipoArticulo === 'Servicio Médico') return; let limite = (d.unidad === 'Mililitros (ml)') ? 20 : 5; if (d.cantidad <= limite) { itemsAlerta.push(`<strong>${d.medicamento}</strong>: Quedan ${d.cantidad} ${d.unidad || 'U.'}`); } }); if(itemsAlerta.length > 0) { cajaAlerta.classList.remove('oculto'); let html = ''; let maxMostrar = Math.min(3, itemsAlerta.length); for(let i=0; i < maxMostrar; i++){ html += `<li>${itemsAlerta[i]}</li>`; } if(itemsAlerta.length > 3) { html += `<li style="list-style:none; margin-top:10px; font-weight:bold; cursor:pointer; color:#0d6efd; text-decoration:underline;" onclick="abrirVerInventario()">+ ${itemsAlerta.length - 3} productos más</li>`; } lista.innerHTML = html; } else { cajaAlerta.classList.add('oculto'); } }); }
 
-        // 6. CÁMARA Y CANCELAR
+        // CÁMARA Y CANCELAR
         function iniciarCamara(idDiv, idDestino) { camaraActivaId = idDiv; document.getElementById(idDiv).classList.remove('oculto'); if(!lectorQr) { lectorQr = new Html5Qrcode(idDiv); } lectorQr.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (codigo) => { reproducirSonidoBip(); document.getElementById(idDestino).value = codigo; if(idDestino === 'buscador-pos') autocompletarPrecio(); detenerCamara(); reiniciarTemporizador(); }, (err) => {} ).catch(e => { alert("Error de cámara."); detenerCamara(); }); }
         function detenerCamara() { if(lectorQr && camaraActivaId) { lectorQr.stop().then(() => { document.getElementById(camaraActivaId).classList.add('oculto'); lectorQr.clear(); lectorQr = null; camaraActivaId = ""; }).catch(e => {}); } }
-        function cancelarVolver() { detenerCamara(); carrito = []; actualizarCarritoUI(); document.querySelectorAll('input, textarea').forEach(input => { if(input.type !== 'checkbox' && input.type !== 'password') input.value = ''; }); document.getElementById('total-cobrar').innerText = "0.00"; document.getElementById('venta-mostrador').checked = false; toggleMostrador(); document.getElementById('check-print-vet').checked = false; document.getElementById('check-print-cliente').checked = true; document.querySelectorAll('.contenedor').forEach(el => el.classList.add('oculto')); cambiarPantalla('pantalla-registro-baja', 'pantalla-menu'); }
+        function cancelarVolver() { detenerCamara(); carrito = []; actualizarCarritoUI(); document.querySelectorAll('input, textarea').forEach(input => { if(input.type !== 'checkbox' && input.type !== 'password') input.value = ''; }); document.getElementById('total-cobrar').innerText = "0.00"; document.getElementById('venta-mostrador').checked = false; toggleMostrador(); document.getElementById('check-print-vet').checked = false; document.getElementById('check-print-cliente').checked = true; document.getElementById('zona-firmas-oculta').classList.add('oculto'); document.getElementById('btn-abrir-firmas').classList.remove('oculto'); canvasActivo = false; document.querySelectorAll('.contenedor').forEach(el => el.classList.add('oculto')); cambiarPantalla('pantalla-registro-baja', 'pantalla-menu'); }
 
-        // 7. PUNTO DE VENTA
+        // PUNTO DE VENTA
         function abrirFormulario() { cambiarPantalla('pantalla-menu', 'pantalla-registro-baja'); document.getElementById('texto-registro-usuario').innerText = `👨‍⚕️ Cajero: ${usuarioLogueado.nombre}`; carrito = []; actualizarCarritoUI(); document.getElementById('precio-pos').readOnly = false; document.getElementById('precio-pos').style.backgroundColor = "#fff"; }
         function toggleMostrador() { const esMostrador = document.getElementById('venta-mostrador').checked; if(esMostrador) { document.getElementById('campos-paciente').classList.add('oculto'); document.getElementById('nombre-dueno').value = "Público General"; document.getElementById('nombre-perro').value = "N/A"; document.getElementById('raza-paciente').value = "N/A"; } else { document.getElementById('campos-paciente').classList.remove('oculto'); document.getElementById('nombre-dueno').value = ""; document.getElementById('nombre-perro').value = ""; document.getElementById('raza-paciente').value = ""; } }
         function autocompletarPrecio() { const val = document.getElementById('buscador-pos').value; const inputPrecio = document.getElementById('precio-pos'); const item = inventarioGlobal.find(i => `${i.medicamento} - ${i.codigoQR}` === val || i.codigoQR === val || i.medicamento === val); if(item) { if(item.tipoArticulo === 'Servicio Médico') { inputPrecio.readOnly = false; inputPrecio.value = item.precioVenta || ""; inputPrecio.placeholder = "Manual..."; inputPrecio.style.backgroundColor = "#fff"; } else { inputPrecio.readOnly = true; inputPrecio.value = item.precioVenta || 0; inputPrecio.style.backgroundColor = "#e9ecef"; } } else { inputPrecio.readOnly = false; inputPrecio.placeholder = "Manual"; inputPrecio.style.backgroundColor = "#fff"; } }
@@ -456,26 +462,26 @@
             const ventaData = { atendio: usuarioLogueado.nombre, paciente: perro, dueno: dueno, raza: raza, articulos: carrito, subtotal: subtotal, tipoDescuento: tipoDesc, valorDescuento: parseFloat(valorDesc), totalCobrado: totalCobroCalculado, metodoPago: metodoPago, ventaMostrador: document.getElementById('venta-mostrador').checked, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now(), fechaReal: firebase.firestore.FieldValue.serverTimestamp() };
 
             db.collection("Historial_Cobros").add(ventaData).then(() => {
-                descontarInventarioAutomatico(carrito); if(imprimir) { imprimirTicketBoucher(ventaData); } else { alert(`✅ Venta guardada.`); } cancelarVolver();
+                descontarInventarioAutomatico(carrito); if(imprimir) { imprimirTicketBoucher(ventaData); } else { alert(`✅ Venta guardada correctamente.`); } cancelarVolver();
             }).catch(e => alert("Error al procesar el cobro."));
         }
         function descontarInventarioAutomatico(articulosVendidos) { articulosVendidos.forEach(item => { if(item.tipo !== 'Servicio Médico' && item.codigo !== 'S/C') { db.collection("Inventario").doc(item.codigo).get().then(doc => { if(doc.exists) { let actual = doc.data().cantidad; db.collection("Inventario").doc(item.codigo).update({ cantidad: actual - 1 }); } }); } }); }
 
         // 8. MÓDULO RECETAS
-        function abrirReceta() { cambiarPantalla('pantalla-menu', 'pantalla-recetas'); resizeCanvases(); limpiarFirma('vet'); limpiarFirma('cliente'); }
+        function abrirReceta() { cambiarPantalla('pantalla-menu', 'pantalla-recetas'); document.getElementById('btn-abrir-firmas').classList.remove('oculto'); document.getElementById('zona-firmas-oculta').classList.add('oculto'); limpiarFirma('vet'); limpiarFirma('cliente'); canvasActivo=false; }
         function isCanvasBlank(canvas) { const context = canvas.getContext('2d'); const pixelBuffer = new Uint32Array(context.getImageData(0, 0, canvas.width, canvas.height).data.buffer); return !pixelBuffer.some(color => color !== 0); }
 
         function procesarReceta(imprimir) {
             const dueno = document.getElementById('receta-dueno').value; const paciente = document.getElementById('receta-paciente').value; const raza = document.getElementById('receta-raza').value; const edad = document.getElementById('receta-edad').value; const sexo = document.getElementById('receta-sexo').value; const peso = document.getElementById('receta-peso').value; const temp = document.getElementById('receta-temp').value; const texto = document.getElementById('receta-texto').value; 
             
             let cVet = document.getElementById('canvas-vet'); let cCli = document.getElementById('canvas-cliente');
-            const firmaVetBase64 = isCanvasBlank(cVet) ? "" : cVet.toDataURL();
-            const firmaCliBase64 = isCanvasBlank(cCli) ? "" : cCli.toDataURL();
+            const firmaVetBase64 = (canvasActivo && !isCanvasBlank(cVet)) ? cVet.toDataURL() : "";
+            const firmaCliBase64 = (canvasActivo && !isCanvasBlank(cCli)) ? cCli.toDataURL() : "";
             const imprimeVet = document.getElementById('check-print-vet').checked;
             const imprimeCliente = document.getElementById('check-print-cliente').checked;
 
             if(!dueno || !paciente || !texto) { alert("⚠️ Llena al menos Dueño, Paciente y la Prescripción."); return; }
-            const folioStr = String(Date.now()).slice(-5); // Folio simple de 5 digitos
+            const folioStr = String(Date.now()).slice(-5); 
 
             const recetaData = { doctor: usuarioLogueado.nombre, dueno: dueno, paciente: paciente, raza: raza, edad: edad, sexo: sexo, peso: peso, temperatura: temp, prescripcion: texto, firmaVet: firmaVetBase64, firmaCliente: firmaCliBase64, imprimeVet: imprimeVet, imprimeCliente: imprimeCliente, folio: folioStr, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now(), fechaReal: firebase.firestore.FieldValue.serverTimestamp() };
 
@@ -486,11 +492,7 @@
         }
 
         // 9. EXPEDIENTE CLÍNICO UNIFICADO (PREMIUM)
-        function abrirExpediente() {
-            cambiarPantalla('pantalla-menu', 'pantalla-expediente'); document.getElementById('buscador-expediente').value = ''; 
-            cargarExpedienteBase();
-        }
-
+        function abrirExpediente() { cambiarPantalla('pantalla-menu', 'pantalla-expediente'); document.getElementById('buscador-expediente').value = ''; cargarExpedienteBase(); }
         function cargarExpedienteBase() {
             document.getElementById('lista-expediente').innerHTML = '<div style="text-align:center; padding:40px;"><h3 style="color:#0d6efd;">⏳ Cargando expedientes...</h3><p style="color:#666;">Sincronizando desde la nube</p></div>';
             Promise.all([ db.collection("Historial_Cobros").orderBy("timestamp", "desc").limit(150).get(), db.collection("Historial_Recetas").orderBy("timestamp", "desc").limit(150).get() ]).then(([cobros, recetas]) => {
@@ -504,43 +506,19 @@
 
         function buscarExpediente() {
             let term = document.getElementById('buscador-expediente').value.toLowerCase();
-            let tipo = document.getElementById('filtro-tipo-exp').value;
-            let fecha = document.getElementById('filtro-fecha-exp').value;
-            let ahora = Date.now();
-
             let filtrados = datosExpediente.filter(d => {
                 let txt = (d.paciente||'') + ' ' + (d.dueno||'') + ' ' + (d.codigoConcepto||'');
-                let coincideTexto = txt.toLowerCase().includes(term);
-                let coincideTipo = (tipo === 'todos') || (d.tipoRegistro === tipo);
-                let coincideFecha = true;
-                if(fecha === 'hoy') coincideFecha = (ahora - d.timestamp) <= (24 * 60 * 60 * 1000);
-                if(fecha === 'semana') coincideFecha = (ahora - d.timestamp) <= (7 * 24 * 60 * 60 * 1000);
-                if(fecha === 'mes') coincideFecha = (ahora - d.timestamp) <= (30 * 24 * 60 * 60 * 1000);
-
-                return coincideTexto && coincideTipo && coincideFecha;
+                return txt.toLowerCase().includes(term);
             });
-
             let html = '';
-            if(filtrados.length === 0) {
-                html = '<div style="text-align:center; padding:30px; color:#888;">🔍 No se encontraron registros con estos filtros.</div>';
-            } else {
+            if(filtrados.length === 0) { html = '<div style="text-align:center; padding:30px; color:#888;">🔍 No se encontraron registros con estos filtros.</div>'; } 
+            else {
                 filtrados.forEach((d) => {
                     if(d.tipoRegistro === 'receta') {
-                        html += `<div class="tarjeta-expediente receta">
-                            <div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-receta">📝 Receta</span> ${d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div>
-                            <div class="exp-meta"><span>👤 Dueño: ${d.dueno}</span><span>⚖️ Peso: ${d.peso||'--'}kg</span><span>🌡️ Temp: ${d.temperatura||'--'}°C</span></div>
-                            <div class="exp-content">${d.prescripcion}</div>
-                            <div class="exp-footer"><span><strong style="color:#333;">Dr. ${d.doctor}</strong></span><button class="btn-exp-action" onclick="reimprimirDesdeExpediente(${d.timestamp}, 'receta')">🖨️ Ver Receta / Firmas</button></div>
-                        </div>`;
+                        html += `<div class="tarjeta-expediente receta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-receta">📝 Receta</span> ${d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 Dueño: ${d.dueno}</span><span>⚖️ Peso: ${d.peso||'--'}kg</span><span>🌡️ Temp: ${d.temperatura||'--'}°C</span></div><div class="exp-content">${d.prescripcion}</div><div class="exp-footer"><span><strong style="color:#333;">Dr. ${d.doctor}</strong></span><button class="btn-exp-action" onclick="reimprimirDesdeExpediente(${d.timestamp}, 'receta')">🖨️ Ver Receta / Firmas</button></div></div>`;
                     } else {
-                        let desc = d.articulos ? d.articulos.map(a=>a.nombre).join(', ') : d.codigoConcepto;
-                        let isVenta = d.ventaMostrador;
-                        html += `<div class="tarjeta-expediente venta">
-                            <div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰 ${isVenta ? 'Mostrador' : 'Cobro'}</span> ${isVenta ? 'Público General' : d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div>
-                            <div class="exp-meta"><span>👤 Dueño: ${isVenta ? 'N/A' : d.dueno}</span><span>👨‍⚕️ Atendió: ${d.atendio}</span><span>💳 Pago: ${d.metodoPago}</span></div>
-                            <div class="exp-content" style="color:#146c43; font-weight:500;">🛒 ${desc}</div>
-                            <div class="exp-footer"><span style="font-size:1.2em; font-weight:bold; color:#198754;">$${parseFloat(d.totalCobrado).toFixed(2)}</span><button class="btn-exp-action btn-venta" onclick="reimprimirDesdeExpediente(${d.timestamp}, 'cobro')">🖨️ Ver Ticket</button></div>
-                        </div>`;
+                        let desc = d.articulos ? d.articulos.map(a=>a.nombre).join(', ') : d.codigoConcepto; let isVenta = d.ventaMostrador;
+                        html += `<div class="tarjeta-expediente venta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰 ${isVenta ? 'Mostrador' : 'Cobro'}</span> ${isVenta ? 'Público General' : d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 Dueño: ${isVenta ? 'N/A' : d.dueno}</span><span>👨‍⚕️ Atendió: ${d.atendio}</span><span>💳 Pago: ${d.metodoPago}</span></div><div class="exp-content" style="color:#146c43; font-weight:500;">🛒 ${desc}</div><div class="exp-footer"><span style="font-size:1.2em; font-weight:bold; color:#198754;">$${parseFloat(d.totalCobrado).toFixed(2)}</span><button class="btn-exp-action btn-venta" onclick="reimprimirDesdeExpediente(${d.timestamp}, 'cobro')">🖨️ Ver Ticket</button></div></div>`;
                     }
                 });
             }
@@ -549,7 +527,7 @@
 
         function reimprimirDesdeExpediente(ts, tipo) { let data = datosExpediente.find(x => x.timestamp == ts && x.tipoRegistro == tipo); if(data) { if(tipo === 'receta') imprimirHojaReceta(data); else imprimirTicketBoucher(data); } }
 
-        // 10. SISTEMA DE IMPRESIÓN EXACTO (OXXO Y VETGRU)
+        // 10. SISTEMA DE IMPRESIÓN (OXXO Y VETGRU)
         function imprimirTicketBoucher(venta) {
             let htmlArticulos = ''; venta.articulos.forEach(a => { let n = a.nombre.length > 20 ? a.nombre.substring(0,20)+'..' : a.nombre; htmlArticulos += `<tr><td style="width:15%;">1</td><td style="width:55%;">${n}</td><td class="col-precio" style="width:30%;">$${a.precio.toFixed(2)}</td></tr>`; });
             let descuentoCalculado = venta.subtotal - venta.totalCobrado;
@@ -567,29 +545,19 @@
                 <div class="cabecera">
                     <div class="logo-area"><h1 style="color: #2c6e8f;">Vetgru</h1><p style="color: #2c6e8f;">HOSPITAL VETERINARIO</p></div>
                     <div class="datos-area">
-                        <div class="linea-dato"><span>FECHA:</span> <span>${fch}</span></div>
-                        <div class="linea-dato"><span>PROPIETARIO:</span> <span>${receta.dueno}</span></div>
-                        <div class="linea-dato"><span>PACIENTE:</span> <span>${receta.paciente}</span></div>
-                        <div class="linea-dato"><span>RAZA:</span> <span>${receta.raza || ''}</span></div>
+                        <div class="linea-dato"><span>FECHA:</span> <span>${fch}</span></div><div class="linea-dato"><span>PROPIETARIO:</span> <span>${receta.dueno}</span></div>
+                        <div class="linea-dato"><span>PACIENTE:</span> <span>${receta.paciente}</span></div><div class="linea-dato"><span>RAZA:</span> <span>${receta.raza || ''}</span></div>
                     </div>
                     <div class="folio-area">
-                        <div class="linea-dato"><span>FOLIO:</span> <span class="folio-rojo">${receta.folio || '00000'}</span></div>
-                        <div class="linea-dato"><span>EDAD:</span> <span>${receta.edad || ''}</span></div>
-                        <div class="linea-dato"><span>SEXO:</span> <span>${receta.sexo || ''}</span></div>
-                        <div class="linea-dato"><span>PESO:</span> <span>${receta.peso ? receta.peso + ' Kg' : ''}</span></div>
+                        <div class="linea-dato"><span>FOLIO:</span> <span class="folio-rojo">${receta.folio || '00000'}</span></div><div class="linea-dato"><span>EDAD:</span> <span>${receta.edad || ''}</span></div>
+                        <div class="linea-dato"><span>SEXO:</span> <span>${receta.sexo || ''}</span></div><div class="linea-dato"><span>PESO:</span> <span>${receta.peso ? receta.peso + ' Kg' : ''}</span></div>
                     </div>
                 </div>
                 <div class="cuerpo-receta">
                     <div class="prescripcion-texto">${receta.prescripcion}</div>
                     <div class="firmas-area">
-                        <div class="firma-bloque">
-                            ${htmlFirmaVet}
-                            <div class="firma-linea">MVZ ${receta.doctor}<br>Ced. Prof. Pendiente</div>
-                        </div>
-                        <div class="firma-bloque">
-                            ${htmlFirmaCli}
-                            <div class="firma-linea">Firma del Propietario</div>
-                        </div>
+                        <div class="firma-bloque">${htmlFirmaVet}<div class="firma-linea">MVZ ${receta.doctor}<br>Ced. Prof. Pendiente</div></div>
+                        <div class="firma-bloque">${htmlFirmaCli}<div class="firma-linea">Firma del Propietario</div></div>
                     </div>
                 </div>
                 <div class="footer-receta">
