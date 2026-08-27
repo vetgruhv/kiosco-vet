@@ -31,16 +31,16 @@
         .alerta-banner { background-color: #fff3cd; border-left: 6px solid #ffc107; border-radius: 12px; padding: 18px; margin-bottom: 20px; text-align: left; }
         
         /* Formularios a dos columnas */
-        .form-row { display: flex; gap: 15px; margin-bottom: 15px; align-items: flex-end; }
-        .form-row .grupo-formulario { margin-bottom: 0; flex: 1; }
-        .grupo-formulario { margin-bottom: 15px; text-align: left; }
+        .form-row { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 15px; align-items: flex-end; }
+        .form-row .grupo-formulario { margin-bottom: 0; flex: 1 1 200px; }
+        .grupo-formulario { margin-bottom: 15px; text-align: left; width: 100%; box-sizing: border-box;}
         .grupo-formulario label { display: block; font-weight: 700; margin-bottom: 8px; color: #495057; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.5px;}
         .grupo-formulario input, .grupo-formulario select, .grupo-formulario textarea { width: 100%; padding: 14px; font-size: 1em; border: 2px solid #e9ecef; border-radius: 12px; box-sizing: border-box; font-family: inherit; transition: all 0.2s; background-color: #f8f9fa; color: #333;}
         .grupo-formulario input:focus, .grupo-formulario select:focus, .grupo-formulario textarea:focus { border-color: #0d6efd; outline: none; background-color: #fff; box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1); }
         .input-buscador { font-size: 1.05em !important; border: 2px solid #0d6efd !important; background: #fff !important; }
         
         /* Botones Generales */
-        .btn { width: 100%; padding: 16px; font-size: 1.1em; border: none; border-radius: 14px; cursor: pointer; font-weight: bold; transition: all 0.2s ease; display: block; text-align: center; }
+        .btn { width: 100%; padding: 16px; font-size: 1.1em; border: none; border-radius: 14px; cursor: pointer; font-weight: bold; transition: all 0.2s ease; display: block; text-align: center; box-sizing: border-box;}
         .btn-qr { background: #e3f2fd; color: #0d6efd; border: 2px dashed #0d6efd; margin-bottom: 15px;}
         .btn-guardar { background: #198754; color: white; box-shadow: 0 6px 15px rgba(25, 135, 84, 0.25); margin-top: 10px;}
         .btn-guardar:hover { background: #157347; transform: translateY(-2px); }
@@ -49,7 +49,7 @@
         .btn-guardar-azul:hover { background: #0b5ed7; transform: translateY(-2px); }
         .btn-cancelar { background: transparent; color: #dc3545; margin-top: 10px; border: 2px solid #ffe3e3; padding: 12px;}
         .btn-cancelar:hover { background: #fff0f0; }
-        .btn-filtro { flex: 1; padding: 10px; border: 2px solid #e9ecef; background: white; color: #6c757d; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s;}
+        .btn-filtro { flex: 1; padding: 10px; border: 2px solid #e9ecef; background: white; color: #6c757d; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; white-space: nowrap;}
         .btn-filtro.activo { background: #0d6efd; color: white; border-color: #0d6efd; box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2); }
 
         .caja-cobro { background: #fffbf0; padding: 25px; border-radius: 18px; border: 1px solid #ffecb5; margin-bottom: 20px; }
@@ -65,17 +65,22 @@
         .btn-eliminar-item:hover { background: #ffc9c9; transform: scale(1.05);}
 
         /* FIRMAS NUEVAS (SOLO CLIENTE) */
-        .firma-card { width: 100%; max-width: 450px; margin: 0 auto; border: 1px solid #e9ecef; border-radius: 14px; padding: 15px; background: #fff; text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.02);}
+        .firma-card { width: 100%; max-width: 450px; margin: 0 auto; border: 1px solid #e9ecef; border-radius: 14px; padding: 15px; background: #fff; text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.02); box-sizing: border-box;}
         .firma-title { font-size: 0.85em; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #198754;}
-        .canvas-firma { border: 2px dashed #ced4da; border-radius: 10px; width: 100%; height: 140px; background: #fafafa; touch-action: none; margin-bottom: 12px; cursor: crosshair;}
+        .canvas-firma { border: 2px dashed #ced4da; border-radius: 10px; width: 100%; height: 140px; background: #fafafa; touch-action: none; margin-bottom: 12px; cursor: crosshair; box-sizing: border-box;}
         .btn-borrar-firma { border: 1px solid #ffc9c9; background: #fff0f0; color: #dc3545; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-size: 0.85em; margin-bottom: 10px; transition: 0.2s; font-weight: bold;}
         .btn-borrar-firma:active { background: #ffc9c9; transform: scale(0.95);}
 
-        /* PANELES DE BÚSQUEDA Y TARJETAS HOMOLOGADAS (LISTA RECTA) */
-        .panel-busqueda { background: #ffffff; padding: 20px; border-radius: 18px; margin-bottom: 25px; border: 1px solid #e9ecef; display: grid; gap: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
-        .lista-vertical { display: flex; flex-direction: column; gap: 15px; max-height: 500px; overflow-y: auto; padding-right: 8px; }
-        .tarjeta-expediente, .tarjeta-info { border: 1px solid #e9ecef; border-radius: 16px; padding: 20px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.03); text-align: left; transition: 0.2s; position: relative; overflow: hidden; margin-bottom: 0;}
+        /* PANELES DE BÚSQUEDA RESPONSIVOS */
+        .panel-busqueda { background: #ffffff; padding: 20px; border-radius: 18px; margin-bottom: 25px; border: 1px solid #e9ecef; display: flex; flex-wrap: wrap; gap: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); align-items: flex-end;}
+        .panel-busqueda .grupo-formulario { flex: 1 1 200px; margin: 0; }
+        .busqueda-ancha { flex: 1 1 100% !important; }
+        
+        /* LISTA RECTA (EVITA EL APLASTAMIENTO) */
+        .lista-vertical { display: block; max-height: 500px; overflow-y: auto; padding-right: 10px; }
+        .tarjeta-expediente, .tarjeta-info { border: 1px solid #e9ecef; border-radius: 16px; padding: 20px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.03); text-align: left; transition: 0.2s; position: relative; overflow: hidden; margin-bottom: 18px; display: block; width: 100%; box-sizing: border-box;}
         .tarjeta-expediente:hover, .tarjeta-info:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.06); transform: translateY(-2px); border-color: #dee2e6; }
+        
         .tarjeta-expediente.receta { border-left: 6px solid #0d6efd; }
         .tarjeta-expediente.venta, .tarjeta-info.venta { border-left: 6px solid #198754; }
         
@@ -83,15 +88,15 @@
         .badge-receta { background: #e3f2fd; color: #0d6efd; }
         .badge-venta { background: #e8f5e9; color: #198754; }
         
-        .exp-header, .th-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #f1f3f5; padding-bottom: 10px;}
+        .exp-header, .th-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f1f3f5; padding-bottom: 10px; flex-wrap: wrap; gap: 10px;}
         .exp-title, .th-header strong { font-weight: 800; font-size: 1.1em; color: #2b3035; display: flex; align-items: center;}
         .exp-date, .th-header span { font-size: 0.85em; color: #888; font-weight: 500;}
-        .exp-meta { font-size: 0.9em; color: #555; margin-bottom: 15px; display: flex; gap: 15px; flex-wrap: wrap;}
-        .exp-meta span { background: #f8f9fa; padding: 4px 10px; border-radius: 6px; border: 1px solid #e9ecef;}
-        .exp-content, .th-cuerpo { background: #f8f9fa; padding: 15px; border-radius: 12px; font-size: 0.95em; color: #444; white-space: pre-wrap; margin-bottom: 15px; border: 1px solid #f1f3f5; line-height: 1.5;}
-        .exp-footer, .th-pie { display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; color: #666; }
+        .exp-meta { font-size: 0.9em; color: #555; margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;}
+        .exp-meta span { background: #f8f9fa; padding: 6px 12px; border-radius: 8px; border: 1px solid #e9ecef; display: inline-block;}
+        .exp-content, .th-cuerpo { background: #f8f9fa; padding: 15px; border-radius: 12px; font-size: 0.95em; color: #444; white-space: pre-wrap; margin-bottom: 15px; border: 1px solid #f1f3f5; line-height: 1.6;}
+        .exp-footer, .th-pie { display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; color: #666; flex-wrap: wrap; gap: 10px;}
         
-        .btn-exp-action { background: #e3f2fd; color: #0d6efd; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s; display: flex; align-items: center; gap: 6px;}
+        .btn-exp-action { background: #e3f2fd; color: #0d6efd; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s; display: flex; align-items: center; gap: 6px; box-sizing: border-box;}
         .btn-exp-action:hover { background: #d0e7ff; transform: translateY(-2px);}
         .btn-exp-action.btn-venta { background: #e8f5e9; color: #198754; }
         .btn-exp-action.btn-venta:hover { background: #d1e7dd; }
@@ -189,7 +194,7 @@
         
         <h4 id="titulo-gerencia" class="oculto" style="color: #adb5bd; margin: 25px 0 15px 0; text-align: left; text-transform: uppercase; font-size: 0.85em; letter-spacing:1px;">Administración (Gerencia)</h4>
         <div class="menu-grid">
-            <button id="btn-corte" class="btn-menu oculto" onclick="abrirCorteCaja('dia')">
+            <button id="btn-corte" class="btn-menu oculto" onclick="abrirCorteCaja('dia')" style="background-color: #f0f9ff; border-color: #b6e3f4;">
                 <span class="emoji">💰</span> <span style="color: #0dcaf0;">Corte de Caja</span>
             </button>
             <button id="btn-ver-inventario" class="btn-menu oculto" onclick="abrirVerInventario()">
@@ -228,11 +233,13 @@
                 <label>Buscar Producto o Servicio:</label>
                 <input type="text" id="buscador-pos" list="lista-medicamentos" class="input-buscador" placeholder="Nombre o código..." oninput="autocompletarPrecio()">
             </div>
-            <div class="grupo-formulario" style="max-width: 120px;">
+            <div class="grupo-formulario" style="flex: 1;">
                 <label>Precio ($):</label>
                 <input type="number" id="precio-pos" placeholder="Manual">
             </div>
-            <button class="btn btn-guardar-azul" style="width: auto; padding: 12px 20px; border-radius: 12px;" onclick="agregarAlCarrito()">➕</button>
+            <div class="grupo-formulario" style="flex: 0 0 auto;">
+                <button class="btn btn-guardar-azul" style="margin-top:0; padding: 14px 20px;" onclick="agregarAlCarrito()">➕ Agregar</button>
+            </div>
         </div>
 
         <label style="font-weight: bold; color: #495057; font-size: 0.85em; text-transform: uppercase;">Artículos en la cuenta:</label>
@@ -257,9 +264,9 @@
             <h2 style="margin: 15px 0 0 0; color: #198754; text-align: right; font-size: 2.2em;">Total: $<span id="total-cobrar">0.00</span></h2>
         </div>
         
-        <div style="display: flex; gap: 15px; margin-top: 15px;">
-            <button class="btn btn-guardar-azul" style="flex: 1;" onclick="procesarVenta(false)">💾 Solo Guardar</button>
-            <button class="btn btn-guardar" style="flex: 1; margin-top: 0;" onclick="procesarVenta(true)">🖨️ Guardar e Imprimir</button>
+        <div class="form-row">
+            <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="margin:0;" onclick="procesarVenta(false)">💾 Solo Guardar</button></div>
+            <div class="grupo-formulario"><button class="btn btn-guardar" style="margin:0;" onclick="procesarVenta(true)">🖨️ Guardar e Imprimir</button></div>
         </div>
         <button class="btn btn-cancelar" style="border:none;" onclick="cancelarVolver()">Cancelar Venta</button>
     </div>
@@ -283,9 +290,9 @@
             </div>
         </div>
         
-        <div style="display: flex; gap: 15px; margin-top: 20px;">
-            <button class="btn btn-guardar-azul ocultar-impresion" style="flex: 1; padding: 12px;" onclick="procesarReceta(false)">💾 Solo Guardar</button>
-            <button class="btn btn-guardar ocultar-impresion" style="flex: 1; margin-top: 0; padding: 12px;" onclick="procesarReceta(true)">🖨️ Guardar e Imprimir</button>
+        <div class="form-row">
+            <div class="grupo-formulario"><button class="btn btn-guardar-azul ocultar-impresion" style="margin:0;" onclick="procesarReceta(false)">💾 Solo Guardar</button></div>
+            <div class="grupo-formulario"><button class="btn btn-guardar ocultar-impresion" style="margin:0;" onclick="procesarReceta(true)">🖨️ Guardar e Imprimir</button></div>
         </div>
         <button class="btn btn-cancelar ocultar-impresion" style="border:none;" onclick="cancelarVolver()">Cerrar</button>
     </div>
@@ -294,14 +301,14 @@
     <div id="pantalla-expediente" class="contenedor contenedor-ancho oculto">
         <h2 style="color: #333; margin-top: 0; text-align: left; font-size: 1.8em;">🗂️ Expediente Clínico Unificado</h2>
         
-        <div class="panel-busqueda" style="grid-template-columns: 1fr 1fr 1fr;">
-            <div class="grupo-formulario" style="margin:0; grid-column: span 3;">
+        <div class="panel-busqueda">
+            <div class="grupo-formulario busqueda-ancha">
                 <label>🔍 Búsqueda por Paciente, Dueño o Producto:</label>
                 <input type="text" id="buscador-expediente" class="input-buscador" placeholder="Escribe para buscar..." oninput="buscarExpediente()">
             </div>
-            <div class="grupo-formulario" style="margin:0;"><label>Filtrar por Tipo:</label><select id="filtro-tipo-exp" onchange="buscarExpediente()"><option value="todos">Todos los registros</option><option value="receta">📝 Solo Recetas</option><option value="cobro">💰 Solo Cobros/Ventas</option></select></div>
-            <div class="grupo-formulario" style="margin:0;"><label>Filtrar por Fecha:</label><select id="filtro-fecha-exp" onchange="buscarExpediente()"><option value="todos">Cualquier fecha</option><option value="hoy">Hoy</option><option value="semana">Últimos 7 días</option><option value="mes">Este mes</option></select></div>
-            <div class="grupo-formulario" style="margin:0; display: flex; align-items: flex-end;"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0;" onclick="cargarExpedienteBase()">🔄 Refrescar Datos</button></div>
+            <div class="grupo-formulario"><label>Filtrar por Tipo:</label><select id="filtro-tipo-exp" onchange="buscarExpediente()"><option value="todos">Todos los registros</option><option value="receta">📝 Solo Recetas</option><option value="cobro">💰 Solo Cobros/Ventas</option></select></div>
+            <div class="grupo-formulario"><label>Filtrar por Fecha:</label><select id="filtro-fecha-exp" onchange="buscarExpediente()"><option value="todos">Cualquier fecha</option><option value="hoy">Hoy</option><option value="semana">Últimos 7 días</option><option value="mes">Este mes</option></select></div>
+            <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0; height: 100%;" onclick="cargarExpedienteBase()">🔄 Refrescar Datos</button></div>
         </div>
 
         <div id="lista-expediente" class="lista-vertical"></div>
@@ -312,12 +319,12 @@
     <div id="pantalla-corte-caja" class="contenedor contenedor-ancho oculto">
         <h2 style="color: #333; margin-top: 0; text-align: left;">💰 Corte de Caja</h2>
         
-        <div class="panel-busqueda" style="grid-template-columns: 1fr 1fr; margin-bottom: 20px; padding: 15px;">
-            <div class="grupo-formulario" style="margin:0; grid-column: span 2;">
+        <div class="panel-busqueda">
+            <div class="grupo-formulario busqueda-ancha">
                 <label>🔍 Filtrar por Doctor:</label>
                 <input type="text" class="input-buscador" placeholder="Nombre del doctor..." oninput="filtrarTarjetas('lista-corte-caja', this.value)">
             </div>
-            <div class="grupo-formulario" style="margin:0; grid-column: span 2; display: flex; gap: 10px; background: #f8f9fa; padding: 8px; border-radius: 12px; border: 1px solid #e9ecef;">
+            <div class="grupo-formulario busqueda-ancha" style="display: flex; gap: 10px; background: #f8f9fa; padding: 8px; border-radius: 12px; border: 1px solid #e9ecef; margin-bottom: 0;">
                 <button id="filtro-dia" class="btn-filtro activo" onclick="abrirCorteCaja('dia')">Día</button>
                 <button id="filtro-semana" class="btn-filtro" onclick="abrirCorteCaja('semana')">Semana</button>
                 <button id="filtro-mes" class="btn-filtro" onclick="abrirCorteCaja('mes')">Mes</button>
@@ -327,7 +334,7 @@
         <div id="resumen-corte" style="background: linear-gradient(135deg, #198754, #146c43); border-radius: 18px; padding: 30px; margin-bottom: 25px; text-align: center; color: white; box-shadow: 0 8px 20px rgba(25, 135, 84, 0.2);">
             <h3 style="margin:0; font-weight: normal; font-size: 1.1em; opacity: 0.9;">Total Cobrado (Neto)</h3>
             <h1 style="margin:10px 0; font-size:3.5em; font-weight: bold; letter-spacing: -1px;">$<span id="corte-gran-total">0.00</span></h1>
-            <div style="background: rgba(255,255,255,0.2); display: inline-block; padding: 6px 20px; border-radius: 20px; font-size: 0.95em; font-weight: bold;">Descuentos: $<span id="corte-gran-descuento">0.00</span></div>
+            <div style="background: rgba(255,255,255,0.2); display: inline-block; padding: 6px 20px; border-radius: 20px; font-size: 0.95em; font-weight: bold;">Descuentos/Mermas: $<span id="corte-gran-descuento">0.00</span></div>
         </div>
         
         <h4 style="text-align: left; margin-bottom: 15px; color: #495057; text-transform: uppercase; font-size: 0.85em;">Rendimiento por Doctor:</h4>
@@ -339,18 +346,18 @@
     <div id="pantalla-ver-inventario" class="contenedor contenedor-ancho oculto">
         <h2 style="color: #333; margin-top: 0; text-align: left;">📦 Inventario Actual</h2>
         
-        <div class="panel-busqueda" style="grid-template-columns: 1fr 1fr 1fr; margin-bottom: 20px; padding: 15px;">
-            <div class="grupo-formulario" style="margin:0; grid-column: span 3;">
+        <div class="panel-busqueda">
+            <div class="grupo-formulario busqueda-ancha">
                 <label>🔍 Buscar Producto:</label>
                 <input type="text" id="busqueda-inv-texto" class="input-buscador" placeholder="Nombre o código..." oninput="filtrarInventario()">
             </div>
-            <div class="grupo-formulario" style="margin:0;">
+            <div class="grupo-formulario">
                 <label>Unidad:</label>
                 <select id="busqueda-inv-unidad" onchange="filtrarInventario()">
                     <option value="todas">Todas</option><option value="Piezas">Piezas</option><option value="Cajas">Cajas</option><option value="Mililitros (ml)">Mililitros (ml)</option>
                 </select>
             </div>
-            <div class="grupo-formulario" style="margin:0;">
+            <div class="grupo-formulario">
                 <label>Nivel Stock:</label>
                 <select id="busqueda-inv-stock" onchange="filtrarInventario()">
                     <option value="todos">Todos</option><option value="bajo">🔴 Bajo Stock</option><option value="ok">🟢 Normal</option>
@@ -365,14 +372,14 @@
     <!-- PANTALLA 7: HISTORIAL DE INVENTARIO (ALTAS Y MERMAS) -->
     <div id="pantalla-historial-inventario" class="contenedor contenedor-ancho oculto">
         <h2 style="color: #333; margin-top: 0; text-align: left;">🗃️ Historial de Altas y Mermas</h2>
-        <div class="panel-busqueda" style="grid-template-columns: 1fr 1fr 1fr; padding: 15px; margin-bottom: 20px;">
-            <div class="grupo-formulario" style="margin:0; grid-column: span 3;">
+        <div class="panel-busqueda">
+            <div class="grupo-formulario busqueda-ancha">
                 <label>🔍 Buscar Movimiento:</label>
                 <input type="text" id="buscador-hist-inv" class="input-buscador" placeholder="Medicamento, código o usuario..." oninput="buscarHistorialInventario()">
             </div>
-            <div class="grupo-formulario" style="margin:0;"><label>Tipo:</label><select id="filtro-tipo-hist-inv" onchange="buscarHistorialInventario()"><option value="todos">Todos</option><option value="Alta">📦 Altas</option><option value="Merma">📉 Mermas</option></select></div>
-            <div class="grupo-formulario" style="margin:0;"><label>Fecha:</label><select id="filtro-fecha-hist-inv" onchange="buscarHistorialInventario()"><option value="todos">Cualquier fecha</option><option value="hoy">Hoy</option><option value="semana">Últimos 7 días</option><option value="mes">Este mes</option></select></div>
-            <div class="grupo-formulario" style="margin:0; display: flex; align-items: flex-end;"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0;" onclick="cargarHistorialInventario()">🔄 Refrescar</button></div>
+            <div class="grupo-formulario"><label>Tipo:</label><select id="filtro-tipo-hist-inv" onchange="buscarHistorialInventario()"><option value="todos">Todos</option><option value="Alta">📦 Altas</option><option value="Merma">📉 Mermas</option></select></div>
+            <div class="grupo-formulario"><label>Fecha:</label><select id="filtro-fecha-hist-inv" onchange="buscarHistorialInventario()"><option value="todos">Cualquier fecha</option><option value="hoy">Hoy</option><option value="semana">Últimos 7 días</option><option value="mes">Este mes</option></select></div>
+            <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0; height: 100%;" onclick="cargarHistorialInventario()">🔄 Refrescar</button></div>
         </div>
         <div id="lista-historial-inventario" class="lista-vertical"></div>
         <button class="btn btn-cancelar" style="margin-top: 20px;" onclick="cambiarPantalla('pantalla-historial-inventario', 'pantalla-menu')">Volver al Menú</button>
@@ -381,19 +388,19 @@
     <!-- PANTALLA 7.5: HISTORIAL DE VENTAS (SUB-GERENTES) -->
     <div id="pantalla-historial-ventas" class="contenedor contenedor-ancho oculto">
         <h2 style="color: #333; margin-top: 0; text-align: left;">📋 Historial de Ventas</h2>
-        <div class="panel-busqueda" style="grid-template-columns: 1fr 1fr;">
-            <div class="grupo-formulario" style="margin:0; grid-column: span 2;">
+        <div class="panel-busqueda">
+            <div class="grupo-formulario busqueda-ancha">
                 <label>🔍 Buscar Venta:</label>
                 <input type="text" id="buscador-hist-ventas" class="input-buscador" placeholder="Ticket, paciente o doctor..." oninput="buscarHistorialVentas()">
             </div>
-            <div class="grupo-formulario" style="margin:0;">
+            <div class="grupo-formulario">
                 <label>Filtrar por Fecha:</label>
                 <select id="filtro-fecha-hist-ventas" onchange="buscarHistorialVentas()">
                     <option value="todos">Cualquier fecha</option><option value="hoy">Hoy</option><option value="semana">Últimos 7 días</option><option value="mes">Este mes</option>
                 </select>
             </div>
-            <div class="grupo-formulario" style="margin:0; display: flex; align-items: flex-end;">
-                <button class="btn btn-guardar-azul" style="padding: 14px; margin:0;" onclick="abrirHistorialVentas()">🔄 Refrescar</button>
+            <div class="grupo-formulario">
+                <button class="btn btn-guardar-azul" style="padding: 14px; margin:0; height: 100%;" onclick="abrirHistorialVentas()">🔄 Refrescar</button>
             </div>
         </div>
         <div id="lista-historial-ventas" class="lista-vertical"></div>
@@ -403,10 +410,10 @@
     <!-- PANTALLA 8: ALTA INVENTARIO -->
     <div id="pantalla-inventario" class="contenedor oculto">
         <h2 style="color: #333; margin-top: 0; text-align: left;">📦 Alta Catálogo e Inventario</h2>
-        <div class="form-row"><div class="grupo-formulario" style="flex:2;"><label>Tipo de Registro:</label><select id="tipo-inventario" onchange="toggleServicio()"><option value="Medicamento/Producto">💊 Producto Físico / Medicamento</option><option value="Servicio Médico">🩺 Servicio Médico (Ej. Consulta, Baño)</option></select></div></div>
-        <button type="button" class="btn btn-qr" onclick="iniciarCamara('caja-camara-inventario', 'qr-inventario')">📷 Escanear (QR)</button>
+        <div class="form-row"><div class="grupo-formulario busqueda-ancha"><label>Tipo de Registro:</label><select id="tipo-inventario" onchange="toggleServicio()"><option value="Medicamento/Producto">💊 Producto Físico / Medicamento</option><option value="Servicio Médico">🩺 Servicio Médico (Ej. Consulta, Baño)</option></select></div></div>
+        <button type="button" class="btn btn-qr" onclick="iniciarCamara('caja-camara-inventario', 'qr-inventario')">📷 Escanear Lote (QR)</button>
         <div id="caja-camara-inventario" class="caja-camara oculto"></div>
-        <div class="grupo-formulario"><label>Código QR / Nombre corto:</label><input type="text" id="qr-inventario" style="font-weight: bold;" placeholder="Ej. 750123456 o 'CONSULTA'"></div>
+        <div class="grupo-formulario"><label>Código QR / Nombre corto:</label><input type="text" id="qr-inventario" style="font-weight: bold; color: #0d6efd;" placeholder="Ej. 750123456 o 'CONSULTA'"></div>
         <div class="grupo-formulario"><label>Nombre del Producto/Servicio:</label><input type="text" id="nombre-inventario"></div>
         <div class="grupo-formulario"><label>Descripción / Gramaje:</label><input type="text" id="descripcion-inventario"></div>
         <div class="form-row">
@@ -421,9 +428,9 @@
     <!-- PANTALLA 9: BAJA INVENTARIO -->
     <div id="pantalla-baja-inventario" class="contenedor oculto">
         <h2 style="color: #dc3545; margin-top: 0; text-align: left;">📉 Baja de Lote (Merma)</h2>
-        <button type="button" class="btn btn-qr" onclick="iniciarCamara('caja-camara-baja-inv', 'qr-baja-inv')">📷 Escanear (QR)</button>
+        <button type="button" class="btn btn-qr" style="color: #dc3545; border-color: #dc3545; background: #fff0f0;" onclick="iniciarCamara('caja-camara-baja-inv', 'qr-baja-inv')">📷 Escanear Producto (QR)</button>
         <div id="caja-camara-baja-inv" class="caja-camara oculto"></div>
-        <div class="grupo-formulario"><label>Código / Nombre:</label><input type="text" id="qr-baja-inv" list="lista-medicamentos" class="input-buscador" style="color: #dc3545;"></div>
+        <div class="grupo-formulario"><label>Código / Nombre:</label><input type="text" id="qr-baja-inv" list="lista-medicamentos" class="input-buscador" style="color: #dc3545; border-color: #dc3545 !important;"></div>
         <div class="grupo-formulario"><label>Motivo:</label><input type="text" id="motivo-baja-inv" placeholder="Ej. Caducidad, uso interno..."></div>
         <div class="form-row"><div class="grupo-formulario"><label>Descontar (Cantidad):</label><input type="number" id="cantidad-baja-inv"></div></div>
         <button class="btn btn-guardar btn-guardar-rojo" onclick="guardarBajaInventario()">Registrar Baja</button>
@@ -433,15 +440,15 @@
     <!-- PANTALLA 10: USUARIOS -->
     <div id="pantalla-usuarios" class="contenedor contenedor-ancho oculto">
         <h2 style="color: #333; margin-top: 0; text-align: left;">👥 Administrar Personal</h2>
-        <div class="panel-busqueda" style="grid-template-columns: 1fr 1fr 1fr; margin-bottom: 25px;">
-            <div class="grupo-formulario" style="margin:0;"><label>Nombre:</label><input type="text" id="nuevo-usuario-nombre"></div>
-            <div class="grupo-formulario" style="margin:0;"><label>PIN (4 dígitos):</label><input type="number" id="nuevo-usuario-pin"></div>
-            <div class="grupo-formulario" style="margin:0;"><label>Rol:</label><select id="nuevo-usuario-rol"><option value="Doctor">Doctor</option><option value="Sub-Gerente">Sub-Gerente</option><option value="Gerente">Gerente</option></select></div>
-            <button class="btn btn-guardar-azul" style="grid-column: span 3; padding: 12px;" onclick="crearUsuario()">+ Agregar Usuario Nuevo</button>
+        <div class="panel-busqueda">
+            <div class="grupo-formulario"><label>Nombre:</label><input type="text" id="nuevo-usuario-nombre"></div>
+            <div class="grupo-formulario"><label>PIN (4 dígitos):</label><input type="number" id="nuevo-usuario-pin"></div>
+            <div class="grupo-formulario"><label>Rol:</label><select id="nuevo-usuario-rol"><option value="Doctor">Doctor</option><option value="Sub-Gerente">Sub-Gerente</option><option value="Gerente">Gerente</option></select></div>
+            <div class="grupo-formulario busqueda-ancha"><button class="btn btn-guardar-azul" style="margin:0; padding: 14px;" onclick="crearUsuario()">+ Agregar Usuario Nuevo</button></div>
         </div>
         
-        <div class="panel-busqueda" style="grid-template-columns: 1fr; margin-bottom: 20px; padding: 15px;">
-            <div class="grupo-formulario" style="margin:0;">
+        <div class="panel-busqueda">
+            <div class="grupo-formulario busqueda-ancha">
                 <label>🔍 Buscar personal:</label>
                 <input type="text" class="input-buscador" placeholder="Nombre o PIN..." oninput="filtrarTarjetas('lista-usuarios-firebase', this.value)">
             </div>
@@ -685,7 +692,7 @@
         function guardarBajaInventario() { let val = document.getElementById('qr-baja-inv').value; let q = val.includes(" - ") ? val.split(" - ")[1] : val; const c = document.getElementById('cantidad-baja-inv').value; const m = document.getElementById('motivo-baja-inv').value || 'Sin especificar'; if(!q || !c) return alert("⚠️ Llena código y cantidad."); db.collection("Inventario").doc(q).get().then(doc => { if(doc.exists) { if(doc.data().tipoArticulo === 'Servicio Médico') return alert("❌ No puedes dar de baja un servicio médico."); let actual = doc.data().cantidad; db.collection("Inventario").doc(q).update({ cantidad: actual - Math.abs(parseInt(c)) }).then(() => { db.collection("Historial_Inventario").add({ tipoMovimiento: "Merma", codigoQR: q, medicamento: doc.data().medicamento, motivo: m, cantidad: parseInt(c), unidad: doc.data().unidad, registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now() }); alert(`✅ Se descontaron piezas/ml del stock.`); cargarSugerenciasInventario(); cancelarVolver(); }); } else { alert("❌ El código no existe en el inventario."); } }); }
 
         // 15. ADMINISTRAR USUARIOS
-        function abrirUsuarios() { cambiarPantalla('pantalla-menu', 'pantalla-usuarios'); const lista = document.getElementById('lista-usuarios-firebase'); lista.innerHTML = '<p style="text-align:center;">Cargando usuarios...</p>'; db.collection("Usuarios").get().then((q) => { lista.innerHTML = ''; q.forEach((doc) => { const u = doc.data(); const uPin = doc.id; lista.innerHTML += `<div class="tarjeta-info" style="display:flex; justify-content: space-between; align-items: center; padding: 15px;"><div style="line-height:1.4;"><strong style="font-size:1.1em;">${u.nombre}</strong> <span style="background:#e3f2fd; color:#0d6efd; padding:2px 8px; border-radius:12px; font-size:0.75em; font-weight:bold; margin-left:5px;">${u.rol}</span><br><span style="color:#6c757d; font-size:0.85em;">PIN: <strong style="color:#333;">${uPin}</strong></span></div><button class="btn-cancelar" style="margin:0; padding:8px 15px; width:auto; border-radius:8px;" onclick="eliminarUsuario('${uPin}')">Borrar</button></div>`; }); }); }
+        function abrirUsuarios() { cambiarPantalla('pantalla-menu', 'pantalla-usuarios'); const lista = document.getElementById('lista-usuarios-firebase'); lista.innerHTML = '<p style="text-align:center;">Cargando usuarios...</p>'; db.collection("Usuarios").get().then((q) => { lista.innerHTML = ''; q.forEach((doc) => { const u = doc.data(); const uPin = doc.id; lista.innerHTML += `<div class="tarjeta-info" style="display:flex; justify-content: space-between; align-items: center; padding: 15px; margin-bottom: 10px;"><div style="line-height:1.4;"><strong style="font-size:1.1em;">${u.nombre}</strong> <span style="background:#e3f2fd; color:#0d6efd; padding:2px 8px; border-radius:12px; font-size:0.75em; font-weight:bold; margin-left:5px;">${u.rol}</span><br><span style="color:#6c757d; font-size:0.85em;">PIN: <strong style="color:#333;">${uPin}</strong></span></div><button class="btn-cancelar" style="margin:0; padding:8px 15px; width:auto; border-radius:8px;" onclick="eliminarUsuario('${uPin}')">Borrar</button></div>`; }); }); }
         function crearUsuario() { const n = document.getElementById('nuevo-usuario-nombre').value; const p = document.getElementById('nuevo-usuario-pin').value; const r = document.getElementById('nuevo-usuario-rol').value; if(!n || !p || p.length !== 4) return alert("⚠️ Ingresa un nombre y un PIN de exactamente 4 números."); db.collection("Usuarios").doc(p).set({ nombre: n, rol: r }).then(() => { alert("✅ Usuario creado."); document.getElementById('nuevo-usuario-nombre').value = ""; document.getElementById('nuevo-usuario-pin').value = ""; abrirUsuarios(); }); }
         function eliminarUsuario(pinBorrar) { if(pinBorrar === usuarioLogueado.pin) return alert("❌ No puedes eliminarte a ti mismo."); if(confirm(`¿Seguro de eliminar este acceso (${pinBorrar})?`)) { db.collection("Usuarios").doc(pinBorrar).delete().then(() => { abrirUsuarios(); }); } }
     </script>
