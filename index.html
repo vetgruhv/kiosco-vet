@@ -33,17 +33,21 @@
         
         .alerta-banner { background-color: #fff3cd; border-left: 6px solid #ffc107; border-radius: 12px; padding: 18px; margin-bottom: 20px; text-align: left; }
         
-        /* Formularios a dos columnas */
-        .form-row { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; align-items: flex-end; }
-        .form-row .grupo-formulario { margin-bottom: 0; flex: 1 1 200px; }
-        .grupo-formulario { margin-bottom: 20px; text-align: left; width: 100%; box-sizing: border-box;}
+        /* Formularios a dos columnas (Mejorado) */
+        .form-row { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 15px; align-items: flex-end; }
+        .form-row .grupo-formulario { margin-bottom: 0; flex: 1 1 150px; }
+        .grupo-formulario { margin-bottom: 15px; text-align: left; width: 100%; box-sizing: border-box;}
         .grupo-formulario label { display: block; font-weight: 700; margin-bottom: 8px; color: #495057; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.5px;}
-        .grupo-formulario input, .grupo-formulario select, .grupo-formulario textarea { width: 100%; padding: 14px; font-size: 1em; border: 2px solid #e9ecef; border-radius: 12px; box-sizing: border-box; font-family: inherit; transition: all 0.2s; background-color: #f8f9fa; color: #333;}
-        .grupo-formulario input:focus, .grupo-formulario select:focus, .grupo-formulario textarea:focus { border-color: #0d6efd; outline: none; background-color: #fff; box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1); }
+        /* Reset para inputs y selectores (Quita bordes nativos feos) */
+        .grupo-formulario input, .grupo-formulario select, .grupo-formulario textarea { 
+            width: 100%; padding: 14px; font-size: 1em; border: 2px solid #e9ecef; border-radius: 12px; 
+            box-sizing: border-box; font-family: inherit; transition: all 0.2s; background-color: #f8f9fa; color: #333; outline: none; appearance: none; -webkit-appearance: none;
+        }
+        .grupo-formulario input:focus, .grupo-formulario select:focus, .grupo-formulario textarea:focus { border-color: #0d6efd; background-color: #fff; box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1); }
         .input-buscador { font-size: 1.05em !important; border: 2px solid #0d6efd !important; background: #fff !important; }
         
         /* Botones Generales */
-        .btn { width: 100%; padding: 16px; font-size: 1.1em; border: none; border-radius: 14px; cursor: pointer; font-weight: bold; transition: all 0.2s ease; display: block; text-align: center; box-sizing: border-box;}
+        .btn { width: 100%; padding: 14px 16px; font-size: 1.1em; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; transition: all 0.2s ease; display: block; text-align: center; box-sizing: border-box;}
         .btn-qr { background: #e3f2fd; color: #0d6efd; border: 2px dashed #0d6efd; margin-bottom: 20px;}
         .btn-guardar { background: #198754; color: white; box-shadow: 0 6px 15px rgba(25, 135, 84, 0.25); margin-top: 10px;}
         .btn-guardar:hover { background: #157347; transform: translateY(-2px); }
@@ -68,24 +72,11 @@
         .btn-eliminar-item { background: #ffe3e3; color: #dc3545; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-weight: bold; transition: 0.2s;}
         .btn-eliminar-item:hover { background: #ffc9c9; transform: scale(1.05);}
 
-        /* DISEÑO DE CUADRÍCULA DE AUTORIZACIONES (NUEVO) */
-        .grid-autorizaciones { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 10px; }
-        .auth-item { background: #fff; padding: 12px 15px; border-radius: 10px; border: 1px solid #d8b4fe; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s; font-size: 0.9em; color: #495057; font-weight: 600;}
-        .auth-item:hover { border-color: #6f42c1; background: #faf5ff; }
-        .auth-item input { width: 18px; height: 18px; accent-color: #6f42c1; cursor: pointer; margin: 0;}
-
-        /* DISEÑO DEL BUSCADOR COMPACTO (NUEVO) */
-        .busqueda-hosp-wrapper { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; margin-bottom: 15px; }
-        .busqueda-hosp-wrapper input { height: 50px; box-sizing: border-box; margin: 0;}
-        .busqueda-hosp-wrapper .b-texto { flex: 1 1 200px; }
-        .busqueda-hosp-wrapper .b-costo { flex: 0 1 100px; }
-        .busqueda-hosp-wrapper .b-boton { flex: 0 0 auto; margin:0; padding: 0 20px; width: auto; height: 50px; border-radius: 12px; }
-
         /* DIVISIÓN VISUAL DEL CARRITO DE HOSPITALIZACIÓN */
         .hosp-listas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
         .hosp-columna { background:#fff; border:1px solid #e9ecef; border-radius:12px; padding:15px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.01); }
-        .hosp-columna h5 { margin: 0 0 10px 0; border-bottom: 2px dashed #e9ecef; padding-bottom: 8px;}
-        
+        .hosp-columna h5 { margin: 0 0 10px 0; border-bottom: 2px dashed #e9ecef; padding-bottom: 8px; text-transform: uppercase; font-size: 0.85em; letter-spacing: 0.5px;}
+
         /* FIRMAS NUEVAS (SOLO CLIENTE) */
         .firma-card { width: 100%; max-width: 450px; margin: 0 auto; border: 1px solid #e9ecef; border-radius: 14px; padding: 15px; background: #fff; text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.02); box-sizing: border-box;}
         .firma-title { font-size: 0.85em; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #198754;}
@@ -93,12 +84,11 @@
         .btn-borrar-firma { border: 1px solid #ffc9c9; background: #fff0f0; color: #dc3545; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-size: 0.85em; margin-bottom: 10px; transition: 0.2s; font-weight: bold;}
         .btn-borrar-firma:active { background: #ffc9c9; transform: scale(0.95);}
 
-        /* PANELES DE BÚSQUEDA RESPONSIVOS */
+        /* PANELES DE BÚSQUEDA RESPONSIVOS Y TARJETAS */
         .panel-busqueda { background: #ffffff; padding: 20px; border-radius: 18px; margin-bottom: 25px; border: 1px solid #e9ecef; display: flex; flex-wrap: wrap; gap: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); align-items: flex-end;}
         .panel-busqueda .grupo-formulario { flex: 1 1 200px; margin: 0; }
         .busqueda-ancha { flex: 1 1 100% !important; }
         
-        /* LISTA RECTA (EVITA EL APLASTAMIENTO) */
         .lista-vertical { display: block; max-height: 500px; overflow-y: auto; padding-right: 10px; margin-bottom: 15px; }
         .tarjeta-expediente, .tarjeta-info { border: 1px solid #e9ecef; border-radius: 16px; padding: 20px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.03); text-align: left; transition: 0.2s; position: relative; overflow: hidden; margin-bottom: 18px; display: block; width: 100%; box-sizing: border-box;}
         .tarjeta-expediente:hover, .tarjeta-info:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.06); transform: translateY(-2px); border-color: #dee2e6; }
@@ -108,6 +98,8 @@
         .tarjeta-expediente.alta { border-left: 6px solid #198754; } .badge-alta { background: #e8f5e9; color: #198754; }
         .tarjeta-expediente.merma { border-left: 6px solid #dc3545; } .badge-merma { background: #fff0f0; color: #dc3545; }
         .tarjeta-expediente.edicion { border-left: 6px solid #0d6efd; } .badge-edicion { background: #e3f2fd; color: #0d6efd; }
+        
+        .badge-tipo { padding: 5px 10px; border-radius: 8px; font-size: 0.8em; font-weight: bold; margin-right: 10px; display: inline-block;}
         
         .exp-header, .th-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f1f3f5; padding-bottom: 10px; flex-wrap: wrap; gap: 10px;}
         .exp-title, .th-header strong { font-weight: 800; font-size: 1.1em; color: #2b3035; display: flex; align-items: center;}
@@ -175,7 +167,7 @@
             .receta-print .footer-receta { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; font-size: 10px; line-height: 1.4; color: #2c6e8f;}
             .print-grid-listas { display: flex; gap: 20px; font-size: 11px; color: black; }
             .print-grid-listas div { flex: 1; }
-            .print-grid-listas ul { padding-left: 15px; margin-top: 5px; }
+            .print-grid-listas ul { padding-left: 15px; margin-top: 5px; margin-bottom:0;}
         }
     </style>
 </head>
@@ -253,10 +245,18 @@
         <button type="button" class="btn btn-qr" onclick="iniciarCamara('caja-camara-baja', 'buscador-pos')">📷 Escanear Producto (QR)</button>
         <div id="caja-camara-baja" class="caja-camara oculto"></div>
         
-        <div class="busqueda-hosp-wrapper" style="background: #f8f9fa; padding: 15px; border-radius: 12px; border: 1px solid #e9ecef; margin-bottom: 20px;">
-            <div class="b-texto"><input type="text" id="buscador-pos" list="lista-medicamentos" class="input-buscador" placeholder="Nombre o código..." oninput="autocompletarPrecio()"></div>
-            <div class="b-costo"><input type="number" id="precio-pos" placeholder="Manual"></div>
-            <button class="btn btn-guardar-azul b-boton" onclick="agregarAlCarrito()">➕ Añadir</button>
+        <div class="form-row" style="background: #fff; padding: 15px; border-radius: 14px; border: 1px solid #ced4da; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+            <div class="grupo-formulario" style="flex: 2; margin:0;">
+                <label>Buscar Producto / Servicio:</label>
+                <input type="text" id="buscador-pos" list="lista-medicamentos" class="input-buscador" placeholder="Nombre o código..." oninput="autocompletarPrecio()">
+            </div>
+            <div class="grupo-formulario" style="flex: 1; max-width: 120px; margin:0;">
+                <label>Precio ($):</label>
+                <input type="number" id="precio-pos" placeholder="Manual">
+            </div>
+            <div class="grupo-formulario" style="flex: 0 0 auto; margin:0;">
+                <button class="btn btn-guardar-azul" style="margin:0; padding: 14px 20px; border-radius: 12px;" onclick="agregarAlCarrito()">➕ Añadir</button>
+            </div>
         </div>
 
         <label style="font-weight: bold; color: #495057; font-size: 0.85em; text-transform: uppercase;">Artículos en la cuenta:</label>
@@ -289,9 +289,11 @@
         <button class="btn btn-cancelar" style="border:none;" onclick="cancelarVolver()">Cancelar Venta</button>
     </div>
 
-    <!-- PANTALLA 4: MANEJO HOSPITALARIO -->
+    <!-- PANTALLA 4: MANEJO HOSPITALARIO (Reemplaza a Receta) -->
     <div id="pantalla-hospitalizacion" class="contenedor contenedor-ancho oculto">
-        <h2 style="color: #6f42c1; margin-top: 0; font-size: 1.8em; text-align: left;">🏥 Manejo Hospitalario / Ingreso</h2>
+        <h2 style="color: #6f42c1; margin-top: 0; font-size: 1.8em; text-align: left; display:flex; align-items:center; gap:10px;">
+            <span style="font-size:1.2em;">🏥</span> Manejo Hospitalario / Ingreso
+        </h2>
         
         <div class="form-row"><div class="grupo-formulario"><label>Dueño:</label><input type="text" id="hosp-dueno" placeholder="Nombre completo"></div><div class="grupo-formulario"><label>Paciente:</label><input type="text" id="hosp-paciente" placeholder="Ej. Max"></div></div>
         <div class="form-row"><div class="grupo-formulario"><label>Raza:</label><input type="text" id="hosp-raza" placeholder="Ej. Husky"></div><div class="grupo-formulario"><label>Sexo:</label><select id="hosp-sexo"><option value="">Seleccione</option><option value="Macho">Macho</option><option value="Hembra">Hembra</option></select></div><div class="grupo-formulario"><label>Edad:</label><input type="text" id="hosp-edad" placeholder="Ej. 2 años"></div></div>
@@ -299,43 +301,62 @@
 
         <div class="seccion-separador"></div>
 
-        <!-- AUTORIZACIONES -->
+        <!-- AUTORIZACIONES MANUALES DINÁMICAS -->
         <div style="background: #f3e8ff; padding: 25px; border-radius: 16px; border: 1px solid #d8b4fe; margin-bottom: 30px;">
             <label style="display: block; font-weight: 800; margin-bottom: 15px; color: #6f42c1; font-size: 0.95em; text-transform: uppercase;">Autorizaciones Legales del Cliente:</label>
-            <div class="grid-autorizaciones">
-                <label class="auth-item"><input type="checkbox" id="auth-hospital" checked> Manejo Hospitalario</label>
-                <label class="auth-item"><input type="checkbox" id="auth-anestesia"> Anestesia / Sedación</label>
-                <label class="auth-item"><input type="checkbox" id="auth-cirugia"> Proc. Quirúrgico</label>
-                <label class="auth-item"><input type="checkbox" id="auth-pension"> Pensión / Estancia</label>
-                <label class="auth-item"><input type="checkbox" id="auth-eutanasia"> Eutanasia</label>
-                <label class="auth-item"><input type="checkbox" id="auth-necropsia"> Necropsia</label>
+            <div class="form-row" style="margin-bottom: 15px;">
+                <div class="grupo-formulario" style="flex:3; margin:0;">
+                    <input type="text" id="input-nueva-auth" placeholder="Ej. Cirugía de fémur, Pensión 3 días, etc." onkeypress="if(event.key==='Enter') agregarAutorizacion()">
+                </div>
+                <div class="grupo-formulario" style="flex:1; margin:0;">
+                    <button class="btn" style="background:#6f42c1; color:white; padding:14px;" onclick="agregarAutorizacion()">➕ Añadir</button>
+                </div>
+            </div>
+            <div id="lista-autorizaciones" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                <!-- Aquí van las etiquetas dinámicas -->
             </div>
         </div>
 
         <div class="seccion-separador"></div>
 
-        <!-- DIVISIÓN: SERVICIOS Y MEDICAMENTOS -->
+        <!-- DIVISIÓN: SERVICIOS Y MEDICAMENTOS (BUSCADOR COMPACTO Y ELEGANTE) -->
         <label style="font-weight: 800; color: #0d6efd; font-size: 0.95em; text-transform: uppercase; margin-bottom:15px; display:block;">Agregar Servicios y/o Insumos aplicados:</label>
         
-        <div class="busqueda-hosp-wrapper">
-            <div class="b-texto"><input type="text" id="buscador-hosp-item" list="lista-medicamentos" class="input-buscador" placeholder="Buscar insumo/servicio..." oninput="autocompletarPrecioHosp()"></div>
-            <div class="b-costo"><input type="number" id="precio-hosp-item" placeholder="Costo"></div>
-            <button class="btn btn-guardar-azul b-boton" onclick="agregarAlCarritoHosp()">➕ Añadir</button>
+        <div class="form-row" style="background: #fff; padding: 15px; border-radius: 14px; border: 1px solid #ced4da; box-shadow: 0 2px 8px rgba(0,0,0,0.02); margin-bottom: 20px;">
+            <div class="grupo-formulario" style="flex: 3; min-width: 150px; margin:0;">
+                <label>Concepto:</label>
+                <input type="text" id="buscador-hosp-item" list="lista-medicamentos" class="input-buscador" placeholder="Buscar o teclear nuevo..." oninput="autocompletarPrecioHosp()">
+            </div>
+            <div class="grupo-formulario" style="flex: 1; min-width: 90px; margin:0;">
+                <label>Precio ($):</label>
+                <input type="number" id="precio-hosp-item" placeholder="0.00">
+            </div>
+            <div class="grupo-formulario" style="flex: 1; min-width: 130px; margin:0;">
+                <label>Clasificación:</label>
+                <select id="tipo-hosp-item">
+                    <option value="Servicio Médico">🩺 Servicio Médico</option>
+                    <option value="Medicamento/Producto">💊 Insumo / Medicamento</option>
+                </select>
+            </div>
+            <div class="grupo-formulario" style="flex: 0 0 auto; margin:0;">
+                <button class="btn btn-guardar-azul" style="margin:0; padding: 14px 20px; border-radius: 12px;" onclick="agregarAlCarritoHosp()">➕ Añadir</button>
+            </div>
         </div>
 
         <div class="hosp-listas-grid">
             <div class="hosp-columna">
-                <h5 style="color: #0d6efd; font-size: 1.05em;">🩺 Servicios Médicos</h5>
+                <h5 style="color: #0d6efd;">🩺 Servicios Médicos</h5>
                 <div id="carrito-hosp-servicios"><p style="text-align:center; color:#adb5bd; margin:0; padding:10px;">Sin servicios</p></div>
             </div>
             <div class="hosp-columna">
-                <h5 style="color: #198754; font-size: 1.05em;">💊 Medicamentos / Insumos</h5>
+                <h5 style="color: #198754;">💊 Medicamentos / Insumos</h5>
                 <div id="carrito-hosp-medicamentos"><p style="text-align:center; color:#adb5bd; margin:0; padding:10px;">Sin medicamentos</p></div>
             </div>
         </div>
 
         <div class="seccion-separador"></div>
 
+        <!-- NOTAS DE EVOLUCIÓN -->
         <div class="grupo-formulario">
             <label>Notas de Evolución / Comentarios Médicos:</label>
             <textarea id="hosp-notas" rows="6" placeholder="Ej. El paciente ingresa estable. Comió a las 14:00 hrs..." style="font-size: 1em;"></textarea>
@@ -481,7 +502,7 @@
         let pinActual = ""; let usuarioLogueado = null; let temporizadorInactividad; let lectorQr; let camaraActivaId = ""; 
         let totalCobroCalculado = 0; let inventarioGlobal = []; let carrito = []; let carritoHosp = [];
         let datosExpediente = []; let datosHistorialInv = []; let datosHistorialVentas = [];
-        let firmaCapturada = false;
+        let firmaCapturada = false; let autorizacionesHosp = ["Manejo Hospitalario"]; // Array de autorizaciones manuales
 
         // --- LÓGICA DE FIRMA DIGITAL ---
         let ctxActivo = null; let isDrawing = false; let canvasActivo = false;
@@ -579,18 +600,51 @@
         }
         function descontarInventarioAutomatico(articulosVendidos) { articulosVendidos.forEach(item => { if(item.tipo !== 'Servicio Médico' && item.codigo !== 'S/C') { db.collection("Inventario").doc(item.codigo).get().then(doc => { if(doc.exists) { let actual = doc.data().cantidad; db.collection("Inventario").doc(item.codigo).update({ cantidad: actual - 1 }); } }); } }); }
 
-        // 8. MANEJO HOSPITALARIO (REEMPLAZA RECETA)
-        function abrirHospitalizacion() { cambiarPantalla('pantalla-menu', 'pantalla-hospitalizacion'); document.getElementById('btn-abrir-firmas').classList.remove('oculto'); document.getElementById('zona-firmas-oculta').classList.add('oculto'); limpiarFirma('cliente'); canvasActivo=false; carritoHosp = []; actualizarCarritoHospUI(); document.getElementById('auth-hospital').checked = true; document.getElementById('auth-anestesia').checked = false; document.getElementById('auth-cirugia').checked = false; document.getElementById('auth-pension').checked = false; document.getElementById('auth-eutanasia').checked = false; document.getElementById('auth-necropsia').checked = false; }
+        // 8. MANEJO HOSPITALARIO (AUTORIZACIONES MANUALES)
+        function abrirHospitalizacion() { cambiarPantalla('pantalla-menu', 'pantalla-hospitalizacion'); document.getElementById('btn-abrir-firmas').classList.remove('oculto'); document.getElementById('zona-firmas-oculta').classList.add('oculto'); limpiarFirma('cliente'); canvasActivo=false; carritoHosp = []; actualizarCarritoHospUI(); autorizacionesHosp = ["Manejo Hospitalario"]; actualizarAutorizacionesUI();}
         
-        function autocompletarPrecioHosp() { const val = document.getElementById('buscador-hosp-item').value; const inputPrecio = document.getElementById('precio-hosp-item'); const item = inventarioGlobal.find(i => `${i.medicamento} - ${i.codigoQR}` === val || i.codigoQR === val || i.medicamento === val); if(item) { if(item.tipoArticulo === 'Servicio Médico') { inputPrecio.readOnly = false; inputPrecio.value = item.precioVenta || ""; inputPrecio.placeholder = "Manual..."; inputPrecio.style.backgroundColor = "#fff"; } else { inputPrecio.readOnly = true; inputPrecio.value = item.precioVenta || 0; inputPrecio.style.backgroundColor = "#e9ecef"; } } else { inputPrecio.readOnly = false; inputPrecio.placeholder = "Manual"; inputPrecio.style.backgroundColor = "#fff"; } }
-        function agregarAlCarritoHosp() { const val = document.getElementById('buscador-hosp-item').value; const inputPrecio = document.getElementById('precio-hosp-item'); let precio = parseFloat(inputPrecio.value) || 0; if(!val) return alert("⚠️ Escribe o escanea un producto."); const itemDb = inventarioGlobal.find(i => `${i.medicamento} - ${i.codigoQR}` === val || i.codigoQR === val || i.medicamento === val); if (itemDb && itemDb.tipoArticulo !== 'Servicio Médico') { precio = parseFloat(itemDb.precioVenta) || 0; } else if (!itemDb || itemDb.tipoArticulo === 'Servicio Médico') { if (precio <= 0) return alert("⚠️ Ingresa el precio del servicio."); } carritoHosp.push({ nombre: itemDb ? itemDb.medicamento : val, precio: precio, tipo: itemDb ? (itemDb.tipoArticulo || 'Medicamento/Producto') : 'Servicio Médico', codigo: itemDb ? itemDb.codigoQR : 'S/C' }); actualizarCarritoHospUI(); document.getElementById('buscador-hosp-item').value = ''; inputPrecio.value = ''; inputPrecio.readOnly = false; inputPrecio.style.backgroundColor = "#fff"; inputPrecio.placeholder = "Manual"; }
+        function actualizarAutorizacionesUI() {
+            const div = document.getElementById('lista-autorizaciones'); div.innerHTML = '';
+            if(autorizacionesHosp.length === 0) { div.innerHTML = '<span style="color:#aaa; font-size:0.9em;">Sin autorizaciones.</span>'; return; }
+            autorizacionesHosp.forEach((auth, idx) => {
+                div.innerHTML += `<span style="background:#e3f2fd; color:#0d6efd; padding:8px 15px; border-radius:20px; font-size:0.9em; font-weight:bold; display:flex; align-items:center; gap:8px;">${auth} <span style="cursor:pointer; color:#dc3545;" onclick="eliminarAutorizacion(${idx})">✖</span></span>`;
+            });
+        }
+        function agregarAutorizacion() { const input = document.getElementById('input-nueva-auth'); const val = input.value.trim(); if(val) { autorizacionesHosp.push(val); input.value = ''; actualizarAutorizacionesUI(); } }
+        function eliminarAutorizacion(idx) { autorizacionesHosp.splice(idx, 1); actualizarAutorizacionesUI(); }
+
+        function autocompletarPrecioHosp() { 
+            const val = document.getElementById('buscador-hosp-item').value; const inputPrecio = document.getElementById('precio-hosp-item'); const selectTipo = document.getElementById('tipo-hosp-item');
+            const item = inventarioGlobal.find(i => `${i.medicamento} - ${i.codigoQR}` === val || i.codigoQR === val || i.medicamento === val); 
+            if(item) { 
+                inputPrecio.readOnly = (item.tipoArticulo !== 'Servicio Médico');
+                inputPrecio.value = item.precioVenta || 0; 
+                inputPrecio.style.backgroundColor = inputPrecio.readOnly ? "#e9ecef" : "#fff";
+                selectTipo.value = item.tipoArticulo || 'Medicamento/Producto';
+            } else { 
+                inputPrecio.readOnly = false; inputPrecio.placeholder = "0.00"; inputPrecio.style.backgroundColor = "#fff"; 
+            } 
+        }
+
+        function agregarAlCarritoHosp() { 
+            const val = document.getElementById('buscador-hosp-item').value; const inputPrecio = document.getElementById('precio-hosp-item'); const selectTipo = document.getElementById('tipo-hosp-item');
+            let precio = parseFloat(inputPrecio.value) || 0; let tipo = selectTipo.value;
+            if(!val) return alert("⚠️ Escribe o escanea un producto/servicio."); 
+            const itemDb = inventarioGlobal.find(i => `${i.medicamento} - ${i.codigoQR}` === val || i.codigoQR === val || i.medicamento === val); 
+            
+            if (itemDb && itemDb.tipoArticulo !== 'Servicio Médico') { precio = parseFloat(itemDb.precioVenta) || 0; tipo = itemDb.tipoArticulo; } 
+            
+            carritoHosp.push({ nombre: itemDb ? itemDb.medicamento : val, precio: precio, tipo: tipo, codigo: itemDb ? itemDb.codigoQR : 'S/C' }); 
+            actualizarCarritoHospUI(); 
+            document.getElementById('buscador-hosp-item').value = ''; inputPrecio.value = ''; inputPrecio.readOnly = false; inputPrecio.style.backgroundColor = "#fff"; inputPrecio.placeholder = "0.00"; 
+        }
+
         function eliminarDelCarritoHosp(index) { carritoHosp.splice(index, 1); actualizarCarritoHospUI(); }
         function actualizarCarritoHospUI() { 
             const divServ = document.getElementById('carrito-hosp-servicios'); const divMed = document.getElementById('carrito-hosp-medicamentos'); 
             let htmlServ = '', htmlMed = '';
             carritoHosp.forEach((item, index) => { 
-                let icon = item.tipo === 'Servicio Médico' ? '🩺' : '💊'; 
-                let str = `<div class="item-carrito"><span>${icon} <strong>${item.nombre}</strong></span><span>$${item.precio.toFixed(2)} <button class="btn-eliminar-item" onclick="eliminarDelCarritoHosp(${index})">X</button></span></div>`;
+                let str = `<div class="item-carrito" style="padding: 8px 0; font-size: 0.9em;"><span><strong>${item.nombre}</strong></span><span>$${item.precio.toFixed(2)} <button class="btn-eliminar-item" style="padding: 4px 8px; font-size: 0.8em;" onclick="eliminarDelCarritoHosp(${index})">X</button></span></div>`;
                 if(item.tipo === 'Servicio Médico') htmlServ += str; else htmlMed += str;
             }); 
             divServ.innerHTML = htmlServ || '<p style="text-align:center; color:#adb5bd; margin:0; padding:10px;">Sin servicios</p>'; 
@@ -600,15 +654,13 @@
         function procesarHospitalizacion(imprimir) {
             const dueno = document.getElementById('hosp-dueno').value; const paciente = document.getElementById('hosp-paciente').value; const raza = document.getElementById('hosp-raza').value; const edad = document.getElementById('hosp-edad').value; const sexo = document.getElementById('hosp-sexo').value; const peso = document.getElementById('hosp-peso').value; const temp = document.getElementById('hosp-temp').value; const notas = document.getElementById('hosp-notas').value; 
             
-            const authAnestesia = document.getElementById('auth-anestesia').checked; const authHospital = document.getElementById('auth-hospital').checked; const authPension = document.getElementById('auth-pension').checked; const authCirugia = document.getElementById('auth-cirugia').checked; const authEutanasia = document.getElementById('auth-eutanasia').checked; const authNecropsia = document.getElementById('auth-necropsia').checked;
-            
             let cCli = document.getElementById('canvas-cliente');
             const firmaCliBase64 = (canvasActivo && firmaCapturada) ? cCli.toDataURL() : "";
 
             if(!dueno || !paciente) { alert("⚠️ Llena al menos Dueño y Paciente."); return; }
             const folioStr = String(Date.now()).slice(-5); 
 
-            const hospData = { doctor: usuarioLogueado.nombre, dueno: dueno, paciente: paciente, raza: raza, edad: edad, sexo: sexo, peso: peso, temperatura: temp, prescripcion: notas, articulos: carritoHosp, authAnestesia: authAnestesia, authHospital: authHospital, authPension: authPension, authCirugia: authCirugia, authEutanasia: authEutanasia, authNecropsia: authNecropsia, firmaCliente: firmaCliBase64, folio: folioStr, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now(), fechaReal: firebase.firestore.FieldValue.serverTimestamp() };
+            const hospData = { doctor: usuarioLogueado.nombre, dueno: dueno, paciente: paciente, raza: raza, edad: edad, sexo: sexo, peso: peso, temperatura: temp, prescripcion: notas, articulos: carritoHosp, autorizaciones: autorizacionesHosp, firmaCliente: firmaCliBase64, folio: folioStr, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now(), fechaReal: firebase.firestore.FieldValue.serverTimestamp() };
 
             db.collection("Historial_Hospitalizacion").add(hospData).then(() => {
                 descontarInventarioAutomatico(carritoHosp);
@@ -650,14 +702,16 @@
                     }
 
                     if(d.tipoRegistro === 'hospitalizacion' || d.tipoRegistro === 'receta_antigua') {
-                        let authTxt = []; if(d.authHospital) authTxt.push("Manejo Hosp"); if(d.authAnestesia) authTxt.push("Anestesia"); if(d.authCirugia) authTxt.push("Cirugía"); if(d.authPension) authTxt.push("Pensión"); if(d.authEutanasia) authTxt.push("Eutanasia"); if(d.authNecropsia) authTxt.push("Necropsia");
+                        let authArr = d.autorizaciones || [];
+                        let authTxt = authArr.length > 0 ? `<div style="font-size:0.85em; color:#6f42c1; font-weight:bold; margin-bottom:10px;">✅ Autoriza: ${authArr.join(', ')}</div>` : '';
+                        
                         let descServ = d.articulos ? d.articulos.map(a=>a.nombre).join(', ') : '';
-                        let notaResumen = d.prescripcion ? d.prescripcion.substring(0, 100) + '...' : 'Sin notas';
+                        let notaResumen = d.prescripcion ? d.prescripcion.substring(0, 150) + '...' : 'Sin notas';
                         
                         html += `<div class="tarjeta-expediente hospital"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-hospital">🏥 Hospital / Notas</span> ${d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 Dueño: ${d.dueno}</span><span>⚖️ Peso: ${d.peso||'--'}kg</span><span>🌡️ Temp: ${d.temperatura||'--'}°C</span></div>
-                        ${authTxt.length > 0 ? `<div style="font-size:0.8em; color:#6f42c1; font-weight:bold; margin-bottom:5px;">AUTORIZADO: ${authTxt.join(', ')}</div>` : ''}
-                        <div class="exp-content">${notaResumen}<br><br><span style="color:#666; font-size:0.85em;">${descServ ? `Insumos: ${descServ}` : ''}</span></div>
-                        <div class="exp-footer"><span><strong style="color:#333;">Dr. ${d.doctor}</strong></span> <div style="display:flex; gap:10px;"><button class="btn-exp-action" style="background:#f3e8ff; color:#6f42c1;" onclick="reimprimirDesdeExpediente(${d.timestamp}, '${d.tipoRegistro}')">🖨️ Ver Hoja/Firmas</button> ${btnBorrar}</div> </div></div>`;
+                        ${authTxt}
+                        <div class="exp-content">${notaResumen}<br><br><span style="color:#666; font-size:0.85em;">${descServ ? `🩺 Insumos: ${descServ}` : ''}</span></div>
+                        <div class="exp-footer"><span><strong style="color:#333;">Dr. ${d.doctor}</strong></span> <div style="display:flex; gap:10px;"><button class="btn-exp-action" style="background:#f3e8ff; color:#6f42c1;" onclick="reimprimirDesdeExpediente(${d.timestamp}, '${d.tipoRegistro}')">🖨️ Ver Hoja</button> ${btnBorrar}</div> </div></div>`;
                     } else {
                         let desc = d.articulos ? d.articulos.map(a=>a.nombre).join(', ') : d.codigoConcepto; let isVenta = d.ventaMostrador;
                         html += `<div class="tarjeta-expediente venta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰 ${isVenta ? 'Mostrador' : 'Cobro'}</span> ${isVenta ? 'Público General' : d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 Dueño: ${isVenta ? 'N/A' : d.dueno}</span><span>👨‍⚕️ Atendió: ${d.atendio}</span><span>💳 Pago: ${d.metodoPago}</span></div><div class="exp-content" style="color:#146c43; font-weight:500;">🛒 ${desc}</div>
@@ -687,7 +741,7 @@
         }
         function reimprimirVentaDirecta(ts) { let data = datosHistorialVentas.find(x => x.timestamp == ts); if(data) imprimirTicketBoucher(data); }
 
-        // 10. SISTEMA DE IMPRESIÓN (OXXO Y VETGRU)
+        // 10. SISTEMA DE IMPRESIÓN
         function imprimirTicketBoucher(venta) {
             let htmlArticulos = ''; venta.articulos.forEach(a => { let n = a.nombre.length > 20 ? a.nombre.substring(0,20)+'..' : a.nombre; htmlArticulos += `<tr><td style="width:15%;">1</td><td style="width:55%;">${n}</td><td class="col-precio" style="width:30%;">$${a.precio.toFixed(2)}</td></tr>`; });
             let descuentoCalculado = venta.subtotal - venta.totalCobrado;
@@ -699,7 +753,7 @@
             let htmlFirmaCli = hosp.firmaCliente ? `<img src="${hosp.firmaCliente}">` : `<div style="height: 45px;"></div>`;
             let fch = hosp.fechaTexto ? hosp.fechaTexto.split(',')[0] : '';
 
-            let authList = []; if(hosp.authHospital) authList.push("Manejo Hospitalario"); if(hosp.authAnestesia) authList.push("Anestesia/Sedación"); if(hosp.authCirugia) authList.push("Procedimiento Quirúrgico"); if(hosp.authPension) authList.push("Pensión/Estancia"); if(hosp.authEutanasia) authList.push("Eutanasia"); if(hosp.authNecropsia) authList.push("Necropsia");
+            let authList = hosp.autorizaciones || [];
             let htmlAuth = authList.length > 0 ? `<div class="seccion-titulo">El propietario autoriza:</div><p style="font-size:12px; margin-top:0; font-weight:bold;">✅ ${authList.join('  ✅ ')}</p>` : '';
 
             let htmlServicios = '', htmlMedicamentos = ''; 
@@ -721,9 +775,9 @@
                 </div>
                 <div class="cuerpo-receta">
                     ${htmlAuth}
-                    <div class="print-grid-listas">
-                        ${htmlServicios ? `<div><div class="seccion-titulo">Servicios Médicos Aplicados:</div><ul>${htmlServicios}</ul></div>` : ''}
-                        ${htmlMedicamentos ? `<div><div class="seccion-titulo">Medicamentos / Insumos Aplicados:</div><ul>${htmlMedicamentos}</ul></div>` : ''}
+                    <div style="display:flex; gap:20px; font-size:12px;">
+                        ${htmlServicios ? `<div style="flex:1;"><div class="seccion-titulo">Servicios Médicos Aplicados:</div><ul style="padding-left:15px; margin-top:5px; margin-bottom:0;">${htmlServicios}</ul></div>` : ''}
+                        ${htmlMedicamentos ? `<div style="flex:1;"><div class="seccion-titulo">Medicamentos / Insumos Aplicados:</div><ul style="padding-left:15px; margin-top:5px; margin-bottom:0;">${htmlMedicamentos}</ul></div>` : ''}
                     </div>
                     <div class="seccion-titulo" style="margin-top:10px;">Notas de Evolución / Comentarios:</div>
                     <div class="prescripcion-texto">${hosp.prescripcion || 'Ninguna.'}</div>
