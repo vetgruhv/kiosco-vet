@@ -11,15 +11,36 @@
 
     <style>
         /* --- ESTILOS VISUALES PREMIUM HOMOLOGADOS --- */
-        /* CENTRADO ABSOLUTO REPARADO */
-        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #eef2f6; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #2b3035; box-sizing: border-box;}
         
-        /* Contenedores con Scroll Interno y Centrados */
-        .contenedor { background: white; padding: 35px; border-radius: 24px; box-shadow: 0 12px 35px rgba(0,0,0,0.06); width: 95%; max-width: 680px; max-height: 90vh; overflow-y: auto; box-sizing: border-box; position: relative; margin: auto;}
+        /* CENTRADO SEGURO: Evita que las tarjetas altas se corten por arriba en tablets */
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #eef2f6; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; /* Permite que el contenido crezca hacia abajo sin cortar arriba */
+            min-height: 100vh; 
+            color: #2b3035; 
+            box-sizing: border-box;
+            padding: 40px 10px 100px 10px; /* Margen superior e inferior para respirar */
+        }
+        
+        .contenedor { 
+            background: white; 
+            padding: 35px; 
+            border-radius: 24px; 
+            box-shadow: 0 12px 35px rgba(0,0,0,0.06); 
+            width: 100%; 
+            max-width: 680px; 
+            max-height: calc(100vh - 80px); /* Se ajusta a la pantalla dejando espacio para los botones flotantes */
+            overflow-y: auto; 
+            box-sizing: border-box; 
+            position: relative; 
+            margin: auto; /* Centra perfectamente de forma horizontal y vertical */
+        }
         .contenedor-ancho { max-width: 850px; } 
         
-        /* Espaciador inferior para que el botón flotante no tape contenido */
-        .espaciador-inferior { height: 80px; width: 100%; display: block; }
         .seccion-separador { border-top: 2px dashed #e9ecef; margin: 25px 0; padding-top: 15px; }
 
         /* Teclado PIN */
@@ -42,17 +63,20 @@
         .form-row .grupo-formulario { margin-bottom: 0; flex: 1 1 200px; }
         .grupo-formulario { margin-bottom: 20px; text-align: left; width: 100%; box-sizing: border-box;}
         .grupo-formulario label { display: block; font-weight: 700; margin-bottom: 8px; color: #495057; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px;}
-        .grupo-formulario input, .grupo-formulario select, .grupo-formulario textarea { width: 100%; padding: 14px; font-size: 1em; border: 2px solid #e9ecef; border-radius: 12px; box-sizing: border-box; font-family: inherit; transition: all 0.2s; background-color: #f8f9fa; color: #333; outline: none; }
+        .grupo-formulario input, .grupo-formulario select, .grupo-formulario textarea { width: 100%; padding: 14px; font-size: 1em; border: 2px solid #e9ecef; border-radius: 12px; box-sizing: border-box; font-family: inherit; transition: all 0.2s; background-color: #f8f9fa; color: #333; outline: none; appearance: none; -webkit-appearance: none; }
         .grupo-formulario input:focus, .grupo-formulario select:focus, .grupo-formulario textarea:focus { border-color: #0d6efd; background-color: #fff; box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1); }
         .input-buscador { font-size: 1.05em !important; border: 2px solid #0d6efd !important; background: #fff !important; }
         
-        /* Botones */
+        /* Botones Generales */
         .btn { width: 100%; padding: 16px; font-size: 1.1em; border: none; border-radius: 14px; cursor: pointer; font-weight: bold; transition: all 0.2s ease; display: block; text-align: center; box-sizing: border-box;}
+        .btn-qr { background: #e3f2fd; color: #0d6efd; border: 2px dashed #0d6efd; margin-bottom: 20px;}
         .btn-guardar { background: #198754; color: white; box-shadow: 0 6px 15px rgba(25, 135, 84, 0.25); margin-top: 10px;}
         .btn-guardar:hover { background: #157347; transform: translateY(-2px); }
         .btn-guardar-rojo { background: #dc3545; color: white; box-shadow: 0 6px 15px rgba(220, 53, 69, 0.25); }
         .btn-guardar-azul { background: #0d6efd; color: white; box-shadow: 0 6px 15px rgba(13, 110, 253, 0.25); }
         .btn-guardar-azul:hover { background: #0b5ed7; transform: translateY(-2px); }
+        .btn-cancelar { background: transparent; color: #dc3545; margin-top: 10px; border: 2px solid #ffe3e3; padding: 12px;}
+        .btn-cancelar:hover { background: #fff0f0; }
         .btn-filtro { flex: 1; padding: 10px; border: 2px solid #e9ecef; background: white; color: #6c757d; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; white-space: nowrap;}
         .btn-filtro.activo { background: #0d6efd; color: white; border-color: #0d6efd; box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2); }
 
@@ -76,7 +100,7 @@
         .item-carrito:last-child { border-bottom: none; }
         .btn-eliminar-item { background: #ffe3e3; color: #dc3545; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-weight: bold; transition: 0.2s;}
 
-        /* DISEÑO DE AUTORIZACIONES (MORADO PREMIUM) */
+        /* DISEÑO DE AUTORIZACIONES (MORADO) */
         .caja-morada { background: #f9f5ff; padding: 25px; border-radius: 18px; border: 1px solid #e9d5ff; margin-bottom: 25px; }
         .titulo-morado { color: #6f42c1; font-weight: 900; font-size: 0.85em; text-transform: uppercase; margin-bottom: 15px; display: block; letter-spacing: 0.5px;}
         .auth-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
@@ -93,7 +117,7 @@
         /* FIRMAS CLIENTE */
         .firma-card { width: 100%; max-width: 450px; margin: 0 auto; border: 1px solid #e9ecef; border-radius: 14px; padding: 15px; background: #fff; text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.02); box-sizing: border-box;}
         .firma-title { font-size: 0.85em; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; color: #198754;}
-        .canvas-firma { border: 2px dashed #ced4da; border-radius: 10px; width: 100%; height: 140px; background: #fafafa; touch-action: none; margin-bottom: 12px; cursor: crosshair; box-sizing: border-box;}
+        .canvas-firma { border: 2px dashed #ced4da; border-radius: 10px; width: 100%; height: 140px; background: #fafafa; touch-action: none; margin-bottom: 12px; cursor: crosshair;}
         .btn-borrar-firma { border: 1px solid #ffc9c9; background: #fff0f0; color: #dc3545; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-size: 0.85em; font-weight: bold;}
 
         /* PANELES DE BÚSQUEDA Y LISTAS RECTAS */
@@ -123,9 +147,10 @@
         .btn-exp-action { background: #e3f2fd; color: #0d6efd; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s; display: flex; align-items: center; gap: 6px; box-sizing: border-box;}
         .btn-exp-action:hover { background: #d0e7ff; transform: translateY(-2px);}
         .btn-exp-action.btn-venta { background: #e8f5e9; color: #198754; }
-        
         .btn-borrar-historial { background: #fff0f0; color: #dc3545; border: 1px solid #ffc9c9; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s;}
         .btn-borrar-historial:hover { background: #dc3545; color: white;}
+
+        @media (max-width: 600px) { .hosp-listas-grid { grid-template-columns: 1fr; } }
 
         /* ZONA DE IMPRESIÓN CON ESTILO LEGAL */
         #zona-impresion { display: none; }
@@ -211,38 +236,39 @@
 
         <h4 style="color: #adb5bd; margin: 0 0 15px 0; text-align: left; text-transform: uppercase; font-size: 0.85em; letter-spacing:1px;">Operaciones Médicas</h4>
         <div class="menu-grid">
-            <button id="btn-movimiento" class="btn-menu oculto" onclick="abrirFormulario()">
+            <!-- REPARACIÓN: LLAMADAS DIRECTAS A LAS FUNCIONES DE CADA PANTALLA -->
+            <button class="btn-menu oculto" id="btn-movimiento" onclick="abrirFormulario()">
                 <span class="emoji">🛒</span> <span>Venta General</span>
             </button>
-            <button id="btn-hospitalizacion" class="btn-menu oculto" onclick="abrirHospitalizacion()">
+            <button class="btn-menu oculto" id="btn-hospitalizacion" onclick="abrirHospitalizacion()">
                 <span class="emoji">🏥</span> <span>Manejo Hospitalario</span>
             </button>
-            <button id="btn-expediente" class="btn-menu oculto" onclick="abrirExpediente()">
+            <button class="btn-menu oculto" id="btn-expediente" onclick="abrirExpediente()">
                 <span class="emoji">🗂️</span> <span>Expediente Clínico</span>
             </button>
         </div>
         
         <h4 id="titulo-gerencia" class="oculto" style="color: #adb5bd; margin: 25px 0 15px 0; text-align: left; text-transform: uppercase; font-size: 0.85em; letter-spacing:1px;">Administración (Gerencia)</h4>
         <div class="menu-grid">
-            <button id="btn-corte" class="btn-menu oculto" onclick="abrirPantalla('pantalla-corte-caja', () => abrirCorteCaja('dia'))" style="background-color: #f0f9ff; border-color: #b6e3f4;">
+            <button class="btn-menu oculto" id="btn-corte" onclick="abrirCorteCaja('dia')" style="background-color: #f0f9ff; border-color: #b6e3f4;">
                 <span class="emoji">💰</span> <span style="color: #0dcaf0;">Corte de Caja</span>
             </button>
-            <button id="btn-ver-inventario" class="btn-menu oculto" onclick="abrirPantalla('pantalla-ver-inventario', cargarInventarioVista)">
+            <button class="btn-menu oculto" id="btn-ver-inventario" onclick="abrirVerInventario()">
                 <span class="emoji">👀</span> <span>Ver Inventario</span>
             </button>
-            <button id="btn-alta-inventario" class="btn-menu oculto" onclick="abrirPantalla('pantalla-inventario')">
+            <button class="btn-menu oculto" id="btn-alta-inventario" onclick="abrirInventario()">
                 <span class="emoji">📦</span> <span>Alta Lotes / Servicios</span>
             </button>
-            <button id="btn-hist-inventario" class="btn-menu oculto" onclick="abrirPantalla('pantalla-historial-inventario', cargarHistorialInventario)">
+            <button class="btn-menu oculto" id="btn-hist-inventario" onclick="abrirHistorialInventario()">
                 <span class="emoji">🗃️</span> <span>Historial Altas/Mermas</span>
             </button>
-            <button id="btn-historial" class="btn-menu oculto" onclick="abrirPantalla('pantalla-historial-ventas', abrirHistorialVentas)">
+            <button class="btn-menu oculto" id="btn-historial" onclick="abrirHistorialVentas()">
                 <span class="emoji">📋</span> <span>Historial de Ventas</span>
             </button>
-            <button id="btn-baja-inventario" class="btn-menu oculto" onclick="abrirPantalla('pantalla-baja-inventario')">
+            <button class="btn-menu oculto" id="btn-baja-inventario" onclick="abrirBajaInventario()">
                 <span class="emoji">📉</span> <span>Devolución / Baja</span>
             </button>
-            <button id="btn-usuarios" class="btn-menu oculto" onclick="abrirPantalla('pantalla-usuarios', abrirUsuarios)">
+            <button class="btn-menu oculto" id="btn-usuarios" onclick="abrirUsuarios()">
                 <span class="emoji">👥</span> <span>Personal</span>
             </button>
         </div>
@@ -295,7 +321,6 @@
             <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="margin:0;" onclick="procesarVenta(false)">💾 Solo Guardar</button></div>
             <div class="grupo-formulario"><button class="btn btn-guardar" style="margin:0;" onclick="procesarVenta(true)">🖨️ Guardar e Imprimir Ticket</button></div>
         </div>
-        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 4: MANEJO HOSPITALARIO -->
@@ -317,7 +342,7 @@
             
             <div class="auth-input-group">
                 <select id="select-auth-rapida">
-                    <!-- Options inyectadas por JS para evitar duplicados -->
+                    <!-- Options inyectadas por JS -->
                 </select>
                 <button onclick="agregarAutorizacionSelect()">➕ Añadir Formato</button>
             </div>
@@ -394,7 +419,6 @@
         
         <div class="seccion-separador"></div>
         <button class="btn" style="background: #ffc107; color: #000;" onclick="procesarAltaHospitalaria()">🏥 Generar ALTA HOSPITALARIA (Imprimir)</button>
-        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 4.5: EXPEDIENTE CLÍNICO UNIFICADO -->
@@ -407,7 +431,6 @@
             <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0; height: 100%;" onclick="cargarExpedienteBase()">🔄 Refrescar</button></div>
         </div>
         <div id="lista-expediente" class="lista-vertical"></div>
-        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 5: CORTE DE CAJA -->
@@ -426,7 +449,6 @@
         </div>
         <h4 style="text-align: left; margin-bottom: 15px; color: #495057; text-transform: uppercase; font-size: 0.85em;">Desglose por Método de Pago:</h4>
         <div id="lista-corte-caja" class="lista-vertical"></div>
-        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 6: VER INVENTARIO -->
@@ -437,7 +459,6 @@
             <div class="grupo-formulario"><label>Nivel Stock:</label><select id="busqueda-inv-stock" onchange="filtrarInventario()"><option value="todos">Todos</option><option value="bajo">🔴 Bajo Stock</option><option value="ok">🟢 Normal</option></select></div>
         </div>
         <div id="lista-stock-firebase" class="lista-vertical"></div>
-        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 7: HISTORIAL DE INVENTARIO -->
@@ -450,7 +471,6 @@
             <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0; height: 100%;" onclick="cargarHistorialInventario()">🔄 Refrescar</button></div>
         </div>
         <div id="lista-historial-inventario" class="lista-vertical"></div>
-        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 7.5: HISTORIAL DE VENTAS -->
@@ -462,7 +482,6 @@
             <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0; height: 100%;" onclick="abrirHistorialVentas()">🔄 Refrescar</button></div>
         </div>
         <div id="lista-historial-ventas" class="lista-vertical"></div>
-        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 8: ALTA DE MEDICAMENTO Y SERVICIO -->
@@ -481,8 +500,7 @@
             <div class="grupo-formulario"><label>Stock Mínimo (Alerta):</label><input type="number" id="min-inventario" placeholder="Ej. 5"></div>
             <div class="grupo-formulario"><label>Stock Máximo:</label><input type="number" id="max-inventario" placeholder="Ej. 50"></div>
         </div>
-        <button id="btn-guardar-inventario" class="btn btn-guardar" onclick="guardarEnInventario()">Guardar Alta</button>
-        <div class="espaciador-inferior"></div>
+        <button id="btn-guardar-inventario" class="btn btn-guardar" onclick="guardarEnInventario(false)">Guardar Alta</button>
     </div>
 
     <!-- PANTALLA 9: DEVOLUCIÓN / BAJA -->
@@ -492,7 +510,6 @@
         <div class="grupo-formulario"><label>Motivo:</label><input type="text" id="motivo-baja-inv" placeholder="Ej. Caducidad, Devolución..."></div>
         <div class="form-row"><div class="grupo-formulario"><label>Descontar (Cantidad):</label><input type="number" id="cantidad-baja-inv" placeholder="0"></div></div>
         <button class="btn btn-guardar btn-guardar-rojo" onclick="guardarBajaInventario()">Registrar Baja</button>
-        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 10: USUARIOS -->
@@ -508,7 +525,6 @@
             <div class="grupo-formulario busqueda-ancha" style="margin:0;"><label>🔍 Buscar personal:</label><input type="text" class="input-buscador" placeholder="Nombre o PIN..." oninput="filtrarTarjetas('lista-usuarios-firebase', this.value)"></div>
         </div>
         <div id="lista-usuarios-firebase" class="lista-vertical"></div>
-        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- === LÓGICA MAESTRA JAVASCRIPT === -->
@@ -630,7 +646,7 @@
             const tipoSelec = document.getElementById('tipo-hosp-item').value;
             inventarioGlobal.forEach(d => { if(d.tipoArticulo === tipoSelec) { let icon = d.tipoArticulo === 'Servicio Médico' ? '🩺' : '💊'; datalistFilt.innerHTML += `<option value="${d.medicamento}">${icon} $${d.precioVenta || 0}</option>`; } });
         }
-        function revisarAlertasInventario() { const cajaAlerta = document.getElementById('alerta-inventario-menu'); const lista = document.getElementById('lista-alertas-menu'); lista.innerHTML = ''; db.collection("Inventario").get().then(q => { let itemsAlerta = []; q.forEach(doc => { const d = doc.data(); if(d.tipoArticulo === 'Servicio Médico') return; let limite = d.minimo || 5; if (d.cantidad <= limite) { itemsAlerta.push(`<strong>${d.medicamento}</strong>: Quedan ${d.cantidad} ${d.unidad || 'U.'}`); } }); if(itemsAlerta.length > 0) { cajaAlerta.classList.remove('oculto'); let html = ''; let maxMostrar = Math.min(3, itemsAlerta.length); for(let i=0; i < maxMostrar; i++){ html += `<li>${itemsAlerta[i]}</li>`; } if(itemsAlerta.length > 3) { html += `<li style="list-style:none; margin-top:10px; font-weight:bold; cursor:pointer; color:#0d6efd; text-decoration:underline;" onclick="abrirPantalla('pantalla-ver-inventario', cargarInventarioVista)">+ ${itemsAlerta.length - 3} productos más</li>`; } lista.innerHTML = html; } else { cajaAlerta.classList.add('oculto'); } }); }
+        function revisarAlertasInventario() { const cajaAlerta = document.getElementById('alerta-inventario-menu'); const lista = document.getElementById('lista-alertas-menu'); lista.innerHTML = ''; db.collection("Inventario").get().then(q => { let itemsAlerta = []; q.forEach(doc => { const d = doc.data(); if(d.tipoArticulo === 'Servicio Médico') return; let limite = d.minimo || 5; if (d.cantidad <= limite) { itemsAlerta.push(`<strong>${d.medicamento}</strong>: Quedan ${d.cantidad} ${d.unidad || 'U.'}`); } }); if(itemsAlerta.length > 0) { cajaAlerta.classList.remove('oculto'); let html = ''; let maxMostrar = Math.min(3, itemsAlerta.length); for(let i=0; i < maxMostrar; i++){ html += `<li>${itemsAlerta[i]}</li>`; } if(itemsAlerta.length > 3) { html += `<li style="list-style:none; margin-top:10px; font-weight:bold; cursor:pointer; color:#0d6efd; text-decoration:underline;" onclick="abrirVerInventario()">+ ${itemsAlerta.length - 3} productos más</li>`; } lista.innerHTML = html; } else { cajaAlerta.classList.add('oculto'); } }); }
 
         // --- CÁMARA Y CANCELAR ---
         function iniciarCamara(idDiv, idDestino) { camaraActivaId = idDiv; document.getElementById(idDiv).classList.remove('oculto'); if(!lectorQr) { lectorQr = new Html5Qrcode(idDiv); } lectorQr.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (codigo) => { reproducirSonidoBip(); document.getElementById(idDestino).value = codigo; if(idDestino === 'buscador-pos') autocompletarPrecio(codigo, 'precio-pos'); detenerCamara(); reiniciarTemporizador(); }, (err) => {} ).catch(e => { alert("Error de cámara."); detenerCamara(); }); }
