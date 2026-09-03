@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hospital Veterinario ERP</title>
+    <title>Sistema Veterinario ERP & POS</title>
     
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -11,7 +11,7 @@
 
     <style>
         /* --- ESTILOS VISUALES PREMIUM HOMOLOGADOS --- */
-        body { font-family: 'Segoe UI', Roboto, Arial, sans-serif; background-color: #eef2f6; margin: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; color: #2b3035; padding-bottom: 80px;}
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #eef2f6; margin: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; color: #2b3035; padding-bottom: 80px;}
         .contenedor { background: white; padding: 35px; border-radius: 24px; box-shadow: 0 12px 35px rgba(0,0,0,0.06); width: 95%; max-width: 680px; margin: 20px auto; box-sizing: border-box; }
         .contenedor-ancho { max-width: 850px; } 
         .seccion-separador { border-top: 2px dashed #e9ecef; margin: 25px 0; padding-top: 15px; }
@@ -82,7 +82,8 @@
         .busqueda-ancha { flex: 1 1 100% !important; }
         
         .lista-vertical { display: block; max-height: 500px; overflow-y: auto; padding-right: 10px; margin-bottom: 15px; }
-        .tarjeta-expediente, .tarjeta-info { border: 1px solid #e9ecef; border-radius: 16px; padding: 20px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.03); text-align: left; transition: 0.2s; margin-bottom: 18px; display: block; width: 100%; box-sizing: border-box;}
+        .tarjeta-expediente, .tarjeta-info { border: 1px solid #e9ecef; border-radius: 16px; padding: 20px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.03); text-align: left; transition: 0.2s; position: relative; overflow: hidden; margin-bottom: 18px; display: block; width: 100%; box-sizing: border-box;}
+        .tarjeta-expediente:hover, .tarjeta-info:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.06); transform: translateY(-2px); border-color: #dee2e6; }
         
         .tarjeta-expediente.hospital { border-left: 6px solid #6f42c1; } .badge-hospital { background: #f3e8ff; color: #6f42c1; }
         .tarjeta-expediente.venta, .tarjeta-info.venta { border-left: 6px solid #198754; } .badge-venta { background: #e8f5e9; color: #198754; }
@@ -92,15 +93,23 @@
         
         .exp-header, .th-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f1f3f5; padding-bottom: 10px; flex-wrap: wrap; gap: 10px;}
         .exp-title, .th-header strong { font-weight: 800; font-size: 1.1em; color: #2b3035; display: flex; align-items: center;}
+        .exp-date, .th-header span { font-size: 0.85em; color: #888; font-weight: 500;}
         .exp-meta { font-size: 0.9em; color: #555; margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;}
         .exp-meta span { background: #f8f9fa; padding: 6px 12px; border-radius: 8px; border: 1px solid #e9ecef; display: inline-block;}
         .exp-content, .th-cuerpo { background: #f8f9fa; padding: 15px; border-radius: 12px; font-size: 0.95em; color: #444; white-space: pre-wrap; margin-bottom: 15px; border: 1px solid #f1f3f5; line-height: 1.6;}
         .exp-footer, .th-pie { display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; color: #666; flex-wrap: wrap; gap: 10px;}
         
-        .btn-exp-action { background: #e3f2fd; color: #0d6efd; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s;}
+        .btn-exp-action { background: #e3f2fd; color: #0d6efd; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s; display: flex; align-items: center; gap: 6px; box-sizing: border-box;}
+        .btn-exp-action:hover { background: #d0e7ff; transform: translateY(-2px);}
         .btn-exp-action.btn-venta { background: #e8f5e9; color: #198754; }
         
-        /* ZONA DE IMPRESIÓN */
+        .btn-borrar-historial { background: #fff0f0; color: #dc3545; border: 1px solid #ffc9c9; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s;}
+
+        .hosp-listas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .hosp-columna { background:#fff; border:1px solid #e9ecef; border-radius:12px; padding:15px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.01); }
+        .hosp-columna h5 { margin: 0 0 10px 0; border-bottom: 2px dashed #e9ecef; padding-bottom: 8px; text-transform: uppercase; font-size: 0.85em; letter-spacing: 0.5px;}
+
+        /* ZONA DE IMPRESIÓN CON ESTILO LEGAL */
         #zona-impresion { display: none; }
         @media print {
             @page { margin: 0; }
@@ -134,17 +143,14 @@
             
             .receta-print .cuerpo-receta { border: 2px solid #2c6e8f; border-radius: 12px; padding: 15px; margin-top: 10px; min-height: 120mm; position: relative;}
             .receta-print .seccion-titulo { font-size: 12px; font-weight: bold; text-transform: uppercase; border-bottom: 1px dashed #2c6e8f; margin-bottom: 8px; padding-bottom: 4px; margin-top:10px;}
-            .receta-print .prescripcion-texto { font-size: 12px; color: black; white-space: pre-wrap; margin-bottom: 15px;}
+            .receta-print .prescripcion-texto { font-size: 10px; color: black; white-space: pre-wrap; margin-bottom: 10px; text-align: justify; line-height: 1.3;}
             
-            .receta-print .firmas-area { display: flex; justify-content: center; margin-top: 40px; margin-bottom: 10px;}
-            .receta-print .firma-bloque { width: 50%; text-align: center; font-size: 11px; }
+            .receta-print .firmas-area { display: flex; justify-content: center; margin-top: 30px; margin-bottom: 10px;}
+            .receta-print .firma-bloque { width: 60%; text-align: center; font-size: 11px; }
             .receta-print .firma-bloque img { max-height: 60px; display: block; margin: 0 auto 5px auto; }
-            .receta-print .firma-linea { border-top: 1px solid #2c6e8f; padding-top: 4px; color: #2c6e8f; display: inline-block; width: 80%;}
+            .receta-print .firma-linea { border-top: 1px solid #2c6e8f; padding-top: 4px; color: #2c6e8f; display: inline-block; width: 100%;}
             
             .receta-print .footer-receta { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; font-size: 10px; line-height: 1.4; color: #2c6e8f;}
-            .print-grid-listas { display: flex; gap: 20px; font-size: 11px; color: black; }
-            .print-grid-listas div { flex: 1; }
-            .print-grid-listas ul { padding-left: 15px; margin-top: 5px; margin-bottom:0;}
         }
     </style>
 </head>
@@ -178,7 +184,7 @@
         <div class="header-usuario" id="texto-bienvenida">Bienvenido</div>
         
         <div id="alerta-inventario-menu" class="alerta-banner oculto">
-            <h4 style="margin:0 0 10px 0; color:#856404;">⚠️ Stock Mínimo Alcanzado</h4>
+            <h4 style="margin:0 0 10px 0; color:#856404;">⚠️ Productos por agotarse</h4>
             <ul id="lista-alertas-menu" style="margin:0; padding-left:20px; font-size:0.9em;"></ul>
         </div>
 
@@ -276,12 +282,19 @@
 
         <div class="seccion-separador"></div>
 
-        <!-- AUTORIZACIONES MANUALES DINÁMICAS -->
+        <!-- AUTORIZACIONES MANUALES -->
         <div style="background: #f3e8ff; padding: 25px; border-radius: 16px; border: 1px solid #d8b4fe; margin-bottom: 30px;">
             <label style="display: block; font-weight: 800; margin-bottom: 15px; color: #6f42c1; font-size: 0.95em; text-transform: uppercase;">Autorizaciones Legales del Cliente:</label>
-            <div class="form-row" style="margin-bottom: 15px;">
-                <div class="grupo-formulario" style="flex:3; margin:0;"><input type="text" id="input-nueva-auth" placeholder="Ej. Cirugía de fémur, Pensión, etc." onkeypress="if(event.key==='Enter') agregarAutorizacion()"></div>
-                <div class="grupo-formulario" style="flex:1; margin:0;"><button class="btn" style="background:#6f42c1; color:white; padding:14px;" onclick="agregarAutorizacion()">➕ Añadir</button></div>
+            <div class="form-row" style="margin-bottom: 15px; background: #fff; padding: 10px; border-radius: 12px; border: 1px solid #e9d5ff;">
+                <div class="grupo-formulario" style="flex:3; margin:0;">
+                    <select id="select-auth-rapida" style="border:none; background:transparent;">
+                        <option value="">-- Seleccionar Formato Legal --</option>
+                        <option value="AUTORIZACIÓN HOSPITALARIA (MANEJO MÉDICO)">Autorización Hospitalaria (Manejo Médico)</option>
+                        <option value="CONTRATO DE PENSIÓN">Contrato de Pensión</option>
+                        <option value="ALTA VOLUNTARIA">Alta Voluntaria (Contra indicación médica)</option>
+                    </select>
+                </div>
+                <div class="grupo-formulario" style="flex:1; margin:0;"><button class="btn" style="background:#6f42c1; color:white; padding:14px;" onclick="agregarAutorizacionSelect()">➕ Añadir</button></div>
             </div>
             <div id="lista-autorizaciones" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
         </div>
@@ -297,9 +310,9 @@
             <div class="grupo-formulario" style="flex: 0 0 100%; margin:0; margin-top: 10px;"><button class="btn btn-guardar-azul" style="margin:0; padding: 16px;" onclick="agregarAlCarritoHosp()">➕ Añadir a la lista</button></div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-            <div style="background:#fff; border:1px solid #e9ecef; border-radius:12px; padding:15px;"><h5 style="color: #0d6efd; margin: 0 0 10px 0; border-bottom: 2px dashed #e9ecef; padding-bottom: 8px;">🩺 Servicios Médicos</h5><div id="carrito-hosp-servicios"><p style="text-align:center; color:#adb5bd; margin:0;">Sin servicios</p></div></div>
-            <div style="background:#fff; border:1px solid #e9ecef; border-radius:12px; padding:15px;"><h5 style="color: #198754; margin: 0 0 10px 0; border-bottom: 2px dashed #e9ecef; padding-bottom: 8px;">💊 Medicamentos / Insumos</h5><div id="carrito-hosp-medicamentos"><p style="text-align:center; color:#adb5bd; margin:0;">Sin medicamentos</p></div></div>
+        <div class="hosp-listas-grid">
+            <div class="hosp-columna"><h5 style="color: #0d6efd;">🩺 Servicios Médicos</h5><div id="carrito-hosp-servicios"><p style="text-align:center; color:#adb5bd; margin:0;">Sin servicios</p></div></div>
+            <div class="hosp-columna"><h5 style="color: #198754;">💊 Medicamentos / Insumos</h5><div id="carrito-hosp-medicamentos"><p style="text-align:center; color:#adb5bd; margin:0;">Sin medicamentos</p></div></div>
         </div>
         <h3 style="text-align: right; color: #0d6efd; margin: 0 0 20px 0;">Costo Acumulado: $<span id="total-hosp">0.00</span></h3>
 
@@ -315,12 +328,12 @@
         
         <div class="form-row" style="margin-top: 30px;">
             <div class="grupo-formulario"><button class="btn btn-guardar-azul ocultar-impresion" style="margin:0; background:#6f42c1;" onclick="procesarHospitalizacion('ninguno')">💾 Guardar Expediente</button></div>
-            <div class="grupo-formulario"><button class="btn btn-guardar-azul ocultar-impresion" style="margin:0;" onclick="procesarHospitalizacion('hoja')">📄 Imprimir Formulario</button></div>
+            <div class="grupo-formulario"><button class="btn btn-guardar-azul ocultar-impresion" style="margin:0;" onclick="procesarHospitalizacion('hoja')">📄 Imprimir Formulario Legal</button></div>
             <div class="grupo-formulario"><button class="btn btn-guardar ocultar-impresion" style="margin:0;" onclick="procesarHospitalizacion('ticket')">🧾 Imprimir Ticket Caja</button></div>
         </div>
         
         <div class="seccion-separador"></div>
-        <button class="btn" style="background: #ffc107; color: #000;" onclick="alert('Alta Médica Registrada (Aún en desarrollo visual, pero el paciente se marca dado de alta).')">🏥 Dar de Alta al Paciente</button>
+        <button class="btn" style="background: #ffc107; color: #000;" onclick="procesarAltaHospitalaria()">🏥 Generar ALTA HOSPITALARIA (Imprimir)</button>
     </div>
 
     <!-- PANTALLA 5: CORTE DE CAJA -->
@@ -410,6 +423,9 @@
             <div class="grupo-formulario"><label>Rol:</label><select id="nuevo-usuario-rol"><option value="Doctor">Doctor</option><option value="Sub-Gerente">Sub-Gerente</option><option value="Gerente">Gerente</option></select></div>
             <div class="grupo-formulario busqueda-ancha"><button class="btn btn-guardar-azul" style="margin:0; padding: 14px;" onclick="crearUsuario()">+ Agregar Usuario Nuevo</button></div>
         </div>
+        <div class="panel-busqueda" style="padding: 15px; margin-bottom: 20px;">
+            <div class="grupo-formulario busqueda-ancha" style="margin:0;"><label>🔍 Buscar personal:</label><input type="text" class="input-buscador" placeholder="Nombre o PIN..." oninput="filtrarTarjetas('lista-usuarios-firebase', this.value)"></div>
+        </div>
         <div id="lista-usuarios-firebase" class="lista-vertical"></div>
     </div>
 
@@ -421,7 +437,7 @@
         let pinActual = ""; let usuarioLogueado = null; let temporizadorInactividad; let lectorQr; let camaraActivaId = ""; 
         let totalCobroCalculado = 0; let inventarioGlobal = []; let carrito = []; let carritoHosp = [];
         let datosHistorialInv = []; let datosHistorialVentas = [];
-        let firmaCapturada = false; let autorizacionesHosp = ["Manejo Hospitalario"]; let guardandoBloqueo = false;
+        let firmaCapturada = false; let autorizacionesHosp = ["AUTORIZACIÓN HOSPITALARIA (MANEJO MÉDICO)"]; let guardandoBloqueo = false;
 
         // --- FIRMAS ---
         let ctxActivo = null; let isDrawing = false; let canvasActivo = false;
@@ -535,10 +551,11 @@
         function descontarInventarioAutomatico(articulosVendidos) { articulosVendidos.forEach(item => { if(item.tipo !== 'Servicio Médico') { db.collection("Inventario").doc(item.nombre).get().then(doc => { if(doc.exists) { let actual = doc.data().cantidad; db.collection("Inventario").doc(item.nombre).update({ cantidad: actual - 1 }); } }); } }); }
 
         // --- MANEJO HOSPITALARIO ---
-        function abrirHospitalizacion() { cambiarPantalla('pantalla-menu', 'pantalla-hospitalizacion'); document.getElementById('btn-abrir-firmas').classList.remove('oculto'); document.getElementById('zona-firmas-oculta').classList.add('oculto'); limpiarFirma('cliente'); canvasActivo=false; carritoHosp = []; actualizarCarritoHospUI(); autorizacionesHosp = ["Manejo Hospitalario"]; actualizarAutorizacionesUI(); document.getElementById('tipo-hosp-item').value = "Servicio Médico"; }
+        function abrirHospitalizacion() { cambiarPantalla('pantalla-menu', 'pantalla-hospitalizacion'); document.getElementById('btn-abrir-firmas').classList.remove('oculto'); document.getElementById('zona-firmas-oculta').classList.add('oculto'); limpiarFirma('cliente'); canvasActivo=false; carritoHosp = []; actualizarCarritoHospUI(); autorizacionesHosp = ["AUTORIZACIÓN HOSPITALARIA (MANEJO MÉDICO)"]; actualizarAutorizacionesUI(); document.getElementById('tipo-hosp-item').value = "Servicio Médico"; }
         
         function actualizarAutorizacionesUI() { const div = document.getElementById('lista-autorizaciones'); div.innerHTML = ''; if(autorizacionesHosp.length === 0) { div.innerHTML = '<span style="color:#aaa; font-size:0.9em;">Sin autorizaciones.</span>'; return; } autorizacionesHosp.forEach((auth, idx) => { div.innerHTML += `<span class="badge-auth">${auth} <span onclick="eliminarAutorizacion(${idx})">✖</span></span>`; }); }
-        function agregarAutorizacion() { const input = document.getElementById('input-nueva-auth'); const val = input.value.trim(); if(val) { autorizacionesHosp.push(val); input.value = ''; actualizarAutorizacionesUI(); } }
+        function agregarAutorizacionSelect() { const sel = document.getElementById('select-auth-rapida'); const val = sel.value; if(val && !autorizacionesHosp.includes(val)) { autorizacionesHosp.push(val); actualizarAutorizacionesUI(); sel.value=""; } }
+        function agregarAutorizacion() { const input = document.getElementById('input-nueva-auth'); const val = input.value.trim().toUpperCase(); if(val && !autorizacionesHosp.includes(val)) { autorizacionesHosp.push(val); input.value = ''; actualizarAutorizacionesUI(); } }
         function eliminarAutorizacion(idx) { autorizacionesHosp.splice(idx, 1); actualizarAutorizacionesUI(); }
 
         function autocompletarPrecioHosp() { 
@@ -588,11 +605,25 @@
 
             db.collection("Historial_Hospitalizacion").add(hospData).then(() => {
                 descontarInventarioAutomatico(carritoHosp);
-                if(imprimir === 'hoja') { imprimirHojaHospitalizacion(hospData); } else if (imprimir === 'ticket') { imprimirTicketBoucher(hospData); } else { alert("✅ Guardado en historial."); } cancelarVolver();
+                if(imprimir === 'hoja') { generarHojasLegalesDinamicas(hospData); } else if (imprimir === 'ticket') { imprimirTicketBoucher(hospData); } else { alert("✅ Guardado en historial."); } cancelarVolver();
             }).catch(e => alert("Error al guardar.")).finally(() => { guardandoBloqueo = false; document.body.style.cursor = 'default'; });
         }
 
-        // --- CORTE DE CAJA (POR MÉTODO DE PAGO) ---
+        function procesarAltaHospitalaria() {
+            let p = document.getElementById('hosp-paciente').value; let d = document.getElementById('hosp-dueno').value;
+            if(!p || !d) return alert("⚠️ Escribe Dueño y Paciente antes de dar el Alta.");
+            let cCli = document.getElementById('canvas-cliente'); const firmaCliBase64 = (canvasActivo && firmaCapturada) ? cCli.toDataURL() : "";
+            
+            let dataAlta = { paciente: p, dueno: d, fechaTexto: new Date().toLocaleString('es-MX'), firmaCliente: firmaCliBase64, doctor: usuarioLogueado.nombre, folio: String(Date.now()).slice(-5) };
+            
+            let html = `<div class="receta-print"><div class="cabecera"><div class="logo-area"><h1 style="color: #2c6e8f;">Vetgru</h1><p style="color: #2c6e8f;">HOSPITAL VETERINARIO</p></div><div class="datos-area"><div class="linea-dato"><span>FECHA:</span> <span>${dataAlta.fechaTexto.split(',')[0]}</span></div><div class="linea-dato"><span>PROPIETARIO:</span> <span>${dataAlta.dueno}</span></div><div class="linea-dato"><span>PACIENTE:</span> <span>${dataAlta.paciente}</span></div></div><div class="folio-area"><div class="linea-dato"><span>FOLIO:</span> <span class="folio-rojo">${dataAlta.folio}</span></div></div></div>
+            <div class="cuerpo-receta" style="min-height:50mm;"><div style="font-size:11px; text-align:justify; line-height:1.4;"><strong style="font-size:13px;">ALTA HOSPITALARIA</strong><br><br>Entendiendo que mi mascota ha sido dada de alta, por lo tanto, me es entregada en óptimas condiciones y estable para continuar el tratamiento en casa. Estoy conforme con el cuidado y manejo médico, así como el diagnostico dado a mi mascota dentro y fuera de VETGRU HOSPITAL VETERINARIO.<br><br>Me comprometo a seguir las instrucciones que el médico me ha dado, así como la administración de sus medicamentos prescritos. Entiendo que de no notificar al equipo médico dentro del tiempo estimado o no seguir con las instrucciones, VETGRU HOSPITAL VETERINARIO y su equipo médico se deslinda de toda responsabilidad.<br><br>Comprendo que VETGRU HOSPITAL VETERINARIO no forma parte de la tienda, por lo tanto deslindo de toda responsabilidad a la tienda Petco. He leído y entendido todo lo anterior, aceptando términos y condiciones expuestas en este documento.</div>
+            <div class="firmas-area"><div class="firma-bloque">${dataAlta.firmaCliente ? `<img src="${dataAlta.firmaCliente}">` : `<div style="height: 45px;"></div>`}<div class="firma-linea">NOMBRE, FIRMA DEL PROPIETARIO Y FECHA</div></div></div></div></div>`;
+            
+            document.getElementById('zona-impresion').innerHTML = html; setTimeout(() => { window.print(); cancelarVolver(); }, 500);
+        }
+
+        // --- CORTE DE CAJA ---
         function abrirCorteCaja(periodo) { 
             cambiarPantalla('pantalla-menu', 'pantalla-corte-caja'); document.querySelectorAll('.btn-filtro').forEach(b => { b.classList.remove('activo'); }); document.getElementById(`filtro-${periodo}`).classList.add('activo'); const lista = document.getElementById('lista-corte-caja'); lista.innerHTML = '<div style="text-align:center; padding:40px;">⏳ Calculando...</div>'; 
             let limiteTiempo = Date.now(); if(periodo === 'dia') limiteTiempo -= (24 * 60 * 60 * 1000); if(periodo === 'semana') limiteTiempo -= (7 * 24 * 60 * 60 * 1000); if(periodo === 'mes') limiteTiempo -= (30 * 24 * 60 * 60 * 1000); 
@@ -621,7 +652,7 @@
             db.collection("Inventario").get().then((q) => { 
                 let inventarioHTML = [];
                 q.forEach(doc => inventarioHTML.push(doc.data()));
-                inventarioHTML.sort((a,b) => a.medicamento.localeCompare(b.medicamento)); // Alfabetico
+                inventarioHTML.sort((a,b) => a.medicamento.localeCompare(b.medicamento)); 
 
                 lista.innerHTML = inventarioHTML.length === 0 ? '<p style="text-align:center;">No hay inventario.</p>' : ''; 
                 let html = ''; 
@@ -639,7 +670,7 @@
         // --- HISTORIAL ALMACÉN ---
         function cargarHistorialInventario() {
             document.getElementById('lista-historial-inventario').innerHTML = '<div style="text-align:center; padding:40px;">⏳ Cargando...</div>';
-            db.collection("Historial_Inventario").orderBy("timestamp", "desc").limit(200).get().then((q) => { datosHistorialInv = []; q.forEach(d => { let data = d.data(); data.id = d.id; data.coleccion = "Historial_Inventario"; datosHistorialInv.push(data);}); buscarHistorialInventario(); }).catch(e => document.getElementById('lista-historial-inventario').innerHTML = '<p style="color:red;">Error.</p>');
+            db.collection("Historial_Inventario").orderBy("timestamp", "desc").limit(200).get().then((q) => { datosHistorialInv = []; q.forEach(d => { let data = d.data(); data.id = d.id; data.coleccion = "Historial_Inventario"; datosHistorialInv.push(data);}); buscarHistorialInventario(); }).catch(e => document.getElementById('lista-historial-inventario').innerHTML = '<p style="color:red; text-align:center;">Error al cargar.</p>');
         }
         function buscarHistorialInventario() {
             let term = document.getElementById('buscador-hist-inv').value.toLowerCase(); let tipo = document.getElementById('filtro-tipo-hist-inv').value; let fecha = document.getElementById('filtro-fecha-hist-inv').value; let ahora = Date.now();
@@ -658,16 +689,16 @@
         function buscarHistorialVentas() {
             let term = document.getElementById('buscador-hist-ventas').value.toLowerCase(); let fecha = document.getElementById('filtro-fecha-hist-ventas').value; let ahora = Date.now();
             let filtrados = datosHistorialVentas.filter(d => { let txt = (d.paciente||'') + ' ' + (d.dueno||'') + ' ' + (d.telefono||'') + ' ' + (d.atendio||''); let coincideTexto = txt.toLowerCase().includes(term); let coincideFecha = true; if(fecha === 'hoy') coincideFecha = (ahora - d.timestamp) <= 86400000; if(fecha === 'semana') coincideFecha = (ahora - d.timestamp) <= 604800000; if(fecha === 'mes') coincideFecha = (ahora - d.timestamp) <= 2592000000; return coincideTexto && coincideFecha; });
-            let html = ''; if(filtrados.length === 0) { html = '<p style="text-align:center; color:#888;">No hay ventas.</p>'; } else {
+            let html = ''; if(filtrados.length === 0) { html = '<p style="text-align:center; color:#888;">No hay ventas recientes.</p>'; } else {
                 filtrados.forEach(d => { 
-                    let desc = d.articulos ? d.articulos.map(a=>a.nombre).join(', ') : 'Venta General'; let isVenta = d.ventaMostrador; let btnBorrar = `<button class="btn-borrar-historial" onclick="borrarRegistro('${d.coleccion}', '${d.id}')">🗑️</button>`; 
+                    let desc = d.articulos ? d.articulos.map(a=>a.nombre).join(', ') : 'Venta General'; let isVenta = d.ventaMostrador; let btnBorrar = ''; if (usuarioLogueado && (usuarioLogueado.rol === 'Gerente' || usuarioLogueado.rol === 'Sub-Gerente')) { btnBorrar = `<button class="btn-borrar-historial" onclick="borrarRegistro('${d.coleccion}', '${d.id}')">🗑️</button>`; }
                     html += `<div class="tarjeta-expediente venta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰</span> ${isVenta ? 'Público General' : d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 Dueño: ${isVenta ? 'N/A' : d.dueno} ${d.telefono ? `(${d.telefono})`:''}</span><span>👨‍⚕️ Cajero: ${d.atendio}</span><span>💳 Pago: ${d.metodoPago}</span></div><div class="exp-content" style="color:#146c43; font-weight:500;">🛒 ${desc}</div><div class="exp-footer"><span style="font-size:1.2em; font-weight:bold; color:#198754;">$${parseFloat(d.totalCobrado).toFixed(2)}</span> <div style="display:flex; gap:10px;"><button class="btn-exp-action btn-venta" onclick="reimprimirVentaDirecta(${d.timestamp})">🖨️ Ticket</button> ${btnBorrar}</div> </div></div>`; 
                 });
             } document.getElementById('lista-historial-ventas').innerHTML = html;
         }
         function reimprimirVentaDirecta(ts) { let data = datosHistorialVentas.find(x => x.timestamp == ts); if(data) imprimirTicketBoucher(data); }
 
-        // --- ALTA Y EDICIÓN INVENTARIO (SIN BARCODE) ---
+        // --- ALTA Y EDICIÓN INVENTARIO ---
         function toggleServicio() { const tipo = document.getElementById('tipo-inventario').value; if(tipo === 'Servicio Médico') { document.getElementById('caja-cantidades-inv').classList.add('oculto'); document.getElementById('caja-unidad-inv').classList.add('oculto'); document.getElementById('cantidad-inventario').value = 9999; } else { document.getElementById('caja-cantidades-inv').classList.remove('oculto'); document.getElementById('caja-unidad-inv').classList.remove('oculto'); if(!modoEdicion) { document.getElementById('cantidad-inventario').value = ""; document.getElementById('min-inventario').value = ""; document.getElementById('max-inventario').value = "";} } }
         function abrirInventario() { modoEdicion = false; cambiarPantalla('pantalla-menu', 'pantalla-inventario'); document.getElementById('titulo-pantalla-inventario').innerText = "📦 Alta Medicamento y Servicio"; document.getElementById('nombre-inventario').readOnly = false; document.getElementById('nombre-inventario').value = ''; document.getElementById('precio-inventario').value = ''; document.getElementById('cantidad-inventario').value = ''; document.getElementById('min-inventario').value = ''; document.getElementById('max-inventario').value = ''; document.getElementById('tipo-inventario').value = 'Medicamento/Producto'; toggleServicio(); document.getElementById('btn-guardar-inventario').innerText = "Guardar Alta"; }
         
@@ -711,29 +742,46 @@
             }); 
         }
 
-        // --- SISTEMA DE IMPRESIÓN ---
-        function imprimirTicketBoucher(venta) {
-            let esHospitalizacion = venta.tipoRegistro === 'hospitalizacion' || venta.autorizaciones !== undefined;
-            let titulo = esHospitalizacion ? "TICKET HOSPITALIZACIÓN" : "TICKET DE VENTA";
-            let htmlArticulos = ''; venta.articulos.forEach(a => { let n = a.nombre.length > 20 ? a.nombre.substring(0,20)+'..' : a.nombre; htmlArticulos += `<tr><td style="width:15%;">1</td><td style="width:55%;">${n}</td><td class="col-precio" style="width:30%;">$${a.precio.toFixed(2)}</td></tr>`; });
-            let descuentoCalculado = (venta.subtotal || 0) - (venta.totalCobrado || 0);
-            
-            let html = `<div class="ticket-print"><div class="info-tienda"><strong>CLÍNICA VETERINARIA</strong><br>RFC: XXXXXXX000<br>AVENIDA PRINCIPAL #123<br>CIUDAD, ESTADO C.P. 00000<br>TEL. 555-123-4567</div><h2>${titulo}</h2><div class="info-ticket">CAJA #1 &nbsp;&nbsp;&nbsp;&nbsp; ${venta.fechaTexto.split(',')[0]}<br>ATENDIÓ: ${venta.atendio || venta.doctor}<br>${venta.ventaMostrador ? 'CLIENTE: MOSTRADOR (GENERAL)' : `PACIENTE: ${venta.paciente}<br>DUEÑO: ${venta.dueno}`}</div><table><thead><tr><th>CANT</th><th>ARTICULO</th><th class="col-precio">TOTAL</th></tr></thead><tbody>${htmlArticulos}</tbody></table><div class="totales">SUBTOTAL : &nbsp;&nbsp;$${(venta.subtotal||0).toFixed(2)}<br>${descuentoCalculado > 0 ? `DESCUENTO : &nbsp;&nbsp;-$${descuentoCalculado.toFixed(2)}<br>` : ''}<strong>PAGO TOTAL : &nbsp;&nbsp;$${(venta.totalCobrado||0).toFixed(2)}</strong></div><div class="footer">*** PAGO EN ${(venta.metodoPago||'ESTANCIA HOSP.').toUpperCase()} ***<br><br>DOCUMENTO SIN VALIDEZ FISCAL<br>GRACIAS POR SU PREFERENCIA</div></div>`;
-            document.getElementById('zona-impresion').innerHTML = html; setTimeout(() => { window.print(); }, 500);
-        }
-
-        function imprimirHojaHospitalizacion(hosp) {
-            let htmlFirmaCli = hosp.firmaCliente ? `<img src="${hosp.firmaCliente}">` : `<div style="height: 45px;"></div>`;
+        // --- SISTEMA DE IMPRESIÓN (LEGAL Y DINÁMICA) ---
+        function generarHojasLegalesDinamicas(hosp) {
+            let htmlFinal = '';
             let fch = hosp.fechaTexto ? hosp.fechaTexto.split(',')[0] : '';
-            let authList = hosp.autorizaciones || []; let htmlAuth = authList.length > 0 ? `<div class="seccion-titulo">El propietario autoriza:</div><p style="font-size:12px; margin-top:0; font-weight:bold;">✅ ${authList.join('  ✅ ')}</p>` : '';
+            let authList = hosp.autorizaciones || [];
+            let htmlFirmaCli = hosp.firmaCliente ? `<img src="${hosp.firmaCliente}">` : `<div style="height: 45px;"></div>`;
+
+            // Plantilla 1: AUTORIZACIÓN HOSPITALARIA[cite: 3]
+            if(authList.includes("AUTORIZACIÓN HOSPITALARIA (MANEJO MÉDICO)")) {
+                htmlFinal += `<div class="receta-print"><div class="cabecera"><div class="logo-area"><h1 style="color: #2c6e8f;">Vetgru</h1><p style="color: #2c6e8f;">HOSPITAL VETERINARIO</p></div><div class="datos-area"><div class="linea-dato"><span>FECHA:</span> <span>${fch}</span></div><div class="linea-dato"><span>PROPIETARIO:</span> <span>${hosp.dueno}</span></div><div class="linea-dato"><span>PACIENTE:</span> <span>${hosp.paciente}</span></div><div class="linea-dato"><span>RAZA:</span> <span>${hosp.raza || ''}</span></div></div><div class="folio-area"><div class="linea-dato"><span>FOLIO:</span> <span class="folio-rojo">${hosp.folio || '00000'}</span></div><div class="linea-dato"><span>EDAD:</span> <span>${hosp.edad || ''}</span></div><div class="linea-dato"><span>SEXO:</span> <span>${hosp.sexo || ''}</span></div><div class="linea-dato"><span>PESO:</span> <span>${hosp.peso ? hosp.peso + ' Kg' : ''}</span></div></div></div>
+                <div class="cuerpo-receta" style="min-height:50mm;"><div style="font-size:11px; text-align:justify; line-height:1.4;"><strong style="font-size:13px;">AUTORIZACIÓN HOSPITALARIA</strong><br><br><strong>I.- MANEJO MÉDICO:</strong> Autorizo al equipo médico de VETGRU HOSPITAL VETERINARIO realizar el manejo necesario para el bienestar de mi mascota. Comprendo que la administración de sueros, medicamentos (anestésicos, analgésicos, antibióticos, entre otros) tiene la capacidad de producir reacciones alérgicas en mi mascota que pueden llegar a ser graves; para lo cual en caso de presentarse, autorizo plenamente al equipo médico a tomar acción para contrarrestar estos efectos indeseados. Por lo que comprendo perfectamente que existen riesgos de lesión o muerte para todo paciente sujeto a un procedimiento anestésico.<br><br><strong>II.- HOSPITALIZACIÓN:</strong> Comprendo que la hospitalización de mi mascota es necesaria para que este bajo atención y cuidado médico debido a la severidad de su enfermedad. Entiendo completamente que el equipo médico de VETGRU HOSPITAL VETERINARIO hará cuanto sea posible para minimizar el tiempo de hospitalización en la recuperación de mi mascota... y en caso de presentarse una respuesta inadecuada, deslindo cualquier responsabilidad a todo el equipo médico de VETGRU HOSPITAL VETERINARIO.<br><br>Comprendo que VETGRU HOSPITAL VETERINARIO no forma parte de la tienda, por lo tanto deslindo de toda responsabilidad a la tienda Petco. He leído y entendido todo lo anterior, aceptando términos y condiciones expuestas en este documento.</div>
+                <div class="firmas-area"><div class="firma-bloque">${htmlFirmaCli}<div class="firma-linea">NOMBRE, FIRMA DEL PROPIETARIO Y FECHA</div></div></div></div><div class="footer-receta"><div><strong style="font-size:11px;">📍 Blvd. Luis Donaldo Colosio No. 2275, Esq. Eulalio Gutiérrez</strong><br>San Alberto Saltillo Oriente, Coahuila<br><strong>HORARIO: 9AM - 9PM LUNES - DOMINGO</strong></div><div style="font-size: 13px; font-weight: bold;">📞 844 227 5808</div></div></div><div style="page-break-after: always;"></div>`;
+            }
+
+            // Plantilla 2: CONTRATO DE PENSIÓN[cite: 2]
+            if(authList.includes("CONTRATO DE PENSIÓN")) {
+                htmlFinal += `<div class="receta-print"><div class="cabecera"><div class="logo-area"><h1 style="color: #2c6e8f;">Vetgru</h1><p style="color: #2c6e8f;">HOSPITAL VETERINARIO</p></div><div class="datos-area"><div class="linea-dato"><span>FECHA:</span> <span>${fch}</span></div><div class="linea-dato"><span>PROPIETARIO:</span> <span>${hosp.dueno}</span></div><div class="linea-dato"><span>PACIENTE:</span> <span>${hosp.paciente}</span></div><div class="linea-dato"><span>RAZA:</span> <span>${hosp.raza || ''}</span></div></div><div class="folio-area"><div class="linea-dato"><span>FOLIO:</span> <span class="folio-rojo">${hosp.folio || '00000'}</span></div><div class="linea-dato"><span>EDAD:</span> <span>${hosp.edad || ''}</span></div><div class="linea-dato"><span>SEXO:</span> <span>${hosp.sexo || ''}</span></div><div class="linea-dato"><span>PESO:</span> <span>${hosp.peso ? hosp.peso + ' Kg' : ''}</span></div></div></div>
+                <div class="cuerpo-receta" style="min-height:50mm; padding: 10px;"><div style="font-size:9.5px; text-align:justify; line-height:1.2;"><strong style="font-size:11px;">CONTRATO DE PRESTACIÓN DE SERVICIO DE PENSIÓN CANINA Y FELINA</strong><br>Por medio de la presente yo el Sr. o Sra. <strong>${hosp.dueno}</strong> con teléfono <strong>${hosp.telefono || '_____________'}</strong> autorizo para que mi mascota de nombre <strong>${hosp.paciente}</strong>, raza <strong>${hosp.raza || '_____________'}</strong>, ingrese al servicio de pensión de ¨VETGRU HOSPITAL VETERINARIO”.<br><br>1.- He presentado mis verdaderos datos en la reseña de arriba...<br>2.- Mi mascota ha sido vacunada periódicamente... Estoy consciente de que existe la posibilidad de que mi mascota se enferme, aun estando vacunada.<br>3.- Me comprometo a liquidar todos los gastos generados durante la estancia de mi mascota.<br>4.- VETGRU ofrece dos tipos de estancia/pensión... Si mi mascota lastima a otra, seré el único responsable.<br>5.- Autorizo a VETGRU a hacer uso de los servicios veterinarios que estime para garantizar la buena salud de mi mascota.<br>6.- En el transcurso de la estancia pueden llegar a suceder accidentes... deslindo de toda responsabilidad a VETGRU.<br>7.- En caso de alguna enfermedad, lesión o muerte de la mascota durante su estancia, VETGRU tratará de contactarlo... Si mi mascota falleciese, VETGRU se encargara de realizar una necropsia... dando mi autorización como propietario con la firma de este contrato.<br>8.- Estoy consciente que pasado 10 días después de la fecha pactada de salida, si el propietario no recoge a su mascota, VETGRU podrá entregarlo a los servicios municipales.<br>9.- VETGRU no se hace responsable de la pérdida o daño de ningún artículo personal.<br><br>Comprendo que VETGRU HOSPITAL VETERINARIO no forma parte de la tienda, por lo tanto deslindo de toda responsabilidad a la tienda Petco. He leído y entendido todo lo anterior, aceptando términos y condiciones.</div>
+                <div class="firmas-area"><div class="firma-bloque">${htmlFirmaCli}<div class="firma-linea">NOMBRE Y FIRMA DE AUTORIZACION DE PROPIETARIO</div></div></div></div><div class="footer-receta"><div><strong style="font-size:11px;">📍 Blvd. Luis Donaldo Colosio No. 2275, Esq. Eulalio Gutiérrez</strong><br>San Alberto Saltillo Oriente, Coahuila<br><strong>HORARIO: 9AM - 9PM LUNES - DOMINGO</strong></div><div style="font-size: 13px; font-weight: bold;">📞 844 227 5808</div></div></div><div style="page-break-after: always;"></div>`;
+            }
+
+            // Plantilla 3: ALTA VOLUNTARIA[cite: 1]
+            if(authList.includes("ALTA VOLUNTARIA")) {
+                htmlFinal += `<div class="receta-print"><div class="cabecera"><div class="logo-area"><h1 style="color: #2c6e8f;">Vetgru</h1><p style="color: #2c6e8f;">HOSPITAL VETERINARIO</p></div><div class="datos-area"><div class="linea-dato"><span>FECHA:</span> <span>${fch}</span></div><div class="linea-dato"><span>PROPIETARIO:</span> <span>${hosp.dueno}</span></div><div class="linea-dato"><span>PACIENTE:</span> <span>${hosp.paciente}</span></div><div class="linea-dato"><span>RAZA:</span> <span>${hosp.raza || ''}</span></div></div><div class="folio-area"><div class="linea-dato"><span>FOLIO:</span> <span class="folio-rojo">${hosp.folio || '00000'}</span></div><div class="linea-dato"><span>EDAD:</span> <span>${hosp.edad || ''}</span></div><div class="linea-dato"><span>SEXO:</span> <span>${hosp.sexo || ''}</span></div><div class="linea-dato"><span>PESO:</span> <span>${hosp.peso ? hosp.peso + ' Kg' : ''}</span></div></div></div>
+                <div class="cuerpo-receta" style="min-height:50mm;"><div style="font-size:11px; text-align:justify; line-height:1.4;"><strong style="font-size:13px;">ALTA VOLUNTARIA</strong><br><br>POR VOLUNTAD PROPIA Y NO OBSTANTE A LA OPINION DEL PERSONAL MEDICO DE “GRUVETS” HOSPITAL VETERINARIO, HE DECIDIDO SOLICITAR MI “ALTA VOLUNTARIA”, POR LO CUAL EXIMO COMPLETAMENTE DE TODA RESPONSABILIDAD AL ÁREA MEDICA Y A GRUVET´S HOSPITAL POR LAS CONSECUENCIAS QUE PUDIERAN SOBREVENIR POR MI DECISIÓN.<br><br>Comprendo que VETGRU HOSPITAL VETERINARIO no forma parte de la tienda, por lo tanto deslindo de toda responsabilidad a la tienda Petco. He leído y entendido todo lo anterior, aceptando términos y condiciones expuestas en este documento.</div>
+                <div class="firmas-area"><div class="firma-bloque">${htmlFirmaCli}<div class="firma-linea">NOMBRE, FIRMA DEL PROPIETARIO Y FECHA</div></div></div></div><div class="footer-receta"><div><strong style="font-size:11px;">📍 Blvd. Luis Donaldo Colosio No. 2275, Esq. Eulalio Gutiérrez</strong><br>San Alberto Saltillo Oriente, Coahuila<br><strong>HORARIO: 9AM - 9PM LUNES - DOMINGO</strong></div><div style="font-size: 13px; font-weight: bold;">📞 844 227 5808</div></div></div><div style="page-break-after: always;"></div>`;
+            }
+
+            // Hoja Base (Si hay otras autorizaciones manuales o notas)
+            let otrasAuth = authList.filter(a => a !== "AUTORIZACIÓN HOSPITALARIA (MANEJO MÉDICO)" && a !== "CONTRATO DE PENSIÓN" && a !== "ALTA VOLUNTARIA");
+            let htmlAuth = otrasAuth.length > 0 ? `<div class="seccion-titulo">El propietario autoriza:</div><p style="font-size:12px; margin-top:0; font-weight:bold;">✅ ${otrasAuth.join('  ✅ ')}</p>` : '';
             let htmlServicios = '', htmlMedicamentos = ''; 
             if(hosp.articulos && hosp.articulos.length > 0) { hosp.articulos.forEach(a => { if(a.tipo === 'Servicio Médico') htmlServicios += `<li>${a.nombre}</li>`; else htmlMedicamentos += `<li>${a.nombre}</li>`; }); }
 
-            let html = `<div class="receta-print">
-                <div class="cabecera"><div class="logo-area"><h1 style="color: #2c6e8f;">Vetgru</h1><p style="color: #2c6e8f;">HOSPITAL VETERINARIO</p></div><div class="datos-area"><div class="linea-dato"><span>FECHA:</span> <span>${fch}</span></div><div class="linea-dato"><span>PROPIETARIO:</span> <span>${hosp.dueno}</span></div><div class="linea-dato"><span>PACIENTE:</span> <span>${hosp.paciente}</span></div><div class="linea-dato"><span>RAZA:</span> <span>${hosp.raza || ''}</span></div></div><div class="folio-area"><div class="linea-dato"><span>FOLIO:</span> <span class="folio-rojo">${hosp.folio || '00000'}</span></div><div class="linea-dato"><span>EDAD:</span> <span>${hosp.edad || ''}</span></div><div class="linea-dato"><span>SEXO:</span> <span>${hosp.sexo || ''}</span></div><div class="linea-dato"><span>PESO:</span> <span>${hosp.peso ? hosp.peso + ' Kg' : ''}</span></div></div></div>
-                <div class="cuerpo-receta">${htmlAuth}<div style="display:flex; gap:20px; font-size:12px;">${htmlServicios ? `<div style="flex:1;"><div class="seccion-titulo">Servicios Médicos Aplicados:</div><ul style="padding-left:15px; margin-top:5px; margin-bottom:0;">${htmlServicios}</ul></div>` : ''}${htmlMedicamentos ? `<div style="flex:1;"><div class="seccion-titulo">Medicamentos / Insumos Aplicados:</div><ul style="padding-left:15px; margin-top:5px; margin-bottom:0;">${htmlMedicamentos}</ul></div>` : ''}</div><div class="seccion-titulo" style="margin-top:10px;">Notas de Evolución / Comentarios:</div><div class="prescripcion-texto">${hosp.prescripcion || 'Ninguna.'}</div><div class="firmas-area"><div class="firma-bloque">${htmlFirmaCli}<div class="firma-linea">Firma de conformidad del Propietario</div></div></div></div>
-                <div class="footer-receta"><div><strong style="font-size:11px;">📍 Blvd. Luis Donaldo Colosio No. 2275, Esq. Eulalio Gutiérrez</strong><br>San Alberto Saltillo Oriente, Coahuila<br><strong>HORARIO: 9AM - 9PM LUNES - DOMINGO</strong></div><div style="font-size: 13px; font-weight: bold;">📞 844 227 5808</div></div></div>`;
-            document.getElementById('zona-impresion').innerHTML = html; setTimeout(() => { window.print(); }, 500);
+            if (otrasAuth.length > 0 || hosp.articulos.length > 0 || hosp.prescripcion) {
+                htmlFinal += `<div class="receta-print"><div class="cabecera"><div class="logo-area"><h1 style="color: #2c6e8f;">Vetgru</h1><p style="color: #2c6e8f;">HOSPITAL VETERINARIO</p></div><div class="datos-area"><div class="linea-dato"><span>FECHA:</span> <span>${fch}</span></div><div class="linea-dato"><span>PROPIETARIO:</span> <span>${hosp.dueno}</span></div><div class="linea-dato"><span>PACIENTE:</span> <span>${hosp.paciente}</span></div><div class="linea-dato"><span>RAZA:</span> <span>${hosp.raza || ''}</span></div></div><div class="folio-area"><div class="linea-dato"><span>FOLIO:</span> <span class="folio-rojo">${hosp.folio || '00000'}</span></div><div class="linea-dato"><span>EDAD:</span> <span>${hosp.edad || ''}</span></div><div class="linea-dato"><span>SEXO:</span> <span>${hosp.sexo || ''}</span></div><div class="linea-dato"><span>PESO:</span> <span>${hosp.peso ? hosp.peso + ' Kg' : ''}</span></div></div></div>
+                <div class="cuerpo-receta">${htmlAuth}<div style="display:flex; gap:20px; font-size:12px;">${htmlServicios ? `<div style="flex:1;"><div class="seccion-titulo">Servicios Médicos Aplicados:</div><ul style="padding-left:15px; margin-top:5px; margin-bottom:0;">${htmlServicios}</ul></div>` : ''}${htmlMedicamentos ? `<div style="flex:1;"><div class="seccion-titulo">Medicamentos / Insumos Aplicados:</div><ul style="padding-left:15px; margin-top:5px; margin-bottom:0;">${htmlMedicamentos}</ul></div>` : ''}</div><div class="seccion-titulo" style="margin-top:10px;">Notas de Evolución / Comentarios:</div><div class="prescripcion-texto">${hosp.prescripcion || 'Ninguna.'}</div><div class="firmas-area"><div class="firma-bloque">${htmlFirmaCli}<div class="firma-linea">Firma de conformidad del Propietario</div></div></div></div><div class="footer-receta"><div><strong style="font-size:11px;">📍 Blvd. Luis Donaldo Colosio No. 2275, Esq. Eulalio Gutiérrez</strong><br>San Alberto Saltillo Oriente, Coahuila<br><strong>HORARIO: 9AM - 9PM LUNES - DOMINGO</strong></div><div style="font-size: 13px; font-weight: bold;">📞 844 227 5808</div></div></div>`;
+            }
+
+            document.getElementById('zona-impresion').innerHTML = htmlFinal; setTimeout(() => { window.print(); }, 500);
         }
 
         // --- ADMINISTRAR USUARIOS ---
