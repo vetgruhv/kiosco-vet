@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Veterinario ERP & POS</title>
+    <title>Hospital Veterinario ERP</title>
     
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -11,14 +11,19 @@
 
     <style>
         /* --- ESTILOS VISUALES PREMIUM HOMOLOGADOS --- */
-        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #eef2f6; margin: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; color: #2b3035; padding-bottom: 100px;}
-        .contenedor { background: white; padding: 35px; border-radius: 24px; box-shadow: 0 12px 35px rgba(0,0,0,0.06); width: 95%; max-width: 680px; margin: 20px auto; box-sizing: border-box; }
+        /* Centrado Absoluto para App Nativa */
+        body { font-family: 'Segoe UI', Roboto, Arial, sans-serif; background-color: #eef2f6; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #2b3035; box-sizing: border-box;}
+        
+        /* Contenedores con Scroll Interno */
+        .contenedor { background: white; padding: 35px; border-radius: 24px; box-shadow: 0 12px 35px rgba(0,0,0,0.06); width: 95%; max-width: 680px; max-height: 90vh; overflow-y: auto; box-sizing: border-box; position: relative;}
         .contenedor-ancho { max-width: 850px; } 
         
+        /* Espaciador inferior para que el botón flotante no tape contenido */
+        .espaciador-inferior { height: 80px; width: 100%; display: block; }
         .seccion-separador { border-top: 2px dashed #e9ecef; margin: 25px 0; padding-top: 15px; }
 
         /* Teclado PIN */
-        .pantalla-pin { font-size: 2.5em; letter-spacing: 15px; margin-bottom: 25px; padding: 15px; width: 100%; text-align: center; background-color: #f8f9fa; border: 2px solid #e9ecef; border-radius: 16px; box-sizing: border-box; color: #333; font-weight: bold; }
+        .pantalla-pin { font-size: 2.5em; letter-spacing: 15px; margin-bottom: 25px; padding: 15px; width: 100%; text-align: center; background-color: #f8f9fa; border: 2px solid #e9ecef; border-radius: 16px; box-sizing: border-box; color: #333; font-weight: bold; outline: none;}
         .cuadricula-teclas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
         .tecla { padding: 20px 0; font-size: 1.8em; background: #ffffff; border: 1px solid #dee2e6; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #333; font-weight: 500; }
         .tecla:active { background: #e9ecef; transform: scale(0.92); }
@@ -32,32 +37,26 @@
         
         .alerta-banner { background-color: #fff3cd; border-left: 6px solid #ffc107; border-radius: 12px; padding: 18px; margin-bottom: 20px; text-align: left; }
         
-        /* Formularios a dos columnas */
+        /* Formularios */
         .form-row { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; align-items: flex-end; }
         .form-row .grupo-formulario { margin-bottom: 0; flex: 1 1 200px; }
         .grupo-formulario { margin-bottom: 20px; text-align: left; width: 100%; box-sizing: border-box;}
         .grupo-formulario label { display: block; font-weight: 700; margin-bottom: 8px; color: #495057; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px;}
-        .grupo-formulario input, .grupo-formulario select, .grupo-formulario textarea { 
-            width: 100%; padding: 14px; font-size: 1em; border: 2px solid #e9ecef; border-radius: 12px; 
-            box-sizing: border-box; font-family: inherit; transition: all 0.2s; background-color: #f8f9fa; color: #333; outline: none;
-        }
+        .grupo-formulario input, .grupo-formulario select, .grupo-formulario textarea { width: 100%; padding: 14px; font-size: 1em; border: 2px solid #e9ecef; border-radius: 12px; box-sizing: border-box; font-family: inherit; transition: all 0.2s; background-color: #f8f9fa; color: #333; outline: none; }
         .grupo-formulario input:focus, .grupo-formulario select:focus, .grupo-formulario textarea:focus { border-color: #0d6efd; background-color: #fff; box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1); }
         .input-buscador { font-size: 1.05em !important; border: 2px solid #0d6efd !important; background: #fff !important; }
         
-        /* Botones Generales */
+        /* Botones */
         .btn { width: 100%; padding: 16px; font-size: 1.1em; border: none; border-radius: 14px; cursor: pointer; font-weight: bold; transition: all 0.2s ease; display: block; text-align: center; box-sizing: border-box;}
-        .btn-qr { background: #e3f2fd; color: #0d6efd; border: 2px dashed #0d6efd; margin-bottom: 20px;}
         .btn-guardar { background: #198754; color: white; box-shadow: 0 6px 15px rgba(25, 135, 84, 0.25); margin-top: 10px;}
         .btn-guardar:hover { background: #157347; transform: translateY(-2px); }
         .btn-guardar-rojo { background: #dc3545; color: white; box-shadow: 0 6px 15px rgba(220, 53, 69, 0.25); }
         .btn-guardar-azul { background: #0d6efd; color: white; box-shadow: 0 6px 15px rgba(13, 110, 253, 0.25); }
         .btn-guardar-azul:hover { background: #0b5ed7; transform: translateY(-2px); }
-        .btn-cancelar { background: transparent; color: #dc3545; margin-top: 10px; border: 2px solid #ffe3e3; padding: 12px;}
-        .btn-cancelar:hover { background: #fff0f0; }
         .btn-filtro { flex: 1; padding: 10px; border: 2px solid #e9ecef; background: white; color: #6c757d; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; white-space: nowrap;}
         .btn-filtro.activo { background: #0d6efd; color: white; border-color: #0d6efd; box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2); }
 
-        /* BOTONES FLOTANTES */
+        /* BOTONES FLOTANTES (Fijos en la pantalla completa) */
         .fab-container { position: fixed; bottom: 25px; right: 25px; display: flex; flex-direction: column; gap: 15px; z-index: 9999; }
         .fab { width: 65px; height: 65px; border-radius: 50%; border: none; color: white; font-size: 28px; box-shadow: 0 6px 15px rgba(0,0,0,0.3); cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
         .fab:active { transform: scale(0.9); }
@@ -77,6 +76,20 @@
         .item-carrito:last-child { border-bottom: none; }
         .btn-eliminar-item { background: #ffe3e3; color: #dc3545; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-weight: bold; transition: 0.2s;}
 
+        /* DISEÑO DE AUTORIZACIONES (MORADO PREMIUM) */
+        .caja-morada { background: #f9f5ff; padding: 25px; border-radius: 18px; border: 1px solid #e9d5ff; margin-bottom: 25px; }
+        .titulo-morado { color: #6f42c1; font-weight: 900; font-size: 0.85em; text-transform: uppercase; margin-bottom: 15px; display: block; letter-spacing: 0.5px;}
+        .auth-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .auth-input-group input, .auth-input-group select { flex: 1; border: 1px solid #e9d5ff !important; border-radius: 12px; padding: 14px; outline: none; background: #fff !important; color: #495057; font-size: 1em;}
+        .auth-input-group input:focus, .auth-input-group select:focus { border-color: #6f42c1 !important; box-shadow: 0 0 0 4px rgba(111, 66, 193, 0.1); }
+        .auth-input-group button { background: #6f42c1; color: white; border: none; border-radius: 12px; padding: 0 25px; font-weight: bold; font-size: 1.05em; cursor: pointer; transition: 0.2s; white-space: nowrap; box-shadow: 0 4px 10px rgba(111, 66, 193, 0.2);}
+        .auth-input-group button:hover { background: #5936a2; transform: translateY(-2px);}
+        
+        .lista-autorizaciones { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px;}
+        .badge-auth { background: #f3e8ff; color: #6f42c1; padding: 8px 16px; border-radius: 20px; font-size: 0.9em; font-weight: bold; display: flex; align-items: center; gap: 8px; border: 1px solid #d8b4fe;}
+        .badge-auth span { cursor: pointer; color: #dc3545; font-size: 1.1em; transition: 0.2s; }
+        .badge-auth span:hover { transform: scale(1.2); }
+
         /* FIRMAS CLIENTE */
         .firma-card { width: 100%; max-width: 450px; margin: 0 auto; border: 1px solid #e9ecef; border-radius: 14px; padding: 15px; background: #fff; text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.02); box-sizing: border-box;}
         .firma-title { font-size: 0.85em; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; color: #198754;}
@@ -90,6 +103,7 @@
         
         .lista-vertical { display: block; max-height: 500px; overflow-y: auto; padding-right: 10px; margin-bottom: 15px; }
         .tarjeta-expediente, .tarjeta-info { border: 1px solid #e9ecef; border-radius: 16px; padding: 20px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.03); text-align: left; transition: 0.2s; position: relative; overflow: hidden; margin-bottom: 18px; display: block; width: 100%; box-sizing: border-box;}
+        .tarjeta-expediente:hover, .tarjeta-info:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.06); transform: translateY(-2px); border-color: #dee2e6; }
         
         .tarjeta-expediente.hospital { border-left: 6px solid #6f42c1; } .badge-hospital { background: #f3e8ff; color: #6f42c1; }
         .tarjeta-expediente.venta, .tarjeta-info.venta { border-left: 6px solid #198754; } .badge-venta { background: #e8f5e9; color: #198754; }
@@ -113,7 +127,7 @@
         .btn-borrar-historial { background: #fff0f0; color: #dc3545; border: 1px solid #ffc9c9; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s;}
         .btn-borrar-historial:hover { background: #dc3545; color: white;}
 
-        /* ZONA DE IMPRESIÓN CON ESTILO LEGAL */
+        /* ZONA DE IMPRESIÓN */
         #zona-impresion { display: none; }
         @media print {
             @page { margin: 0; }
@@ -176,7 +190,7 @@
 
     <!-- PANTALLA 1: LOGIN -->
     <div id="pantalla-login" class="contenedor">
-        <h2 style="color: #333; margin-top: 0; font-size: 1.8em;">🔐 Ingreso al Sistema</h2>
+        <h2 style="color: #333; margin-top: 0; font-size: 1.8em; text-align: center;">🔐 Ingreso al Sistema</h2>
         <input type="password" id="input-pin" class="pantalla-pin" readonly>
         <div class="cuadricula-teclas">
             <button class="tecla" onclick="agregarNumero('1')">1</button><button class="tecla" onclick="agregarNumero('2')">2</button><button class="tecla" onclick="agregarNumero('3')">3</button>
@@ -210,35 +224,36 @@
         
         <h4 id="titulo-gerencia" class="oculto" style="color: #adb5bd; margin: 25px 0 15px 0; text-align: left; text-transform: uppercase; font-size: 0.85em; letter-spacing:1px;">Administración (Gerencia)</h4>
         <div class="menu-grid">
-            <button id="btn-corte" class="btn-menu oculto" onclick="abrirCorteCaja('dia')" style="background-color: #f0f9ff; border-color: #b6e3f4;">
+            <button id="btn-corte" class="btn-menu oculto" onclick="abrirPantalla('pantalla-corte-caja', () => abrirCorteCaja('dia'))" style="background-color: #f0f9ff; border-color: #b6e3f4;">
                 <span class="emoji">💰</span> <span style="color: #0dcaf0;">Corte de Caja</span>
             </button>
-            <button id="btn-ver-inventario" class="btn-menu oculto" onclick="abrirVerInventario()">
+            <button id="btn-ver-inventario" class="btn-menu oculto" onclick="abrirPantalla('pantalla-ver-inventario', cargarInventarioVista)">
                 <span class="emoji">👀</span> <span>Ver Inventario</span>
             </button>
-            <button id="btn-alta-inventario" class="btn-menu oculto" onclick="abrirInventario()">
-                <span class="emoji">📦</span> <span>Lotes / Servicios</span>
+            <button id="btn-alta-inventario" class="btn-menu oculto" onclick="abrirPantalla('pantalla-inventario')">
+                <span class="emoji">📦</span> <span>Alta Lotes / Servicios</span>
             </button>
-            <button id="btn-hist-inventario" class="btn-menu oculto" onclick="abrirHistorialInventario()">
+            <button id="btn-hist-inventario" class="btn-menu oculto" onclick="abrirPantalla('pantalla-historial-inventario', cargarHistorialInventario)">
                 <span class="emoji">🗃️</span> <span>Historial Altas/Mermas</span>
             </button>
-            <button id="btn-historial" class="btn-menu oculto" onclick="abrirHistorialVentas()">
+            <button id="btn-historial" class="btn-menu oculto" onclick="abrirPantalla('pantalla-historial-ventas', abrirHistorialVentas)">
                 <span class="emoji">📋</span> <span>Historial de Ventas</span>
             </button>
-            <button id="btn-baja-inventario" class="btn-menu oculto" onclick="abrirBajaInventario()">
+            <button id="btn-baja-inventario" class="btn-menu oculto" onclick="abrirPantalla('pantalla-baja-inventario')">
                 <span class="emoji">📉</span> <span>Devolución / Baja</span>
             </button>
-            <button id="btn-usuarios" class="btn-menu oculto" onclick="abrirUsuarios()">
+            <button id="btn-usuarios" class="btn-menu oculto" onclick="abrirPantalla('pantalla-usuarios', abrirUsuarios)">
                 <span class="emoji">👥</span> <span>Personal</span>
             </button>
         </div>
         <button class="btn btn-cancelar" style="margin-top:20px; font-size: 1em; padding: 14px; border-radius: 14px;" onclick="cerrarSesion()">Cerrar Sesión</button>
+        <div class="espaciador-inferior"></div>
     </div>
 
-    <!-- PANTALLA 3: PUNTO DE VENTA (CARRITO) -->
+    <!-- PANTALLA 3: VENTA GENERAL (CARRITO) -->
     <div id="pantalla-registro-baja" class="contenedor oculto">
         <div class="header-usuario" id="texto-registro-usuario" style="background: linear-gradient(135deg, #198754, #146c43);"></div>
-        <h2 id="titulo-formulario" style="color: #333; margin-top: 0; font-size: 1.5em; text-align: left;">🛒 Punto de Venta</h2>
+        <h2 id="titulo-formulario" style="color: #333; margin-top: 0; font-size: 1.5em; text-align: left;">🛒 Venta General</h2>
         
         <div class="form-row" style="background: #fff; padding: 15px; border-radius: 14px; border: 1px solid #ced4da; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
             <div class="grupo-formulario" style="flex: 2; margin:0;">
@@ -250,7 +265,7 @@
                 <input type="number" id="precio-pos" placeholder="Manual">
             </div>
             <div class="grupo-formulario" style="flex: 0 0 auto; margin:0;">
-                <button class="btn btn-guardar-azul" style="margin:0; padding: 14px 20px; border-radius: 12px;" onclick="agregarAlCarrito()">➕</button>
+                <button class="btn btn-guardar-azul" style="margin:0; padding: 14px 20px; border-radius: 12px;" onclick="agregarAlCarrito()">➕ Añadir</button>
             </div>
         </div>
 
@@ -259,7 +274,8 @@
 
         <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e9ecef;">
             <label style="font-weight: 600; font-size: 0.95em; cursor: pointer; display: flex; align-items: center; gap: 10px; color: #495057;">
-                <input type="checkbox" id="venta-mostrador" onchange="toggleMostrador()" style="width: 22px; height: 22px; accent-color: #0d6efd;"> Venta a Público General (Mostrador)
+                <input type="checkbox" id="venta-mostrador" onchange="toggleMostrador()" style="width: 22px; height: 22px; accent-color: #0d6efd;"> 
+                Venta a Público General (Mostrador)
             </label>
         </div>
         
@@ -280,7 +296,7 @@
             <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="margin:0;" onclick="procesarVenta(false)">💾 Solo Guardar</button></div>
             <div class="grupo-formulario"><button class="btn btn-guardar" style="margin:0;" onclick="procesarVenta(true)">🖨️ Guardar e Imprimir Ticket</button></div>
         </div>
-        <button class="btn btn-cancelar" style="border:none; margin-top:20px;" onclick="cancelarVolver()">Cancelar Venta / Volver</button>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 4: MANEJO HOSPITALARIO -->
@@ -296,39 +312,49 @@
 
         <div class="seccion-separador"></div>
 
-        <!-- AUTORIZACIONES MANUALES -->
-        <div style="background: #f3e8ff; padding: 25px; border-radius: 16px; border: 1px solid #d8b4fe; margin-bottom: 30px;">
-            <label style="display: block; font-weight: 800; margin-bottom: 15px; color: #6f42c1; font-size: 0.95em; text-transform: uppercase;">Autorizaciones Legales del Cliente:</label>
-            <div class="form-row" style="margin-bottom: 15px; background: #fff; padding: 10px; border-radius: 12px; border: 1px solid #e9d5ff;">
-                <div class="grupo-formulario" style="flex:3; margin:0;">
-                    <select id="select-auth-rapida" style="border:none; background:transparent;">
-                        <option value="">-- Seleccionar Formato Legal para Imprimir --</option>
-                        <option value="AUTORIZACIÓN HOSPITALARIA (MANEJO MÉDICO)">Autorización Hospitalaria (Manejo Médico)</option>
-                        <option value="CONTRATO DE PENSIÓN">Contrato de Pensión</option>
-                        <option value="ALTA VOLUNTARIA">Alta Voluntaria (Contra indicación médica)</option>
-                    </select>
-                </div>
-                <div class="grupo-formulario" style="flex:1; margin:0;"><button class="btn" style="background:#6f42c1; color:white; padding:14px;" onclick="agregarAutorizacionSelect()">➕ Añadir Formato</button></div>
+        <!-- AUTORIZACIONES MANUALES DINÁMICAS (MORADO) -->
+        <div class="caja-morada">
+            <label class="titulo-morado">Autorizaciones Legales del Cliente:</label>
+            
+            <div class="auth-input-group">
+                <select id="select-auth-rapida">
+                    <!-- Options inyectadas por JS para evitar duplicados -->
+                </select>
+                <button onclick="agregarAutorizacionSelect()">➕ Añadir Formato</button>
             </div>
             
-            <!-- Campo para añadir otras autorizaciones manuales -->
-            <div class="form-row" style="margin-bottom: 15px;">
-                <div class="grupo-formulario" style="flex:3; margin:0;"><input type="text" id="input-nueva-auth" placeholder="Otras autorizaciones (Ej. Cirugía, Profilaxis...)" onkeypress="if(event.key==='Enter') agregarAutorizacion()"></div>
-                <div class="grupo-formulario" style="flex:1; margin:0;"><button class="btn" style="background:#8b5cf6; color:white; padding:14px;" onclick="agregarAutorizacion()">➕ Añadir Extra</button></div>
+            <div class="auth-input-group">
+                <input type="text" id="input-nueva-auth" placeholder="Otras autorizaciones (Ej. Cirugía, Profilaxis...)" onkeypress="if(event.key==='Enter') agregarAutorizacion()">
+                <button onclick="agregarAutorizacion()">➕ Añadir Extra</button>
             </div>
 
-            <div id="lista-autorizaciones" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+            <div id="lista-autorizaciones" class="lista-autorizaciones"></div>
         </div>
 
         <div class="seccion-separador"></div>
 
-        <!-- DIVISIÓN: SERVICIOS Y MEDICAMENTOS -->
+        <!-- DIVISIÓN: SERVICIOS Y MEDICAMENTOS (AZUL) -->
         <label style="font-weight: 800; color: #0d6efd; font-size: 0.95em; text-transform: uppercase; margin-bottom:15px; display:block;">Agregar Servicios y/o Insumos aplicados:</label>
+        
         <div class="form-row" style="background: #fff; padding: 15px; border-radius: 14px; border: 1px solid #ced4da; box-shadow: 0 2px 8px rgba(0,0,0,0.02); margin-bottom: 20px;">
-            <div class="grupo-formulario" style="flex: 3; min-width: 200px; margin:0;"><label>Concepto:</label><input type="text" id="buscador-hosp-item" list="lista-medicamentos-filtrada" class="input-buscador" placeholder="Buscar o teclear manual..." oninput="autocompletarPrecioHosp()"></div>
-            <div class="grupo-formulario" style="flex: 1; min-width: 90px; margin:0;"><label>Precio ($):</label><input type="number" id="precio-hosp-item" placeholder="0.00"></div>
-            <div class="grupo-formulario" style="flex: 1; min-width: 150px; margin:0;"><label>Clasificación:</label><select id="tipo-hosp-item" onchange="actualizarDatalistHosp()"><option value="Servicio Médico">🩺 Servicio Médico</option><option value="Medicamento/Producto">💊 Insumo / Medicamento</option></select></div>
-            <div class="grupo-formulario" style="flex: 0 0 100%; margin:0; margin-top: 10px;"><button class="btn btn-guardar-azul" style="margin:0; padding: 16px;" onclick="agregarAlCarritoHosp()">➕ Añadir a la lista</button></div>
+            <div class="grupo-formulario" style="flex: 3; min-width: 150px; margin:0;">
+                <label>Concepto:</label>
+                <input type="text" id="buscador-hosp-item" list="lista-medicamentos-filtrada" class="input-buscador" placeholder="Buscar o teclear nuevo..." oninput="autocompletarPrecioHosp()">
+            </div>
+            <div class="grupo-formulario" style="flex: 1; min-width: 90px; margin:0;">
+                <label>Precio ($):</label>
+                <input type="number" id="precio-hosp-item" placeholder="0.00">
+            </div>
+            <div class="grupo-formulario" style="flex: 1; min-width: 130px; margin:0;">
+                <label>Clasificación:</label>
+                <select id="tipo-hosp-item" onchange="actualizarDatalistHosp()">
+                    <option value="Servicio Médico">🩺 Servicio Médico</option>
+                    <option value="Medicamento/Producto">💊 Insumo / Medicamento</option>
+                </select>
+            </div>
+            <div class="grupo-formulario" style="flex: 0 0 100%; margin:0; margin-top: 10px;">
+                <button class="btn btn-guardar-azul" style="margin:0; padding: 16px;" onclick="agregarAlCarritoHosp()">➕ Añadir a la lista</button>
+            </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
@@ -349,13 +375,13 @@
         
         <div class="form-row" style="margin-top: 30px;">
             <div class="grupo-formulario"><button class="btn btn-guardar-azul ocultar-impresion" style="margin:0; background:#6f42c1;" onclick="procesarHospitalizacion('ninguno')">💾 Solo Guardar</button></div>
-            <div class="grupo-formulario"><button class="btn btn-guardar-azul ocultar-impresion" style="margin:0;" onclick="procesarHospitalizacion('hoja')">📄 Imprimir Formulario</button></div>
+            <div class="grupo-formulario"><button class="btn btn-guardar-azul ocultar-impresion" style="margin:0;" onclick="procesarHospitalizacion('hoja')">📄 Imprimir Formulario Legal</button></div>
             <div class="grupo-formulario"><button class="btn btn-guardar ocultar-impresion" style="margin:0;" onclick="procesarHospitalizacion('ticket')">🧾 Imprimir Ticket Caja</button></div>
         </div>
         
         <div class="seccion-separador"></div>
         <button class="btn" style="background: #ffc107; color: #000;" onclick="procesarAltaHospitalaria()">🏥 Generar ALTA HOSPITALARIA (Imprimir)</button>
-        <button class="btn btn-cancelar" style="border:none; margin-top:20px;" onclick="cancelarVolver()">Cancelar / Volver</button>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 4.5: EXPEDIENTE CLÍNICO UNIFICADO -->
@@ -368,14 +394,15 @@
             <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0; height: 100%;" onclick="cargarExpedienteBase()">🔄 Refrescar</button></div>
         </div>
         <div id="lista-expediente" class="lista-vertical"></div>
-        <button class="btn btn-cancelar" style="margin-top: 25px; border-color: #ced4da; color: #495057;" onclick="cancelarVolver()">Volver al Menú</button>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 5: CORTE DE CAJA -->
     <div id="pantalla-corte-caja" class="contenedor contenedor-ancho oculto">
         <h2 style="color: #333; margin-top: 0; text-align: left;">💰 Corte de Caja</h2>
-        <div class="panel-busqueda" style="margin-bottom: 20px;">
-            <div class="grupo-formulario busqueda-ancha" style="display: flex; gap: 10px; background: #f8f9fa; padding: 8px; border-radius: 12px; border: 1px solid #e9ecef; margin: 0;">
+        <div class="panel-busqueda">
+            <div class="grupo-formulario busqueda-ancha"><label>🔍 Filtrar por Doctor:</label><input type="text" class="input-buscador" placeholder="Nombre del doctor..." oninput="filtrarTarjetas('lista-corte-caja', this.value)"></div>
+            <div class="grupo-formulario busqueda-ancha" style="display: flex; gap: 10px; background: #f8f9fa; padding: 8px; border-radius: 12px; border: 1px solid #e9ecef; margin-bottom: 0;">
                 <button id="filtro-dia" class="btn-filtro activo" onclick="abrirCorteCaja('dia')">Día</button><button id="filtro-semana" class="btn-filtro" onclick="abrirCorteCaja('semana')">Semana</button><button id="filtro-mes" class="btn-filtro" onclick="abrirCorteCaja('mes')">Mes</button>
             </div>
         </div>
@@ -386,7 +413,7 @@
         </div>
         <h4 style="text-align: left; margin-bottom: 15px; color: #495057; text-transform: uppercase; font-size: 0.85em;">Desglose por Método de Pago:</h4>
         <div id="lista-corte-caja" class="lista-vertical"></div>
-        <button class="btn btn-cancelar" style="margin-top: 20px;" onclick="cancelarVolver()">Volver al Menú</button>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 6: VER INVENTARIO -->
@@ -397,7 +424,7 @@
             <div class="grupo-formulario"><label>Nivel Stock:</label><select id="busqueda-inv-stock" onchange="filtrarInventario()"><option value="todos">Todos</option><option value="bajo">🔴 Bajo Stock</option><option value="ok">🟢 Normal</option></select></div>
         </div>
         <div id="lista-stock-firebase" class="lista-vertical"></div>
-        <button class="btn btn-cancelar" style="margin-top: 20px;" onclick="cancelarVolver()">Volver al Menú</button>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 7: HISTORIAL DE INVENTARIO -->
@@ -410,7 +437,7 @@
             <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0; height: 100%;" onclick="cargarHistorialInventario()">🔄 Refrescar</button></div>
         </div>
         <div id="lista-historial-inventario" class="lista-vertical"></div>
-        <button class="btn btn-cancelar" style="margin-top: 20px;" onclick="cancelarVolver()">Volver al Menú</button>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 7.5: HISTORIAL DE VENTAS -->
@@ -422,7 +449,7 @@
             <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0; height: 100%;" onclick="abrirHistorialVentas()">🔄 Refrescar</button></div>
         </div>
         <div id="lista-historial-ventas" class="lista-vertical"></div>
-        <button class="btn btn-cancelar" style="margin-top: 20px;" onclick="cancelarVolver()">Volver al Menú</button>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 8: ALTA DE MEDICAMENTO Y SERVICIO -->
@@ -442,7 +469,7 @@
             <div class="grupo-formulario"><label>Stock Máximo:</label><input type="number" id="max-inventario" placeholder="Ej. 50"></div>
         </div>
         <button id="btn-guardar-inventario" class="btn btn-guardar" onclick="guardarEnInventario()">Guardar Alta</button>
-        <button class="btn btn-cancelar" style="border:none;" onclick="cancelarVolver()">Cancelar</button>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 9: DEVOLUCIÓN / BAJA -->
@@ -452,7 +479,7 @@
         <div class="grupo-formulario"><label>Motivo:</label><input type="text" id="motivo-baja-inv" placeholder="Ej. Caducidad, Devolución..."></div>
         <div class="form-row"><div class="grupo-formulario"><label>Descontar (Cantidad):</label><input type="number" id="cantidad-baja-inv" placeholder="0"></div></div>
         <button class="btn btn-guardar btn-guardar-rojo" onclick="guardarBajaInventario()">Registrar Baja</button>
-        <button class="btn btn-cancelar" style="border:none;" onclick="cancelarVolver()">Cancelar</button>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 10: USUARIOS -->
@@ -468,7 +495,7 @@
             <div class="grupo-formulario busqueda-ancha" style="margin:0;"><label>🔍 Buscar personal:</label><input type="text" class="input-buscador" placeholder="Nombre o PIN..." oninput="filtrarTarjetas('lista-usuarios-firebase', this.value)"></div>
         </div>
         <div id="lista-usuarios-firebase" class="lista-vertical"></div>
-        <button class="btn btn-cancelar" style="margin-top: 20px;" onclick="cancelarVolver()">Volver al Menú</button>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- === LÓGICA MAESTRA JAVASCRIPT === -->
@@ -478,8 +505,14 @@
 
         let pinActual = ""; let usuarioLogueado = null; let temporizadorInactividad; let lectorQr; let camaraActivaId = ""; 
         let totalCobroCalculado = 0; let inventarioGlobal = []; let carrito = []; let carritoHosp = [];
-        let datosExpediente = []; let datosHistorialInv = []; let datosHistorialVentas = [];
+        let datosHistorialInv = []; let datosHistorialVentas = []; let datosExpediente = [];
         let firmaCapturada = false; let autorizacionesHosp = []; let guardandoBloqueo = false;
+
+        const opcionesLegalesMaestras = [
+            { val: "AUTORIZACIÓN HOSPITALARIA (MANEJO MÉDICO)", text: "Autorización Hospitalaria (Manejo Médico)" },
+            { val: "CONTRATO DE PENSIÓN", text: "Contrato de Pensión" },
+            { val: "ALTA VOLUNTARIA", text: "Alta Voluntaria (Contra indicación médica)" }
+        ];
 
         // --- FIRMAS ---
         let ctxActivo = null; let isDrawing = false; let canvasActivo = false;
@@ -584,10 +617,10 @@
             const tipoSelec = document.getElementById('tipo-hosp-item').value;
             inventarioGlobal.forEach(d => { if(d.tipoArticulo === tipoSelec) { let icon = d.tipoArticulo === 'Servicio Médico' ? '🩺' : '💊'; datalistFilt.innerHTML += `<option value="${d.medicamento}">${icon} $${d.precioVenta || 0}</option>`; } });
         }
-        function revisarAlertasInventario() { const cajaAlerta = document.getElementById('alerta-inventario-menu'); const lista = document.getElementById('lista-alertas-menu'); lista.innerHTML = ''; db.collection("Inventario").get().then(q => { let itemsAlerta = []; q.forEach(doc => { const d = doc.data(); if(d.tipoArticulo === 'Servicio Médico') return; let limite = d.minimo || 5; if (d.cantidad <= limite) { itemsAlerta.push(`<strong>${d.medicamento}</strong>: Quedan ${d.cantidad} ${d.unidad || 'U.'}`); } }); if(itemsAlerta.length > 0) { cajaAlerta.classList.remove('oculto'); let html = ''; let maxMostrar = Math.min(3, itemsAlerta.length); for(let i=0; i < maxMostrar; i++){ html += `<li>${itemsAlerta[i]}</li>`; } if(itemsAlerta.length > 3) { html += `<li style="list-style:none; margin-top:10px; font-weight:bold; cursor:pointer; color:#0d6efd; text-decoration:underline;" onclick="abrirVerInventario()">+ ${itemsAlerta.length - 3} productos más</li>`; } lista.innerHTML = html; } else { cajaAlerta.classList.add('oculto'); } }); }
+        function revisarAlertasInventario() { const cajaAlerta = document.getElementById('alerta-inventario-menu'); const lista = document.getElementById('lista-alertas-menu'); lista.innerHTML = ''; db.collection("Inventario").get().then(q => { let itemsAlerta = []; q.forEach(doc => { const d = doc.data(); if(d.tipoArticulo === 'Servicio Médico') return; let limite = d.minimo || 5; if (d.cantidad <= limite) { itemsAlerta.push(`<strong>${d.medicamento}</strong>: Quedan ${d.cantidad} ${d.unidad || 'U.'}`); } }); if(itemsAlerta.length > 0) { cajaAlerta.classList.remove('oculto'); let html = ''; let maxMostrar = Math.min(3, itemsAlerta.length); for(let i=0; i < maxMostrar; i++){ html += `<li>${itemsAlerta[i]}</li>`; } if(itemsAlerta.length > 3) { html += `<li style="list-style:none; margin-top:10px; font-weight:bold; cursor:pointer; color:#0d6efd; text-decoration:underline;" onclick="abrirPantalla('pantalla-ver-inventario', cargarInventarioVista)">+ ${itemsAlerta.length - 3} productos más</li>`; } lista.innerHTML = html; } else { cajaAlerta.classList.add('oculto'); } }); }
 
         // --- CÁMARA Y CANCELAR ---
-        function iniciarCamara(idDiv, idDestino) { camaraActivaId = idDiv; document.getElementById(idDiv).classList.remove('oculto'); if(!lectorQr) { lectorQr = new Html5Qrcode(idDiv); } lectorQr.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (codigo) => { reproducirSonidoBip(); document.getElementById(idDestino).value = codigo; if(idDestino === 'buscador-pos') autocompletarPrecio(); if(idDestino === 'buscador-hosp-item') autocompletarPrecioHosp(); detenerCamara(); reiniciarTemporizador(); }, (err) => {} ).catch(e => { alert("Error de cámara."); detenerCamara(); }); }
+        function iniciarCamara(idDiv, idDestino) { camaraActivaId = idDiv; document.getElementById(idDiv).classList.remove('oculto'); if(!lectorQr) { lectorQr = new Html5Qrcode(idDiv); } lectorQr.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (codigo) => { reproducirSonidoBip(); document.getElementById(idDestino).value = codigo; if(idDestino === 'buscador-pos') autocompletarPrecio(codigo, 'precio-pos'); detenerCamara(); reiniciarTemporizador(); }, (err) => {} ).catch(e => { alert("Error de cámara."); detenerCamara(); }); }
         function detenerCamara() { if(lectorQr && camaraActivaId) { lectorQr.stop().then(() => { document.getElementById(camaraActivaId).classList.add('oculto'); lectorQr.clear(); lectorQr = null; camaraActivaId = ""; }).catch(e => {}); } }
 
         // --- VENTA GENERAL (POS) ---
@@ -614,8 +647,22 @@
         function descontarInventarioAutomatico(articulosVendidos) { articulosVendidos.forEach(item => { if(item.tipo !== 'Servicio Médico') { db.collection("Inventario").doc(item.nombre).get().then(doc => { if(doc.exists) { let actual = doc.data().cantidad; db.collection("Inventario").doc(item.nombre).update({ cantidad: actual - 1 }); } }); } }); }
 
         // --- MANEJO HOSPITALARIO ---
-        function abrirHospitalizacion() { cambiarPantalla('pantalla-menu', 'pantalla-hospitalizacion'); document.getElementById('btn-abrir-firmas').classList.remove('oculto'); document.getElementById('zona-firmas-oculta').classList.add('oculto'); limpiarFirma('cliente'); canvasActivo=false; carritoHosp = []; actualizarCarritoHospUI(); autorizacionesHosp = ["AUTORIZACIÓN HOSPITALARIA (MANEJO MÉDICO)"]; actualizarAutorizacionesUI(); document.getElementById('tipo-hosp-item').value = "Servicio Médico"; actualizarDatalistHosp(); }
-        function actualizarAutorizacionesUI() { const div = document.getElementById('lista-autorizaciones'); div.innerHTML = ''; if(autorizacionesHosp.length === 0) { div.innerHTML = '<span style="color:#aaa; font-size:0.9em;">Sin autorizaciones.</span>'; return; } autorizacionesHosp.forEach((auth, idx) => { div.innerHTML += `<span class="badge-auth">${auth} <span onclick="eliminarAutorizacion(${idx})">✖</span></span>`; }); }
+        function abrirHospitalizacion() { 
+            cambiarPantalla('pantalla-menu', 'pantalla-hospitalizacion'); document.getElementById('btn-abrir-firmas').classList.remove('oculto'); document.getElementById('zona-firmas-oculta').classList.add('oculto'); limpiarFirma('cliente'); canvasActivo=false; carritoHosp = []; actualizarCarritoHospUI(); 
+            autorizacionesHosp = ["AUTORIZACIÓN HOSPITALARIA (MANEJO MÉDICO)"]; actualizarAutorizacionesUI(); 
+            document.getElementById('tipo-hosp-item').value = "Servicio Médico"; actualizarDatalistHosp();
+        }
+        
+        function actualizarAutorizacionesUI() { 
+            const div = document.getElementById('lista-autorizaciones'); div.innerHTML = ''; 
+            if(autorizacionesHosp.length === 0) { div.innerHTML = '<span style="color:#aaa; font-size:0.9em; padding: 10px 0;">Sin autorizaciones.</span>'; } 
+            else { autorizacionesHosp.forEach((auth, idx) => { div.innerHTML += `<span class="badge-auth">${auth} <span onclick="eliminarAutorizacion(${idx})">✖</span></span>`; }); }
+            const sel = document.getElementById('select-auth-rapida');
+            if(sel) {
+                sel.innerHTML = '<option value="">-- Seleccionar Formato Legal para Imprimir --</option>';
+                opcionesLegalesMaestras.forEach(op => { if(!autorizacionesHosp.includes(op.val)) { sel.innerHTML += `<option value="${op.val}">${op.text}</option>`; } });
+            }
+        }
         function agregarAutorizacionSelect() { const sel = document.getElementById('select-auth-rapida'); const val = sel.value; if(val && !autorizacionesHosp.includes(val)) { autorizacionesHosp.push(val); actualizarAutorizacionesUI(); sel.value=""; } }
         function agregarAutorizacion() { const input = document.getElementById('input-nueva-auth'); const val = input.value.trim().toUpperCase(); if(val && !autorizacionesHosp.includes(val)) { autorizacionesHosp.push(val); input.value = ''; actualizarAutorizacionesUI(); } }
         function eliminarAutorizacion(idx) { autorizacionesHosp.splice(idx, 1); actualizarAutorizacionesUI(); }
@@ -624,8 +671,10 @@
             const val = document.getElementById('buscador-hosp-item').value; const inputPrecio = document.getElementById('precio-hosp-item'); const selectTipo = document.getElementById('tipo-hosp-item');
             if(val.length < 3) return;
             const item = inventarioGlobal.find(i => i.medicamento.toLowerCase() === val.toLowerCase()); 
-            if(item) { if (selectTipo.value !== item.tipoArticulo) { selectTipo.value = item.tipoArticulo; actualizarDatalistHosp(); } inputPrecio.readOnly = (item.tipoArticulo !== 'Servicio Médico'); inputPrecio.value = item.precioVenta || 0; inputPrecio.style.backgroundColor = inputPrecio.readOnly ? "#e9ecef" : "#fff"; } 
-            else { inputPrecio.readOnly = false; inputPrecio.style.backgroundColor = "#fff"; } 
+            if(item) { 
+                if (selectTipo.value !== item.tipoArticulo) { selectTipo.value = item.tipoArticulo; actualizarDatalistHosp(); }
+                inputPrecio.readOnly = (item.tipoArticulo !== 'Servicio Médico'); inputPrecio.value = item.precioVenta || 0; inputPrecio.style.backgroundColor = inputPrecio.readOnly ? "#e9ecef" : "#fff";
+            } else { inputPrecio.readOnly = false; inputPrecio.style.backgroundColor = "#fff"; } 
         }
 
         function agregarAlCarritoHosp() { 
@@ -656,6 +705,7 @@
             if(guardandoBloqueo) return;
             const dueno = document.getElementById('hosp-dueno').value; const paciente = document.getElementById('hosp-paciente').value; const tel = document.getElementById('hosp-tel').value; const raza = document.getElementById('hosp-raza').value; const edad = document.getElementById('hosp-edad').value; const sexo = document.getElementById('hosp-sexo').value; const peso = document.getElementById('hosp-peso').value; const temp = document.getElementById('hosp-temp').value; const notas = document.getElementById('hosp-notas').value; 
             let cCli = document.getElementById('canvas-cliente'); const firmaCliBase64 = (canvasActivo && firmaCapturada) ? cCli.toDataURL() : "";
+
             if(!dueno || !paciente) { alert("⚠️ Llena al menos Dueño y Paciente."); return; }
             const folioStr = String(Date.now()).slice(-5); const subtotal = carritoHosp.reduce((sum, item) => sum + item.precio, 0);
             
@@ -679,37 +729,6 @@
             <div class="firmas-area"><div class="firma-bloque">${dataAlta.firmaCliente ? `<img src="${dataAlta.firmaCliente}">` : `<div style="height: 45px;"></div>`}<div class="firma-linea">NOMBRE Y FIRMA DE CONFORMIDAD</div></div></div></div></div>`;
             document.getElementById('zona-impresion').innerHTML = html; setTimeout(() => { window.print(); cancelarVolver(); }, 500);
         }
-
-        // --- CORTE DE CAJA ---
-        function abrirCorteCaja(periodo) { 
-            cambiarPantalla('pantalla-menu', 'pantalla-corte-caja'); document.querySelectorAll('.btn-filtro').forEach(b => { b.classList.remove('activo'); }); let bt = document.getElementById(`filtro-${periodo}`); if(bt) bt.classList.add('activo'); const lista = document.getElementById('lista-corte-caja'); lista.innerHTML = '<div style="text-align:center; padding:40px;">⏳ Calculando...</div>'; 
-            let limiteTiempo = Date.now(); if(periodo === 'dia') limiteTiempo -= (24 * 60 * 60 * 1000); if(periodo === 'semana') limiteTiempo -= (7 * 24 * 60 * 60 * 1000); if(periodo === 'mes') limiteTiempo -= (30 * 24 * 60 * 60 * 1000); 
-            db.collection("Historial_Cobros").orderBy("timestamp", "desc").limit(1000).get().then(q => { 
-                let resumen = {}; let granTotal = 0; let granDescuento = 0; 
-                q.forEach(doc => { const d = doc.data(); if(d.timestamp >= limiteTiempo) { let mPago = d.metodoPago || 'Efectivo'; if(!resumen[mPago]) resumen[mPago] = 0; let totalPagado = d.totalCobrado || 0; let descuentoMoneda = d.valorDescuento || 0; resumen[mPago] += totalPagado; granTotal += totalPagado; granDescuento += descuentoMoneda; } }); 
-                document.getElementById('corte-gran-total').innerText = granTotal.toFixed(2); document.getElementById('corte-gran-descuento').innerText = granDescuento.toFixed(2); 
-                if(Object.keys(resumen).length === 0) { lista.innerHTML = '<p style="text-align:center; color:#666;">No hay movimientos.</p>'; return; } 
-                let html = ''; for(let metodo in resumen) { html += `<div class="tarjeta-info" style="border-left: 4px solid #0d6efd; display:flex; justify-content:space-between;"><strong style="color:#333; font-size:1.1em;">${metodo}</strong><strong style="color:#198754; font-size:1.2em;">$${resumen[metodo].toFixed(2)}</strong></div>`; } 
-                lista.innerHTML = html; 
-            }).catch(e => { lista.innerHTML = '<p style="color:red;">Error</p>'; }); 
-        }
-
-        // --- VER INVENTARIO ---
-        function abrirVerInventario() { cambiarPantalla('pantalla-menu', 'pantalla-ver-inventario'); document.getElementById('busqueda-inv-texto').value = ''; document.getElementById('busqueda-inv-stock').value = 'todos'; cargarInventarioVista(); }
-        function cargarInventarioVista() {
-            const lista = document.getElementById('lista-stock-firebase'); lista.innerHTML = '<div style="text-align:center; padding:40px;">⏳ Cargando inventario...</div>';
-            db.collection("Inventario").get().then((q) => { 
-                let inventarioHTML = []; q.forEach(doc => inventarioHTML.push(doc.data())); inventarioHTML.sort((a,b) => a.medicamento.localeCompare(b.medicamento)); 
-                lista.innerHTML = inventarioHTML.length === 0 ? '<p style="text-align:center;">No hay inventario.</p>' : ''; let html = ''; 
-                inventarioHTML.forEach((d) => { 
-                    if(d.tipoArticulo === 'Servicio Médico') return; 
-                    let limite = d.minimo || 5; const claseAlerta = d.cantidad <= limite ? 'stock-alerta' : 'stock-ok'; const mensajeAlerta = d.cantidad <= limite ? `<div style="margin-top:8px; padding:5px; background:#fff0f0; color:#dc3545; border-radius:5px; text-align:center; font-size:0.85em; font-weight:bold;">¡Bajo Stock!</div>` : ''; 
-                    let btnEdit = (usuarioLogueado.rol === 'Gerente' || usuarioLogueado.rol === 'Sub-Gerente') ? `<div class="th-pie" style="margin-top: 10px; border-top: 1px dashed #eee; padding-top: 10px;"><button class="btn-exp-action" style="padding: 6px 12px; font-size: 0.85em;" onclick="editarProducto('${d.medicamento}')">✏️ Editar Detalles</button></div>` : '';
-                    html += `<div class="tarjeta-info ${claseAlerta}"><div class="th-header"><strong style="font-size:1.1em;">${d.medicamento}</strong> <span style="font-size: 1.2em; font-weight: bold; background:#f8f9fa; padding:2px 10px; border-radius:8px; color: ${d.cantidad <= limite ? '#dc3545' : '#198754'};">${d.cantidad} <span style="font-size:0.6em; font-weight:normal; color:#666;">${d.unidad || 'U.'}</span></span></div><div class="th-cuerpo" style="color:#0d6efd; font-family:monospace;">$${d.precioVenta || 0}</div>${mensajeAlerta}${btnEdit}</div>`; 
-                }); lista.innerHTML = html; 
-            });
-        }
-        function filtrarInventario() { let txt = document.getElementById('busqueda-inv-texto').value.toLowerCase(); let stk = document.getElementById('busqueda-inv-stock').value; let tarjetas = document.getElementById('lista-stock-firebase').children; for(let t of tarjetas) { if(t.tagName !== 'DIV') continue; let matchTxt = t.innerText.toLowerCase().includes(txt); let matchStk = (stk === 'todos') || (stk === 'bajo' && t.classList.contains('stock-alerta')) || (stk === 'ok' && t.classList.contains('stock-ok')); t.style.display = (matchTxt && matchStk) ? "" : "none"; } }
 
         // --- EXPEDIENTE ---
         function abrirExpediente() { cambiarPantalla('pantalla-menu', 'pantalla-expediente'); document.getElementById('buscador-expediente').value = ''; cargarExpedienteBase(); }
@@ -741,11 +760,42 @@
         }
         function reimprimirDesdeExpediente(ts, tipo, formato) { let data = datosExpediente.find(x => x.timestamp == ts && x.tipoRegistro == tipo); if(data) { if(formato === 'hoja') generarHojasLegalesDinamicas(data); else imprimirTicketBoucher(data); } }
 
+        // --- CORTE DE CAJA ---
+        function abrirCorteCaja(periodo) { 
+            cambiarPantalla('pantalla-menu', 'pantalla-corte-caja'); document.querySelectorAll('.btn-filtro').forEach(b => { b.classList.remove('activo'); }); let bt = document.getElementById(`filtro-${periodo}`); if(bt) bt.classList.add('activo'); const lista = document.getElementById('lista-corte-caja'); lista.innerHTML = '<div style="text-align:center; padding:40px;">⏳ Calculando...</div>'; 
+            let limiteTiempo = Date.now(); if(periodo === 'dia') limiteTiempo -= (24 * 60 * 60 * 1000); if(periodo === 'semana') limiteTiempo -= (7 * 24 * 60 * 60 * 1000); if(periodo === 'mes') limiteTiempo -= (30 * 24 * 60 * 60 * 1000); 
+            db.collection("Historial_Cobros").orderBy("timestamp", "desc").limit(1000).get().then(q => { 
+                let resumen = {}; let granTotal = 0; let granDescuento = 0; 
+                q.forEach(doc => { const d = doc.data(); if(d.timestamp >= limiteTiempo) { let mPago = d.metodoPago || 'Efectivo'; if(!resumen[mPago]) resumen[mPago] = 0; let totalPagado = d.totalCobrado || 0; let descuentoMoneda = d.valorDescuento || 0; resumen[mPago] += totalPagado; granTotal += totalPagado; granDescuento += descuentoMoneda; } }); 
+                document.getElementById('corte-gran-total').innerText = granTotal.toFixed(2); document.getElementById('corte-gran-descuento').innerText = granDescuento.toFixed(2); 
+                if(Object.keys(resumen).length === 0) { lista.innerHTML = '<p style="text-align:center; color:#666;">No hay movimientos.</p>'; return; } 
+                let html = ''; for(let metodo in resumen) { html += `<div class="tarjeta-info" style="border-left: 4px solid #0d6efd; display:flex; justify-content:space-between;"><strong style="color:#333; font-size:1.1em;">${metodo}</strong><strong style="color:#198754; font-size:1.2em;">$${resumen[metodo].toFixed(2)}</strong></div>`; } 
+                lista.innerHTML = html; 
+            }).catch(e => { lista.innerHTML = '<p style="color:red;">Error</p>'; }); 
+        }
+
+        // --- VER INVENTARIO ---
+        function abrirVerInventario() { cambiarPantalla('pantalla-menu', 'pantalla-ver-inventario'); document.getElementById('busqueda-inv-texto').value = ''; document.getElementById('busqueda-inv-stock').value = 'todos'; cargarInventarioVista(); }
+        function cargarInventarioVista() {
+            const lista = document.getElementById('lista-stock-firebase'); lista.innerHTML = '<div style="text-align:center; padding:40px;">⏳ Cargando inventario...</div>';
+            db.collection("Inventario").get().then((q) => { 
+                let inventarioHTML = []; q.forEach(doc => inventarioHTML.push(doc.data())); inventarioHTML.sort((a,b) => a.medicamento.localeCompare(b.medicamento)); 
+                lista.innerHTML = inventarioHTML.length === 0 ? '<p style="text-align:center;">No hay inventario.</p>' : ''; let html = ''; 
+                inventarioHTML.forEach((d) => { 
+                    if(d.tipoArticulo === 'Servicio Médico') return; 
+                    let limite = d.minimo || 5; const claseAlerta = d.cantidad <= limite ? 'stock-alerta' : 'stock-ok'; const mensajeAlerta = d.cantidad <= limite ? `<div style="margin-top:8px; padding:5px; background:#fff0f0; color:#dc3545; border-radius:5px; text-align:center; font-size:0.85em; font-weight:bold;">¡Bajo Stock!</div>` : ''; 
+                    let btnEdit = (usuarioLogueado.rol === 'Gerente' || usuarioLogueado.rol === 'Sub-Gerente') ? `<div class="th-pie" style="margin-top: 10px; border-top: 1px dashed #eee; padding-top: 10px;"><button class="btn-exp-action" style="padding: 6px 12px; font-size: 0.85em;" onclick="editarProducto('${d.medicamento}')">✏️ Editar Detalles</button></div>` : '';
+                    html += `<div class="tarjeta-info ${claseAlerta}" data-unidad="${d.unidad}"><div class="th-header"><strong style="font-size:1.1em;">${d.medicamento}</strong> <span style="font-size: 1.2em; font-weight: bold; background:#f8f9fa; padding:2px 10px; border-radius:8px; color: ${d.cantidad <= limite ? '#dc3545' : '#198754'};">${d.cantidad} <span style="font-size:0.6em; font-weight:normal; color:#666;">${d.unidad || 'U.'}</span></span></div><div class="th-cuerpo" style="color:#0d6efd; font-family:monospace;">$${d.precioVenta || 0}</div>${mensajeAlerta}${btnEdit}</div>`; 
+                }); lista.innerHTML = html; 
+            });
+        }
+        function filtrarInventario() { let txt = document.getElementById('busqueda-inv-texto').value.toLowerCase(); let stk = document.getElementById('busqueda-inv-stock').value; let tarjetas = document.getElementById('lista-stock-firebase').children; for(let t of tarjetas) { if(t.tagName !== 'DIV') continue; let matchTxt = t.innerText.toLowerCase().includes(txt); let matchStk = (stk === 'todos') || (stk === 'bajo' && t.classList.contains('stock-alerta')) || (stk === 'ok' && t.classList.contains('stock-ok')); t.style.display = (matchTxt && matchStk) ? "" : "none"; } }
+
         // --- HISTORIAL ALMACÉN ---
         function abrirHistorialInventario() { cambiarPantalla('pantalla-menu', 'pantalla-historial-inventario'); document.getElementById('buscador-hist-inv').value = ''; cargarHistorialInventario(); }
         function cargarHistorialInventario() {
             document.getElementById('lista-historial-inventario').innerHTML = '<div style="text-align:center; padding:40px;">⏳ Cargando...</div>';
-            db.collection("Historial_Inventario").orderBy("timestamp", "desc").limit(200).get().then((q) => { datosHistorialInv = []; q.forEach(d => { let data = d.data(); data.id = d.id; data.coleccion = "Historial_Inventario"; datosHistorialInv.push(data);}); buscarHistorialInventario(); }).catch(e => document.getElementById('lista-historial-inventario').innerHTML = '<p style="color:red;">Error.</p>');
+            db.collection("Historial_Inventario").orderBy("timestamp", "desc").limit(200).get().then((q) => { datosHistorialInv = []; q.forEach(d => { let data = d.data(); data.id = d.id; data.coleccion = "Historial_Inventario"; datosHistorialInv.push(data);}); buscarHistorialInventario(); }).catch(e => document.getElementById('lista-historial-inventario').innerHTML = '<p style="color:red; text-align:center;">Error al cargar.</p>');
         }
         function buscarHistorialInventario() {
             let term = document.getElementById('buscador-hist-inv').value.toLowerCase(); let tipo = document.getElementById('filtro-tipo-hist-inv').value; let fecha = document.getElementById('filtro-fecha-hist-inv').value; let ahora = Date.now();
@@ -763,7 +813,7 @@
         function buscarHistorialVentas() {
             let term = document.getElementById('buscador-hist-ventas').value.toLowerCase(); let fecha = document.getElementById('filtro-fecha-hist-ventas').value; let ahora = Date.now();
             let filtrados = datosHistorialVentas.filter(d => { let txt = (d.paciente||'') + ' ' + (d.dueno||'') + ' ' + (d.telefono||'') + ' ' + (d.atendio||''); let coincideTexto = txt.toLowerCase().includes(term); let coincideFecha = true; if(fecha === 'hoy') coincideFecha = (ahora - d.timestamp) <= 86400000; if(fecha === 'semana') coincideFecha = (ahora - d.timestamp) <= 604800000; if(fecha === 'mes') coincideFecha = (ahora - d.timestamp) <= 2592000000; return coincideTexto && coincideFecha; });
-            let html = ''; if(filtrados.length === 0) { html = '<p style="text-align:center; color:#888;">No hay ventas.</p>'; } else {
+            let html = ''; if(filtrados.length === 0) { html = '<p style="text-align:center; color:#888;">No hay ventas recientes.</p>'; } else {
                 filtrados.forEach(d => { let desc = d.articulos ? d.articulos.map(a=>a.nombre).join(', ') : 'Venta General'; let isVenta = d.ventaMostrador; let btnBorrar = ''; if (usuarioLogueado && (usuarioLogueado.rol === 'Gerente' || usuarioLogueado.rol === 'Sub-Gerente')) { btnBorrar = `<button class="btn-borrar-historial" onclick="borrarRegistro('${d.coleccion}', '${d.id}')">🗑️</button>`; } html += `<div class="tarjeta-expediente venta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰</span> ${isVenta ? 'Público General' : d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 Dueño: ${isVenta ? 'N/A' : d.dueno} ${d.telefono ? `(${d.telefono})`:''}</span><span>👨‍⚕️ Atendió: ${d.atendio}</span><span>💳 Pago: ${d.metodoPago}</span></div><div class="exp-content" style="color:#146c43; font-weight:500;">🛒 ${desc}</div><div class="exp-footer"><span style="font-size:1.2em; font-weight:bold; color:#198754;">$${parseFloat(d.totalCobrado).toFixed(2)}</span> <div style="display:flex; gap:10px;"><button class="btn-exp-action btn-venta" onclick="reimprimirVentaDirecta(${d.timestamp})">🖨️ Ticket</button> ${btnBorrar}</div> </div></div>`; });
             } document.getElementById('lista-historial-ventas').innerHTML = html;
         }
@@ -811,7 +861,7 @@
             }); 
         }
 
-        // --- SISTEMA DE IMPRESIÓN (LEGAL) ---
+        // --- SISTEMA DE IMPRESIÓN LEGAL ---
         function generarHojasLegalesDinamicas(hosp) {
             let htmlFinal = ''; let fch = hosp.fechaTexto ? hosp.fechaTexto.split(',')[0] : '';
             let authList = hosp.autorizaciones || []; let htmlFirmaCli = hosp.firmaCliente ? `<img src="${hosp.firmaCliente}">` : `<div style="height: 45px;"></div>`;
