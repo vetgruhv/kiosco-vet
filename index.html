@@ -11,9 +11,15 @@
 
     <style>
         /* --- ESTILOS VISUALES PREMIUM HOMOLOGADOS --- */
-        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #eef2f6; margin: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; color: #2b3035; padding-bottom: 80px;}
-        .contenedor { background: white; padding: 35px; border-radius: 24px; box-shadow: 0 12px 35px rgba(0,0,0,0.06); width: 95%; max-width: 680px; margin: 20px auto; box-sizing: border-box; }
+        /* CENTRADO ABSOLUTO REPARADO */
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #eef2f6; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #2b3035; box-sizing: border-box;}
+        
+        /* Contenedores con Scroll Interno y Centrados */
+        .contenedor { background: white; padding: 35px; border-radius: 24px; box-shadow: 0 12px 35px rgba(0,0,0,0.06); width: 95%; max-width: 680px; max-height: 90vh; overflow-y: auto; box-sizing: border-box; position: relative; margin: auto;}
         .contenedor-ancho { max-width: 850px; } 
+        
+        /* Espaciador inferior para que el botón flotante no tape contenido */
+        .espaciador-inferior { height: 80px; width: 100%; display: block; }
         .seccion-separador { border-top: 2px dashed #e9ecef; margin: 25px 0; padding-top: 15px; }
 
         /* Teclado PIN */
@@ -36,20 +42,17 @@
         .form-row .grupo-formulario { margin-bottom: 0; flex: 1 1 200px; }
         .grupo-formulario { margin-bottom: 20px; text-align: left; width: 100%; box-sizing: border-box;}
         .grupo-formulario label { display: block; font-weight: 700; margin-bottom: 8px; color: #495057; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px;}
-        .grupo-formulario input, .grupo-formulario select, .grupo-formulario textarea { width: 100%; padding: 14px; font-size: 1em; border: 2px solid #e9ecef; border-radius: 12px; box-sizing: border-box; font-family: inherit; transition: all 0.2s; background-color: #f8f9fa; color: #333; outline: none; appearance: none; -webkit-appearance: none; }
+        .grupo-formulario input, .grupo-formulario select, .grupo-formulario textarea { width: 100%; padding: 14px; font-size: 1em; border: 2px solid #e9ecef; border-radius: 12px; box-sizing: border-box; font-family: inherit; transition: all 0.2s; background-color: #f8f9fa; color: #333; outline: none; }
         .grupo-formulario input:focus, .grupo-formulario select:focus, .grupo-formulario textarea:focus { border-color: #0d6efd; background-color: #fff; box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1); }
         .input-buscador { font-size: 1.05em !important; border: 2px solid #0d6efd !important; background: #fff !important; }
         
         /* Botones */
         .btn { width: 100%; padding: 16px; font-size: 1.1em; border: none; border-radius: 14px; cursor: pointer; font-weight: bold; transition: all 0.2s ease; display: block; text-align: center; box-sizing: border-box;}
-        .btn-qr { background: #e3f2fd; color: #0d6efd; border: 2px dashed #0d6efd; margin-bottom: 20px;}
         .btn-guardar { background: #198754; color: white; box-shadow: 0 6px 15px rgba(25, 135, 84, 0.25); margin-top: 10px;}
         .btn-guardar:hover { background: #157347; transform: translateY(-2px); }
         .btn-guardar-rojo { background: #dc3545; color: white; box-shadow: 0 6px 15px rgba(220, 53, 69, 0.25); }
         .btn-guardar-azul { background: #0d6efd; color: white; box-shadow: 0 6px 15px rgba(13, 110, 253, 0.25); }
         .btn-guardar-azul:hover { background: #0b5ed7; transform: translateY(-2px); }
-        .btn-cancelar { background: transparent; color: #dc3545; margin-top: 10px; border: 2px solid #ffe3e3; padding: 12px;}
-        .btn-cancelar:hover { background: #fff0f0; }
         .btn-filtro { flex: 1; padding: 10px; border: 2px solid #e9ecef; background: white; color: #6c757d; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; white-space: nowrap;}
         .btn-filtro.activo { background: #0d6efd; color: white; border-color: #0d6efd; box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2); }
 
@@ -90,7 +93,7 @@
         /* FIRMAS CLIENTE */
         .firma-card { width: 100%; max-width: 450px; margin: 0 auto; border: 1px solid #e9ecef; border-radius: 14px; padding: 15px; background: #fff; text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.02); box-sizing: border-box;}
         .firma-title { font-size: 0.85em; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; color: #198754;}
-        .canvas-firma { border: 2px dashed #ced4da; border-radius: 10px; width: 100%; height: 140px; background: #fafafa; touch-action: none; margin-bottom: 12px; cursor: crosshair;}
+        .canvas-firma { border: 2px dashed #ced4da; border-radius: 10px; width: 100%; height: 140px; background: #fafafa; touch-action: none; margin-bottom: 12px; cursor: crosshair; box-sizing: border-box;}
         .btn-borrar-firma { border: 1px solid #ffc9c9; background: #fff0f0; color: #dc3545; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-size: 0.85em; font-weight: bold;}
 
         /* PANELES DE BÚSQUEDA Y LISTAS RECTAS */
@@ -221,25 +224,25 @@
         
         <h4 id="titulo-gerencia" class="oculto" style="color: #adb5bd; margin: 25px 0 15px 0; text-align: left; text-transform: uppercase; font-size: 0.85em; letter-spacing:1px;">Administración (Gerencia)</h4>
         <div class="menu-grid">
-            <button id="btn-corte" class="btn-menu oculto" onclick="abrirCorteCaja('dia')" style="background-color: #f0f9ff; border-color: #b6e3f4;">
+            <button id="btn-corte" class="btn-menu oculto" onclick="abrirPantalla('pantalla-corte-caja', () => abrirCorteCaja('dia'))" style="background-color: #f0f9ff; border-color: #b6e3f4;">
                 <span class="emoji">💰</span> <span style="color: #0dcaf0;">Corte de Caja</span>
             </button>
-            <button id="btn-ver-inventario" class="btn-menu oculto" onclick="abrirVerInventario()">
+            <button id="btn-ver-inventario" class="btn-menu oculto" onclick="abrirPantalla('pantalla-ver-inventario', cargarInventarioVista)">
                 <span class="emoji">👀</span> <span>Ver Inventario</span>
             </button>
-            <button id="btn-alta-inventario" class="btn-menu oculto" onclick="abrirInventario()">
+            <button id="btn-alta-inventario" class="btn-menu oculto" onclick="abrirPantalla('pantalla-inventario')">
                 <span class="emoji">📦</span> <span>Alta Lotes / Servicios</span>
             </button>
-            <button id="btn-hist-inventario" class="btn-menu oculto" onclick="abrirHistorialInventario()">
+            <button id="btn-hist-inventario" class="btn-menu oculto" onclick="abrirPantalla('pantalla-historial-inventario', cargarHistorialInventario)">
                 <span class="emoji">🗃️</span> <span>Historial Altas/Mermas</span>
             </button>
-            <button id="btn-historial" class="btn-menu oculto" onclick="abrirHistorialVentas()">
+            <button id="btn-historial" class="btn-menu oculto" onclick="abrirPantalla('pantalla-historial-ventas', abrirHistorialVentas)">
                 <span class="emoji">📋</span> <span>Historial de Ventas</span>
             </button>
-            <button id="btn-baja-inventario" class="btn-menu oculto" onclick="abrirBajaInventario()">
+            <button id="btn-baja-inventario" class="btn-menu oculto" onclick="abrirPantalla('pantalla-baja-inventario')">
                 <span class="emoji">📉</span> <span>Devolución / Baja</span>
             </button>
-            <button id="btn-usuarios" class="btn-menu oculto" onclick="abrirUsuarios()">
+            <button id="btn-usuarios" class="btn-menu oculto" onclick="abrirPantalla('pantalla-usuarios', abrirUsuarios)">
                 <span class="emoji">👥</span> <span>Personal</span>
             </button>
         </div>
@@ -292,6 +295,7 @@
             <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="margin:0;" onclick="procesarVenta(false)">💾 Solo Guardar</button></div>
             <div class="grupo-formulario"><button class="btn btn-guardar" style="margin:0;" onclick="procesarVenta(true)">🖨️ Guardar e Imprimir Ticket</button></div>
         </div>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 4: MANEJO HOSPITALARIO -->
@@ -390,6 +394,7 @@
         
         <div class="seccion-separador"></div>
         <button class="btn" style="background: #ffc107; color: #000;" onclick="procesarAltaHospitalaria()">🏥 Generar ALTA HOSPITALARIA (Imprimir)</button>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 4.5: EXPEDIENTE CLÍNICO UNIFICADO -->
@@ -402,6 +407,7 @@
             <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0; height: 100%;" onclick="cargarExpedienteBase()">🔄 Refrescar</button></div>
         </div>
         <div id="lista-expediente" class="lista-vertical"></div>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 5: CORTE DE CAJA -->
@@ -420,6 +426,7 @@
         </div>
         <h4 style="text-align: left; margin-bottom: 15px; color: #495057; text-transform: uppercase; font-size: 0.85em;">Desglose por Método de Pago:</h4>
         <div id="lista-corte-caja" class="lista-vertical"></div>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 6: VER INVENTARIO -->
@@ -430,6 +437,7 @@
             <div class="grupo-formulario"><label>Nivel Stock:</label><select id="busqueda-inv-stock" onchange="filtrarInventario()"><option value="todos">Todos</option><option value="bajo">🔴 Bajo Stock</option><option value="ok">🟢 Normal</option></select></div>
         </div>
         <div id="lista-stock-firebase" class="lista-vertical"></div>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 7: HISTORIAL DE INVENTARIO -->
@@ -442,6 +450,7 @@
             <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0; height: 100%;" onclick="cargarHistorialInventario()">🔄 Refrescar</button></div>
         </div>
         <div id="lista-historial-inventario" class="lista-vertical"></div>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 7.5: HISTORIAL DE VENTAS -->
@@ -453,6 +462,7 @@
             <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0; height: 100%;" onclick="abrirHistorialVentas()">🔄 Refrescar</button></div>
         </div>
         <div id="lista-historial-ventas" class="lista-vertical"></div>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 8: ALTA DE MEDICAMENTO Y SERVICIO -->
@@ -472,6 +482,7 @@
             <div class="grupo-formulario"><label>Stock Máximo:</label><input type="number" id="max-inventario" placeholder="Ej. 50"></div>
         </div>
         <button id="btn-guardar-inventario" class="btn btn-guardar" onclick="guardarEnInventario()">Guardar Alta</button>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 9: DEVOLUCIÓN / BAJA -->
@@ -481,6 +492,7 @@
         <div class="grupo-formulario"><label>Motivo:</label><input type="text" id="motivo-baja-inv" placeholder="Ej. Caducidad, Devolución..."></div>
         <div class="form-row"><div class="grupo-formulario"><label>Descontar (Cantidad):</label><input type="number" id="cantidad-baja-inv" placeholder="0"></div></div>
         <button class="btn btn-guardar btn-guardar-rojo" onclick="guardarBajaInventario()">Registrar Baja</button>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- PANTALLA 10: USUARIOS -->
@@ -496,6 +508,7 @@
             <div class="grupo-formulario busqueda-ancha" style="margin:0;"><label>🔍 Buscar personal:</label><input type="text" class="input-buscador" placeholder="Nombre o PIN..." oninput="filtrarTarjetas('lista-usuarios-firebase', this.value)"></div>
         </div>
         <div id="lista-usuarios-firebase" class="lista-vertical"></div>
+        <div class="espaciador-inferior"></div>
     </div>
 
     <!-- === LÓGICA MAESTRA JAVASCRIPT === -->
@@ -796,7 +809,7 @@
         function abrirHistorialInventario() { cambiarPantalla('pantalla-menu', 'pantalla-historial-inventario'); document.getElementById('buscador-hist-inv').value = ''; cargarHistorialInventario(); }
         function cargarHistorialInventario() {
             document.getElementById('lista-historial-inventario').innerHTML = '<div style="text-align:center; padding:40px;">⏳ Cargando...</div>';
-            db.collection("Historial_Inventario").orderBy("timestamp", "desc").limit(200).get().then((q) => { datosHistorialInv = []; q.forEach(d => { let data = d.data(); data.id = d.id; data.coleccion = "Historial_Inventario"; datosHistorialInv.push(data);}); buscarHistorialInventario(); }).catch(e => document.getElementById('lista-historial-inventario').innerHTML = '<p style="color:red;">Error.</p>');
+            db.collection("Historial_Inventario").orderBy("timestamp", "desc").limit(200).get().then((q) => { datosHistorialInv = []; q.forEach(d => { let data = d.data(); data.id = d.id; data.coleccion = "Historial_Inventario"; datosHistorialInv.push(data);}); buscarHistorialInventario(); }).catch(e => document.getElementById('lista-historial-inventario').innerHTML = '<p style="color:red; text-align:center;">Error al cargar.</p>');
         }
         function buscarHistorialInventario() {
             let term = document.getElementById('buscador-hist-inv').value.toLowerCase(); let tipo = document.getElementById('filtro-tipo-hist-inv').value; let fecha = document.getElementById('filtro-fecha-hist-inv').value; let ahora = Date.now();
