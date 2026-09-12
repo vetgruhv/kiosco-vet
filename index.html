@@ -14,36 +14,37 @@
         .tecla:active{background:#e9ecef;transform:scale(0.92)} .tecla-borrar{background:#fff0f0;color:#dc3545;border-color:#ffc9c9}
         .header-usuario{background:linear-gradient(135deg,#0caeb9,#088c96);color:#fff;padding:18px;border-radius:16px;margin-bottom:25px;font-weight:bold;font-size:1.1em;text-align:center;box-shadow:0 6px 15px rgba(12,174,185,0.25)}
         .menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-bottom:20px} .btn-menu{padding:20px 10px;font-size:0.95em;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1px solid #e9ecef;background:#fff;border-radius:16px;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 10px rgba(0,0,0,0.03);color:#495057;font-weight:600}
-        .btn-menu:hover{background:#fcfcfd;transform:translateY(-4px);border-color:#0caeb9} .alerta-banner{background:#fff3cd;border-left:6px solid #ffc107;border-radius:12px;padding:18px;margin-bottom:20px;text-align:left}
+        .btn-menu:hover{background:#fcfcfd;transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,0.06);border-color:#0caeb9}
+        .alerta-banner{background:#fff3cd;border-left:6px solid #ffc107;border-radius:12px;padding:18px;margin-bottom:20px;text-align:left}
         .form-row{display:flex;flex-wrap:wrap;gap:20px;margin-bottom:20px;align-items:flex-end} .form-row .grupo-formulario{margin-bottom:0;flex:1 1 200px}
-        .grupo-formulario{margin-bottom:20px;text-align:left;width:100%;box-sizing:border-box} .grupo-formulario label{display:block;font-weight:700;margin-bottom:8px;color:#495057;font-size:0.8em;text-transform:uppercase}
-        .grupo-formulario input,.grupo-formulario select,.grupo-formulario textarea{width:100%;padding:14px;font-size:1em;border:2px solid #e9ecef;border-radius:12px;box-sizing:border-box;font-family:inherit;background:#f8f9fa;color:#333;outline:none;appearance:none;-webkit-appearance:none}
-        .grupo-formulario input:focus,.grupo-formulario select:focus,.grupo-formulario textarea:focus{border-color:#0caeb9;background:#fff;box-shadow:0 0 0 4px rgba(12,174,185,0.1)}
+        .grupo-formulario{margin-bottom:20px;text-align:left;width:100%;box-sizing:border-box} .grupo-formulario label{display:block;font-weight:700;margin-bottom:8px;color:#495057;font-size:0.8em;text-transform:uppercase;letter-spacing:0.5px}
+        .grupo-formulario input,.grupo-formulario select,.grupo-formulario textarea{width:100%;padding:14px;font-size:1em;border:2px solid #e9ecef;border-radius:12px;box-sizing:border-box;font-family:inherit;transition:all 0.2s;background:#f8f9fa;color:#333;outline:none;appearance:none;-webkit-appearance:none}
+        .grupo-formulario input[type="file"]{background:#fff;padding:10px} .grupo-formulario input:focus,.grupo-formulario select:focus,.grupo-formulario textarea:focus{border-color:#0caeb9;background:#fff;box-shadow:0 0 0 4px rgba(12,174,185,0.1)}
         .input-buscador{font-size:1.05em!important;border:2px solid #0caeb9!important;background:#fff!important}
         .autocomplete-container{position:relative;width:100%} .autocomplete-dropdown{position:absolute;top:calc(100% + 5px);left:0;right:0;background:#fff;border:2px solid #0caeb9;border-radius:12px;max-height:250px;overflow-y:auto;z-index:10000;box-shadow:0 8px 25px rgba(0,0,0,0.15)}
-        .sugerencia-item{padding:12px 15px;border-bottom:1px solid #e9ecef;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:0.95em;color:#333} .sugerencia-item:hover{background:#f0f7ff}
-        .btn{width:100%;padding:16px;font-size:1.1em;border:none;border-radius:14px;cursor:pointer;font-weight:bold;display:block;text-align:center;box-sizing:border-box;transition:all 0.2s}
-        .btn-guardar{background:#198754;color:#fff;margin-top:10px} .btn-guardar:hover{background:#157347;transform:translateY(-2px)}
-        .btn-guardar-rojo{background:#dc3545;color:#fff} .btn-guardar-azul{background:#0caeb9;color:#fff} .btn-guardar-azul:hover{background:#088c96;transform:translateY(-2px)}
-        .btn-amarillo{background:#ffc107;color:#000;margin-top:10px} .btn-cancelar{background:transparent;color:#dc3545;margin-top:10px;border:2px solid #ffe3e3;padding:12px} .btn-cancelar:hover{background:#fff0f0}
-        .btn-filtro{flex:1;padding:10px;border:2px solid #e9ecef;background:#fff;color:#6c757d;border-radius:10px;cursor:pointer;font-weight:bold;white-space:nowrap} .btn-filtro.activo{background:#0caeb9;color:#fff;border-color:#0caeb9}
-        .fab-container{position:fixed;bottom:25px;right:25px;display:flex;flex-direction:column;gap:15px;z-index:9999} .fab{width:65px;height:65px;border-radius:50%;border:none;color:#fff;font-size:28px;box-shadow:0 6px 15px rgba(0,0,0,0.3);cursor:pointer;display:flex;justify-content:center;align-items:center} .fab:active{transform:scale(0.9)} 
-        .fab-preview{background:#0caeb9;display:none} .fab-cancel{background:#dc3545}
+        .sugerencia-item{padding:12px 15px;border-bottom:1px solid #e9ecef;cursor:pointer;transition:0.2s;display:flex;justify-content:space-between;align-items:center;font-size:0.95em;color:#333} .sugerencia-item:hover{background:#f0f7ff} .sugerencia-item:last-child{border-bottom:none} .sugerencia-icon{margin-right:8px;font-size:1.1em}
+        .btn{width:100%;padding:16px;font-size:1.1em;border:none;border-radius:14px;cursor:pointer;font-weight:bold;transition:all 0.2s;display:block;text-align:center;box-sizing:border-box}
+        .btn-guardar{background:#198754;color:#fff;box-shadow:0 6px 15px rgba(25,135,84,0.25);margin-top:10px} .btn-guardar:hover{background:#157347;transform:translateY(-2px)}
+        .btn-guardar-rojo{background:#dc3545;color:#fff;box-shadow:0 6px 15px rgba(220,53,69,0.25)} .btn-guardar-azul{background:#0caeb9;color:#fff;box-shadow:0 6px 15px rgba(12,174,185,0.25)} .btn-guardar-azul:hover{background:#088c96;transform:translateY(-2px)}
+        .btn-amarillo{background:#ffc107;color:#000;box-shadow:0 6px 15px rgba(255,193,7,0.25);margin-top:10px}
+        .btn-cancelar{background:transparent;color:#dc3545;margin-top:10px;border:2px solid #ffe3e3;padding:12px} .btn-cancelar:hover{background:#fff0f0}
+        .btn-filtro{flex:1;padding:10px;border:2px solid #e9ecef;background:#fff;color:#6c757d;border-radius:10px;cursor:pointer;font-weight:bold;transition:0.2s;white-space:nowrap} .btn-filtro.activo{background:#0caeb9;color:#fff;border-color:#0caeb9;box-shadow:0 4px 10px rgba(12,174,185,0.2)}
+        .fab-container{position:fixed;bottom:25px;right:25px;display:flex;flex-direction:column;gap:15px;z-index:9999} .fab{width:65px;height:65px;border-radius:50%;border:none;color:#fff;font-size:28px;box-shadow:0 6px 15px rgba(0,0,0,0.3);cursor:pointer;display:flex;justify-content:center;align-items:center;transition:0.3s} .fab:active{transform:scale(0.9)} .fab-preview{background:#0caeb9;display:none} .fab-cancel{background:#dc3545}
         .caja-cobro{background:#fffbf0;padding:25px;border-radius:18px;border:1px solid #ffecb5;margin-bottom:20px} .stock-alerta{border-left:6px solid #dc3545;background:#fffafb} .stock-ok{border-left:6px solid #198754} .oculto{display:none!important}
-        .carrito-box{background:#fff;border:2px solid #e9ecef;border-radius:14px;padding:15px;margin-bottom:20px;max-height:200px;overflow-y:auto} .item-carrito{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed #e9ecef;font-size:0.95em} .btn-eliminar-item{background:#ffe3e3;color:#dc3545;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:bold}
-        .caja-morada{background:#fdfaf6;padding:25px;border-radius:18px;border:1px solid #0caeb9;margin-bottom:25px} .titulo-morado{color:#0caeb9;font-weight:900;font-size:0.85em;text-transform:uppercase;margin-bottom:15px;display:block} .campos-dinamicos{background:#fff;padding:15px;border-radius:12px;border:1px dashed #0caeb9;margin-bottom:15px}
+        .carrito-box{background:#fff;border:2px solid #e9ecef;border-radius:14px;padding:15px;margin-bottom:20px;max-height:200px;overflow-y:auto;box-shadow:inset 0 2px 5px rgba(0,0,0,0.02)} .item-carrito{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed #e9ecef;font-size:0.95em} .item-carrito:last-child{border-bottom:none} .btn-eliminar-item{background:#ffe3e3;color:#dc3545;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:bold;transition:0.2s}
+        .caja-morada{background:#fdfaf6;padding:25px;border-radius:18px;border:1px solid #0caeb9;margin-bottom:25px} .titulo-morado{color:#0caeb9;font-weight:900;font-size:0.85em;text-transform:uppercase;margin-bottom:15px;display:block;letter-spacing:0.5px} .campos-dinamicos{background:#fff;padding:15px;border-radius:12px;border:1px dashed #0caeb9;margin-bottom:15px}
         .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:100000;display:flex;justify-content:center;align-items:center} .modal-content{background:#fff;width:95%;max-width:800px;height:90vh;border-radius:16px;display:flex;flex-direction:column;overflow:hidden} .modal-header{background:#0caeb9;color:#fff;padding:15px 20px;font-weight:bold;display:flex;justify-content:space-between;align-items:center} .modal-body{padding:20px;overflow-y:auto;flex:1;font-family:Arial,sans-serif;font-size:13px;line-height:1.5;color:#333} .modal-footer{padding:15px;border-top:1px solid #eee;text-align:center;background:#f8f9fa}
-        .firma-card{width:100%;max-width:450px;margin:0 auto;border:1px solid #e9ecef;border-radius:14px;padding:15px;background:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;box-sizing:border-box} .firma-title{font-size:0.85em;font-weight:800;margin-bottom:12px;text-transform:uppercase;color:#198754} .canvas-firma{border:2px dashed #ced4da;border-radius:10px;width:100%;height:140px;background:#fafafa;touch-action:none;margin-bottom:12px;cursor:crosshair;box-sizing:border-box} .btn-borrar-firma{border:1px solid #ffc9c9;background:#fff0f0;color:#dc3545;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:0.85em;font-weight:bold}
-        .panel-busqueda{background:#fff;padding:20px;border-radius:18px;margin-bottom:25px;border:1px solid #e9ecef;display:flex;flex-wrap:wrap;gap:15px;align-items:flex-end} .panel-busqueda .grupo-formulario{flex:1 1 200px;margin:0} .busqueda-ancha{flex:1 1 100%!important}
-        .lista-vertical{display:block;max-height:500px;overflow-y:auto;padding-right:10px;margin-bottom:15px} .tarjeta-expediente,.tarjeta-info{border:1px solid #e9ecef;border-radius:16px;padding:20px;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.03);text-align:left;position:relative;overflow:hidden;margin-bottom:18px;display:block;width:100%;box-sizing:border-box}
-        .badge-tipo{padding:5px 10px;border-radius:8px;font-size:0.8em;font-weight:bold;margin-right:10px;display:inline-block} .exp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;border-bottom:1px solid #f1f3f5;padding-bottom:10px;flex-wrap:wrap;gap:10px} .exp-title{font-weight:800;font-size:1.1em;color:#2b3035;display:flex;align-items:center} .exp-date{font-size:0.85em;color:#888;font-weight:500} .exp-content{background:#f8f9fa;padding:15px;border-radius:12px;font-size:0.95em;color:#444;white-space:pre-wrap;margin-bottom:15px;border:1px solid #f1f3f5;line-height:1.6} .exp-footer{display:flex;justify-content:space-between;align-items:center;font-size:0.9em;color:#666;flex-wrap:wrap;gap:10px}
-        .btn-exp-action{background:#e0f7fa;color:#0caeb9;border:none;padding:10px 18px;border-radius:10px;cursor:pointer;font-weight:bold;font-size:0.9em;display:flex;align-items:center;gap:6px} .btn-borrar-historial{background:#fff0f0;color:#dc3545;border:1px solid #ffc9c9;padding:10px 15px;border-radius:10px;cursor:pointer;font-weight:bold;font-size:0.9em}
-        .hosp-listas-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px} .hosp-columna{background:#fff;border:1px solid #e9ecef;border-radius:12px;padding:15px} .hosp-columna h5{margin:0 0 10px 0;border-bottom:2px dashed #e9ecef;padding-bottom:8px;text-transform:uppercase;font-size:0.85em;letter-spacing:0.5px}
+        .firma-card{width:100%;max-width:450px;margin:0 auto;border:1px solid #e9ecef;border-radius:14px;padding:15px;background:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;box-shadow:0 4px 8px rgba(0,0,0,0.02);box-sizing:border-box} .firma-title{font-size:0.85em;font-weight:800;margin-bottom:12px;text-transform:uppercase;color:#198754} .canvas-firma{border:2px dashed #ced4da;border-radius:10px;width:100%;height:140px;background:#fafafa;touch-action:none;margin-bottom:12px;cursor:crosshair;box-sizing:border-box} .btn-borrar-firma{border:1px solid #ffc9c9;background:#fff0f0;color:#dc3545;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:0.85em;font-weight:bold}
+        .panel-busqueda{background:#fff;padding:20px;border-radius:18px;margin-bottom:25px;border:1px solid #e9ecef;display:flex;flex-wrap:wrap;gap:15px;box-shadow:0 4px 15px rgba(0,0,0,0.03);align-items:flex-end} .panel-busqueda .grupo-formulario{flex:1 1 200px;margin:0} .busqueda-ancha{flex:1 1 100%!important}
+        .lista-vertical{display:block;max-height:500px;overflow-y:auto;padding-right:10px;margin-bottom:15px} .tarjeta-expediente,.tarjeta-info{border:1px solid #e9ecef;border-radius:16px;padding:20px;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.03);text-align:left;transition:0.2s;position:relative;overflow:hidden;margin-bottom:18px;display:block;width:100%;box-sizing:border-box}
+        .badge-tipo{padding:5px 10px;border-radius:8px;font-size:0.8em;font-weight:bold;margin-right:10px;display:inline-block} .exp-header,.th-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;border-bottom:1px solid #f1f3f5;padding-bottom:10px;flex-wrap:wrap;gap:10px} .exp-title,.th-header strong{font-weight:800;font-size:1.1em;color:#2b3035;display:flex;align-items:center} .exp-date,.th-header span{font-size:0.85em;color:#888;font-weight:500} .exp-meta{font-size:0.9em;color:#555;margin-bottom:15px;display:flex;gap:10px;flex-wrap:wrap} .exp-meta span{background:#f8f9fa;padding:6px 12px;border-radius:8px;border:1px solid #e9ecef;display:inline-block} .exp-content,.th-cuerpo{background:#f8f9fa;padding:15px;border-radius:12px;font-size:0.95em;color:#444;white-space:pre-wrap;margin-bottom:15px;border:1px solid #f1f3f5;line-height:1.6} .exp-footer,.th-pie{display:flex;justify-content:space-between;align-items:center;font-size:0.9em;color:#666;flex-wrap:wrap;gap:10px}
+        .btn-exp-action{background:#e0f7fa;color:#0caeb9;border:none;padding:10px 18px;border-radius:10px;cursor:pointer;font-weight:bold;font-size:0.9em;transition:0.2s;display:flex;align-items:center;gap:6px;box-sizing:border-box} .btn-exp-action:hover{background:#b2ebf2;transform:translateY(-2px)} .btn-exp-action.btn-venta{background:#e8f5e9;color:#198754} .btn-borrar-historial{background:#fff0f0;color:#dc3545;border:1px solid #ffc9c9;padding:10px 15px;border-radius:10px;cursor:pointer;font-weight:bold;font-size:0.9em;transition:0.2s}
+        .hosp-listas-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px} .hosp-columna{background:#fff;border:1px solid #e9ecef;border-radius:12px;padding:15px;box-shadow:inset 0 2px 4px rgba(0,0,0,0.01)} .hosp-columna h5{margin:0 0 10px 0;border-bottom:2px dashed #e9ecef;padding-bottom:8px;text-transform:uppercase;font-size:0.85em;letter-spacing:0.5px}
         @media (max-width:600px){.hosp-listas-grid{grid-template-columns:1fr}}
         #zona-impresion{display:none}
         @media print{
             @page{margin:0} body{background:#fff;margin:0;padding:0;color:#000} .contenedor,.fab-container,#modal-lectura{display:none!important} #zona-impresion{display:block!important;width:100%}
-            .ticket-print{width:78mm;font-family:'Courier New',Courier,monospace;font-size:12px;margin:0;padding:10mm 5mm;text-transform:uppercase} .ticket-print h2{font-size:16px;text-align:center;margin:0 0 5px 0;font-weight:bold} .ticket-print .info-tienda{text-align:center;font-size:11px;margin-bottom:10px;line-height:1.2} .ticket-print .info-ticket{margin-bottom:10px;font-size:11px;border-bottom:1px dashed #000;padding-bottom:5px;line-height:1.4} .ticket-print table{width:100%;border-collapse:collapse;margin-bottom:10px} .ticket-print th{border-bottom:1px dashed #000;text-align:left;font-weight:normal;font-size:11px;padding-bottom:2px} .ticket-print td{padding:4px 0;font-size:11px;vertical-align:top} .ticket-print .col-precio{text-align:right} .ticket-print .totales{text-align:right;margin-top:5px;font-size:12px;border-top:1px dashed #000;padding-top:5px;line-height:1.4} .ticket-print .footer{text-align:center;font-size:11px;margin-top:15px;border-top:1px dashed #000;padding-top:10px;line-height:1.4}
+            .ticket-print{width:78mm;font-family:'Courier New',Courier,monospace;font-size:12px;margin:0;padding:10mm 5mm;text-transform:uppercase} .ticket-print h2{font-size:16px;text-align:center;margin:0 0 5px 0;font-weight:bold} .ticket-print .info-tienda{text-align:center;font-size:11px;margin-bottom:10px;line-height:1.2} .ticket-print .info-ticket{margin-bottom:10px;font-size:11px;border-bottom:1px dashed #000;padding-bottom:5px;line-height:1.4} .ticket-print table{width:100%;border-collapse:collapse;margin-bottom:10px} .ticket-print th{border-bottom:1px dashed #000;text-align:left;font-weight:normal;font-size:11px;padding-bottom:2px} .ticket-print td{padding:4px 0;font-size:11px;vertical-align:top} .ticket-print .col-precio{text-align:right} .ticket-print .totales{text-align:right;margin-top:5px;font-size:12px;border-top:1px dashed #000;padding-top:5px;line-height:1.4} .ticket-print .totales strong{font-size:14px} .ticket-print .footer{text-align:center;font-size:11px;margin-top:15px;border-top:1px dashed #000;padding-top:10px;line-height:1.4}
             .receta-print{width:100%;max-width:216mm;font-family:Arial,sans-serif;margin:0 auto;padding:10mm 15mm;box-sizing:border-box;color:#000} .receta-print .cabecera{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:15px;border-bottom:2px solid #0caeb9;padding-bottom:10px} .receta-print .logo-area{width:40%} .receta-print .logo-area h1{margin:0;font-size:38px;font-weight:900;letter-spacing:-1px;margin-bottom:-5px;color:#0caeb9} .receta-print .logo-area p{margin:0;font-size:10px;letter-spacing:2px;font-weight:bold;color:#0caeb9} .receta-print .datos-clinica{width:50%;font-size:10px;text-align:right;line-height:1.3;font-weight:bold} .receta-print h2{text-align:center;font-size:14px;text-transform:uppercase;margin:15px 0}
             .tabla-datos{width:100%;border-collapse:collapse;margin-bottom:15px;font-size:10px} .tabla-datos td{border:1px solid #000;padding:4px 6px} .tabla-datos .bg-gris{background-color:#f0f0f0;font-weight:bold;width:25%} .cuerpo-texto{font-size:11px;text-align:justify;line-height:1.5;margin-bottom:20px} .cuerpo-texto p{margin:0 0 10px 0}
             .firmas-area{display:flex;justify-content:center;margin-top:40px;margin-bottom:10px} .firma-bloque{width:60%;text-align:center;font-size:11px;font-weight:bold} .firma-bloque img{max-height:60px;display:block;margin:0 auto 5px auto} .firma-linea{border-top:1px solid #000;padding-top:4px;display:inline-block;width:100%}
@@ -52,6 +53,7 @@
 </head>
 <body>
 
+    <datalist id="lista-medicamentos-general"></datalist>
     <div id="zona-impresion"></div>
 
     <!-- MODAL DE LECTURA (DOCUMENTOS LEGALES) -->
@@ -111,7 +113,7 @@
             <button class="btn-menu oculto" id="btn-ver-inventario" onclick="window.abrirVerInventario()"><span>👀 Ver Inventario</span></button>
             <button class="btn-menu oculto" id="btn-alta-inventario" onclick="window.abrirInventario()"><span>📦 Alta productos/servicios</span></button>
             <button class="btn-menu oculto" id="btn-sistemas" onclick="window.abrirModoSistemas()"><span>⚙️ Modo Sistemas (Excel)</span></button>
-            <button class="btn-menu oculto" id="btn-hist-inventario" onclick="window.abrirHistorialInventario()"><span>🗃️ Historial de productos y devoluciones</span></button>
+            <button class="btn-menu oculto" id="btn-hist-inventario" onclick="window.abrirHistorialInventario()"><span>🗃️ Historial Almacén</span></button>
             <button class="btn-menu oculto" id="btn-historial" onclick="window.abrirHistorialVentas()"><span>📋 Historial de Ventas</span></button>
             <button class="btn-menu oculto" id="btn-baja-inventario" onclick="window.abrirBajaInventario()"><span>📉 Devolución / Baja</span></button>
             <button class="btn-menu oculto" id="btn-usuarios" onclick="window.abrirUsuarios()"><span>👥 Personal</span></button>
@@ -130,7 +132,7 @@
         <label style="font-weight:bold;font-size:0.85em;text-transform:uppercase">Artículos en la cuenta:</label><div id="carrito-lista" class="carrito-box"><p style="text-align:center;color:#adb5bd">Vacío</p></div>
         <div style="background:#f8f9fa;padding:15px;border-radius:12px;margin-bottom:20px;border:1px solid #e9ecef;display:flex;align-items:center;">
             <input type="checkbox" id="venta-mostrador" onchange="window.toggleMostrador()" style="width:24px;height:24px;margin:0 10px 0 0;appearance:auto;-webkit-appearance:auto;flex:none;"> 
-            <label style="font-weight:600;font-size:0.95em;color:#495057;margin:0;">Venta a Público General (Mostrador)</label>
+            <label style="font-weight:600;font-size:0.95em;color:#495057;margin:0;text-transform:none;">Venta a Público General (Mostrador)</label>
         </div>
         <div id="campos-paciente"><div class="form-row"><div class="grupo-formulario"><label>Dueño:</label><input type="text" id="nombre-dueno"></div><div class="grupo-formulario"><label>Teléfono:</label><input type="number" id="tel-dueno"></div></div><div class="form-row"><div class="grupo-formulario"><label>Paciente:</label><input type="text" id="nombre-perro"></div><div class="grupo-formulario"><label>Raza:</label><input type="text" id="raza-paciente"></div></div></div>
         <div class="caja-cobro"><h4 style="margin:0 0 15px 0;color:#856404;border-bottom:1px solid #ffeeba;padding-bottom:8px">💳 Cobro</h4><div class="form-row"><div class="grupo-formulario"><label>Descuento Directo ($):</label><input type="number" id="valor-descuento" placeholder="0.00" oninput="window.calcularTotal()"></div><div class="grupo-formulario"><label>Método de Pago:</label><select id="metodo-pago"><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Transferencia</option><option>Sin Cobro (Interno)</option></select></div></div><h2 style="text-align:right;color:#198754">Total: $<span id="total-cobrar">0.00</span></h2></div>
@@ -286,7 +288,7 @@
 
     <!-- LÓGICA CORE -->
     <script>
-        // Declaración global explícita de Funciones de Canvas
+        // Declaración global explícita de Funciones de Canvas (Reparado)
         window.resizeCanvases = function() {
             let cv = document.getElementById('canvas-cliente');
             if(cv) { let pW = cv.parentElement.clientWidth; cv.width = pW ? pW - 4 : 250; }
@@ -308,7 +310,7 @@
             firmaCapturada = false;
         };
 
-        // IMPRESIONES GLOBALES
+        // IMPRESIONES GLOBALES (Blindadas contra errores)
         window.imprimirTicketBoucher = function(venta) {
             let esHosp = venta.tipoRegistro === 'hospitalizacion' || venta.formatoLegal; let titulo = esHosp ? "TICKET HOSPITALIZACIÓN" : "TICKET DE VENTA";
             let arts = ''; venta.articulos.forEach(a => { let n = a.nombre?a.nombre.substring(0,20):'Prod'; arts+=`<tr><td>1</td><td>${n}</td><td class="col-precio">$${Number(a.precio).toFixed(2)}</td></tr>`; });
@@ -374,13 +376,15 @@
             window.cambiarPantalla('todas','pantalla-menu'); 
         };
 
-        // --- LOGIN Y SEGURIDAD BLINDADA ---
+        // --- LOGIN Y SEGURIDAD BLINDADA (Reparado los puntos de contraseña) ---
         window.agregarNumero = function(n) { 
             if(pinActual.length >= 4) return; 
             pinActual += n; 
-            document.getElementById('input-pin').value = pinActual; 
+            let inputPin = document.getElementById('input-pin');
+            inputPin.value = pinActual; 
             if(pinActual.length === 4) {
-                document.getElementById('input-pin').value = "⏳ Espere...";
+                inputPin.type = "text"; // Lo vuelve texto temporalmente para que se lea la palabra
+                inputPin.value = "⏳ Cargando...";
                 setTimeout(() => {
                     if(typeof window.validarPin === 'function') { window.validarPin(); } 
                     else { alert("Error de carga. Haz un Hard Refresh (Ctrl + F5)"); window.limpiarPin(); }
@@ -388,7 +392,12 @@
             }
         };
 
-        window.limpiarPin = function() { pinActual=""; document.getElementById('input-pin').value=""; };
+        window.limpiarPin = function() { 
+            pinActual=""; 
+            let inputPin = document.getElementById('input-pin');
+            inputPin.type = "password"; // Lo regresa a modo oculto
+            inputPin.value=""; 
+        };
         window.cerrarSesion = function() { usuarioLogueado=null; window.limpiarPin(); window.cambiarPantalla('todas','pantalla-login'); };
 
         window.validarPin = function() {
@@ -409,7 +418,7 @@
                         window.limpiarRegistrosViejos();
                     }
                     document.getElementById('texto-bienvenida').innerText = `Hola, ${usuarioLogueado.nombre}`;
-                    window.cargarSugerenciasInventario(); window.cambiarPantalla('pantalla-login', 'pantalla-menu');
+                    window.cargarSugerenciasInventario(); window.limpiarPin(); window.cambiarPantalla('pantalla-login', 'pantalla-menu');
                 } else { 
                     if(["1111","2222","3333","2306"].includes(pinActual)){
                         const bLocal = {"1111":{nombre:"Ana",rol:"Gerente"},"2222":{nombre:"Carlos",rol:"Sub-Gerente"},"3333":{nombre:"Luis",rol:"Doctor"},"2306":{nombre:"Sistemas",rol:"Sistemas"}};
@@ -479,6 +488,7 @@
             const val = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
             const isChecked = (id) => { const el = document.getElementById(id); return el ? el.checked : false; };
             
+            // Blindaje: Solo captura los valores si existen los campos, evitando que truene si falta alguno.
             let d = { doctor:usuarioLogueado?.nombre || '', dueno:val('hosp-dueno'), paciente:val('hosp-paciente'), telefono:val('hosp-tel'), raza:val('hosp-raza'), edad:val('hosp-edad'), sexo:val('hosp-sexo'), peso:val('hosp-peso'), prescripcion:val('hosp-notas'), formatoLegal:f };
             if(f==="AUTORIZACIÓN HOSPITALARIA"){d.domicilio=val('hosp-domicilio');d.correo=val('hosp-correo');d.color=val('hosp-color');d.nacimiento=val('hosp-nacimiento');d.vacSextuple=val('hosp-vac-sextuple');d.vacRabia=val('hosp-vac-rabia');d.vacDesp=val('hosp-vac-desp');d.manejoMedico=val('hosp-manejo-medico');d.autorizaHosp=isChecked('check-hosp');}
             if(f==="CONTRATO DE PENSIÓN"){d.penEntrada=val('pen-entrada');d.penSalida=val('pen-salida');d.penCosto=val('pen-costo');d.penAlergias=val('pen-alergias');d.penSinComida=val('pen-sin-comida');d.penMarca=val('pen-marca');d.penHorario=val('pen-horario');d.penCantidad=val('pen-cantidad');d.penCuidados=val('pen-cuidados');}
