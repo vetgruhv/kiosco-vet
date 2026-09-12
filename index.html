@@ -83,7 +83,6 @@
         .titulo-morado { color: #6f42c1; font-weight: 900; font-size: 0.85em; text-transform: uppercase; margin-bottom: 15px; display: block; letter-spacing: 0.5px;}
         .auth-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
         .auth-input-group input, .auth-input-group select { flex: 1; border: 1px solid #e9d5ff !important; border-radius: 12px; padding: 14px; outline: none; background: #fff !important; color: #495057; font-size: 1em;}
-        .auth-input-group input:focus, .auth-input-group select:focus { border-color: #6f42c1 !important; box-shadow: 0 0 0 4px rgba(111, 66, 193, 0.1); }
         .auth-input-group button { background: #6f42c1; color: white; border: none; border-radius: 12px; padding: 0 25px; font-weight: bold; font-size: 1.05em; cursor: pointer; transition: 0.2s; white-space: nowrap; box-shadow: 0 4px 10px rgba(111, 66, 193, 0.2);}
         .lista-autorizaciones { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px;}
         .badge-auth { background: #f3e8ff; color: #6f42c1; padding: 8px 16px; border-radius: 20px; font-size: 0.9em; font-weight: bold; display: flex; align-items: center; gap: 8px; border: 1px solid #d8b4fe;}
@@ -171,9 +170,6 @@
             .receta-print .firma-bloque img { max-height: 60px; display: block; margin: 0 auto 5px auto; }
             .receta-print .firma-linea { border-top: 1px solid #2c6e8f; padding-top: 4px; color: #2c6e8f; display: inline-block; width: 100%;}
             .receta-print .footer-receta { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; font-size: 10px; line-height: 1.4; color: #2c6e8f;}
-            .print-grid-listas { display: flex; gap: 20px; font-size: 11px; color: black; }
-            .print-grid-listas div { flex: 1; }
-            .print-grid-listas ul { padding-left: 15px; margin-top: 5px; margin-bottom:0;}
         }
     </style>
 </head>
@@ -296,6 +292,7 @@
         </div>
         
         <div class="form-row">
+            <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="margin:0;" onclick="procesarVenta(false)">💾 Solo Guardar</button></div>
             <div class="grupo-formulario"><button class="btn btn-guardar" style="margin:0;" onclick="procesarVenta(true)">🖨️ Guardar e Imprimir Ticket</button></div>
         </div>
     </div>
@@ -349,7 +346,7 @@
             </div>
             <div class="grupo-formulario" style="flex: 1; min-width: 130px; margin:0;">
                 <label>Clasificación:</label>
-                <select id="tipo-hosp-item" onchange="actualizarDatalistHosp()">
+                <select id="tipo-hosp-item">
                     <option value="Servicio Médico">🩺 Servicio Médico</option>
                     <option value="Medicamento/Producto">💊 Insumo / Medicamento</option>
                 </select>
@@ -554,6 +551,17 @@
             { val: "ALTA VOLUNTARIA", text: "Alta Voluntaria (Contra indicación médica)" }
         ];
 
+        // --- SISTEMA DE IMPRESIÓN ---
+        function imprimirTicketBoucher(venta) {
+            let esHospitalizacion = venta.tipoRegistro === 'hospitalizacion' || venta.autorizaciones !== undefined;
+            let titulo = esHospitalizacion ? "TICKET HOSPITALIZACIÓN" : "TICKET DE VENTA";
+            let htmlArticulos = ''; venta.articulos.forEach(a => { let n = a.nombre ? (a.nombre.length > 20 ? a.nombre.substring(0,20)+'..' : a.nombre) : 'Producto'; htmlArticulos += `<tr><td style="width:15%;">1</td><td style="width:55%;">${n}</td><td class="col-precio" style="width:30%;">$${Number(a.precio).toFixed(2)}</td></tr>`; });
+            let descuentoCalculado = (venta.subtotal || 0) - (venta.totalCobrado || 0);
+            
+            let html = `<div class="ticket-print"><div class="info-tienda"><strong>CLÍNICA VETERINARIA</strong><br>RFC: XXXXXXX000<br>AVENIDA PRINCIPAL #123<br>CIUDAD, ESTADO C.P. 00000<br>TEL. 555-123-4567</div><h2>${titulo}</h2><div class="info-ticket">CAJA #1 &nbsp;&nbsp;&nbsp;&nbsp; ${String(venta.fechaTexto).split(',')[0]}<br>ATENDIÓ: ${venta.atendio || venta.doctor}<br>${venta.ventaMostrador ? 'CLIENTE: MOSTRADOR (GENERAL)' : `PACIENTE: ${venta.paciente}<br>DUEÑO: ${venta.dueno}`}</div><table><thead><tr><th>CANT</th><th>ARTICULO</th><th class="col-precio">TOTAL</th></tr></thead><tbody>${htmlArticulos}</tbody></table><div class="totales">SUBTOTAL : &nbsp;&nbsp;$${Number(venta.subtotal||0).toFixed(2)}<br>${descuentoCalculado > 0 ? `DESCUENTO : &nbsp;&nbsp;-$${descuentoCalculado.toFixed(2)}<br>` : ''}<strong>PAGO TOTAL : &nbsp;&nbsp;$${Number(venta.totalCobrado||0).toFixed(2)}</strong></div><div class="footer">*** PAGO EN ${String(venta.metodoPago||'ESTANCIA HOSP.').toUpperCase()} ***<br><br>DOCUMENTO SIN VALIDEZ FISCAL<br>GRACIAS POR SU PREFERENCIA</div></div>`;
+            document.getElementById('zona-impresion').innerHTML = html; setTimeout(() => { window.print(); }, 500);
+        }
+
         // --- BUSCADOR INTELIGENTE (AUTOCOMPLETE) ---
         function buscarAutocomplete(inputId, dropdownId, callbackSelec, filtroTipo = null) {
             const input = document.getElementById(inputId); const dropdown = document.getElementById(dropdownId);
@@ -600,6 +608,7 @@
             }
         }
 
+        // --- FILTRO LISTAS ---
         function filtrarTarjetas(idContenedor, texto) {
             let term = texto.toLowerCase(); let tarjetas = document.getElementById(idContenedor).children;
             for(let t of tarjetas) { if(t.classList.contains('tarjeta-info') || t.classList.contains('tarjeta-expediente')) { t.style.display = t.innerText.toLowerCase().includes(term) ? "" : "none"; } }
@@ -629,6 +638,7 @@
         }
 
         // --- SEGURIDAD ---
+        function reproducirSonidoBip() { try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); const osc = ctx.createOscillator(); const vol = ctx.createGain(); osc.type = 'sine'; osc.frequency.value = 800; osc.connect(vol); vol.connect(ctx.destination); vol.gain.setValueAtTime(1, ctx.currentTime); vol.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15); osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.15); } catch (e) {} }
         function reiniciarTemporizador() { clearTimeout(temporizadorInactividad); if(usuarioLogueado) { temporizadorInactividad = setTimeout(() => { alert("Sesión cerrada por inactividad."); cancelarVolver(); cerrarSesion(); }, 600000); } }
         window.onload = function() { document.body.addEventListener('click', reiniciarTemporizador); document.body.addEventListener('keypress', reiniciarTemporizador); }
 
@@ -698,7 +708,7 @@
             
             db.collection("Historial_Cobros").add(ventaData).then(() => { 
                 descontarInventarioAutomatico(carrito); if(imprimir) { imprimirTicketBoucher(ventaData); } else { alert(`✅ Venta guardada.`); } cancelarVolver(); 
-            }).catch(e => { console.error(e); alert("Error al guardar: " + e.message + "\n\n(Revisa si tu regla de Firebase caducó o recarga la página con Ctrl + F5)"); }).finally(() => { guardandoBloqueo = false; document.body.style.cursor = 'default'; });
+            }).catch(e => { console.error(e); alert("Error al guardar en la nube: " + e.message + "\n\n(Espera un par de minutos a que apliquen las reglas de Firebase)"); }).finally(() => { guardandoBloqueo = false; document.body.style.cursor = 'default'; });
         }
         function descontarInventarioAutomatico(articulosVendidos) { articulosVendidos.forEach(item => { if(item.tipo !== 'Servicio Médico') { let safeName = String(item.nombre).replace(/\//g, '-'); db.collection("Inventario").doc(safeName).get().then(doc => { if(doc.exists) { let actual = doc.data().cantidad; db.collection("Inventario").doc(safeName).update({ cantidad: actual - 1 }); } }); } }); }
 
@@ -953,42 +963,6 @@
                     }); 
                 } else { alert("❌ El producto no existe."); } 
             }); 
-        }
-
-        // --- SISTEMA DE IMPRESIÓN LEGAL ---
-        function generarHojasLegalesDinamicas(hosp) {
-            let htmlFinal = ''; let fch = hosp.fechaTexto ? hosp.fechaTexto.split(',')[0] : '';
-            let authList = hosp.autorizaciones || []; let htmlFirmaCli = hosp.firmaCliente ? `<img src="${hosp.firmaCliente}">` : `<div style="height: 45px;"></div>`;
-
-            if(authList.includes("AUTORIZACIÓN HOSPITALARIA (MANEJO MÉDICO)")) {
-                htmlFinal += `<div class="receta-print"><div class="cabecera"><div class="logo-area"><h1 style="color: #2c6e8f;">Vetgru</h1><p style="color: #2c6e8f;">HOSPITAL VETERINARIO</p></div><div class="datos-area"><div class="linea-dato"><span>FECHA:</span> <span>${fch}</span></div><div class="linea-dato"><span>PROPIETARIO:</span> <span>${hosp.dueno}</span></div><div class="linea-dato"><span>PACIENTE:</span> <span>${hosp.paciente}</span></div><div class="linea-dato"><span>RAZA:</span> <span>${hosp.raza || ''}</span></div></div><div class="folio-area"><div class="linea-dato"><span>FOLIO:</span> <span class="folio-rojo">${hosp.folio || '00000'}</span></div><div class="linea-dato"><span>EDAD:</span> <span>${hosp.edad || ''}</span></div><div class="linea-dato"><span>SEXO:</span> <span>${hosp.sexo || ''}</span></div><div class="linea-dato"><span>PESO:</span> <span>${hosp.peso ? hosp.peso + ' Kg' : ''}</span></div></div></div>
-                <div class="cuerpo-receta" style="min-height:50mm;"><div style="font-size:11px; text-align:justify; line-height:1.4;"><strong style="font-size:13px;">AUTORIZACIÓN HOSPITALARIA</strong><br><br><strong>I.- MANEJO MÉDICO:</strong> Autorizo al equipo médico de VETGRU HOSPITAL VETERINARIO realizar el manejo necesario para el bienestar de mi mascota. Comprendo que la administración de sueros, medicamentos (anestésicos, analgésicos, antibióticos, entre otros) tiene la capacidad de producir reacciones alérgicas en mi mascota que pueden llegar a ser graves; para lo cual en caso de presentarse, autorizo plenamente al equipo médico a tomar acción para contrarrestar estos efectos indeseados. Por lo que comprendo perfectamente que existen riesgos de lesión o muerte para todo paciente sujeto a un procedimiento anestésico.<br><br><strong>II.- HOSPITALIZACIÓN:</strong> Comprendo que la hospitalización de mi mascota es necesaria para que este bajo atención y cuidado médico debido a la severidad de su enfermedad. Entiendo completamente que el equipo médico de VETGRU HOSPITAL VETERINARIO hará cuanto sea posible para minimizar el tiempo de hospitalización en la recuperación de mi mascota... y en caso de presentarse una respuesta inadecuada, deslindo cualquier responsabilidad a todo el equipo médico de VETGRU HOSPITAL VETERINARIO.<br><br>Comprendo que VETGRU HOSPITAL VETERINARIO no forma parte de la tienda, por lo tanto deslindo de toda responsabilidad a la tienda Petco. He leído y entendido todo lo anterior, aceptando términos y condiciones expuestas en este documento.</div>
-                <div class="firmas-area"><div class="firma-bloque">${htmlFirmaCli}<div class="firma-linea">NOMBRE, FIRMA DEL PROPIETARIO Y FECHA</div></div></div></div><div class="footer-receta"><div><strong style="font-size:11px;">📍 Blvd. Luis Donaldo Colosio No. 2275, Esq. Eulalio Gutiérrez</strong><br>San Alberto Saltillo Oriente, Coahuila<br><strong>HORARIO: 9AM - 9PM LUNES - DOMINGO</strong></div><div style="font-size: 13px; font-weight: bold;">📞 844 227 5808</div></div></div><div style="page-break-after: always;"></div>`;
-            }
-
-            if(authList.includes("CONTRATO DE PENSIÓN")) {
-                htmlFinal += `<div class="receta-print"><div class="cabecera"><div class="logo-area"><h1 style="color: #2c6e8f;">Vetgru</h1><p style="color: #2c6e8f;">HOSPITAL VETERINARIO</p></div><div class="datos-area"><div class="linea-dato"><span>FECHA:</span> <span>${fch}</span></div><div class="linea-dato"><span>PROPIETARIO:</span> <span>${hosp.dueno}</span></div><div class="linea-dato"><span>PACIENTE:</span> <span>${hosp.paciente}</span></div><div class="linea-dato"><span>RAZA:</span> <span>${hosp.raza || ''}</span></div></div><div class="folio-area"><div class="linea-dato"><span>FOLIO:</span> <span class="folio-rojo">${hosp.folio || '00000'}</span></div><div class="linea-dato"><span>EDAD:</span> <span>${hosp.edad || ''}</span></div><div class="linea-dato"><span>SEXO:</span> <span>${hosp.sexo || ''}</span></div><div class="linea-dato"><span>PESO:</span> <span>${hosp.peso ? hosp.peso + ' Kg' : ''}</span></div></div></div>
-                <div class="cuerpo-receta" style="min-height:50mm; padding: 10px;"><div style="font-size:9.5px; text-align:justify; line-height:1.2;"><strong style="font-size:11px;">CONTRATO DE PRESTACIÓN DE SERVICIO DE PENSIÓN CANINA Y FELINA</strong><br>Por medio de la presente yo el Sr. o Sra. <strong>${hosp.dueno}</strong> con teléfono <strong>${hosp.telefono || '_____________'}</strong> autorizo para que mi mascota de nombre <strong>${hosp.paciente}</strong>, raza <strong>${hosp.raza || '_____________'}</strong>, ingrese al servicio de pensión de ¨VETGRU HOSPITAL VETERINARIO”.<br><br>1.- He presentado mis verdaderos datos en la reseña de arriba...<br>2.- Mi mascota ha sido vacunada periódicamente... Estoy consciente de que existe la posibilidad de que mi mascota se enferme, aun estando vacunada.<br>3.- Me comprometo a liquidar todos los gastos generados durante la estancia de mi mascota.<br>4.- VETGRU ofrece dos tipos de estancia/pensión... Si mi mascota lastima a otra, seré el único responsable.<br>5.- Autorizo a VETGRU a hacer uso de los servicios veterinarios que estime para garantizar la buena salud de mi mascota.<br>6.- En el transcurso de la estancia pueden llegar a suceder accidentes... deslindo de toda responsabilidad a VETGRU.<br>7.- En caso de alguna enfermedad, lesión o muerte de la mascota durante su estancia, VETGRU tratará de contactarlo... Si mi mascota falleciese, VETGRU se encargara de realizar una necropsia... dando mi autorización como propietario con la firma de este contrato.<br>8.- Estoy consciente que pasado 10 días después de la fecha pactada de salida, si el propietario no recoge a su mascota, VETGRU podrá entregarlo a los servicios municipales.<br>9.- VETGRU no se hace responsable de la pérdida o daño de ningún artículo personal.<br><br>Comprendo que VETGRU HOSPITAL VETERINARIO no forma parte de la tienda, por lo tanto deslindo de toda responsabilidad a la tienda Petco. He leído y entendido todo lo anterior, aceptando términos y condiciones.</div>
-                <div class="firmas-area"><div class="firma-bloque">${htmlFirmaCli}<div class="firma-linea">NOMBRE Y FIRMA DE AUTORIZACION DE PROPIETARIO</div></div></div></div><div class="footer-receta"><div><strong style="font-size:11px;">📍 Blvd. Luis Donaldo Colosio No. 2275, Esq. Eulalio Gutiérrez</strong><br>San Alberto Saltillo Oriente, Coahuila<br><strong>HORARIO: 9AM - 9PM LUNES - DOMINGO</strong></div><div style="font-size: 13px; font-weight: bold;">📞 844 227 5808</div></div></div><div style="page-break-after: always;"></div>`;
-            }
-
-            if(authList.includes("ALTA VOLUNTARIA")) {
-                htmlFinal += `<div class="receta-print"><div class="cabecera"><div class="logo-area"><h1 style="color: #2c6e8f;">Vetgru</h1><p style="color: #2c6e8f;">HOSPITAL VETERINARIO</p></div><div class="datos-area"><div class="linea-dato"><span>FECHA:</span> <span>${fch}</span></div><div class="linea-dato"><span>PROPIETARIO:</span> <span>${hosp.dueno}</span></div><div class="linea-dato"><span>PACIENTE:</span> <span>${hosp.paciente}</span></div><div class="linea-dato"><span>RAZA:</span> <span>${hosp.raza || ''}</span></div></div><div class="folio-area"><div class="linea-dato"><span>FOLIO:</span> <span class="folio-rojo">${hosp.folio || '00000'}</span></div><div class="linea-dato"><span>EDAD:</span> <span>${hosp.edad || ''}</span></div><div class="linea-dato"><span>SEXO:</span> <span>${hosp.sexo || ''}</span></div><div class="linea-dato"><span>PESO:</span> <span>${hosp.peso ? hosp.peso + ' Kg' : ''}</span></div></div></div>
-                <div class="cuerpo-receta" style="min-height:50mm;"><div style="font-size:11px; text-align:justify; line-height:1.4;"><strong style="font-size:13px;">ALTA VOLUNTARIA</strong><br><br>POR VOLUNTAD PROPIA Y NO OBSTANTE A LA OPINION DEL PERSONAL MEDICO DE “GRUVETS” HOSPITAL VETERINARIO, HE DECIDIDO SOLICITAR MI “ALTA VOLUNTARIA”, POR LO CUAL EXIMO COMPLETAMENTE DE TODA RESPONSABILIDAD AL ÁREA MEDICA Y A GRUVET´S HOSPITAL POR LAS CONSECUENCIAS QUE PUDIERAN SOBREVENIR POR MI DECISIÓN.<br><br>Comprendo que VETGRU HOSPITAL VETERINARIO no forma parte de la tienda, por lo tanto deslindo de toda responsabilidad a la tienda Petco. He leído y entendido todo lo anterior, aceptando términos y condiciones expuestas en este documento.</div>
-                <div class="firmas-area"><div class="firma-bloque">${htmlFirmaCli}<div class="firma-linea">NOMBRE, FIRMA DEL PROPIETARIO Y FECHA</div></div></div></div><div class="footer-receta"><div><strong style="font-size:11px;">📍 Blvd. Luis Donaldo Colosio No. 2275, Esq. Eulalio Gutiérrez</strong><br>San Alberto Saltillo Oriente, Coahuila<br><strong>HORARIO: 9AM - 9PM LUNES - DOMINGO</strong></div><div style="font-size: 13px; font-weight: bold;">📞 844 227 5808</div></div></div><div style="page-break-after: always;"></div>`;
-            }
-
-            let otrasAuth = authList.filter(a => a !== "AUTORIZACIÓN HOSPITALARIA (MANEJO MÉDICO)" && a !== "CONTRATO DE PENSIÓN" && a !== "ALTA VOLUNTARIA");
-            let htmlAuth = otrasAuth.length > 0 ? `<div class="seccion-titulo">El propietario autoriza:</div><p style="font-size:12px; margin-top:0; font-weight:bold;">✅ ${otrasAuth.join('  ✅ ')}</p>` : '';
-            let htmlServicios = '', htmlMedicamentos = ''; 
-            if(hosp.articulos && hosp.articulos.length > 0) { hosp.articulos.forEach(a => { if(a.tipo === 'Servicio Médico') htmlServicios += `<li>${a.nombre}</li>`; else htmlMedicamentos += `<li>${a.nombre}</li>`; }); }
-
-            if (otrasAuth.length > 0 || (hosp.articulos && hosp.articulos.length > 0) || hosp.prescripcion) {
-                htmlFinal += `<div class="receta-print"><div class="cabecera"><div class="logo-area"><h1 style="color: #2c6e8f;">Vetgru</h1><p style="color: #2c6e8f;">HOSPITAL VETERINARIO</p></div><div class="datos-area"><div class="linea-dato"><span>FECHA:</span> <span>${fch}</span></div><div class="linea-dato"><span>PROPIETARIO:</span> <span>${hosp.dueno}</span></div><div class="linea-dato"><span>PACIENTE:</span> <span>${hosp.paciente}</span></div><div class="linea-dato"><span>RAZA:</span> <span>${hosp.raza || ''}</span></div></div><div class="folio-area"><div class="linea-dato"><span>FOLIO:</span> <span class="folio-rojo">${hosp.folio || '00000'}</span></div><div class="linea-dato"><span>EDAD:</span> <span>${hosp.edad || ''}</span></div><div class="linea-dato"><span>SEXO:</span> <span>${hosp.sexo || ''}</span></div><div class="linea-dato"><span>PESO:</span> <span>${hosp.peso ? hosp.peso + ' Kg' : ''}</span></div></div></div>
-                <div class="cuerpo-receta">${htmlAuth}<div style="display:flex; gap:20px; font-size:12px;">${htmlServicios ? `<div style="flex:1;"><div class="seccion-titulo">Servicios Médicos Aplicados:</div><ul style="padding-left:15px; margin-top:5px; margin-bottom:0;">${htmlServicios}</ul></div>` : ''}${htmlMedicamentos ? `<div style="flex:1;"><div class="seccion-titulo">Medicamentos / Insumos Aplicados:</div><ul style="padding-left:15px; margin-top:5px; margin-bottom:0;">${htmlMedicamentos}</ul></div>` : ''}</div><div class="seccion-titulo" style="margin-top:10px;">Notas de Evolución / Comentarios:</div><div class="prescripcion-texto">${hosp.prescripcion || 'Ninguna.'}</div><div class="firmas-area"><div class="firma-bloque">${htmlFirmaCli}<div class="firma-linea">Firma de conformidad del Propietario</div></div></div></div><div class="footer-receta"><div><strong style="font-size:11px;">📍 Blvd. Luis Donaldo Colosio No. 2275, Esq. Eulalio Gutiérrez</strong><br>San Alberto Saltillo Oriente, Coahuila<br><strong>HORARIO: 9AM - 9PM LUNES - DOMINGO</strong></div><div style="font-size: 13px; font-weight: bold;">📞 844 227 5808</div></div></div>`;
-            }
-
-            document.getElementById('zona-impresion').innerHTML = htmlFinal; setTimeout(() => { window.print(); }, 500);
         }
 
         // --- ADMINISTRAR USUARIOS ---
