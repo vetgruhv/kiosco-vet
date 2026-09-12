@@ -5,26 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hospital Veterinario ERP</title>
     
-    <!-- Firebase -->
+    <!-- Firebase y Excel -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    <!-- Librería para leer Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
         /* --- ESTILOS VISUALES PREMIUM HOMOLOGADOS --- */
-        body { 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            background-color: #eef2f6; margin: 0; display: flex; justify-content: center; 
-            align-items: flex-start; min-height: 100vh; color: #2b3035; box-sizing: border-box;
-            padding: 40px 10px 100px 10px; 
-        }
-        
-        .contenedor { 
-            background: white; padding: 35px; border-radius: 24px; box-shadow: 0 12px 35px rgba(0,0,0,0.06); 
-            width: 100%; max-width: 680px; max-height: calc(100vh - 80px); overflow-y: auto; 
-            box-sizing: border-box; position: relative; margin: auto; 
-        }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #eef2f6; margin: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; color: #2b3035; box-sizing: border-box; padding: 40px 10px 100px 10px; }
+        .contenedor { background: white; padding: 35px; border-radius: 24px; box-shadow: 0 12px 35px rgba(0,0,0,0.06); width: 100%; max-width: 680px; max-height: calc(100vh - 80px); overflow-y: auto; box-sizing: border-box; position: relative; margin: auto; }
         .contenedor-ancho { max-width: 850px; } 
         .seccion-separador { border-top: 2px dashed #e9ecef; margin: 25px 0; padding-top: 15px; }
 
@@ -52,7 +41,15 @@
         .grupo-formulario input:focus, .grupo-formulario select:focus, .grupo-formulario textarea:focus { border-color: #0d6efd; background-color: #fff; box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1); }
         .input-buscador { font-size: 1.05em !important; border: 2px solid #0d6efd !important; background: #fff !important; }
         
-        /* Botones */
+        /* BUSCADOR INTELIGENTE AUTOCOMPLETE */
+        .autocomplete-container { position: relative; width: 100%; }
+        .autocomplete-dropdown { position: absolute; top: calc(100% + 5px); left: 0; right: 0; background: white; border: 2px solid #0d6efd; border-radius: 12px; max-height: 250px; overflow-y: auto; z-index: 10000; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .sugerencia-item { padding: 12px 15px; border-bottom: 1px solid #e9ecef; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; font-size: 0.95em; color: #333;}
+        .sugerencia-item:hover { background: #f0f7ff; }
+        .sugerencia-item:last-child { border-bottom: none; }
+        .sugerencia-icon { margin-right: 8px; font-size: 1.1em; }
+
+        /* Botones Generales */
         .btn { width: 100%; padding: 16px; font-size: 1.1em; border: none; border-radius: 14px; cursor: pointer; font-weight: bold; transition: all 0.2s ease; display: block; text-align: center; box-sizing: border-box;}
         .btn-guardar { background: #198754; color: white; box-shadow: 0 6px 15px rgba(25, 135, 84, 0.25); margin-top: 10px;}
         .btn-guardar:hover { background: #157347; transform: translateY(-2px); }
@@ -64,7 +61,7 @@
         .btn-filtro { flex: 1; padding: 10px; border: 2px solid #e9ecef; background: white; color: #6c757d; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; white-space: nowrap;}
         .btn-filtro.activo { background: #0d6efd; color: white; border-color: #0d6efd; box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2); }
 
-        /* BOTON FLOTANTE */
+        /* BOTON FLOTANTE UNICO (CANCELAR) */
         .fab-container { position: fixed; bottom: 25px; right: 25px; display: flex; flex-direction: column; gap: 15px; z-index: 9999; }
         .fab { width: 65px; height: 65px; border-radius: 50%; border: none; color: white; font-size: 28px; box-shadow: 0 6px 15px rgba(0,0,0,0.3); cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
         .fab:active { transform: scale(0.9); }
@@ -80,7 +77,6 @@
         .item-carrito { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed #e9ecef; font-size: 0.95em; }
         .item-carrito:last-child { border-bottom: none; }
         .btn-eliminar-item { background: #ffe3e3; color: #dc3545; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-weight: bold; transition: 0.2s;}
-        .btn-eliminar-item:hover { background: #ffc9c9; transform: scale(1.05);}
 
         /* DISEÑO DE AUTORIZACIONES */
         .caja-morada { background: #f9f5ff; padding: 25px; border-radius: 18px; border: 1px solid #e9d5ff; margin-bottom: 25px; }
@@ -105,13 +101,11 @@
         
         .lista-vertical { display: block; max-height: 500px; overflow-y: auto; padding-right: 10px; margin-bottom: 15px; }
         .tarjeta-expediente, .tarjeta-info { border: 1px solid #e9ecef; border-radius: 16px; padding: 20px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.03); text-align: left; transition: 0.2s; position: relative; overflow: hidden; margin-bottom: 18px; display: block; width: 100%; box-sizing: border-box;}
-        .tarjeta-expediente:hover, .tarjeta-info:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.06); transform: translateY(-2px); border-color: #dee2e6; }
         
         .tarjeta-expediente.hospital { border-left: 6px solid #6f42c1; } .badge-hospital { background: #f3e8ff; color: #6f42c1; }
         .tarjeta-expediente.venta, .tarjeta-info.venta { border-left: 6px solid #198754; } .badge-venta { background: #e8f5e9; color: #198754; }
         .tarjeta-expediente.alta { border-left: 6px solid #198754; } .badge-alta { background: #e8f5e9; color: #198754; }
         .tarjeta-expediente.merma { border-left: 6px solid #dc3545; } .badge-merma { background: #fff0f0; color: #dc3545; }
-        .tarjeta-expediente.edicion { border-left: 6px solid #0d6efd; } .badge-edicion { background: #e3f2fd; color: #0d6efd; }
         .badge-tipo { padding: 5px 10px; border-radius: 8px; font-size: 0.8em; font-weight: bold; margin-right: 10px; display: inline-block;}
         
         .exp-header, .th-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f1f3f5; padding-bottom: 10px; flex-wrap: wrap; gap: 10px;}
@@ -123,16 +117,13 @@
         .exp-footer, .th-pie { display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; color: #666; flex-wrap: wrap; gap: 10px;}
         
         .btn-exp-action { background: #e3f2fd; color: #0d6efd; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s; display: flex; align-items: center; gap: 6px; box-sizing: border-box;}
-        .btn-exp-action:hover { background: #d0e7ff; transform: translateY(-2px);}
         .btn-exp-action.btn-venta { background: #e8f5e9; color: #198754; }
-        
         .btn-borrar-historial { background: #fff0f0; color: #dc3545; border: 1px solid #ffc9c9; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s;}
-        .btn-borrar-historial:hover { background: #dc3545; color: white;}
 
-        /* DIVISIÓN VISUAL DEL CARRITO DE HOSPITALIZACIÓN */
         .hosp-listas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
         .hosp-columna { background:#fff; border:1px solid #e9ecef; border-radius:12px; padding:15px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.01); }
         .hosp-columna h5 { margin: 0 0 10px 0; border-bottom: 2px dashed #e9ecef; padding-bottom: 8px; text-transform: uppercase; font-size: 0.85em; letter-spacing: 0.5px;}
+
         @media (max-width: 600px) { .hosp-listas-grid { grid-template-columns: 1fr; } }
 
         /* ZONA DE IMPRESIÓN CON ESTILO LEGAL */
@@ -183,9 +174,6 @@
 </head>
 <body>
 
-    <!-- DATALISTS PARA BUSCADORES INDEPENDIENTES -->
-    <datalist id="lista-medicamentos-general"></datalist>
-    <datalist id="lista-medicamentos-filtrada"></datalist>
     <div id="zona-impresion"></div>
 
     <!-- BOTON FLOTANTE UNICO (CANCELAR) -->
@@ -236,13 +224,13 @@
                 <span class="emoji">👀</span> <span>Ver Inventario</span>
             </button>
             <button class="btn-menu oculto" id="btn-alta-inventario" onclick="abrirInventario()">
-                <span class="emoji">📦</span> <span>Alta Lotes / Servicios</span>
+                <span class="emoji">📦</span> <span>Alta de productos y servicios</span>
             </button>
             <button class="btn-menu oculto" id="btn-sistemas" onclick="abrirModoSistemas()">
                 <span class="emoji">⚙️</span> <span>Modo Sistemas (Excel)</span>
             </button>
             <button class="btn-menu oculto" id="btn-hist-inventario" onclick="abrirHistorialInventario()">
-                <span class="emoji">🗃️</span> <span>Historial Altas/Mermas</span>
+                <span class="emoji">🗃️</span> <span>Historial de productos y devoluciones</span>
             </button>
             <button class="btn-menu oculto" id="btn-historial" onclick="abrirHistorialVentas()">
                 <span class="emoji">📋</span> <span>Historial de Ventas</span>
@@ -263,9 +251,10 @@
         <h2 id="titulo-formulario" style="color: #333; margin-top: 0; font-size: 1.5em; text-align: left;">🛒 Venta General</h2>
         
         <div class="form-row" style="background: #fff; padding: 15px; border-radius: 14px; border: 1px solid #ced4da; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
-            <div class="grupo-formulario" style="flex: 2; margin:0;">
+            <div class="grupo-formulario autocomplete-container" style="flex: 2; margin:0;">
                 <label>Buscar Producto / Servicio (Min 3 letras):</label>
-                <input type="text" id="buscador-pos" list="lista-medicamentos-general" class="input-buscador" placeholder="Nombre..." oninput="autocompletarPrecio(this.value, 'precio-pos')">
+                <input type="text" id="buscador-pos" class="input-buscador" placeholder="Nombre..." oninput="buscarAutocomplete('buscador-pos', 'dropdown-pos', seleccionarItemPos)" autocomplete="off">
+                <div id="dropdown-pos" class="autocomplete-dropdown oculto"></div>
             </div>
             <div class="grupo-formulario" style="flex: 1; max-width: 120px; margin:0;">
                 <label>Precio ($):</label>
@@ -300,7 +289,6 @@
         </div>
         
         <div class="form-row">
-            <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="margin:0;" onclick="procesarVenta(false)">💾 Solo Guardar</button></div>
             <div class="grupo-formulario"><button class="btn btn-guardar" style="margin:0;" onclick="procesarVenta(true)">🖨️ Guardar e Imprimir Ticket</button></div>
         </div>
     </div>
@@ -324,7 +312,7 @@
             
             <div class="auth-input-group">
                 <select id="select-auth-rapida">
-                    <!-- Options inyectadas por JS -->
+                    <!-- Options inyectadas por JS para evitar duplicados -->
                 </select>
                 <button onclick="agregarAutorizacionSelect()">➕ Añadir Formato</button>
             </div>
@@ -343,9 +331,10 @@
         <label style="font-weight: 800; color: #0d6efd; font-size: 0.95em; text-transform: uppercase; margin-bottom:15px; display:block;">Agregar Servicios y/o Insumos aplicados:</label>
         
         <div class="form-row" style="background: #fff; padding: 15px; border-radius: 14px; border: 1px solid #ced4da; box-shadow: 0 2px 8px rgba(0,0,0,0.02); margin-bottom: 20px;">
-            <div class="grupo-formulario" style="flex: 3; min-width: 150px; margin:0;">
+            <div class="grupo-formulario autocomplete-container" style="flex: 3; min-width: 150px; margin:0;">
                 <label>Concepto:</label>
-                <input type="text" id="buscador-hosp-item" list="lista-medicamentos-filtrada" class="input-buscador" placeholder="Buscar o teclear nuevo..." oninput="autocompletarPrecioHosp()">
+                <input type="text" id="buscador-hosp-item" class="input-buscador" placeholder="Buscar o teclear nuevo..." oninput="buscarAutocompleteHosp('buscador-hosp-item', 'dropdown-hosp', seleccionarItemHosp)" autocomplete="off">
+                <div id="dropdown-hosp" class="autocomplete-dropdown oculto"></div>
             </div>
             <div class="grupo-formulario" style="flex: 1; min-width: 90px; margin:0;">
                 <label>Precio ($):</label>
@@ -353,7 +342,7 @@
             </div>
             <div class="grupo-formulario" style="flex: 1; min-width: 130px; margin:0;">
                 <label>Clasificación:</label>
-                <select id="tipo-hosp-item" onchange="actualizarDatalistHosp()">
+                <select id="tipo-hosp-item">
                     <option value="Servicio Médico">🩺 Servicio Médico</option>
                     <option value="Medicamento/Producto">💊 Insumo / Medicamento</option>
                 </select>
@@ -393,7 +382,6 @@
         </div>
         
         <div class="form-row" style="margin-top: 30px;">
-            <div class="grupo-formulario"><button class="btn btn-guardar-azul ocultar-impresion" style="margin:0; background:#6f42c1;" onclick="procesarHospitalizacion('ninguno')">💾 Solo Guardar</button></div>
             <div class="grupo-formulario"><button class="btn btn-guardar-azul ocultar-impresion" style="margin:0;" onclick="procesarHospitalizacion('hoja')">📄 Imprimir Formulario Legal</button></div>
             <div class="grupo-formulario"><button class="btn btn-guardar ocultar-impresion" style="margin:0;" onclick="procesarHospitalizacion('ticket')">🧾 Imprimir Ticket Caja</button></div>
         </div>
@@ -507,9 +495,9 @@
         </div>
         
         <div class="form-row" id="caja-cantidades-inv">
-            <div class="grupo-formulario"><label>Cant. Mínima (Alerta):</label><input type="number" id="inv-min" placeholder="Ej. 5"></div>
-            <div class="grupo-formulario"><label>Cant. Máxima:</label><input type="number" id="inv-max" placeholder="Ej. 50"></div>
-            <div class="grupo-formulario"><label>Total cant. Actual:</label><input type="number" id="inv-cantidad" placeholder="0"></div>
+            <div class="grupo-formulario"><label>Cantidad Actual:</label><input type="number" id="cantidad-inventario" placeholder="0"></div>
+            <div class="grupo-formulario"><label>Stock Mínimo (Alerta):</label><input type="number" id="min-inventario" placeholder="Ej. 5 (0 para no alertar)"></div>
+            <div class="grupo-formulario"><label>Stock Máximo:</label><input type="number" id="max-inventario" placeholder="Ej. 50"></div>
         </div>
         <button id="btn-guardar-inventario" class="btn btn-guardar" onclick="guardarEnInventario()">Guardar Alta</button>
     </div>
@@ -517,7 +505,11 @@
     <!-- PANTALLA 9: DEVOLUCIÓN / BAJA -->
     <div id="pantalla-baja-inventario" class="contenedor oculto">
         <h2 style="color: #dc3545; margin-top: 0; text-align: left;">📉 Devolución / Baja</h2>
-        <div class="grupo-formulario"><label>Nombre del Medicamento:</label><input type="text" id="qr-baja-inv" list="lista-medicamentos-general" class="input-buscador" style="color: #dc3545; border-color: #dc3545 !important;" placeholder="Teclea para buscar..."></div>
+        <div class="grupo-formulario autocomplete-container">
+            <label>Nombre del Medicamento:</label>
+            <input type="text" id="qr-baja-inv" class="input-buscador" style="color: #dc3545; border-color: #dc3545 !important;" placeholder="Teclea para buscar..." oninput="buscarAutocomplete('qr-baja-inv', 'dropdown-baja', (i) => {})" autocomplete="off">
+            <div id="dropdown-baja" class="autocomplete-dropdown oculto"></div>
+        </div>
         <div class="grupo-formulario"><label>Motivo:</label><input type="text" id="motivo-baja-inv" placeholder="Ej. Caducidad, Devolución..."></div>
         <div class="form-row"><div class="grupo-formulario"><label>Descontar (Cantidad):</label><input type="number" id="cantidad-baja-inv" placeholder="0"></div></div>
         <button class="btn btn-guardar btn-guardar-rojo" onclick="guardarBajaInventario()">Registrar Baja</button>
@@ -554,6 +546,24 @@
             { val: "ALTA VOLUNTARIA", text: "Alta Voluntaria (Contra indicación médica)" }
         ];
 
+        // --- BUSCADOR INTELIGENTE (AUTOCOMPLETE) ---
+        function buscarAutocomplete(inputId, dropdownId, callbackSelec, filtroTipo = null) {
+            const input = document.getElementById(inputId); const dropdown = document.getElementById(dropdownId);
+            const val = input.value.toLowerCase().trim(); dropdown.innerHTML = '';
+            if (val.length < 3) { dropdown.classList.add('oculto'); return; }
+            let filtrados = inventarioGlobal.filter(i => { let matchTexto = i.medicamento.toLowerCase().includes(val); let matchTipo = filtroTipo ? i.tipoArticulo === filtroTipo : true; return matchTexto && matchTipo; });
+            if (filtrados.length === 0) { dropdown.classList.add('oculto'); return; }
+            dropdown.classList.remove('oculto');
+            filtrados.slice(0, 15).forEach(item => {
+                let div = document.createElement('div'); div.className = 'sugerencia-item';
+                let icon = item.tipoArticulo === 'Servicio Médico' ? '🩺' : '💊';
+                div.innerHTML = `<div><span class="sugerencia-icon">${icon}</span><strong>${item.medicamento}</strong></div><span style="color:#198754; font-weight:bold;">$${item.precioVenta}</span>`;
+                div.onclick = () => { input.value = item.medicamento; dropdown.classList.add('oculto'); callbackSelec(item); }; dropdown.appendChild(div);
+            });
+        }
+        function buscarAutocompleteHosp(inputId, dropdownId, callbackSelec) { let tipoSel = document.getElementById('tipo-hosp-item').value; buscarAutocomplete(inputId, dropdownId, callbackSelec, tipoSel); }
+        document.addEventListener('click', function(e) { if(!e.target.closest('.autocomplete-container')) { document.querySelectorAll('.autocomplete-dropdown').forEach(d => d.classList.add('oculto')); } });
+
         // --- FIRMAS ---
         let ctxActivo = null; let isDrawing = false; let canvasActivo = false;
         function resizeCanvases() { ['cliente'].forEach(id => { let cv = document.getElementById('canvas-'+id); if(!cv) return; let pW = cv.parentElement.clientWidth; cv.width = pW ? pW - 4 : 250; }); }
@@ -582,6 +592,7 @@
             }
         }
 
+        // --- FILTRO LISTAS ---
         function filtrarTarjetas(idContenedor, texto) {
             let term = texto.toLowerCase(); let tarjetas = document.getElementById(idContenedor).children;
             for(let t of tarjetas) { if(t.classList.contains('tarjeta-info') || t.classList.contains('tarjeta-expediente')) { t.style.display = t.innerText.toLowerCase().includes(term) ? "" : "none"; } }
@@ -611,7 +622,6 @@
         }
 
         // --- SEGURIDAD ---
-        function reproducirSonidoBip() { try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); const osc = ctx.createOscillator(); const vol = ctx.createGain(); osc.type = 'sine'; osc.frequency.value = 800; osc.connect(vol); vol.connect(ctx.destination); vol.gain.setValueAtTime(1, ctx.currentTime); vol.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15); osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.15); } catch (e) {} }
         function reiniciarTemporizador() { clearTimeout(temporizadorInactividad); if(usuarioLogueado) { temporizadorInactividad = setTimeout(() => { alert("Sesión cerrada por inactividad."); cancelarVolver(); cerrarSesion(); }, 600000); } }
         window.onload = function() { document.body.addEventListener('click', reiniciarTemporizador); document.body.addEventListener('keypress', reiniciarTemporizador); }
 
@@ -622,7 +632,7 @@
             db.collection("Usuarios").doc(pinActual).get().then((doc) => {
                 if(doc.exists) { usuarioLogueado = doc.data(); usuarioLogueado.pin = pinActual; configurarTextosYPermisos(); reiniciarTemporizador(); cargarSugerenciasInventario(); cambiarPantalla('pantalla-login', 'pantalla-menu');
                 } else { if(pinActual === "1111" || pinActual === "2222" || pinActual === "3333" || pinActual === "2306") { const baseLocal = { "1111": { nombre: "Ana", rol: "Gerente" }, "2222": { nombre: "Carlos", rol: "Sub-Gerente" }, "3333": { nombre: "Luis", rol: "Doctor" }, "2306": { nombre: "Sistemas", rol: "Sistemas" } }; db.collection("Usuarios").doc(pinActual).set(baseLocal[pinActual]).then(validarPin); } else { alert("PIN incorrecto."); limpiarPin(); } }
-            }).catch(e => { alert("Error de conexión."); limpiarPin(); });
+            }).catch(e => { alert("Error de conexión. Revisa tus reglas en Firebase."); limpiarPin(); });
         }
 
         async function solicitarPinSupervisor() {
@@ -647,25 +657,21 @@
 
         // --- INVENTARIO ALERTA Y BUSCADOR ---
         function cargarSugerenciasInventario() { 
-            const datalistGen = document.getElementById('lista-medicamentos-general'); if(datalistGen) datalistGen.innerHTML = ''; inventarioGlobal = []; 
+            inventarioGlobal = []; 
             db.collection("Inventario").get().then((q) => { 
                 q.forEach((doc) => { const d = doc.data(); d.idUnico = doc.id; inventarioGlobal.push(d); }); 
                 inventarioGlobal.sort((a,b) => a.medicamento.localeCompare(b.medicamento));
-                inventarioGlobal.forEach(d => { let icon = d.tipoArticulo === 'Servicio Médico' ? '🩺' : '💊'; if(datalistGen) datalistGen.innerHTML += `<option value="${d.medicamento}">${icon} $${d.precioVenta || 0}</option>`; }); 
-            }); 
+            }).catch(e => console.error("Error al cargar inventario:", e)); 
         }
-        function actualizarDatalistHosp() {
-            const datalistFilt = document.getElementById('lista-medicamentos-filtrada'); if(!datalistFilt) return; datalistFilt.innerHTML = '';
-            const tipoSelec = document.getElementById('tipo-hosp-item').value;
-            inventarioGlobal.forEach(d => { if(d.tipoArticulo === tipoSelec) { let icon = d.tipoArticulo === 'Servicio Médico' ? '🩺' : '💊'; datalistFilt.innerHTML += `<option value="${d.medicamento}">${icon} $${d.precioVenta || 0}</option>`; } });
-        }
-        function revisarAlertasInventario() { const cajaAlerta = document.getElementById('alerta-inventario-menu'); const lista = document.getElementById('lista-alertas-menu'); lista.innerHTML = ''; db.collection("Inventario").get().then(q => { let itemsAlerta = []; q.forEach(doc => { const d = doc.data(); if(d.tipoArticulo === 'Servicio Médico') return; let limite = d.minimo || 5; if (d.cantidad <= limite) { itemsAlerta.push(`<strong>${d.medicamento}</strong>: Quedan ${d.cantidad} ${d.unidad || 'U.'}`); } }); if(itemsAlerta.length > 0) { cajaAlerta.classList.remove('oculto'); let html = ''; let maxMostrar = Math.min(3, itemsAlerta.length); for(let i=0; i < maxMostrar; i++){ html += `<li>${itemsAlerta[i]}</li>`; } if(itemsAlerta.length > 3) { html += `<li style="list-style:none; margin-top:10px; font-weight:bold; cursor:pointer; color:#0d6efd; text-decoration:underline;" onclick="abrirPantalla('pantalla-ver-inventario', cargarInventarioVista)">+ ${itemsAlerta.length - 3} productos más</li>`; } lista.innerHTML = html; } else { cajaAlerta.classList.add('oculto'); } }); }
+
+        function revisarAlertasInventario() { const cajaAlerta = document.getElementById('alerta-inventario-menu'); const lista = document.getElementById('lista-alertas-menu'); lista.innerHTML = ''; db.collection("Inventario").get().then(q => { let itemsAlerta = []; q.forEach(doc => { const d = doc.data(); if(d.tipoArticulo === 'Servicio Médico') return; let valMin = d.minimo; let limite = isNaN(parseInt(valMin)) ? 5 : parseInt(valMin); if (d.cantidad <= limite) { itemsAlerta.push(`<strong>${d.medicamento}</strong>: Quedan ${d.cantidad} ${d.unidad || 'U.'}`); } }); if(itemsAlerta.length > 0) { cajaAlerta.classList.remove('oculto'); let html = ''; let maxMostrar = Math.min(3, itemsAlerta.length); for(let i=0; i < maxMostrar; i++){ html += `<li>${itemsAlerta[i]}</li>`; } if(itemsAlerta.length > 3) { html += `<li style="list-style:none; margin-top:10px; font-weight:bold; cursor:pointer; color:#0d6efd; text-decoration:underline;" onclick="abrirVerInventario()">+ ${itemsAlerta.length - 3} productos más</li>`; } lista.innerHTML = html; } else { cajaAlerta.classList.add('oculto'); } }).catch(e => console.error(e)); }
 
         // --- VENTA GENERAL (POS) ---
         function abrirFormulario() { cambiarPantalla('pantalla-menu', 'pantalla-registro-baja'); document.getElementById('texto-registro-usuario').innerText = `👨‍⚕️ Cajero: ${usuarioLogueado.nombre}`; carrito = []; actualizarCarritoUI(); document.getElementById('precio-pos').readOnly = false; document.getElementById('precio-pos').style.backgroundColor = "#fff"; }
         function toggleMostrador() { const esMostrador = document.getElementById('venta-mostrador').checked; if(esMostrador) { document.getElementById('campos-paciente').classList.add('oculto'); document.getElementById('nombre-dueno').value = "Público General"; document.getElementById('nombre-perro').value = "N/A"; document.getElementById('raza-paciente').value = "N/A"; } else { document.getElementById('campos-paciente').classList.remove('oculto'); document.getElementById('nombre-dueno').value = ""; document.getElementById('nombre-perro').value = ""; document.getElementById('raza-paciente').value = ""; } }
         
-        function autocompletarPrecio(val, idDestino) { if(val.length < 3) return; const inputPrecio = document.getElementById(idDestino); const item = inventarioGlobal.find(i => i.medicamento.toLowerCase() === val.toLowerCase()); if(item) { if(item.tipoArticulo === 'Servicio Médico') { inputPrecio.readOnly = false; inputPrecio.value = item.precioVenta || ""; inputPrecio.style.backgroundColor = "#fff"; } else { inputPrecio.readOnly = true; inputPrecio.value = item.precioVenta || 0; inputPrecio.style.backgroundColor = "#e9ecef"; } } else { inputPrecio.readOnly = false; inputPrecio.style.backgroundColor = "#fff"; } }
+        function seleccionarItemPos(item) { const inputPrecio = document.getElementById('precio-pos'); if(item.tipoArticulo === 'Servicio Médico') { inputPrecio.readOnly = false; inputPrecio.value = item.precioVenta || ""; inputPrecio.style.backgroundColor = "#fff"; inputPrecio.focus(); } else { inputPrecio.readOnly = true; inputPrecio.value = item.precioVenta || 0; inputPrecio.style.backgroundColor = "#e9ecef"; } }
+        
         function agregarAlCarrito() { const val = document.getElementById('buscador-pos').value; const inputPrecio = document.getElementById('precio-pos'); let precio = parseFloat(inputPrecio.value) || 0; if(!val) return alert("⚠️ Escribe un producto."); const itemDb = inventarioGlobal.find(i => i.medicamento.toLowerCase() === val.toLowerCase()); if (itemDb && itemDb.tipoArticulo !== 'Servicio Médico') { precio = parseFloat(itemDb.precioVenta) || 0; } else if (!itemDb || itemDb.tipoArticulo === 'Servicio Médico') { if (precio <= 0) return alert("⚠️ Ingresa el precio manual."); } carrito.push({ nombre: itemDb ? itemDb.medicamento : val, precio: precio, tipo: itemDb ? (itemDb.tipoArticulo || 'Medicamento/Producto') : 'Servicio Médico' }); actualizarCarritoUI(); document.getElementById('buscador-pos').value = ''; inputPrecio.value = ''; inputPrecio.readOnly = false; inputPrecio.style.backgroundColor = "#fff"; }
         function eliminarDelCarrito(index) { carrito.splice(index, 1); actualizarCarritoUI(); }
         function actualizarCarritoUI() { const div = document.getElementById('carrito-lista'); if(carrito.length === 0) { div.innerHTML = '<p style="text-align:center; color:#adb5bd; margin:10px 0;">El carrito está vacío</p>'; } else { let html = ''; carrito.forEach((item, index) => { let icon = item.tipo === 'Servicio Médico' ? '🩺' : '💊'; html += `<div class="item-carrito"><span>${icon} <strong>${item.nombre}</strong></span><span>$${item.precio.toFixed(2)} <button class="btn-eliminar-item" onclick="eliminarDelCarrito(${index})">X</button></span></div>`; }); div.innerHTML = html; } calcularTotal(); }
@@ -679,8 +685,11 @@
             if(valorDesc > 0 && usuarioLogueado.rol === 'Doctor') { let auth = await solicitarPinSupervisor(); if(!auth) return; }
             guardandoBloqueo = true; document.body.style.cursor = 'wait';
             const subtotal = carrito.reduce((sum, item) => sum + item.precio, 0);
-            const ventaData = { atendio: usuarioLogueado.nombre, paciente: perro, dueno: dueno, telefono: tel, raza: raza, articulos: carrito, subtotal: subtotal, valorDescuento: valorDesc, totalCobrado: totalCobroCalculado, metodoPago: metodoPago, ventaMostrador: document.getElementById('venta-mostrador').checked, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now(), fechaReal: firebase.firestore.FieldValue.serverTimestamp() };
-            db.collection("Historial_Cobros").add(ventaData).then(() => { descontarInventarioAutomatico(carrito); if(imprimir) { imprimirTicketBoucher(ventaData); } else { alert(`✅ Venta guardada.`); } cancelarVolver(); }).catch(e => alert("Error al guardar.")).finally(() => { guardandoBloqueo = false; document.body.style.cursor = 'default'; });
+            const ventaData = { atendio: usuarioLogueado.nombre, paciente: perro||'', dueno: dueno||'', telefono: tel||'', raza: raza||'', articulos: carrito, subtotal: subtotal, valorDescuento: valorDesc, totalCobrado: totalCobroCalculado, metodoPago: metodoPago, ventaMostrador: document.getElementById('venta-mostrador').checked, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now(), fechaReal: firebase.firestore.FieldValue.serverTimestamp() };
+            
+            db.collection("Historial_Cobros").add(ventaData).then(() => { 
+                descontarInventarioAutomatico(carrito); if(imprimir) { imprimirTicketBoucher(ventaData); } else { alert(`✅ Venta guardada.`); } cancelarVolver(); 
+            }).catch(e => { console.error(e); alert("Error al guardar: " + e.message + "\n\n(Revisa si tu regla de Firebase caducó)"); }).finally(() => { guardandoBloqueo = false; document.body.style.cursor = 'default'; });
         }
         function descontarInventarioAutomatico(articulosVendidos) { articulosVendidos.forEach(item => { if(item.tipo !== 'Servicio Médico') { let safeName = String(item.nombre).replace(/\//g, '-'); db.collection("Inventario").doc(safeName).get().then(doc => { if(doc.exists) { let actual = doc.data().cantidad; db.collection("Inventario").doc(safeName).update({ cantidad: actual - 1 }); } }); } }); }
 
@@ -705,14 +714,11 @@
         function agregarAutorizacion() { const input = document.getElementById('input-nueva-auth'); const val = input.value.trim().toUpperCase(); if(val && !autorizacionesHosp.includes(val)) { autorizacionesHosp.push(val); input.value = ''; actualizarAutorizacionesUI(); } }
         function eliminarAutorizacion(idx) { autorizacionesHosp.splice(idx, 1); actualizarAutorizacionesUI(); }
 
-        function autocompletarPrecioHosp() { 
-            const val = document.getElementById('buscador-hosp-item').value; const inputPrecio = document.getElementById('precio-hosp-item'); const selectTipo = document.getElementById('tipo-hosp-item');
-            if(val.length < 3) return;
-            const item = inventarioGlobal.find(i => i.medicamento.toLowerCase() === val.toLowerCase()); 
-            if(item) { 
-                if (selectTipo.value !== item.tipoArticulo) { selectTipo.value = item.tipoArticulo; actualizarDatalistHosp(); }
-                inputPrecio.readOnly = (item.tipoArticulo !== 'Servicio Médico'); inputPrecio.value = item.precioVenta || 0; inputPrecio.style.backgroundColor = inputPrecio.readOnly ? "#e9ecef" : "#fff";
-            } else { inputPrecio.readOnly = false; inputPrecio.style.backgroundColor = "#fff"; } 
+        function seleccionarItemHosp(item) {
+            const inputPrecio = document.getElementById('precio-hosp-item'); const selectTipo = document.getElementById('tipo-hosp-item');
+            if (selectTipo.value !== item.tipoArticulo) { selectTipo.value = item.tipoArticulo; }
+            inputPrecio.readOnly = (item.tipoArticulo !== 'Servicio Médico'); inputPrecio.value = item.precioVenta || 0; inputPrecio.style.backgroundColor = inputPrecio.readOnly ? "#e9ecef" : "#fff";
+            if(!inputPrecio.readOnly) inputPrecio.focus();
         }
 
         function agregarAlCarritoHosp() { 
@@ -748,12 +754,12 @@
             const folioStr = String(Date.now()).slice(-5); const subtotal = carritoHosp.reduce((sum, item) => sum + item.precio, 0);
             
             guardandoBloqueo = true; document.body.style.cursor = 'wait';
-            const hospData = { doctor: usuarioLogueado.nombre, dueno: dueno, paciente: paciente, telefono: tel, raza: raza, edad: edad, sexo: sexo, peso: peso, temperatura: temp, prescripcion: notas, articulos: carritoHosp, autorizaciones: autorizacionesHosp, firmaCliente: firmaCliBase64, subtotal: subtotal, totalCobrado: subtotal, atendio: usuarioLogueado.nombre, metodoPago: "Estancia Hospitalaria", folio: folioStr, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now(), fechaReal: firebase.firestore.FieldValue.serverTimestamp() };
+            const hospData = { doctor: usuarioLogueado.nombre, dueno: dueno||'', paciente: paciente||'', telefono: tel||'', raza: raza||'', edad: edad||'', sexo: sexo||'', peso: peso||'', temperatura: temp||'', prescripcion: notas||'', articulos: carritoHosp, autorizaciones: autorizacionesHosp, firmaCliente: firmaCliBase64, subtotal: subtotal, totalCobrado: subtotal, atendio: usuarioLogueado.nombre, metodoPago: "Estancia Hospitalaria", folio: folioStr, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now(), fechaReal: firebase.firestore.FieldValue.serverTimestamp() };
 
             db.collection("Historial_Hospitalizacion").add(hospData).then(() => {
                 descontarInventarioAutomatico(carritoHosp);
                 if(imprimir === 'hoja') { generarHojasLegalesDinamicas(hospData); } else if (imprimir === 'ticket') { imprimirTicketBoucher(hospData); } else { alert("✅ Guardado en historial."); } cancelarVolver();
-            }).catch(e => alert("Error al guardar.")).finally(() => { guardandoBloqueo = false; document.body.style.cursor = 'default'; });
+            }).catch(e => { console.error(e); alert("Error al guardar: " + e.message); }).finally(() => { guardandoBloqueo = false; document.body.style.cursor = 'default'; });
         }
 
         function procesarAltaHospitalaria() {
@@ -821,11 +827,11 @@
                 lista.innerHTML = inventarioHTML.length === 0 ? '<p style="text-align:center;">No hay inventario.</p>' : ''; let html = ''; 
                 inventarioHTML.forEach((d) => { 
                     if(d.tipoArticulo === 'Servicio Médico') return; 
-                    let limite = d.minimo || 5; const claseAlerta = d.cantidad <= limite ? 'stock-alerta' : 'stock-ok'; const mensajeAlerta = d.cantidad <= limite ? `<div style="margin-top:8px; padding:5px; background:#fff0f0; color:#dc3545; border-radius:5px; text-align:center; font-size:0.85em; font-weight:bold;">¡Bajo Stock!</div>` : ''; 
+                    let valMin = d.minimo; let limite = isNaN(parseInt(valMin)) ? 5 : parseInt(valMin); const claseAlerta = d.cantidad <= limite ? 'stock-alerta' : 'stock-ok'; const mensajeAlerta = d.cantidad <= limite ? `<div style="margin-top:8px; padding:5px; background:#fff0f0; color:#dc3545; border-radius:5px; text-align:center; font-size:0.85em; font-weight:bold;">¡Bajo Stock!</div>` : ''; 
                     let btnEdit = (usuarioLogueado.rol === 'Gerente' || usuarioLogueado.rol === 'Sub-Gerente' || usuarioLogueado.rol === 'Sistemas') ? `<div class="th-pie" style="margin-top: 10px; border-top: 1px dashed #eee; padding-top: 10px;"><button class="btn-exp-action" style="padding: 6px 12px; font-size: 0.85em;" onclick="editarProducto('${d.medicamento}')">✏️ Editar Detalles</button></div>` : '';
                     html += `<div class="tarjeta-info ${claseAlerta}" data-unidad="${d.unidad}"><div class="th-header"><strong style="font-size:1.1em;">${d.medicamento}</strong> <span style="font-size: 1.2em; font-weight: bold; background:#f8f9fa; padding:2px 10px; border-radius:8px; color: ${d.cantidad <= limite ? '#dc3545' : '#198754'};">${d.cantidad} <span style="font-size:0.6em; font-weight:normal; color:#666;">${d.unidad || 'U.'}</span></span></div><div class="th-cuerpo" style="color:#0d6efd; font-family:monospace;">$${d.precioVenta || 0}</div>${mensajeAlerta}${btnEdit}</div>`; 
                 }); lista.innerHTML = html; 
-            });
+            }).catch(e => { console.error(e); lista.innerHTML = '<p style="color:red; text-align:center;">Error al cargar. Verifica tus reglas de Firebase.</p>'; });
         }
         function filtrarInventario() { let txt = document.getElementById('busqueda-inv-texto').value.toLowerCase(); let stk = document.getElementById('busqueda-inv-stock').value; let tarjetas = document.getElementById('lista-stock-firebase').children; for(let t of tarjetas) { if(t.tagName !== 'DIV') continue; let matchTxt = t.innerText.toLowerCase().includes(txt); let matchStk = (stk === 'todos') || (stk === 'bajo' && t.classList.contains('stock-alerta')) || (stk === 'ok' && t.classList.contains('stock-ok')); t.style.display = (matchTxt && matchStk) ? "" : "none"; } }
 
@@ -845,7 +851,7 @@
                         let nombreRaw = row['Nombre'] || row['Medicamento'] || row['Producto'];
                         if(!nombreRaw) { errores++; return; } 
                         let nombre = String(nombreRaw).trim().replace(/\//g, '-');
-                        let precio = parseFloat(row['Precio']) || 0; let cantidad = parseInt(row['Cantidad']) || 0; let tipo = row['Tipo'] || 'Medicamento/Producto'; let unidad = row['Unidad'] || 'Piezas'; let min = parseInt(row['Mínimo']) || 5; let max = parseInt(row['Máximo']) || 50; let desc = row['Descripción'] || ''; let prov = row['Proveedor'] || ''; let pres = row['Presentación'] || '';
+                        let precio = parseFloat(row['Precio']) || 0; let cantidad = parseInt(row['Cantidad']) || 0; let tipo = row['Tipo'] || 'Medicamento/Producto'; let unidad = row['Unidad'] || 'Piezas'; let minRaw = parseInt(row['Mínimo']); let min = isNaN(minRaw) ? 5 : minRaw; let max = parseInt(row['Máximo']) || 50; let desc = row['Descripción'] || ''; let prov = row['Proveedor'] || ''; let pres = row['Presentación'] || '';
                         
                         let refInv = db.collection("Inventario").doc(nombre);
                         batch.set(refInv, { tipoArticulo: tipo, medicamento: nombre, descripcion: String(desc), proveedor: String(prov), presentacion: String(pres), precioVenta: precio, cantidad: cantidad, unidad: unidad, minimo: min, maximo: max, registradoPor: usuarioLogueado.nombre + " (Excel)", fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() }, {merge: true});
@@ -901,22 +907,25 @@
             document.getElementById('tipo-inventario').value = item.tipoArticulo || 'Medicamento/Producto'; toggleServicio();
             document.getElementById('nombre-inventario').value = item.medicamento; document.getElementById('nombre-inventario').readOnly = true; 
             document.getElementById('precio-inventario').value = item.precioVenta || ''; document.getElementById('cantidad-inventario').value = item.cantidad || '';
-            document.getElementById('min-inventario').value = item.minimo || ''; document.getElementById('max-inventario').value = item.maximo || '';
+            document.getElementById('min-inventario').value = item.minimo !== undefined ? item.minimo : ''; document.getElementById('max-inventario').value = item.maximo || '';
             document.getElementById('unidad-inventario').value = item.unidad || 'Piezas';
             document.getElementById('inv-proveedor').value = item.proveedor || ''; document.getElementById('inv-descripcion').value = item.descripcion || ''; document.getElementById('inv-presentacion').value = item.presentacion || '';
             document.getElementById('btn-guardar-inventario').innerText = "Guardar Cambios";
         }
 
         function guardarEnInventario() { 
-            const n = document.getElementById('nombre-inventario').value.trim().replace(/\//g, '-'); let c = document.getElementById('cantidad-inventario').value; const u = document.getElementById('unidad-inventario').value; let p = document.getElementById('precio-inventario').value; const t = document.getElementById('tipo-inventario').value; const min = document.getElementById('min-inventario').value; const max = document.getElementById('max-inventario').value;
+            const n = document.getElementById('nombre-inventario').value.trim().replace(/\//g, '-'); let c = document.getElementById('cantidad-inventario').value; const u = document.getElementById('unidad-inventario').value; let p = document.getElementById('precio-inventario').value; const t = document.getElementById('tipo-inventario').value; let valMin = document.getElementById('min-inventario').value; const max = document.getElementById('max-inventario').value;
             const prov = document.getElementById('inv-proveedor').value.trim(); const desc = document.getElementById('inv-descripcion').value.trim(); const pres = document.getElementById('inv-presentacion').value.trim();
+            let min = valMin === "" ? 5 : parseInt(valMin); // Si lo deja en blanco pone 5. Si pone 0, guarda 0.
+            
             if(t === 'Servicio Médico') { if(!n) return alert("⚠️ Llena nombre del servicio."); if(!p) p = 0; c = 9999; } 
             else { if(!n || !c || !p) return alert("⚠️ Llena nombre, precio y cantidad actual."); }
-            db.collection("Inventario").doc(n).set({ tipoArticulo: t, medicamento: n, descripcion: desc, proveedor: prov, presentacion: pres, precioVenta: parseFloat(p), cantidad: parseInt(c), unidad: u, minimo: parseInt(min)||5, maximo: parseInt(max)||100, registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() }, {merge: true}).then(() => { 
+            
+            db.collection("Inventario").doc(n).set({ tipoArticulo: t, medicamento: n, descripcion: desc, proveedor: prov, presentacion: pres, precioVenta: parseFloat(p), cantidad: parseInt(c), unidad: u, minimo: min, maximo: parseInt(max)||100, registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() }, {merge: true}).then(() => { 
                 let mov = modoEdicion ? "Edición" : "Alta"; let mot = modoEdicion ? `Actualización de datos` : "Ingreso nuevo";
                 db.collection("Historial_Inventario").add({ tipoMovimiento: mov, medicamento: n, cantidad: parseInt(c), unidad: u, precio: parseFloat(p), motivo: mot, registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now() }); 
                 alert(modoEdicion ? "✅ Cambios guardados." : "✅ Alta Guardada."); cargarSugerenciasInventario(); cancelarVolver(); 
-            }); 
+            }).catch(e => { console.error(e); alert("Error al guardar en Firebase: " + e.message); }); 
         }
 
         function abrirBajaInventario() { cambiarPantalla('pantalla-menu', 'pantalla-baja-inventario'); }
