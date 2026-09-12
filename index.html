@@ -1,1 +1,737 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Veterinario ERP</title>
+    
+    <!-- Firebase y Excel -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
+    <style>
+        /* --- ESTILOS VISUALES PREMIUM HOMOLOGADOS --- */
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #eef2f6; margin: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; color: #2b3035; box-sizing: border-box; padding: 40px 10px 100px 10px; }
+        .contenedor { background: white; padding: 35px; border-radius: 24px; box-shadow: 0 12px 35px rgba(0,0,0,0.06); width: 100%; max-width: 680px; max-height: calc(100vh - 80px); overflow-y: auto; box-sizing: border-box; position: relative; margin: auto; }
+        .contenedor-ancho { max-width: 850px; } 
+        .seccion-separador { border-top: 2px dashed #e9ecef; margin: 25px 0; padding-top: 15px; }
+
+        /* Teclado PIN */
+        .pantalla-pin { font-size: 2.5em; letter-spacing: 15px; margin-bottom: 25px; padding: 15px; width: 100%; text-align: center; background-color: #f8f9fa; border: 2px solid #e9ecef; border-radius: 16px; box-sizing: border-box; color: #333; font-weight: bold; outline: none;}
+        .cuadricula-teclas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .tecla { padding: 20px 0; font-size: 1.8em; background: #ffffff; border: 1px solid #dee2e6; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #333; font-weight: 500; }
+        .tecla:active { background: #e9ecef; transform: scale(0.92); }
+        .tecla-borrar { background: #fff0f0; color: #dc3545; border-color: #ffc9c9; }
+        
+        /* Cabeceras y Menús */
+        .header-usuario { background: linear-gradient(135deg, #0caeb9, #088c96); color: white; padding: 18px; border-radius: 16px; margin-bottom: 25px; font-weight: bold; font-size: 1.1em; text-align: center; box-shadow: 0 6px 15px rgba(12, 174, 185, 0.25); }
+        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
+        .btn-menu { padding: 20px 10px; font-size: 0.95em; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 1px solid #e9ecef; background: white; border-radius: 16px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.03); color: #495057; font-weight: 600; }
+        .btn-menu:hover { background: #fcfcfd; transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.06); border-color: #0caeb9; }
+        .alerta-banner { background-color: #fff3cd; border-left: 6px solid #ffc107; border-radius: 12px; padding: 18px; margin-bottom: 20px; text-align: left; }
+        
+        /* Formularios */
+        .form-row { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; align-items: flex-end; }
+        .form-row .grupo-formulario { margin-bottom: 0; flex: 1 1 200px; }
+        .grupo-formulario { margin-bottom: 20px; text-align: left; width: 100%; box-sizing: border-box;}
+        .grupo-formulario label { display: block; font-weight: 700; margin-bottom: 8px; color: #495057; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px;}
+        .grupo-formulario input, .grupo-formulario select, .grupo-formulario textarea { width: 100%; padding: 14px; font-size: 1em; border: 2px solid #e9ecef; border-radius: 12px; box-sizing: border-box; font-family: inherit; transition: all 0.2s; background-color: #f8f9fa; color: #333; outline: none; appearance: none; -webkit-appearance: none; }
+        .grupo-formulario input[type="file"] { background-color: #fff; padding: 10px; }
+        .grupo-formulario input:focus, .grupo-formulario select:focus, .grupo-formulario textarea:focus { border-color: #0caeb9; background-color: #fff; box-shadow: 0 0 0 4px rgba(12, 174, 185, 0.1); }
+        .input-buscador { font-size: 1.05em !important; border: 2px solid #0caeb9 !important; background: #fff !important; }
+        
+        /* BUSCADOR INTELIGENTE AUTOCOMPLETE */
+        .autocomplete-container { position: relative; width: 100%; }
+        .autocomplete-dropdown { position: absolute; top: calc(100% + 5px); left: 0; right: 0; background: white; border: 2px solid #0caeb9; border-radius: 12px; max-height: 250px; overflow-y: auto; z-index: 10000; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .sugerencia-item { padding: 12px 15px; border-bottom: 1px solid #e9ecef; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; font-size: 0.95em; color: #333;}
+        .sugerencia-item:hover { background: #f0f7ff; }
+        .sugerencia-item:last-child { border-bottom: none; }
+        .sugerencia-icon { margin-right: 8px; font-size: 1.1em; }
+
+        /* Botones Generales */
+        .btn { width: 100%; padding: 16px; font-size: 1.1em; border: none; border-radius: 14px; cursor: pointer; font-weight: bold; transition: all 0.2s ease; display: block; text-align: center; box-sizing: border-box;}
+        .btn-guardar { background: #198754; color: white; box-shadow: 0 6px 15px rgba(25, 135, 84, 0.25); margin-top: 10px;}
+        .btn-guardar:hover { background: #157347; transform: translateY(-2px); }
+        .btn-guardar-rojo { background: #dc3545; color: white; box-shadow: 0 6px 15px rgba(220, 53, 69, 0.25); }
+        .btn-guardar-azul { background: #0caeb9; color: white; box-shadow: 0 6px 15px rgba(12, 174, 185, 0.25); }
+        .btn-guardar-azul:hover { background: #088c96; transform: translateY(-2px); }
+        .btn-amarillo { background: #ffc107; color: #000; box-shadow: 0 6px 15px rgba(255, 193, 7, 0.25); margin-top: 10px;}
+        .btn-cancelar { background: transparent; color: #dc3545; margin-top: 10px; border: 2px solid #ffe3e3; padding: 12px;}
+        .btn-cancelar:hover { background: #fff0f0; }
+        .btn-filtro { flex: 1; padding: 10px; border: 2px solid #e9ecef; background: white; color: #6c757d; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; white-space: nowrap;}
+        .btn-filtro.activo { background: #0caeb9; color: white; border-color: #0caeb9; box-shadow: 0 4px 10px rgba(12, 174, 185, 0.2); }
+
+        /* BOTONES FLOTANTES */
+        .fab-container { position: fixed; bottom: 25px; right: 25px; display: flex; flex-direction: column; gap: 15px; z-index: 9999; }
+        .fab { width: 65px; height: 65px; border-radius: 50%; border: none; color: white; font-size: 28px; box-shadow: 0 6px 15px rgba(0,0,0,0.3); cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
+        .fab:active { transform: scale(0.9); }
+        .fab-preview { background: #0caeb9; display: none; } /* Boton para leer formato */
+        .fab-cancel { background: #dc3545; }
+
+        .caja-cobro { background: #fffbf0; padding: 25px; border-radius: 18px; border: 1px solid #ffecb5; margin-bottom: 20px; }
+        .stock-alerta { border-left: 6px solid #dc3545; background-color: #fffafb; }
+        .stock-ok { border-left: 6px solid #198754; }
+        .oculto { display: none !important; }
+
+        /* CARRITOS */
+        .carrito-box { background: #ffffff; border: 2px solid #e9ecef; border-radius: 14px; padding: 15px; margin-bottom: 20px; max-height: 200px; overflow-y: auto; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);}
+        .item-carrito { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed #e9ecef; font-size: 0.95em; }
+        .item-carrito:last-child { border-bottom: none; }
+        .btn-eliminar-item { background: #ffe3e3; color: #dc3545; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-weight: bold; transition: 0.2s;}
+
+        /* DISEÑO DE AUTORIZACIONES */
+        .caja-morada { background: #fdfaf6; padding: 25px; border-radius: 18px; border: 1px solid #0caeb9; margin-bottom: 25px; }
+        .titulo-morado { color: #0caeb9; font-weight: 900; font-size: 0.85em; text-transform: uppercase; margin-bottom: 15px; display: block; letter-spacing: 0.5px;}
+        .auth-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .auth-input-group input, .auth-input-group select { flex: 1; border: 1px solid #0caeb9 !important; border-radius: 12px; padding: 14px; outline: none; background: #fff !important; color: #495057; font-size: 1em;}
+        .auth-input-group button { background: #0caeb9; color: white; border: none; border-radius: 12px; padding: 0 25px; font-weight: bold; font-size: 1.05em; cursor: pointer; transition: 0.2s; white-space: nowrap; box-shadow: 0 4px 10px rgba(12, 174, 185, 0.2);}
+        .lista-autorizaciones { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px;}
+        .badge-auth { background: #e0f7fa; color: #00838f; padding: 8px 16px; border-radius: 20px; font-size: 0.9em; font-weight: bold; display: flex; align-items: center; gap: 8px; border: 1px solid #b2ebf2;}
+        .badge-auth span { cursor: pointer; color: #dc3545; font-size: 1.1em; transition: 0.2s; }
+
+        /* MODAL DE LECTURA DE CONTRATOS */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 100000; display: flex; justify-content: center; align-items: center; }
+        .modal-content { background: white; width: 95%; max-width: 800px; height: 90vh; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden;}
+        .modal-header { background: #0caeb9; color: white; padding: 15px 20px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;}
+        .modal-body { padding: 20px; overflow-y: auto; flex: 1; font-family: Arial, sans-serif; font-size: 13px; line-height: 1.5; color: #333;}
+        .modal-footer { padding: 15px; border-top: 1px solid #eee; text-align: center; background: #f8f9fa;}
+
+        /* FIRMAS CLIENTE */
+        .firma-card { width: 100%; max-width: 450px; margin: 0 auto; border: 1px solid #e9ecef; border-radius: 14px; padding: 15px; background: #fff; text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.02); box-sizing: border-box;}
+        .firma-title { font-size: 0.85em; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; color: #198754;}
+        .canvas-firma { border: 2px dashed #ced4da; border-radius: 10px; width: 100%; height: 140px; background: #fafafa; touch-action: none; margin-bottom: 12px; cursor: crosshair; box-sizing: border-box;}
+        .btn-borrar-firma { border: 1px solid #ffc9c9; background: #fff0f0; color: #dc3545; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-size: 0.85em; font-weight: bold;}
+
+        /* PANELES DE BÚSQUEDA Y LISTAS RECTAS */
+        .panel-busqueda { background: #ffffff; padding: 20px; border-radius: 18px; margin-bottom: 25px; border: 1px solid #e9ecef; display: flex; flex-wrap: wrap; gap: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); align-items: flex-end;}
+        .panel-busqueda .grupo-formulario { flex: 1 1 200px; margin: 0; }
+        .busqueda-ancha { flex: 1 1 100% !important; }
+        
+        .lista-vertical { display: block; max-height: 500px; overflow-y: auto; padding-right: 10px; margin-bottom: 15px; }
+        .tarjeta-expediente, .tarjeta-info { border: 1px solid #e9ecef; border-radius: 16px; padding: 20px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.03); text-align: left; transition: 0.2s; position: relative; overflow: hidden; margin-bottom: 18px; display: block; width: 100%; box-sizing: border-box;}
+        
+        .badge-tipo { padding: 5px 10px; border-radius: 8px; font-size: 0.8em; font-weight: bold; margin-right: 10px; display: inline-block;}
+        .exp-header, .th-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f1f3f5; padding-bottom: 10px; flex-wrap: wrap; gap: 10px;}
+        .exp-title, .th-header strong { font-weight: 800; font-size: 1.1em; color: #2b3035; display: flex; align-items: center;}
+        .exp-date, .th-header span { font-size: 0.85em; color: #888; font-weight: 500;}
+        .exp-content, .th-cuerpo { background: #f8f9fa; padding: 15px; border-radius: 12px; font-size: 0.95em; color: #444; white-space: pre-wrap; margin-bottom: 15px; border: 1px solid #f1f3f5; line-height: 1.6;}
+        .exp-footer, .th-pie { display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; color: #666; flex-wrap: wrap; gap: 10px;}
+        
+        .btn-exp-action { background: #e0f7fa; color: #0caeb9; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s; display: flex; align-items: center; gap: 6px; box-sizing: border-box;}
+        .btn-borrar-historial { background: #fff0f0; color: #dc3545; border: 1px solid #ffc9c9; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s;}
+
+        .hosp-listas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .hosp-columna { background:#fff; border:1px solid #e9ecef; border-radius:12px; padding:15px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.01); }
+        .hosp-columna h5 { margin: 0 0 10px 0; border-bottom: 2px dashed #e9ecef; padding-bottom: 8px; text-transform: uppercase; font-size: 0.85em; letter-spacing: 0.5px;}
+
+        @media (max-width: 600px) { .hosp-listas-grid { grid-template-columns: 1fr; } }
+
+        /* ZONA DE IMPRESIÓN CON ESTILO LEGAL VETGRU */
+        #zona-impresion { display: none; }
+        @media print {
+            @page { margin: 0; }
+            body { background: white; margin: 0; padding: 0; color: black; }
+            .contenedor, .fab-container, #modal-lectura { display: none !important; }
+            #zona-impresion { display: block !important; width: 100%; }
+            
+            /* TICKET VÁUCHER OXXO */
+            .ticket-print { width: 78mm; font-family: 'Courier New', Courier, monospace; font-size: 12px; margin: 0; padding: 10mm 5mm; text-transform: uppercase; }
+            .ticket-print h2 { font-size: 16px; text-align: center; margin: 0 0 5px 0; font-weight: bold; }
+            .ticket-print .info-tienda { text-align: center; font-size: 11px; margin-bottom: 10px; line-height: 1.2; }
+            .ticket-print .info-ticket { margin-bottom: 10px; font-size: 11px; border-bottom: 1px dashed #000; padding-bottom: 5px; line-height: 1.4;}
+            .ticket-print table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+            .ticket-print th { border-bottom: 1px dashed #000; text-align: left; font-weight: normal; font-size: 11px; padding-bottom: 2px;}
+            .ticket-print td { padding: 4px 0; font-size: 11px; vertical-align: top; }
+            .ticket-print .col-precio { text-align: right; }
+            .ticket-print .totales { text-align: right; margin-top: 5px; font-size: 12px; border-top: 1px dashed #000; padding-top: 5px; line-height: 1.4;}
+            .ticket-print .totales strong { font-size: 14px; }
+            .ticket-print .footer { text-align: center; font-size: 11px; margin-top: 15px; border-top: 1px dashed #000; padding-top: 10px; line-height: 1.4; }
+            
+            /* RECETA / DOCUMENTO DISEÑO VETGRU */
+            .receta-print { width: 100%; max-width: 216mm; font-family: Arial, sans-serif; margin: 0 auto; padding: 10mm 15mm; box-sizing: border-box; color: black; }
+            .receta-print .cabecera { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 2px solid #0caeb9; padding-bottom: 10px;}
+            .receta-print .logo-area { width: 40%; }
+            .receta-print .logo-area h1 { margin: 0; font-size: 38px; font-weight: 900; letter-spacing: -1px; margin-bottom: -5px; color: #0caeb9;}
+            .receta-print .logo-area p { margin: 0; font-size: 10px; letter-spacing: 2px; font-weight: bold; color: #0caeb9;}
+            .receta-print .datos-clinica { width: 50%; font-size: 10px; text-align: right; line-height: 1.3; font-weight: bold;}
+            
+            .receta-print h2 { text-align: center; font-size: 14px; text-transform: uppercase; margin: 15px 0;}
+            
+            /* Tablas de Datos */
+            .tabla-datos { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10px; }
+            .tabla-datos td { border: 1px solid #000; padding: 4px 6px; }
+            .tabla-datos .bg-gris { background-color: #f0f0f0; font-weight: bold; width: 25%;}
+            
+            .cuerpo-texto { font-size: 11px; text-align: justify; line-height: 1.5; margin-bottom: 20px;}
+            .cuerpo-texto p { margin: 0 0 10px 0; }
+            
+            .firmas-area { display: flex; justify-content: center; margin-top: 40px; margin-bottom: 10px;}
+            .firma-bloque { width: 60%; text-align: center; font-size: 11px; font-weight: bold;}
+            .firma-bloque img { max-height: 60px; display: block; margin: 0 auto 5px auto; }
+            .firma-linea { border-top: 1px solid black; padding-top: 4px; display: inline-block; width: 100%;}
+        }
+    </style>
+</head>
+<body>
+
+    <datalist id="lista-medicamentos-general"></datalist>
+    <datalist id="lista-medicamentos-filtrada"></datalist>
+    <div id="zona-impresion"></div>
+
+    <!-- MODAL DE PREVISUALIZACIÓN DE DOCUMENTOS -->
+    <div id="modal-lectura" class="modal-overlay oculto">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>📄 Vista Previa del Documento Legal</span>
+                <button onclick="document.getElementById('modal-lectura').classList.add('oculto')" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">✖</button>
+            </div>
+            <div id="modal-cuerpo" class="modal-body">
+                <!-- HTML Inyectado -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-guardar" style="width: auto; display: inline-block; padding: 12px 30px;" onclick="document.getElementById('modal-lectura').classList.add('oculto')">✅ He leído y acepto (Cerrar para Firmar)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTONES FLOTANTES -->
+    <div class="fab-container oculto" id="fab-container">
+        <!-- El boton de preview solo saldrá en hospitalizacion cuando haya formatos -->
+        <button class="fab fab-preview" id="fab-preview" onclick="abrirLecturaYFirma()" title="Previsualizar y Firmar">📝</button>
+        <button class="fab fab-cancel" onclick="cancelarVolver()" title="Volver al Menú">❌</button>
+    </div>
+
+    <!-- PANTALLA 1: LOGIN -->
+    <div id="pantalla-login" class="contenedor">
+        <h2 style="color: #333; margin-top: 0; font-size: 1.8em; text-align: center;">🔐 Ingreso al Sistema</h2>
+        <input type="password" id="input-pin" class="pantalla-pin" readonly>
+        <div class="cuadricula-teclas">
+            <button class="tecla" onclick="agregarNumero('1')">1</button><button class="tecla" onclick="agregarNumero('2')">2</button><button class="tecla" onclick="agregarNumero('3')">3</button>
+            <button class="tecla" onclick="agregarNumero('4')">4</button><button class="tecla" onclick="agregarNumero('5')">5</button><button class="tecla" onclick="agregarNumero('6')">6</button>
+            <button class="tecla" onclick="agregarNumero('7')">7</button><button class="tecla" onclick="agregarNumero('8')">8</button><button class="tecla" onclick="agregarNumero('9')">9</button>
+            <button class="tecla" onclick="limpiarPin()" style="background: #fff0f0; color: #dc3545; border-color: #ffc9c9;">C</button><button class="tecla" onclick="agregarNumero('0')">0</button><button style="background: transparent; border: none;"></button>
+        </div>
+    </div>
+
+    <!-- PANTALLA 2: MENÚ PRINCIPAL -->
+    <div id="pantalla-menu" class="contenedor oculto">
+        <div class="header-usuario" id="texto-bienvenida">Bienvenido</div>
+        
+        <div id="alerta-inventario-menu" class="alerta-banner oculto">
+            <h4 style="margin:0 0 10px 0; color:#856404;">⚠️ Productos por agotarse</h4>
+            <ul id="lista-alertas-menu" style="margin:0; padding-left:20px; font-size:0.9em;"></ul>
+        </div>
+
+        <h4 style="color: #adb5bd; margin: 0 0 15px 0; text-align: left; text-transform: uppercase; font-size: 0.85em; letter-spacing:1px;">Operaciones Médicas</h4>
+        <div class="menu-grid">
+            <button class="btn-menu oculto" id="btn-movimiento" onclick="abrirFormulario()">
+                <span class="emoji">🛒</span> <span>Venta General</span>
+            </button>
+            <button class="btn-menu oculto" id="btn-hospitalizacion" onclick="abrirHospitalizacion()">
+                <span class="emoji">🏥</span> <span>Manejo Hospitalario</span>
+            </button>
+        </div>
+        
+        <h4 id="titulo-gerencia" class="oculto" style="color: #adb5bd; margin: 25px 0 15px 0; text-align: left; text-transform: uppercase; font-size: 0.85em; letter-spacing:1px;">Administración (Gerencia)</h4>
+        <div class="menu-grid">
+            <button class="btn-menu oculto" id="btn-corte" onclick="abrirCorteCaja('dia')" style="background-color: #e0f7fa; border-color: #b2ebf2;">
+                <span class="emoji">💰</span> <span style="color: #00838f;">Corte de Caja</span>
+            </button>
+            <button class="btn-menu oculto" id="btn-ver-inventario" onclick="abrirVerInventario()">
+                <span class="emoji">👀</span> <span>Ver Inventario</span>
+            </button>
+            <button class="btn-menu oculto" id="btn-alta-inventario" onclick="abrirInventario()">
+                <span class="emoji">📦</span> <span>Alta de productos y servicios</span>
+            </button>
+            <button class="btn-menu oculto" id="btn-sistemas" onclick="abrirModoSistemas()">
+                <span class="emoji">⚙️</span> <span>Modo Sistemas (Excel)</span>
+            </button>
+            <button class="btn-menu oculto" id="btn-hist-inventario" onclick="abrirHistorialInventario()">
+                <span class="emoji">🗃️</span> <span>Historial de productos y devoluciones</span>
+            </button>
+            <button class="btn-menu oculto" id="btn-historial" onclick="abrirHistorialVentas()">
+                <span class="emoji">📋</span> <span>Historial de Ventas</span>
+            </button>
+            <button class="btn-menu oculto" id="btn-baja-inventario" onclick="abrirBajaInventario()">
+                <span class="emoji">📉</span> <span>Devolución / Baja</span>
+            </button>
+            <button class="btn-menu oculto" id="btn-usuarios" onclick="abrirUsuarios()">
+                <span class="emoji">👥</span> <span>Personal</span>
+            </button>
+        </div>
+        <button class="btn btn-cancelar" style="margin-top:20px; font-size: 1em; padding: 14px; border-radius: 14px;" onclick="cerrarSesion()">Cerrar Sesión</button>
+    </div>
+
+    <!-- PANTALLA 3: VENTA GENERAL (CARRITO) -->
+    <div id="pantalla-registro-baja" class="contenedor oculto">
+        <div class="header-usuario" id="texto-registro-usuario" style="background: linear-gradient(135deg, #198754, #146c43);"></div>
+        <h2 id="titulo-formulario" style="color: #333; margin-top: 0; font-size: 1.5em; text-align: left;">🛒 Venta General</h2>
+        
+        <div class="form-row" style="background: #fff; padding: 15px; border-radius: 14px; border: 1px solid #ced4da; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+            <div class="grupo-formulario autocomplete-container" style="flex: 2; margin:0;">
+                <label>Buscar Producto / Servicio (Min 3 letras):</label>
+                <input type="text" id="buscador-pos" class="input-buscador" placeholder="Nombre..." oninput="buscarAutocomplete('buscador-pos', 'dropdown-pos', seleccionarItemPos)" autocomplete="off">
+                <div id="dropdown-pos" class="autocomplete-dropdown oculto"></div>
+            </div>
+            <div class="grupo-formulario" style="flex: 1; max-width: 120px; margin:0;">
+                <label>Precio ($):</label>
+                <input type="number" id="precio-pos" placeholder="Manual">
+            </div>
+            <div class="grupo-formulario" style="flex: 0 0 auto; margin:0;">
+                <button class="btn btn-guardar-azul" style="margin:0; padding: 14px 20px; border-radius: 12px;" onclick="agregarAlCarrito()">➕ Añadir</button>
+            </div>
+        </div>
+
+        <label style="font-weight: bold; color: #495057; font-size: 0.85em; text-transform: uppercase;">Artículos en la cuenta:</label>
+        <div id="carrito-lista" class="carrito-box"><p style="color: #adb5bd; text-align: center; margin: 10px 0;">El carrito está vacío</p></div>
+
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e9ecef;">
+            <label style="font-weight: 600; font-size: 0.95em; cursor: pointer; display: flex; align-items: center; gap: 10px; color: #495057;">
+                <input type="checkbox" id="venta-mostrador" onchange="toggleMostrador()" style="width: 22px; height: 22px; accent-color: #0caeb9;"> 
+                Venta a Público General (Mostrador)
+            </label>
+        </div>
+        
+        <div id="campos-paciente">
+            <div class="form-row"><div class="grupo-formulario"><label>Dueño:</label><input type="text" id="nombre-dueno" placeholder="Ej. Juan Pérez"></div><div class="grupo-formulario"><label>Teléfono:</label><input type="number" id="tel-dueno" placeholder="10 dígitos"></div></div>
+            <div class="form-row"><div class="grupo-formulario"><label>Paciente:</label><input type="text" id="nombre-perro" placeholder="Ej. Firulais"></div><div class="grupo-formulario"><label>Raza:</label><input type="text" id="raza-paciente" placeholder="Ej. Chihuahua..."></div></div>
+            <div class="seccion-separador"></div>
+        </div>
+
+        <div class="caja-cobro">
+            <h4 style="margin: 0 0 15px 0; color: #856404; font-size: 1.1em; border-bottom: 1px solid #ffeeba; padding-bottom: 8px;">💳 Detalles de Cobro</h4>
+            <div class="form-row"><div class="grupo-formulario"><label>Descuento Directo ($):</label><input type="number" id="valor-descuento" placeholder="0.00" oninput="calcularTotal()"></div>
+            <div class="grupo-formulario"><label>Método de Pago:</label><select id="metodo-pago"><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Transferencia</option><option>Sin Cobro (Interno)</option></select></div></div>
+            <h2 style="margin: 15px 0 0 0; color: #198754; text-align: right; font-size: 2.2em;">Total: $<span id="total-cobrar">0.00</span></h2>
+        </div>
+        
+        <div class="form-row">
+            <div class="grupo-formulario"><button class="btn btn-guardar" style="margin:0;" onclick="procesarVenta(true)">🖨️ Guardar e Imprimir Ticket</button></div>
+        </div>
+    </div>
+
+    <!-- PANTALLA 4: MANEJO HOSPITALARIO -->
+    <div id="pantalla-hospitalizacion" class="contenedor contenedor-ancho oculto">
+        <h2 style="color: #0caeb9; margin-top: 0; font-size: 1.8em; text-align: left; display:flex; align-items:center; gap:10px;">
+            <span style="font-size:1.2em;">🏥</span> Manejo Hospitalario
+        </h2>
+        
+        <!-- DATOS BASE -->
+        <div class="form-row"><div class="grupo-formulario"><label>Dueño (Nombre completo):</label><input type="text" id="hosp-dueno"></div><div class="grupo-formulario"><label>Teléfono:</label><input type="number" id="hosp-tel"></div></div>
+        <div class="form-row"><div class="grupo-formulario"><label>Paciente:</label><input type="text" id="hosp-paciente"></div><div class="grupo-formulario"><label>Raza:</label><input type="text" id="hosp-raza"></div></div>
+        <div class="form-row"><div class="grupo-formulario"><label>Sexo:</label><select id="hosp-sexo"><option value="">Seleccionar</option><option value="Macho">Macho</option><option value="Hembra">Hembra</option></select></div><div class="grupo-formulario"><label>Edad:</label><input type="text" id="hosp-edad"></div><div class="grupo-formulario"><label>Peso (Kg):</label><input type="number" step="0.1" id="hosp-peso"></div></div>
+
+        <div class="seccion-separador"></div>
+
+        <!-- AUTORIZACIONES MANUALES DINÁMICAS (MORADO) -->
+        <div class="caja-morada">
+            <label class="titulo-morado">1. Seleccionar Formato Legal a Rellenar:</label>
+            <div class="grupo-formulario">
+                <select id="select-formato-legal" onchange="mostrarCamposDinamicos()">
+                    <option value="">-- Elige un formato para habilitar sus campos --</option>
+                    <option value="AUTORIZACIÓN HOSPITALARIA">Autorización Hospitalaria (Manejo Médico)</option>
+                    <option value="CONTRATO DE PENSIÓN">Contrato de Pensión</option>
+                    <option value="ALTA VOLUNTARIA">Alta Voluntaria (Contra indicación médica)</option>
+                </select>
+            </div>
+            
+            <!-- CAMPOS DINÁMICOS: AUTORIZACION HOSPITALARIA -->
+            <div id="campos-auth-hospital" class="campos-dinamicos oculto">
+                <div class="form-row"><div class="grupo-formulario" style="flex:2;"><label>Domicilio (Calle, Num, Col):</label><input type="text" id="hosp-domicilio"></div><div class="grupo-formulario"><label>Correo Electrónico:</label><input type="text" id="hosp-correo"></div></div>
+                <div class="form-row"><div class="grupo-formulario"><label>Color del paciente:</label><input type="text" id="hosp-color"></div><div class="grupo-formulario"><label>Fecha de Nacimiento:</label><input type="date" id="hosp-nacimiento"></div></div>
+                <label style="font-size:0.85em; font-weight:bold; color:#0caeb9; margin-top:10px;">Vacunaciones Verificadas (Solo si aplica):</label>
+                <div class="form-row"><div class="grupo-formulario"><label>Últ. Múltiple/Séxtuple:</label><input type="date" id="hosp-vac-sextuple"></div><div class="grupo-formulario"><label>Últ. Rabia:</label><input type="date" id="hosp-vac-rabia"></div><div class="grupo-formulario"><label>Últ. Desparasitación:</label><input type="date" id="hosp-vac-desp"></div></div>
+                <div class="grupo-formulario"><label>Manejo Médico Autorizado (Especificar procedimiento):</label><input type="text" id="hosp-manejo-medico" placeholder="Ej. Cirugía de fémur, Profilaxis, Toma de muestras..."></div>
+                <div class="grupo-formulario"><label><input type="checkbox" id="check-hosp" checked style="width:auto; display:inline-block;"> Autoriza Hospitalización (Por gravedad de enfermedad)</label></div>
+            </div>
+
+            <!-- CAMPOS DINÁMICOS: CONTRATO DE PENSIÓN -->
+            <div id="campos-pension" class="campos-dinamicos oculto">
+                <div class="form-row"><div class="grupo-formulario"><label>Fecha de Entrada:</label><input type="date" id="pen-entrada"></div><div class="grupo-formulario"><label>Fecha de Salida:</label><input type="date" id="pen-salida"></div><div class="grupo-formulario"><label>Costo Total Acordado ($):</label><input type="number" id="pen-costo"></div></div>
+                <div class="form-row"><div class="grupo-formulario"><label>Alergias Conocidas:</label><input type="text" id="pen-alergias" placeholder="Si no tiene, pon Ninguna"></div><div class="grupo-formulario"><label>Si se queda sin comida, ¿qué prefiere?:</label><input type="text" id="pen-sin-comida" placeholder="Ej. Que compren su marca y me la cobren"></div></div>
+                <label style="font-size:0.85em; font-weight:bold; color:#0caeb9; margin-top:10px;">Alimentación y Cuidados:</label>
+                <div class="form-row"><div class="grupo-formulario"><label>Marca Alimento:</label><input type="text" id="pen-marca"></div><div class="grupo-formulario"><label>Horario(s):</label><input type="text" id="pen-horario" placeholder="Ej. 8am y 6pm"></div><div class="grupo-formulario"><label>Cantidad/Ración:</label><input type="text" id="pen-cantidad" placeholder="Ej. 1 taza"></div></div>
+                <div class="grupo-formulario"><label>Cuidados Especiales:</label><input type="text" id="pen-cuidados" placeholder="Si requiere medicamentos, especificar..."></div>
+            </div>
+
+            <!-- CAMPOS DINÁMICOS: ALTA VOLUNTARIA -->
+            <div id="campos-alta-voluntaria" class="campos-dinamicos oculto">
+                <div class="form-row"><div class="grupo-formulario"><label>Fecha de Ingreso Original:</label><input type="date" id="alta-f-ingreso"></div><div class="grupo-formulario"><label>Dx de Ingreso:</label><input type="text" id="alta-dx-ingreso"></div></div>
+                <div class="form-row"><div class="grupo-formulario"><label>Fecha de Egreso (Hoy):</label><input type="date" id="alta-f-egreso"></div><div class="grupo-formulario"><label>Dx de Egreso:</label><input type="text" id="alta-dx-egreso"></div></div>
+                <div class="grupo-formulario"><label>Motivo del Egreso (Por qué se lo lleva):</label><input type="text" id="alta-motivo"></div>
+            </div>
+            
+            <div id="lista-autorizaciones" class="lista-autorizaciones oculto"></div>
+        </div>
+
+        <div class="seccion-separador"></div>
+
+        <!-- DIVISIÓN: SERVICIOS Y MEDICAMENTOS (AZUL) -->
+        <label style="font-weight: 800; color: #0caeb9; font-size: 0.95em; text-transform: uppercase; margin-bottom:15px; display:block;">2. Servicios y/o Insumos aplicados en clínica:</label>
+        
+        <div class="form-row" style="background: #fff; padding: 15px; border-radius: 14px; border: 1px solid #ced4da; box-shadow: 0 2px 8px rgba(0,0,0,0.02); margin-bottom: 20px;">
+            <div class="grupo-formulario autocomplete-container" style="flex: 3; min-width: 150px; margin:0;">
+                <label>Concepto:</label>
+                <input type="text" id="buscador-hosp-item" class="input-buscador" placeholder="Buscar o teclear nuevo..." oninput="buscarAutocompleteHosp('buscador-hosp-item', 'dropdown-hosp', seleccionarItemHosp)" autocomplete="off">
+                <div id="dropdown-hosp" class="autocomplete-dropdown oculto"></div>
+            </div>
+            <div class="grupo-formulario" style="flex: 1; min-width: 90px; margin:0;">
+                <label>Precio ($):</label>
+                <input type="number" id="precio-hosp-item" placeholder="0.00">
+            </div>
+            <div class="grupo-formulario" style="flex: 1; min-width: 130px; margin:0;">
+                <label>Clasificación:</label>
+                <select id="tipo-hosp-item" onchange="actualizarDatalistHosp()">
+                    <option value="Servicio Médico">🩺 Servicio Médico</option>
+                    <option value="Medicamento/Producto">💊 Insumo / Medicamento</option>
+                </select>
+            </div>
+            <div class="grupo-formulario" style="flex: 0 0 100%; margin:0; margin-top: 10px;">
+                <button class="btn btn-guardar-azul" style="margin:0; padding: 16px;" onclick="agregarAlCarritoHosp()">➕ Añadir a la lista</button>
+            </div>
+        </div>
+
+        <div class="hosp-listas-grid">
+            <div class="hosp-columna">
+                <h5 style="color: #0caeb9;">🩺 Servicios Médicos</h5>
+                <div id="carrito-hosp-servicios"><p style="text-align:center; color:#adb5bd; margin:0; padding:10px;">Sin servicios</p></div>
+            </div>
+            <div class="hosp-columna">
+                <h5 style="color: #198754;">💊 Medicamentos / Insumos</h5>
+                <div id="carrito-hosp-medicamentos"><p style="text-align:center; color:#adb5bd; margin:0; padding:10px;">Sin medicamentos</p></div>
+            </div>
+        </div>
+        <h3 style="text-align: right; color: #0caeb9; margin: 15px 0 0 0;">Costo Acumulado: $<span id="total-hosp">0.00</span></h3>
+
+        <div class="seccion-separador"></div>
+
+        <div class="grupo-formulario">
+            <label>Notas Clínicas (Para el expediente interno):</label>
+            <textarea id="hosp-notas" rows="4" placeholder="Ej. Evolución del paciente..."></textarea>
+        </div>
+
+        <div id="zona-firmas-oculta" class="form-row oculto" style="justify-content: center; margin-top: 25px; padding: 20px; background:#f8f9fa; border-radius:16px;">
+            <div class="firma-card">
+                <div class="firma-title" style="color:#198754;">Firma de Conformidad del Cliente</div>
+                <canvas id="canvas-cliente" class="canvas-firma"></canvas>
+                <button type="button" class="btn-borrar-firma" onclick="limpiarFirma('cliente')">Borrar y Volver a Firmar</button>
+            </div>
+        </div>
+        
+        <div class="form-row" style="margin-top: 30px;">
+            <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="margin:0;" id="btn-final-hosp" onclick="procesarHospitalizacion(true)" disabled>📄 Guardar e Imprimir Formato Legal</button></div>
+            <div class="grupo-formulario"><button class="btn btn-guardar" style="margin:0;" onclick="procesarHospitalizacion('ticket')">🧾 Imprimir Solo Ticket</button></div>
+        </div>
+        
+        <div class="seccion-separador"></div>
+        <div class="form-row">
+            <div class="grupo-formulario"><button class="btn btn-amarillo" onclick="procesarAltaMedica()">🏥 Dar ALTA MÉDICA (Imprimir)</button></div>
+            <div class="grupo-formulario"><button class="btn btn-amarillo" style="background:#fd7e14;" onclick="procesarSalidaPension()">🏡 Dar SALIDA DE PENSIÓN (Imprimir)</button></div>
+        </div>
+    </div>
+
+    <!-- PANTALLA 5: CORTE DE CAJA -->
+    <div id="pantalla-corte-caja" class="contenedor contenedor-ancho oculto">
+        <h2 style="color: #333; margin-top: 0; text-align: left;">💰 Corte de Caja</h2>
+        <div class="panel-busqueda" style="margin-bottom: 20px;">
+            <div class="grupo-formulario busqueda-ancha" style="display: flex; gap: 10px; background: #f8f9fa; padding: 8px; border-radius: 12px; border: 1px solid #e9ecef; margin: 0;">
+                <button id="filtro-dia" class="btn-filtro activo" onclick="abrirCorteCaja('dia')">Día</button><button id="filtro-semana" class="btn-filtro" onclick="abrirCorteCaja('semana')">Semana</button><button id="filtro-mes" class="btn-filtro" onclick="abrirCorteCaja('mes')">Mes</button>
+            </div>
+        </div>
+        <div id="resumen-corte" style="background: linear-gradient(135deg, #198754, #146c43); border-radius: 18px; padding: 30px; margin-bottom: 25px; text-align: center; color: white; box-shadow: 0 8px 20px rgba(25, 135, 84, 0.2);">
+            <h3 style="margin:0; font-weight: normal; font-size: 1.1em; opacity: 0.9;">Ingreso Total (Neto)</h3>
+            <h1 style="margin:10px 0; font-size:3.5em; font-weight: bold; letter-spacing: -1px;">$<span id="corte-gran-total">0.00</span></h1>
+            <div style="background: rgba(255,255,255,0.2); display: inline-block; padding: 6px 20px; border-radius: 20px; font-size: 0.95em; font-weight: bold;">Total Descuentos Otorgados: $<span id="corte-gran-descuento">0.00</span></div>
+        </div>
+        <h4 style="text-align: left; margin-bottom: 15px; color: #495057; text-transform: uppercase; font-size: 0.85em;">Desglose de Movimientos:</h4>
+        <div id="lista-corte-caja" class="lista-vertical"></div>
+    </div>
+
+    <!-- PANTALLA 6: VER INVENTARIO -->
+    <div id="pantalla-ver-inventario" class="contenedor contenedor-ancho oculto">
+        <h2 style="color: #333; margin-top: 0; text-align: left;">📦 Inventario Actual</h2>
+        <div class="panel-busqueda">
+            <div class="grupo-formulario busqueda-ancha"><label>🔍 Buscar Producto (Min 3 letras):</label><input type="text" id="busqueda-inv-texto" class="input-buscador" placeholder="Nombre..." oninput="filtrarInventario()"></div>
+            <div class="grupo-formulario"><label>Nivel Stock:</label><select id="busqueda-inv-stock" onchange="filtrarInventario()"><option value="todos">Todos</option><option value="bajo">🔴 Bajo Stock</option><option value="ok">🟢 Normal</option></select></div>
+        </div>
+        <div id="lista-stock-firebase" class="lista-vertical"></div>
+    </div>
+
+    <!-- PANTALLA MODO SISTEMAS (CARGA EXCEL) -->
+    <div id="pantalla-sistemas" class="contenedor oculto">
+        <h2 style="color: #0caeb9; margin-top: 0; text-align: left;">⚙️ Modo Sistemas (Carga Masiva)</h2>
+        <p style="color:#666; font-size:0.9em; text-align:justify;">Sube un archivo Excel (.xlsx) para dar de alta múltiples medicamentos o servicios a la vez. El archivo <strong>debe</strong> tener una hoja con las siguientes columnas exactas en la primera fila:</p>
+        <ul style="color:#444; font-size:0.85em; font-weight:bold; background:#f8f9fa; padding:15px 30px; border-radius:10px;">
+            <li>Nombre (Obligatorio)</li>
+            <li>Tipo (Ej: Servicio Médico o Medicamento/Producto)</li>
+            <li>Precio (Ej: 150.50)</li>
+            <li>Cantidad (Ej: 10)</li>
+            <li>Unidad (Ej: Pza(s), Caja(s), Ml.)</li>
+            <li>Mínimo (Alerta de stock)</li>
+            <li>Máximo</li>
+            <li>Proveedor</li>
+            <li>Presentación</li>
+            <li>Descripción</li>
+        </ul>
+        <div class="grupo-formulario">
+            <label>Seleccionar Archivo Excel (.xlsx):</label>
+            <input type="file" id="excel-file" accept=".xlsx, .xls, .csv">
+        </div>
+        <button class="btn btn-guardar-azul" onclick="window.procesarExcel()">🚀 Procesar y Subir a la Nube</button>
+        <div id="excel-resultado" style="margin-top: 20px; font-weight: bold; text-align: center; color: #0caeb9;"></div>
+    </div>
+
+    <!-- PANTALLA 7: HISTORIAL DE INVENTARIO -->
+    <div id="pantalla-historial-inventario" class="contenedor contenedor-ancho oculto">
+        <h2 style="color: #333; margin-top: 0; text-align: left;">🗃️ Historial de productos y devoluciones</h2>
+        <div class="panel-busqueda">
+            <div class="grupo-formulario busqueda-ancha"><label>🔍 Buscar Movimiento:</label><input type="text" id="buscador-hist-inv" class="input-buscador" placeholder="Medicamento o usuario..." oninput="buscarHistorialInventario()"></div>
+            <div class="grupo-formulario"><label>Tipo:</label><select id="filtro-tipo-hist-inv" onchange="buscarHistorialInventario()"><option value="todos">Todos</option><option value="Alta">📦 Altas</option><option value="Merma">📉 Devolución/Baja</option></select></div>
+            <div class="grupo-formulario"><label>Fecha:</label><select id="filtro-fecha-hist-inv" onchange="buscarHistorialInventario()"><option value="todos">Cualquier fecha</option><option value="hoy">Hoy</option><option value="semana">Últimos 7 días</option><option value="mes">Este mes</option></select></div>
+            <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0; height: 100%;" onclick="cargarHistorialInventario()">🔄 Refrescar</button></div>
+        </div>
+        <div id="lista-historial-inventario" class="lista-vertical"></div>
+    </div>
+
+    <!-- PANTALLA 7.5: HISTORIAL DE VENTAS -->
+    <div id="pantalla-historial-ventas" class="contenedor contenedor-ancho oculto">
+        <h2 style="color: #333; margin-top: 0; text-align: left;">📋 Historial de Ventas / Hospitalizaciones</h2>
+        <div class="panel-busqueda">
+            <div class="grupo-formulario busqueda-ancha"><label>🔍 Buscar Venta:</label><input type="text" id="buscador-hist-ventas" class="input-buscador" placeholder="Teléfono, paciente o doctor..." oninput="buscarHistorialVentas()"></div>
+            <div class="grupo-formulario"><label>Fecha:</label><select id="filtro-fecha-hist-ventas" onchange="buscarHistorialVentas()"><option value="todos">Cualquier fecha</option><option value="hoy">Hoy</option><option value="semana">Últimos 7 días</option><option value="mes">Este mes</option></select></div>
+            <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0; height: 100%;" onclick="abrirHistorialVentas()">🔄 Refrescar</button></div>
+        </div>
+        <div id="lista-historial-ventas" class="lista-vertical"></div>
+    </div>
+
+    <!-- PANTALLA 8: ALTA DE MEDICAMENTO Y SERVICIO -->
+    <div id="pantalla-inventario" class="contenedor oculto">
+        <h2 id="titulo-pantalla-inventario" style="color: #333; margin-top: 0; text-align: left;">📦 Alta de productos y servicios</h2>
+        
+        <div class="form-row"><div class="grupo-formulario"><label>Proveedor:</label><input type="text" id="inv-proveedor" placeholder="Opcional"></div></div>
+        <div class="form-row"><div class="grupo-formulario busqueda-ancha"><label>Descripción / Composición:</label><input type="text" id="inv-descripcion" placeholder="Ej. Antibiótico de amplio espectro..."></div></div>
+        
+        <div class="form-row"><div class="grupo-formulario busqueda-ancha"><label>Nombre del Producto/Servicio (Identificador exacto):</label><input type="text" id="inv-nombre" style="font-weight: bold; color: #0caeb9;" placeholder="Ej. Amoxicilina 250mg"></div></div>
+        <div class="form-row"><div class="grupo-formulario"><label>Presentación:</label><input type="text" id="inv-presentacion" placeholder="Ej. Frasco 50ml"></div></div>
+        
+        <div class="form-row"><div class="grupo-formulario busqueda-ancha"><label>Clasificación:</label><select id="inv-tipo-prod" onchange="window.toggleServicio()"><option value="Medicamento/Producto">💊 Medicamento / Insumo Físico</option><option value="Servicio Médico">🩺 Servicio Médico (Consulta, Baño...)</option></select></div></div>
+
+        <div class="form-row">
+            <div class="grupo-formulario"><label>Precio Fijo de Venta ($):</label><input type="number" id="inv-precio" placeholder="Ej. 250"></div>
+            <div class="grupo-formulario" id="caja-unidad-inv"><label>Tipo de Prod. (Unidad):</label><select id="inv-unidad"><option value="Pza(s)">Pza(s)</option><option value="Caja(s)">Caja(s)</option><option value="Gr.">Gr.</option><option value="K.">K.</option><option value="Kg.">Kg.</option><option value="L.">L.</option><option value="Lts.">Lts.</option><option value="Ml.">Ml.</option><option value="M.">M.</option><option value="Mts.">Mts.</option><option value="Cm(s)">Cm(s)</option><option value="Cap(s)">Cap(s)</option><option value="Tab(s)">Tab(s)</option></select></div>
+        </div>
+        
+        <div class="form-row" id="caja-cantidades-inv">
+            <div class="grupo-formulario"><label>Cantidad Actual:</label><input type="number" id="cantidad-inventario" placeholder="0"></div>
+            <div class="grupo-formulario"><label>Stock Mínimo (Alerta):</label><input type="number" id="min-inventario" placeholder="Ej. 5 (0 = No alertar)"></div>
+            <div class="grupo-formulario"><label>Stock Máximo:</label><input type="number" id="max-inventario" placeholder="Ej. 50"></div>
+        </div>
+        <button id="btn-guardar-inventario" class="btn btn-guardar-azul" onclick="window.guardarEnInventario()">Guardar Alta</button>
+    </div>
+
+    <!-- PANTALLA 9: DEVOLUCIÓN / BAJA -->
+    <div id="pantalla-baja-inventario" class="contenedor oculto">
+        <h2 style="color: #dc3545; margin-top: 0; text-align: left;">📉 Devolución / Baja</h2>
+        <div class="grupo-formulario autocomplete-container">
+            <label>Nombre del Medicamento:</label>
+            <input type="text" id="qr-baja-inv" class="input-buscador" style="color: #dc3545; border-color: #dc3545 !important;" placeholder="Teclea para buscar..." oninput="buscarAutocomplete('qr-baja-inv', 'dropdown-baja', (i) => {})" autocomplete="off">
+            <div id="dropdown-baja" class="autocomplete-dropdown oculto"></div>
+        </div>
+        <div class="grupo-formulario"><label>Motivo:</label><input type="text" id="motivo-baja-inv" placeholder="Ej. Caducidad, Devolución..."></div>
+        <div class="form-row"><div class="grupo-formulario"><label>Descontar (Cantidad):</label><input type="number" id="cantidad-baja-inv" placeholder="0"></div></div>
+        <button class="btn btn-guardar btn-guardar-rojo" onclick="window.guardarBajaInventario()">Registrar Baja</button>
+    </div>
+
+    <!-- PANTALLA 10: USUARIOS -->
+    <div id="pantalla-usuarios" class="contenedor contenedor-ancho oculto">
+        <h2 style="color: #333; margin-top: 0; text-align: left;">👥 Administrar Personal</h2>
+        <div class="panel-busqueda">
+            <div class="grupo-formulario"><label>Nombre:</label><input type="text" id="nuevo-usuario-nombre"></div>
+            <div class="grupo-formulario"><label>PIN (4 dígitos):</label><input type="number" id="nuevo-usuario-pin"></div>
+            <div class="grupo-formulario"><label>Rol:</label><select id="nuevo-usuario-rol"><option value="Doctor">Doctor</option><option value="Sub-Gerente">Sub-Gerente</option><option value="Gerente">Gerente</option></select></div>
+            <div class="grupo-formulario busqueda-ancha"><button class="btn btn-guardar-azul" style="margin:0; padding: 14px;" onclick="window.crearUsuario()">+ Agregar Usuario Nuevo</button></div>
+        </div>
+        <div class="panel-busqueda" style="padding: 15px; margin-bottom: 20px;">
+            <div class="grupo-formulario busqueda-ancha" style="margin:0;"><label>🔍 Buscar personal:</label><input type="text" class="input-buscador" placeholder="Nombre o PIN..." oninput="window.filtrarTarjetas('lista-usuarios-firebase', this.value)"></div>
+        </div>
+        <div id="lista-usuarios-firebase" class="lista-vertical"></div>
+    </div>
+
+    <!-- === LÓGICA MAESTRA JAVASCRIPT === -->
+    <script>
+        // MÓDULOS GLOBALES DE IMPRESIÓN 
+        window.imprimirTicketBoucher = function(venta) {
+            let esHospitalizacion = venta.tipoRegistro === 'hospitalizacion' || venta.autorizaciones !== undefined;
+            let titulo = esHospitalizacion ? "TICKET HOSPITALIZACIÓN" : "TICKET DE VENTA";
+            let htmlArticulos = ''; venta.articulos.forEach(a => { let n = a.nombre ? (a.nombre.length > 20 ? a.nombre.substring(0,20)+'..' : a.nombre) : 'Producto'; htmlArticulos += `<tr><td style="width:15%;">1</td><td style="width:55%;">${n}</td><td class="col-precio" style="width:30%;">$${Number(a.precio).toFixed(2)}</td></tr>`; });
+            let descuentoCalculado = (venta.subtotal || 0) - (venta.totalCobrado || 0);
+            let html = `<div class="ticket-print"><div class="info-tienda"><strong>CLÍNICA VETERINARIA</strong><br>RFC: XXXXXXX000<br>AVENIDA PRINCIPAL #123<br>CIUDAD, ESTADO C.P. 00000<br>TEL. 555-123-4567</div><h2>${titulo}</h2><div class="info-ticket">CAJA #1 &nbsp;&nbsp;&nbsp;&nbsp; ${String(venta.fechaTexto).split(',')[0]}<br>ATENDIÓ: ${venta.atendio || venta.doctor}<br>${venta.ventaMostrador ? 'CLIENTE: MOSTRADOR (GENERAL)' : `PACIENTE: ${venta.paciente}<br>DUEÑO: ${venta.dueno}`}</div><table><thead><tr><th>CANT</th><th>ARTICULO</th><th class="col-precio">TOTAL</th></tr></thead><tbody>${htmlArticulos}</tbody></table><div class="totales">SUBTOTAL : &nbsp;&nbsp;$${Number(venta.subtotal||0).toFixed(2)}<br>${descuentoCalculado > 0 ? `DESCUENTO : &nbsp;&nbsp;-$${descuentoCalculado.toFixed(2)}<br>` : ''}<strong>PAGO TOTAL : &nbsp;&nbsp;$${Number(venta.totalCobrado||0).toFixed(2)}</strong></div><div class="footer">*** PAGO EN ${String(venta.metodoPago||'ESTANCIA HOSP.').toUpperCase()} ***<br><br>DOCUMENTO SIN VALIDEZ FISCAL<br>GRACIAS POR SU PREFERENCIA</div></div>`;
+            document.getElementById('zona-impresion').innerHTML = html; setTimeout(() => { window.print(); }, 500);
+        };
+
+        window.generarHojasLegalesDinamicas = function(hosp, isPreview = false) {
+            let htmlFinal = ''; let fch = hosp.fechaTexto ? hosp.fechaTexto.split(',')[0] : '';
+            let authStr = hosp.formatoLegal || ""; let htmlFirmaCli = hosp.firmaCliente ? `<img src="${hosp.firmaCliente}">` : `<div style="height: 45px;"></div>`;
+            let htmlCabeceraComun = `<div class="cabecera"><div class="logo-area"><h1 style="color: #0caeb9;">Vetgru</h1><p style="color: #0caeb9;">HOSPITAL VETERINARIO</p></div><div class="datos-clinica">Blvd. Luis Donaldo Colosio No. 2275<br>Esq. Eulalio Gutiérrez.<br>San Alberto, Saltillo Coahuila<br>844 227 58 08</div></div>`;
+
+            if(authStr === "AUTORIZACIÓN HOSPITALARIA") {
+                htmlFinal += `<div class="receta-print">${htmlCabeceraComun}<h2>AUTORIZACIÓN HOSPITALARIA</h2><p style="text-align:right; font-weight:bold; font-size:11px;">FECHA DE INGRESO: ${fch}</p>
+                <table class="tabla-datos"><tr><td colspan="4" class="bg-gris">DATOS DEL PROPIETARIO</td></tr><tr><td colspan="4">${hosp.dueno || ''}</td></tr><tr><td colspan="4" class="bg-gris">DOMICILIO</td></tr><tr><td colspan="4">${hosp.domicilio || '__________________________________'}</td></tr><tr><td colspan="2" class="bg-gris">TELÉFONO</td><td colspan="2" class="bg-gris">CORREO ELECTRÓNICO</td></tr><tr><td colspan="2">${hosp.telefono || '_____________'}</td><td colspan="2">${hosp.correo || '___________________'}</td></tr><tr><td colspan="4" class="bg-gris">DATOS DEL PACIENTE</td></tr><tr><td>NOMBRE: ${hosp.paciente || ''}</td><td>RAZA: ${hosp.raza || ''}</td><td colspan="2">SEXO: ${hosp.sexo || ''}</td></tr><tr><td>FECHA NACIMIENTO: ${hosp.nacimiento || '____/____/____'}</td><td>EDAD: ${hosp.edad || ''}</td><td colspan="2">COLOR: ${hosp.color || ''}</td></tr></table>
+                <table class="tabla-datos"><tr><td colspan="4" class="bg-gris">VACUNACIONES VERIFICADAS</td></tr><tr><td>MÚLTIPLE/SÉXTUPLE: ${hosp.vacSextuple || '____/____/____'}</td><td>RABIA: ${hosp.vacRabia || '____/____/____'}</td><td colspan="2">DESPARASITACIÓN: ${hosp.vacDesp || '____/____/____'}</td></tr></table>
+                <div class="cuerpo-texto"><p><strong>I.- MANEJO MÉDICO:</strong> Autorizo al equipo médico de VETGRU HOSPITAL VETERINARIO realizar el manejo necesario para el bienestar de mi mascota, el cual es: <u>${hosp.manejoMedico || '_________________________________'}</u>.</p><p>Comprendo que la administración de sueros, medicamentos (anestésicos, analgésicos, antibióticos, entre otros) tiene la capacidad de producir reacciones alérgicas en mi mascota que pueden llegar a ser graves; para lo cual en caso de presentarse, autorizo plenamente al equipo médico a tomar acción para contrarrestar estos efectos indeseados. Por lo que comprendo perfectamente que existen riesgos de lesión o muerte para todo paciente sujeto a un procedimiento anestésico.</p><p><strong>II.- HOSPITALIZACIÓN:</strong> ${hosp.autorizaHosp ? '☒' : '☐'} Comprendo que la hospitalización de mi mascota es necesaria para que este bajo atención y cuidado médico debido a la severidad de su enfermedad... Entiendo completamente que el equipo médico de VETGRU HOSPITAL VETERINARIO hará cuanto sea posible para minimizar el tiempo de hospitalización en la recuperación de mi mascota... y en caso de presentarse una respuesta inadecuada, deslindo cualquier responsabilidad a todo el equipo médico de VETGRU HOSPITAL VETERINARIO.</p><p>Comprendo que VETGRU HOSPITAL VETERINARIO no forma parte de la tienda, por lo tanto deslindo de toda responsabilidad a la tienda Petco. He leído y entendido todo lo anterior, aceptando términos y condiciones expuestas en este documento.</p></div>
+                <div class="firmas-area"><div class="firma-bloque">${htmlFirmaCli}<div class="firma-linea">NOMBRE, FIRMA DEL PROPIETARIO Y FECHA</div></div></div></div>`;
+            } else if(authStr === "CONTRATO DE PENSIÓN") {
+                htmlFinal += `<div class="receta-print">${htmlCabeceraComun}<p style="text-align:right; font-weight:bold; font-size:11px;">FECHA: ${fch}</p><h2>CONTRATO DE PRESTACIÓN DE SERVICIO DE PENSIÓN CANINA Y FELINA</h2>
+                <div class="cuerpo-texto"><p>Por medio de la presente yo el Sr. o Sra. <strong>${hosp.dueno || '______________________'}</strong> con teléfono <strong>${hosp.telefono || '______________________'}</strong> autorizo para que mi mascota de nombre <strong>${hosp.paciente || '_________________'}</strong>, raza <strong>${hosp.raza || '_____________'}</strong>, edad <strong>${hosp.edad || '______'}</strong>, sexo <strong>${hosp.sexo || '______'}</strong>, ingrese al servicio de pensión de "VETGRU HOSPITAL VETERINARIO". Hago constatar lo siguiente:</p>
+                <p>1.- He presentado mis verdaderos datos en la reseña de arriba...<br>2.- Mi mascota ha sido vacunada periódicamente... Estoy consciente de que existe la posibilidad de que mi mascota se enferme, aun estando vacunada.<br>3.- La duración de la estancia será desde el día <strong>${hosp.penEntrada || '_____'}</strong> al día <strong>${hosp.penSalida || '_____'}</strong>. Teniendo un costo de <strong>$${hosp.penCosto || '_____'}</strong>; siendo la recepción y la entrega de 12 a 5 pm, en caso de necesitar entregarlo antes o después de esa hora tendría un costo extra. Me comprometo a liquidar todos los gastos generados.<br>4.- VETGRU ofrece dos tipos de estancia/pensión... Si mi mascota lastima a otra, seré el único responsable.<br>5.- Autorizo a VETGRU a hacer uso de los servicios veterinarios que estime para garantizar la buena salud de mi mascota.<br>6.- En el transcurso de la estancia pueden llegar a suceder accidentes... deslindo de toda responsabilidad a VETGRU.<br>7.- En caso de alguna enfermedad, lesión o muerte de la mascota durante su estancia, VETGRU tratará de contactarlo... Si mi mascota falleciese, VETGRU se encargara de realizar una necropsia... dando mi autorización como propietario con la firma de este contrato.<br>8.- Estoy consciente que pasado 10 días después de la fecha pactada de salida, si el propietario no recoge a su mascota, VETGRU podrá entregarlo a los servicios municipales.<br>9.- VETGRU no se hace responsable de la pérdida o daño de ningún artículo personal.<br>10.- Deberá traer la comida para su mascota... Favor de informar a VETGRU en caso de que su perro tenga algún tipo de alergias (<strong>${hosp.penAlergias || 'Ninguna'}</strong>). En caso de que su mascota se quede sin comida, favor de confirmar cuál opción prefiere: <strong>${hosp.penSinComida || '______________________'}</strong>.<br>11.- Si por alguna razón consideramos que su mascota puede causar daño, será separado de inmediato.</p>
+                <p><strong>ALIMENTACIÓN:</strong> Marca: <strong>${hosp.penMarca || '_______'}</strong> | Horario: <strong>${hosp.penHorario || '_______'}</strong> | Cantidad: <strong>${hosp.penCantidad || '_______'}</strong><br><strong>CUIDADOS ESPECIALES:</strong> <strong>${hosp.penCuidados || 'Ninguno'}</strong></p>
+                <p>Comprendo que VETGRU HOSPITAL VETERINARIO no forma parte de la tienda, por lo tanto deslindo de toda responsabilidad a la tienda Petco. He leído y entendido todo lo anterior, aceptando términos y condiciones expuestas en este documento.</p></div>
+                <div class="firmas-area"><div class="firma-bloque">${htmlFirmaCli}<div class="firma-linea">NOMBRE Y FIRMA DE AUTORIZACION DE PROPIETARIO</div></div></div></div>`;
+            } else if(authStr === "ALTA VOLUNTARIA") {
+                htmlFinal += `<div class="receta-print">${htmlCabeceraComun}<h2>ALTA VOLUNTARIA</h2>
+                <table class="tabla-datos"><tr><td class="bg-gris">PACIENTE:</td><td>${hosp.paciente || ''}</td></tr><tr><td class="bg-gris">RAZA:</td><td>${hosp.raza || ''}</td></tr><tr><td class="bg-gris">SEXO:</td><td>${hosp.sexo || ''}</td></tr><tr><td class="bg-gris">EDAD:</td><td>${hosp.edad || ''}</td></tr><tr><td class="bg-gris">PROPIETARIO:</td><td>${hosp.dueno || ''}</td></tr><tr><td class="bg-gris">FECHA DE INGRESO:</td><td>${hosp.altaFechaIn || ''}</td></tr><tr><td class="bg-gris">Dx DE INGRESO:</td><td>${hosp.altaDxIn || ''}</td></tr><tr><td class="bg-gris">FECHA DE EGRESO:</td><td>${hosp.altaFechaOut || ''}</td></tr><tr><td class="bg-gris">Dx DE EGRESO:</td><td>${hosp.altaDxOut || ''}</td></tr><tr><td class="bg-gris">MOTIVO DEL EGRESO:</td><td>${hosp.altaMotivo || ''}</td></tr></table>
+                <div class="cuerpo-texto"><p>POR VOLUNTAD PROPIA Y NO OBSTANTE A LA OPINION DEL PERSONAL MEDICO DE “GRUVETS” HOSPITAL VETERINARIO, HE DECIDIDO SOLICITAR MI “ALTA VOLUNTARIA”, POR LO CUAL EXIMO COMPLETAMENTE DE TODA RESPONSABILIDAD AL ÁREA MEDICA Y A GRUVET´S HOSPITAL POR LAS CONSECUENCIAS QUE PUDIERAN SOBREVENIR POR MI DECISIÓN.</p><p>Comprendo que VETGRU HOSPITAL VETERINARIO no forma parte de la tienda, por lo tanto deslindo de toda responsabilidad a la tienda Petco. He leído y entendido todo lo anterior, aceptando términos y condiciones expuestas en este documento.</p></div>
+                <div class="firmas-area"><div class="firma-bloque">${htmlFirmaCli}<div class="firma-linea">NOMBRE, FIRMA DEL PROPIETARIO Y FECHA</div></div></div></div>`;
+            } else { 
+                htmlFinal += `<div class="receta-print">${htmlCabeceraComun}<h2 style="text-align:center;">DETALLE DE MANEJO HOSPITALARIO</h2><div class="cuerpo-texto">Este es un registro interno de control. Imprima el Ticket para ver desglose económico.</div></div>`; 
+            }
+            
+            if(isPreview) {
+                document.getElementById('modal-cuerpo').innerHTML = htmlFinal;
+            } else {
+                document.getElementById('zona-impresion').innerHTML = htmlFinal;
+                setTimeout(() => { window.print(); }, 500);
+            }
+        };
+
+        window.recopilarDatosHosp = function() {
+            const dueno = document.getElementById('hosp-dueno').value; 
+            const paciente = document.getElementById('hosp-paciente').value; 
+            const tel = document.getElementById('hosp-tel').value; 
+            const raza = document.getElementById('hosp-raza').value; 
+            const edad = document.getElementById('hosp-edad').value; 
+            const sexo = document.getElementById('hosp-sexo').value; 
+            const peso = document.getElementById('hosp-peso').value; 
+            const temp = document.getElementById('hosp-temp').value; 
+            const notas = document.getElementById('hosp-notas').value; 
+            const formato = document.getElementById('select-formato-legal').value;
+            
+            let data = { doctor: usuarioLogueado?.nombre || '', dueno: dueno||'', paciente: paciente||'', telefono: tel||'', raza: raza||'', edad: edad||'', sexo: sexo||'', peso: peso||'', temperatura: temp||'', prescripcion: notas||'', formatoLegal: formato, autorizaciones: autorizacionesHosp };
+            
+            if(formato === "AUTORIZACIÓN HOSPITALARIA") {
+                data.domicilio = document.getElementById('hosp-domicilio').value; data.correo = document.getElementById('hosp-correo').value; data.color = document.getElementById('hosp-color').value; data.nacimiento = document.getElementById('hosp-nacimiento').value;
+                data.vacSextuple = document.getElementById('hosp-vac-sextuple').value; data.vacRabia = document.getElementById('hosp-vac-rabia').value; data.vacDesp = document.getElementById('hosp-vac-desp').value;
+                data.manejoMedico = document.getElementById('hosp-manejo-medico').value; data.autorizaHosp = document.getElementById('check-hosp').checked;
+            }
+            if(formato === "CONTRATO DE PENSIÓN") {
+                data.penEntrada = document.getElementById('pen-entrada').value; data.penSalida = document.getElementById('pen-salida').value; data.penCosto = document.getElementById('pen-costo').value; data.penAlergias = document.getElementById('pen-alergias').value; data.penSinComida = document.getElementById('pen-sin-comida').value; data.penMarca = document.getElementById('pen-marca').value; data.penHorario = document.getElementById('pen-horario').value; data.penCantidad = document.getElementById('pen-cantidad').value; data.penCuidados = document.getElementById('pen-cuidados').value;
+            }
+            if(formato === "ALTA VOLUNTARIA") {
+                data.altaFechaIn = document.getElementById('alta-f-ingreso').value; data.altaDxIn = document.getElementById('alta-dx-ingreso').value; data.altaFechaOut = document.getElementById('alta-f-egreso').value; data.altaDxOut = document.getElementById('alta-dx-egreso').value; data.altaMotivo = document.getElementById('alta-motivo').value;
+            }
+            return data;
+        }
+
+        window.abrirLecturaYFirma = function() {
+            let dataPreview = window.recopilarDatosHosp();
+            dataPreview.fechaTexto = new Date().toLocaleString('es-MX'); dataPreview.folio = "VISTA PREVIA";
+            window.generarHojasLegalesDinamicas(dataPreview, true);
+            document.getElementById('modal-lectura').classList.remove('oculto');
+            document.getElementById('zona-firmas-oculta').classList.remove('oculto');
+            document.getElementById('btn-final-hosp').disabled = false;
+            setTimeout(resizeCanvases, 50); canvasActivo = true;
+        }
+
+        window.revisarAlertasInventario = function() { 
+            const cajaAlerta = document.getElementById('alerta-inventario-menu'); const lista = document.getElementById('lista-alertas-menu'); lista.innerHTML = ''; 
+            db.collection("Inventario").get().then(q => { 
+                let itemsAlerta = []; 
+                q.forEach(doc => { 
+                    const d = doc.data(); 
+                    if(d.tipoArticulo === 'Servicio Médico') return; 
+                    let valMin = d.minimo; let limite = isNaN(parseInt(valMin)) ? 5 : parseInt(valMin); 
+                    if (limite > 0 && d.cantidad <= limite) { itemsAlerta.push(`<strong>${d.medicamento}</strong>: Quedan ${d.cantidad} ${d.unidad || 'U.'}`); } 
+                }); 
+                if(itemsAlerta.length > 0) { 
+                    cajaAlerta.classList.remove('oculto'); let html = ''; let maxMostrar = Math.min(3, itemsAlerta.length); 
+                    for(let i=0; i < maxMostrar; i++){ html += `<li>${itemsAlerta[i]}</li>`; } 
+                    if(itemsAlerta.length > 3) { html += `<li style="list-style:none; margin-top:10px; font-weight:bold; cursor:pointer; color:#0caeb9; text-decoration:underline;" onclick="abrirVerInventario()">+ ${itemsAlerta.length - 3} productos más</li>`; } 
+                    lista.innerHTML = html; 
+                } else { cajaAlerta.classList.add('oculto'); } 
+            }).catch(e => console.error(e)); 
+        }
+
+        // --- SISTEMA CORE INIT ---
+        const firebaseConfig = { apiKey: "AIzaSyABktLytyy6fBXXDOrJq9B0nErrOzc30a4", authDomain: "kioscovet-93eae.firebaseapp.com", projectId: "kioscovet-93eae", storageBucket: "kioscovet-93eae.firebasestorage.app", messagingSenderId: "571603121447", appId: "1:571603121447:web:ad4a7d439050ec82812502" };
+        firebase.initializeApp(firebaseConfig); const db = firebase.firestore(); 
+
+        let pinActual = ""; let usuarioLogueado = null; let temporizadorInactividad; 
+        let totalCobroCalculado = 0; let inventarioGlobal = []; let carrito = []; let carritoHosp = [];
+        let datosHistorialInv = []; let datosHistorialVentas = []; let datosExpediente = [];
+        
+        // INTERFAZ
+        function mostrarCamposDinamicos() {
+            const sel = document.getElementById('select-formato-legal').value;
+            document.querySelectorAll('.campos-dinamicos').forEach(d => d.classList.add('oculto'));
+            document.getElementById('fab-preview').style.display = 'none';
+            if(sel === "AUTORIZACIÓN HOSPITALARIA") { document.getElementById('campos-auth-hospital').classList.remove('oculto'); document.getElementById('fab-preview').style.display = 'flex'; }
+            if(sel === "CONTRATO DE PENSIÓN") { document.getElementById('campos-pension').classList.remove('oculto'); document.getElementById('fab-preview').style.display = 'flex'; }
+            if(sel === "ALTA VOLUNTARIA") { document.getElementById('campos-alta-voluntaria').classList.remove('oculto'); document.getElementById('fab-preview').style.display = 'flex'; }
+        }
+
+        window.abrirCorteCaja = function(periodo) { 
+            cambiarPantalla('pantalla-menu', 'pantalla-corte-caja'); 
+            document.querySelectorAll('.btn-filtro').forEach(b => { b.classList.remove('activo'); }); 
+            let bt = document.getElementById(`filtro-${periodo}`); if(bt) bt.classList.add('activo'); 
+            const lista = document.getElementById('lista-corte-caja'); 
+            lista.innerHTML = '<div style="text-align:center; padding:40px;">⏳ Calculando...</div>'; 
+            
+            let limiteTiempo = Date.now(); 
+            if(periodo === 'dia') limiteTiempo -= (24 * 60 * 60 * 1000); 
+            if(periodo === 'semana') limiteTiempo -= (7 * 24 * 60 * 60 * 1000); 
+            if(periodo === 'mes') limiteTiempo -= (30 * 24 * 60 * 60 * 1000); 
+            
+            db.collection("Historial_Cobros").orderBy("timestamp", "desc").get().then(q => { 
+                let granTotal = 0; let granDescuento = 0; let htmlVentas = '';
+                q.forEach(doc => { 
+                    const d = doc.data(); 
+                    if(d.timestamp >= limiteTiempo) { 
+                        let mPago = d.metodoPago || 'Efectivo'; 
+                        let totalPagado = parseFloat(d.totalCobrado) || 0; 
+                        let descuentoMoneda = parseFloat(d.valorDescuento) || 0; 
+                        let sub = parseFloat(d.subtotal) || 0;
+                        granTotal += totalPagado; granDescuento += descuentoMoneda; 
+                        
+                        htmlVentas += `<div class="tarjeta-info" style="border-left: 4px solid #0caeb9; padding: 15px; margin-bottom: 10px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><strong style="font-size:1.1em; color:#333;">${d.fechaTexto}</strong><span style="background:#e0f7fa; color:#00838f; padding:3px 8px; border-radius:10px; font-size:0.8em; font-weight:bold;">${mPago}</span></div>
+                            <div style="font-size:0.9em; color:#555; margin-bottom:8px;"><span>👨‍⚕️ Atendió: <b>${d.atendio}</b></span><br><span>🛒 ${d.ventaMostrador ? 'Mostrador' : 'Paciente: ' + d.paciente}</span></div>
+                            <div style="display:flex; justify-content:space-between; border-top:1px dashed #ccc; padding-top:8px; font-size:0.95em;"><span>Subtotal: $${sub.toFixed(2)}</span><span style="color:#dc3545;">Desc: -$${descuentoMoneda.toFixed(2)}</span><strong style="color:#198754; font-size:1.1em;">Total: $${totalPagado.toFixed(2)}</strong></div>
+                        </div>`;
+                    } 
+                }); 
+                document.getElementById('corte-gran-total').innerText = granTotal.toFixed(2); document.getElementById('corte-gran-descuento').innerText = granDescuento.toFixed(2); 
+                lista.innerHTML = htmlVentas === '' ? '<p style="text-align:center; color:#666;">No hay movimientos en este periodo.</p>' : htmlVentas; 
+            }).catch(e => { lista.innerHTML = `<p style="color:red; text-align:center;">Error al cargar: ${e.message}</p>`; }); 
+        }
+
+        window.procesarHospitalizacion = function(imprimir) {
+            if(guardandoBloqueo) return;
+            let hospData = window.recopilarDatosHosp();
+            if(!hospData.dueno || !hospData.paciente) { alert("⚠️ Llena al menos Dueño y Paciente."); return; }
+            if(!hospData.formatoLegal && imprimir === 'hoja') { alert("⚠️ Selecciona un Formato Legal arriba primero."); return;}
+            
+            let cCli = document.getElementById('canvas-cliente'); const firmaCliBase64 = (canvasActivo && firmaCapturada) ? cCli.toDataURL() : "";
+            const folioStr = String(Date.now()).slice(-5); const subtotal = carritoHosp.reduce((sum, item) => sum + item.precio, 0);
+            guardandoBloqueo = true; document.body.style.cursor = 'wait';
+            
+            hospData.articulos = carritoHosp; hospData.firmaCliente = firmaCliBase64; hospData.subtotal = subtotal; hospData.totalCobrado = subtotal; hospData.metodoPago = "Estancia Hospitalaria"; hospData.folio = folioStr; hospData.fechaTexto = new Date().toLocaleString('es-MX'); hospData.timestamp = Date.now(); hospData.fechaReal = firebase.firestore.FieldValue.serverTimestamp();
+
+            db.collection("Historial_Hospitalizacion").add(hospData).then(() => {
+                descontarInventarioAutomatico(carritoHosp);
+                if(imprimir === 'hoja' || imprimir === true) { window.generarHojasLegalesDinamicas(hospData); } else if (imprimir === 'ticket') { window.imprimirTicketBoucher(hospData); } else { alert("✅ Guardado en historial."); } cancelarVolver();
+            }).catch(e => { console.error(e); alert("Error al guardar: " + e.message); }).finally(() => { guardandoBloqueo = false; document.body.style.cursor = 'default'; });
+        }
+    </script>
+</body>
+</html>
