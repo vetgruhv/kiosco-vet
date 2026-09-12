@@ -5,42 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hospital Veterinario ERP</title>
     
-    <script src="https://unpkg.com/html5-qrcode"></script>
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <!-- Librería para leer Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
         /* --- ESTILOS VISUALES PREMIUM HOMOLOGADOS --- */
-        
-        /* CENTRADO SEGURO: Evita que las tarjetas altas se corten por arriba en tablets */
         body { 
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            background-color: #eef2f6; 
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            align-items: flex-start; /* Permite que el contenido crezca hacia abajo sin cortar arriba */
-            min-height: 100vh; 
-            color: #2b3035; 
-            box-sizing: border-box;
-            padding: 40px 10px 100px 10px; /* Margen superior e inferior para respirar */
+            background-color: #eef2f6; margin: 0; display: flex; justify-content: center; 
+            align-items: flex-start; min-height: 100vh; color: #2b3035; box-sizing: border-box;
+            padding: 40px 10px 100px 10px; 
         }
         
         .contenedor { 
-            background: white; 
-            padding: 35px; 
-            border-radius: 24px; 
-            box-shadow: 0 12px 35px rgba(0,0,0,0.06); 
-            width: 100%; 
-            max-width: 680px; 
-            max-height: calc(100vh - 80px); /* Se ajusta a la pantalla dejando espacio para los botones flotantes */
-            overflow-y: auto; 
-            box-sizing: border-box; 
-            position: relative; 
-            margin: auto; /* Centra perfectamente de forma horizontal y vertical */
+            background: white; padding: 35px; border-radius: 24px; box-shadow: 0 12px 35px rgba(0,0,0,0.06); 
+            width: 100%; max-width: 680px; max-height: calc(100vh - 80px); overflow-y: auto; 
+            box-sizing: border-box; position: relative; margin: auto; 
         }
         .contenedor-ancho { max-width: 850px; } 
-        
         .seccion-separador { border-top: 2px dashed #e9ecef; margin: 25px 0; padding-top: 15px; }
 
         /* Teclado PIN */
@@ -55,7 +40,6 @@
         .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
         .btn-menu { padding: 20px 10px; font-size: 0.95em; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 1px solid #e9ecef; background: white; border-radius: 16px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.03); color: #495057; font-weight: 600; }
         .btn-menu:hover { background: #fcfcfd; transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.06); border-color: #dee2e6; }
-        
         .alerta-banner { background-color: #fff3cd; border-left: 6px solid #ffc107; border-radius: 12px; padding: 18px; margin-bottom: 20px; text-align: left; }
         
         /* Formularios */
@@ -64,12 +48,12 @@
         .grupo-formulario { margin-bottom: 20px; text-align: left; width: 100%; box-sizing: border-box;}
         .grupo-formulario label { display: block; font-weight: 700; margin-bottom: 8px; color: #495057; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px;}
         .grupo-formulario input, .grupo-formulario select, .grupo-formulario textarea { width: 100%; padding: 14px; font-size: 1em; border: 2px solid #e9ecef; border-radius: 12px; box-sizing: border-box; font-family: inherit; transition: all 0.2s; background-color: #f8f9fa; color: #333; outline: none; appearance: none; -webkit-appearance: none; }
+        .grupo-formulario input[type="file"] { background-color: #fff; padding: 10px; }
         .grupo-formulario input:focus, .grupo-formulario select:focus, .grupo-formulario textarea:focus { border-color: #0d6efd; background-color: #fff; box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1); }
         .input-buscador { font-size: 1.05em !important; border: 2px solid #0d6efd !important; background: #fff !important; }
         
-        /* Botones Generales */
+        /* Botones */
         .btn { width: 100%; padding: 16px; font-size: 1.1em; border: none; border-radius: 14px; cursor: pointer; font-weight: bold; transition: all 0.2s ease; display: block; text-align: center; box-sizing: border-box;}
-        .btn-qr { background: #e3f2fd; color: #0d6efd; border: 2px dashed #0d6efd; margin-bottom: 20px;}
         .btn-guardar { background: #198754; color: white; box-shadow: 0 6px 15px rgba(25, 135, 84, 0.25); margin-top: 10px;}
         .btn-guardar:hover { background: #157347; transform: translateY(-2px); }
         .btn-guardar-rojo { background: #dc3545; color: white; box-shadow: 0 6px 15px rgba(220, 53, 69, 0.25); }
@@ -80,18 +64,15 @@
         .btn-filtro { flex: 1; padding: 10px; border: 2px solid #e9ecef; background: white; color: #6c757d; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; white-space: nowrap;}
         .btn-filtro.activo { background: #0d6efd; color: white; border-color: #0d6efd; box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2); }
 
-        /* BOTONES FLOTANTES */
+        /* BOTON FLOTANTE */
         .fab-container { position: fixed; bottom: 25px; right: 25px; display: flex; flex-direction: column; gap: 15px; z-index: 9999; }
         .fab { width: 65px; height: 65px; border-radius: 50%; border: none; color: white; font-size: 28px; box-shadow: 0 6px 15px rgba(0,0,0,0.3); cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
         .fab:active { transform: scale(0.9); }
-        .fab-qr { background: #0d6efd; }
         .fab-cancel { background: #dc3545; }
 
         .caja-cobro { background: #fffbf0; padding: 25px; border-radius: 18px; border: 1px solid #ffecb5; margin-bottom: 20px; }
         .stock-alerta { border-left: 6px solid #dc3545; background-color: #fffafb; }
         .stock-ok { border-left: 6px solid #198754; }
-        .caja-camara { width: 100%; border-radius: 16px; overflow: hidden; margin-bottom: 15px; border: 4px solid #333; position: fixed; top: 10%; left: 5%; right: 5%; width: 90%; max-width: 500px; z-index: 10000; background: #000; margin: auto;}
-        .fondo-oscuro { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index: 9999; }
         .oculto { display: none !important; }
 
         /* CARRITOS */
@@ -100,19 +81,15 @@
         .item-carrito:last-child { border-bottom: none; }
         .btn-eliminar-item { background: #ffe3e3; color: #dc3545; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-weight: bold; transition: 0.2s;}
 
-        /* DISEÑO DE AUTORIZACIONES (MORADO) */
+        /* DISEÑO DE AUTORIZACIONES */
         .caja-morada { background: #f9f5ff; padding: 25px; border-radius: 18px; border: 1px solid #e9d5ff; margin-bottom: 25px; }
         .titulo-morado { color: #6f42c1; font-weight: 900; font-size: 0.85em; text-transform: uppercase; margin-bottom: 15px; display: block; letter-spacing: 0.5px;}
         .auth-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
         .auth-input-group input, .auth-input-group select { flex: 1; border: 1px solid #e9d5ff !important; border-radius: 12px; padding: 14px; outline: none; background: #fff !important; color: #495057; font-size: 1em;}
-        .auth-input-group input:focus, .auth-input-group select:focus { border-color: #6f42c1 !important; box-shadow: 0 0 0 4px rgba(111, 66, 193, 0.1); }
         .auth-input-group button { background: #6f42c1; color: white; border: none; border-radius: 12px; padding: 0 25px; font-weight: bold; font-size: 1.05em; cursor: pointer; transition: 0.2s; white-space: nowrap; box-shadow: 0 4px 10px rgba(111, 66, 193, 0.2);}
-        .auth-input-group button:hover { background: #5936a2; transform: translateY(-2px);}
-        
         .lista-autorizaciones { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px;}
         .badge-auth { background: #f3e8ff; color: #6f42c1; padding: 8px 16px; border-radius: 20px; font-size: 0.9em; font-weight: bold; display: flex; align-items: center; gap: 8px; border: 1px solid #d8b4fe;}
         .badge-auth span { cursor: pointer; color: #dc3545; font-size: 1.1em; transition: 0.2s; }
-        .badge-auth span:hover { transform: scale(1.2); }
 
         /* FIRMAS CLIENTE */
         .firma-card { width: 100%; max-width: 450px; margin: 0 auto; border: 1px solid #e9ecef; border-radius: 14px; padding: 15px; background: #fff; text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.02); box-sizing: border-box;}
@@ -147,8 +124,8 @@
         .btn-exp-action { background: #e3f2fd; color: #0d6efd; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s; display: flex; align-items: center; gap: 6px; box-sizing: border-box;}
         .btn-exp-action:hover { background: #d0e7ff; transform: translateY(-2px);}
         .btn-exp-action.btn-venta { background: #e8f5e9; color: #198754; }
+        
         .btn-borrar-historial { background: #fff0f0; color: #dc3545; border: 1px solid #ffc9c9; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s;}
-        .btn-borrar-historial:hover { background: #dc3545; color: white;}
 
         @media (max-width: 600px) { .hosp-listas-grid { grid-template-columns: 1fr; } }
 
@@ -160,7 +137,6 @@
             .contenedor, .fab-container { display: none !important; }
             #zona-impresion { display: block !important; width: 100%; }
             
-            /* TICKET VÁUCHER OXXO */
             .ticket-print { width: 78mm; font-family: 'Courier New', Courier, monospace; font-size: 12px; margin: 0; padding: 10mm 5mm; text-transform: uppercase; }
             .ticket-print h2 { font-size: 16px; text-align: center; margin: 0 0 5px 0; font-weight: bold; }
             .ticket-print .info-tienda { text-align: center; font-size: 11px; margin-bottom: 10px; line-height: 1.2; }
@@ -173,7 +149,6 @@
             .ticket-print .totales strong { font-size: 14px; }
             .ticket-print .footer { text-align: center; font-size: 11px; margin-top: 15px; border-top: 1px dashed #000; padding-top: 10px; line-height: 1.4; }
             
-            /* RECETA DISEÑO VETGRU */
             .receta-print { width: 100%; max-width: 216mm; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0 auto; padding: 10mm 15mm; box-sizing: border-box; color: #2c6e8f; }
             .receta-print .cabecera { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5px; }
             .receta-print .logo-area { width: 28%; }
@@ -194,7 +169,6 @@
             .receta-print .firma-bloque { width: 60%; text-align: center; font-size: 11px; }
             .receta-print .firma-bloque img { max-height: 60px; display: block; margin: 0 auto 5px auto; }
             .receta-print .firma-linea { border-top: 1px solid #2c6e8f; padding-top: 4px; color: #2c6e8f; display: inline-block; width: 100%;}
-            
             .receta-print .footer-receta { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; font-size: 10px; line-height: 1.4; color: #2c6e8f;}
         }
     </style>
@@ -205,13 +179,10 @@
     <datalist id="lista-medicamentos-filtrada"></datalist>
     <div id="zona-impresion"></div>
 
-    <!-- BOTONES FLOTANTES GLOBALES -->
+    <!-- BOTON FLOTANTE CANCELAR/VOLVER -->
     <div class="fab-container oculto" id="fab-container">
-        <button class="fab fab-qr" onclick="activarQrUniversal()" title="Escanear QR">📷</button>
         <button class="fab fab-cancel" onclick="cancelarVolver()" title="Volver al Menú">❌</button>
     </div>
-    <div id="fondo-camara" class="fondo-oscuro oculto"></div>
-    <div id="caja-camara-universal" class="caja-camara oculto"></div>
 
     <!-- PANTALLA 1: LOGIN -->
     <div id="pantalla-login" class="contenedor">
@@ -236,41 +207,21 @@
 
         <h4 style="color: #adb5bd; margin: 0 0 15px 0; text-align: left; text-transform: uppercase; font-size: 0.85em; letter-spacing:1px;">Operaciones Médicas</h4>
         <div class="menu-grid">
-            <!-- REPARACIÓN: LLAMADAS DIRECTAS A LAS FUNCIONES DE CADA PANTALLA -->
-            <button class="btn-menu oculto" id="btn-movimiento" onclick="abrirFormulario()">
-                <span class="emoji">🛒</span> <span>Venta General</span>
-            </button>
-            <button class="btn-menu oculto" id="btn-hospitalizacion" onclick="abrirHospitalizacion()">
-                <span class="emoji">🏥</span> <span>Manejo Hospitalario</span>
-            </button>
-            <button class="btn-menu oculto" id="btn-expediente" onclick="abrirExpediente()">
-                <span class="emoji">🗂️</span> <span>Expediente Clínico</span>
-            </button>
+            <button class="btn-menu oculto" id="btn-movimiento" onclick="abrirFormulario()"><span class="emoji">🛒</span> <span>Venta General</span></button>
+            <button class="btn-menu oculto" id="btn-hospitalizacion" onclick="abrirHospitalizacion()"><span class="emoji">🏥</span> <span>Manejo Hospitalario</span></button>
+            <button class="btn-menu oculto" id="btn-expediente" onclick="abrirExpediente()"><span class="emoji">🗂️</span> <span>Expediente Clínico</span></button>
         </div>
         
         <h4 id="titulo-gerencia" class="oculto" style="color: #adb5bd; margin: 25px 0 15px 0; text-align: left; text-transform: uppercase; font-size: 0.85em; letter-spacing:1px;">Administración (Gerencia)</h4>
         <div class="menu-grid">
-            <button class="btn-menu oculto" id="btn-corte" onclick="abrirCorteCaja('dia')" style="background-color: #f0f9ff; border-color: #b6e3f4;">
-                <span class="emoji">💰</span> <span style="color: #0dcaf0;">Corte de Caja</span>
-            </button>
-            <button class="btn-menu oculto" id="btn-ver-inventario" onclick="abrirVerInventario()">
-                <span class="emoji">👀</span> <span>Ver Inventario</span>
-            </button>
-            <button class="btn-menu oculto" id="btn-alta-inventario" onclick="abrirInventario()">
-                <span class="emoji">📦</span> <span>Alta Lotes / Servicios</span>
-            </button>
-            <button class="btn-menu oculto" id="btn-hist-inventario" onclick="abrirHistorialInventario()">
-                <span class="emoji">🗃️</span> <span>Historial Altas/Mermas</span>
-            </button>
-            <button class="btn-menu oculto" id="btn-historial" onclick="abrirHistorialVentas()">
-                <span class="emoji">📋</span> <span>Historial de Ventas</span>
-            </button>
-            <button class="btn-menu oculto" id="btn-baja-inventario" onclick="abrirBajaInventario()">
-                <span class="emoji">📉</span> <span>Devolución / Baja</span>
-            </button>
-            <button class="btn-menu oculto" id="btn-usuarios" onclick="abrirUsuarios()">
-                <span class="emoji">👥</span> <span>Personal</span>
-            </button>
+            <button class="btn-menu oculto" id="btn-corte" onclick="abrirCorteCaja('dia')" style="background-color: #f0f9ff; border-color: #b6e3f4;"><span class="emoji">💰</span> <span style="color: #0dcaf0;">Corte de Caja</span></button>
+            <button class="btn-menu oculto" id="btn-ver-inventario" onclick="abrirVerInventario()"><span class="emoji">👀</span> <span>Ver Inventario</span></button>
+            <button class="btn-menu oculto" id="btn-alta-inventario" onclick="abrirInventario()"><span class="emoji">📦</span> <span>Alta Lotes / Servicios</span></button>
+            <button class="btn-menu oculto" id="btn-sistemas" onclick="abrirModoSistemas()"><span class="emoji">⚙️</span> <span>Modo Sistemas (Excel)</span></button>
+            <button class="btn-menu oculto" id="btn-hist-inventario" onclick="abrirHistorialInventario()"><span class="emoji">🗃️</span> <span>Historial Altas/Mermas</span></button>
+            <button class="btn-menu oculto" id="btn-historial" onclick="abrirHistorialVentas()"><span class="emoji">📋</span> <span>Historial de Ventas</span></button>
+            <button class="btn-menu oculto" id="btn-baja-inventario" onclick="abrirBajaInventario()"><span class="emoji">📉</span> <span>Devolución / Baja</span></button>
+            <button class="btn-menu oculto" id="btn-usuarios" onclick="abrirUsuarios()"><span class="emoji">👥</span> <span>Personal</span></button>
         </div>
         <button class="btn btn-cancelar" style="margin-top:20px; font-size: 1em; padding: 14px; border-radius: 14px;" onclick="cerrarSesion()">Cerrar Sesión</button>
     </div>
@@ -299,8 +250,7 @@
 
         <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e9ecef;">
             <label style="font-weight: 600; font-size: 0.95em; cursor: pointer; display: flex; align-items: center; gap: 10px; color: #495057;">
-                <input type="checkbox" id="venta-mostrador" onchange="toggleMostrador()" style="width: 22px; height: 22px; accent-color: #0d6efd;"> 
-                Venta a Público General (Mostrador)
+                <input type="checkbox" id="venta-mostrador" onchange="toggleMostrador()" style="width: 22px; height: 22px; accent-color: #0d6efd;"> Venta a Público General (Mostrador)
             </label>
         </div>
         
@@ -339,19 +289,16 @@
         <!-- AUTORIZACIONES MANUALES DINÁMICAS (MORADO) -->
         <div class="caja-morada">
             <label class="titulo-morado">Autorizaciones Legales del Cliente:</label>
-            
             <div class="auth-input-group">
                 <select id="select-auth-rapida">
-                    <!-- Options inyectadas por JS -->
+                    <!-- Options inyectadas por JS para evitar duplicados -->
                 </select>
                 <button onclick="agregarAutorizacionSelect()">➕ Añadir Formato</button>
             </div>
-            
             <div class="auth-input-group">
                 <input type="text" id="input-nueva-auth" placeholder="Otras autorizaciones (Ej. Cirugía, Profilaxis...)" onkeypress="if(event.key==='Enter') agregarAutorizacion()">
                 <button onclick="agregarAutorizacion()">➕ Añadir Extra</button>
             </div>
-
             <div id="lista-autorizaciones" class="lista-autorizaciones"></div>
         </div>
 
@@ -395,20 +342,15 @@
 
         <div class="seccion-separador"></div>
 
-        <!-- NOTAS DE EVOLUCIÓN -->
         <div class="grupo-formulario">
             <label>Notas de Evolución / Comentarios Médicos:</label>
-            <textarea id="hosp-notas" rows="6" placeholder="Ej. El paciente ingresa estable. Comió a las 14:00 hrs..." style="font-size: 1em;"></textarea>
+            <textarea id="hosp-notas" rows="6" placeholder="Ej. El paciente ingresa estable. Comió a las 14:00 hrs..."></textarea>
         </div>
 
         <button type="button" id="btn-abrir-firmas" class="btn" style="background:#e3f2fd; color:#0d6efd; border: 2px dashed #0d6efd; margin-top: 25px; margin-bottom: 20px;" onclick="mostrarFirmas()">🖊️ Habilitar Firma (Cliente)</button>
 
         <div id="zona-firmas-oculta" class="form-row oculto" style="justify-content: center; margin-top: 25px;">
-            <div class="firma-card">
-                <div class="firma-title" style="color:#198754;">Firma de Conformidad (Cliente)</div>
-                <canvas id="canvas-cliente" class="canvas-firma"></canvas>
-                <button type="button" class="btn-borrar-firma" onclick="limpiarFirma('cliente')">Borrar Firma</button>
-            </div>
+            <div class="firma-card"><div class="firma-title" style="color:#198754;">Firma de Conformidad (Cliente)</div><canvas id="canvas-cliente" class="canvas-firma"></canvas><button type="button" class="btn-borrar-firma" onclick="limpiarFirma('cliente')">Borrar Firma</button></div>
         </div>
         
         <div class="form-row" style="margin-top: 30px;">
@@ -461,6 +403,29 @@
         <div id="lista-stock-firebase" class="lista-vertical"></div>
     </div>
 
+    <!-- PANTALLA MODO SISTEMAS (CARGA EXCEL) -->
+    <div id="pantalla-sistemas" class="contenedor oculto">
+        <h2 style="color: #6f42c1; margin-top: 0; text-align: left;">⚙️ Modo Sistemas (Carga Masiva)</h2>
+        <p style="color:#666; font-size:0.9em; text-align:justify;">Sube un archivo Excel (.xlsx) para dar de alta múltiples medicamentos o servicios a la vez. El archivo <strong>debe</strong> tener una hoja con las siguientes columnas exactas en la primera fila:</p>
+        <ul style="color:#444; font-size:0.85em; font-weight:bold; background:#f8f9fa; padding:15px 30px; border-radius:10px;">
+            <li>Código (Obligatorio)</li>
+            <li>Nombre (Obligatorio)</li>
+            <li>Tipo (Ej: Servicio Médico o Medicamento/Producto)</li>
+            <li>Precio (Ej: 150.50)</li>
+            <li>Cantidad (Ej: 10)</li>
+            <li>Unidad (Ej: Piezas, Cajas, Mililitros (ml))</li>
+            <li>Mínimo (Alerta de stock)</li>
+            <li>Máximo</li>
+            <li>Descripción</li>
+        </ul>
+        <div class="grupo-formulario">
+            <label>Seleccionar Archivo Excel (.xlsx):</label>
+            <input type="file" id="excel-file" accept=".xlsx, .xls, .csv">
+        </div>
+        <button class="btn btn-guardar-azul" style="background:#6f42c1;" onclick="procesarExcel()">🚀 Procesar y Subir a la Nube</button>
+        <div id="excel-resultado" style="margin-top: 20px; font-weight: bold; text-align: center; color: #0d6efd;"></div>
+    </div>
+
     <!-- PANTALLA 7: HISTORIAL DE INVENTARIO -->
     <div id="pantalla-historial-inventario" class="contenedor contenedor-ancho oculto">
         <h2 style="color: #333; margin-top: 0; text-align: left;">🗃️ Historial de Almacén</h2>
@@ -500,7 +465,7 @@
             <div class="grupo-formulario"><label>Stock Mínimo (Alerta):</label><input type="number" id="min-inventario" placeholder="Ej. 5"></div>
             <div class="grupo-formulario"><label>Stock Máximo:</label><input type="number" id="max-inventario" placeholder="Ej. 50"></div>
         </div>
-        <button id="btn-guardar-inventario" class="btn btn-guardar" onclick="guardarEnInventario(false)">Guardar Alta</button>
+        <button id="btn-guardar-inventario" class="btn btn-guardar" onclick="guardarEnInventario()">Guardar Alta</button>
     </div>
 
     <!-- PANTALLA 9: DEVOLUCIÓN / BAJA -->
@@ -532,7 +497,7 @@
         const firebaseConfig = { apiKey: "AIzaSyABktLytyy6fBXXDOrJq9B0nErrOzc30a4", authDomain: "kioscovet-93eae.firebaseapp.com", projectId: "kioscovet-93eae", storageBucket: "kioscovet-93eae.firebasestorage.app", messagingSenderId: "571603121447", appId: "1:571603121447:web:ad4a7d439050ec82812502" };
         firebase.initializeApp(firebaseConfig); const db = firebase.firestore(); 
 
-        let pinActual = ""; let usuarioLogueado = null; let temporizadorInactividad; let lectorQr; let camaraActivaId = ""; 
+        let pinActual = ""; let usuarioLogueado = null; let temporizadorInactividad; 
         let totalCobroCalculado = 0; let inventarioGlobal = []; let carrito = []; let carritoHosp = [];
         let datosHistorialInv = []; let datosHistorialVentas = []; let datosExpediente = [];
         let firmaCapturada = false; let autorizacionesHosp = []; let guardandoBloqueo = false;
@@ -571,7 +536,6 @@
             }
         }
 
-        // --- FILTRO LISTAS ---
         function filtrarTarjetas(idContenedor, texto) {
             let term = texto.toLowerCase(); let tarjetas = document.getElementById(idContenedor).children;
             for(let t of tarjetas) { if(t.classList.contains('tarjeta-info') || t.classList.contains('tarjeta-expediente')) { t.style.display = t.innerText.toLowerCase().includes(term) ? "" : "none"; } }
@@ -587,7 +551,7 @@
             if (idMostrar === 'pantalla-menu') { revisarAlertasInventario(); } 
         }
         function cancelarVolver() { 
-            detenerCamara(); carrito = []; carritoHosp = []; 
+            carrito = []; carritoHosp = []; 
             if(document.getElementById('carrito-lista')) actualizarCarritoUI(); 
             if(document.getElementById('carrito-hosp-servicios')) actualizarCarritoHospUI(); 
             document.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(input => { input.value = ''; }); 
@@ -595,7 +559,10 @@
             let vm = document.getElementById('venta-mostrador'); if(vm) { vm.checked = false; toggleMostrador(); }
             let zf = document.getElementById('zona-firmas-oculta'); if(zf) zf.classList.add('oculto'); 
             let ba = document.getElementById('btn-abrir-firmas'); if(ba) ba.classList.remove('oculto'); 
-            canvasActivo = false; cambiarPantalla('todas', 'pantalla-menu'); 
+            canvasActivo = false; 
+            if(document.getElementById('excel-file')) document.getElementById('excel-file').value = ''; 
+            if(document.getElementById('excel-resultado')) document.getElementById('excel-resultado').innerHTML = ''; 
+            cambiarPantalla('todas', 'pantalla-menu'); 
         }
 
         // --- SEGURIDAD ---
@@ -623,7 +590,7 @@
         function configurarTextosYPermisos() {
             document.getElementById('texto-bienvenida').innerText = `Hola, ${usuarioLogueado.nombre}`;
             document.getElementById('btn-movimiento').classList.remove('oculto'); document.getElementById('btn-hospitalizacion').classList.remove('oculto'); document.getElementById('btn-expediente').classList.remove('oculto');
-            const adminBotones = ['btn-corte', 'btn-ver-inventario', 'btn-alta-inventario', 'btn-hist-inventario', 'btn-baja-inventario', 'btn-historial', 'btn-usuarios', 'titulo-gerencia'];
+            const adminBotones = ['btn-corte', 'btn-ver-inventario', 'btn-alta-inventario', 'btn-sistemas', 'btn-hist-inventario', 'btn-baja-inventario', 'btn-historial', 'btn-usuarios', 'titulo-gerencia'];
             adminBotones.forEach(id => { let b = document.getElementById(id); if(b) b.classList.add('oculto'); });
             
             if(usuarioLogueado.rol === "Doctor") { let v = document.getElementById('btn-ver-inventario'); if(v) v.classList.remove('oculto'); } 
@@ -646,11 +613,7 @@
             const tipoSelec = document.getElementById('tipo-hosp-item').value;
             inventarioGlobal.forEach(d => { if(d.tipoArticulo === tipoSelec) { let icon = d.tipoArticulo === 'Servicio Médico' ? '🩺' : '💊'; datalistFilt.innerHTML += `<option value="${d.medicamento}">${icon} $${d.precioVenta || 0}</option>`; } });
         }
-        function revisarAlertasInventario() { const cajaAlerta = document.getElementById('alerta-inventario-menu'); const lista = document.getElementById('lista-alertas-menu'); lista.innerHTML = ''; db.collection("Inventario").get().then(q => { let itemsAlerta = []; q.forEach(doc => { const d = doc.data(); if(d.tipoArticulo === 'Servicio Médico') return; let limite = d.minimo || 5; if (d.cantidad <= limite) { itemsAlerta.push(`<strong>${d.medicamento}</strong>: Quedan ${d.cantidad} ${d.unidad || 'U.'}`); } }); if(itemsAlerta.length > 0) { cajaAlerta.classList.remove('oculto'); let html = ''; let maxMostrar = Math.min(3, itemsAlerta.length); for(let i=0; i < maxMostrar; i++){ html += `<li>${itemsAlerta[i]}</li>`; } if(itemsAlerta.length > 3) { html += `<li style="list-style:none; margin-top:10px; font-weight:bold; cursor:pointer; color:#0d6efd; text-decoration:underline;" onclick="abrirVerInventario()">+ ${itemsAlerta.length - 3} productos más</li>`; } lista.innerHTML = html; } else { cajaAlerta.classList.add('oculto'); } }); }
-
-        // --- CÁMARA Y CANCELAR ---
-        function iniciarCamara(idDiv, idDestino) { camaraActivaId = idDiv; document.getElementById(idDiv).classList.remove('oculto'); if(!lectorQr) { lectorQr = new Html5Qrcode(idDiv); } lectorQr.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, (codigo) => { reproducirSonidoBip(); document.getElementById(idDestino).value = codigo; if(idDestino === 'buscador-pos') autocompletarPrecio(codigo, 'precio-pos'); detenerCamara(); reiniciarTemporizador(); }, (err) => {} ).catch(e => { alert("Error de cámara."); detenerCamara(); }); }
-        function detenerCamara() { if(lectorQr && camaraActivaId) { lectorQr.stop().then(() => { document.getElementById(camaraActivaId).classList.add('oculto'); lectorQr.clear(); lectorQr = null; camaraActivaId = ""; }).catch(e => {}); } }
+        function revisarAlertasInventario() { const cajaAlerta = document.getElementById('alerta-inventario-menu'); const lista = document.getElementById('lista-alertas-menu'); lista.innerHTML = ''; db.collection("Inventario").get().then(q => { let itemsAlerta = []; q.forEach(doc => { const d = doc.data(); if(d.tipoArticulo === 'Servicio Médico') return; let limite = d.minimo || 5; if (d.cantidad <= limite) { itemsAlerta.push(`<strong>${d.medicamento}</strong>: Quedan ${d.cantidad} ${d.unidad || 'U.'}`); } }); if(itemsAlerta.length > 0) { cajaAlerta.classList.remove('oculto'); let html = ''; let maxMostrar = Math.min(3, itemsAlerta.length); for(let i=0; i < maxMostrar; i++){ html += `<li>${itemsAlerta[i]}</li>`; } if(itemsAlerta.length > 3) { html += `<li style="list-style:none; margin-top:10px; font-weight:bold; cursor:pointer; color:#0d6efd; text-decoration:underline;" onclick="abrirPantalla('pantalla-ver-inventario', cargarInventarioVista)">+ ${itemsAlerta.length - 3} productos más</li>`; } lista.innerHTML = html; } else { cajaAlerta.classList.add('oculto'); } }); }
 
         // --- VENTA GENERAL (POS) ---
         function abrirFormulario() { cambiarPantalla('pantalla-menu', 'pantalla-registro-baja'); document.getElementById('texto-registro-usuario').innerText = `👨‍⚕️ Cajero: ${usuarioLogueado.nombre}`; carrito = []; actualizarCarritoUI(); document.getElementById('precio-pos').readOnly = false; document.getElementById('precio-pos').style.backgroundColor = "#fff"; }
@@ -760,6 +723,36 @@
             document.getElementById('zona-impresion').innerHTML = html; setTimeout(() => { window.print(); cancelarVolver(); }, 500);
         }
 
+        // --- EXPEDIENTE ---
+        function abrirExpediente() { cambiarPantalla('pantalla-menu', 'pantalla-expediente'); document.getElementById('buscador-expediente').value = ''; cargarExpedienteBase(); }
+        function cargarExpedienteBase() {
+            document.getElementById('lista-expediente').innerHTML = '<div style="text-align:center; padding:40px;"><h3 style="color:#0d6efd;">⏳ Cargando expedientes...</h3></div>';
+            Promise.all([ db.collection("Historial_Cobros").orderBy("timestamp", "desc").limit(150).get(), db.collection("Historial_Hospitalizacion").orderBy("timestamp", "desc").limit(150).get() ]).then(([cobros, hosp]) => {
+                datosExpediente = [];
+                cobros.forEach(d => { let data = d.data(); data.id = d.id; data.coleccion = "Historial_Cobros"; data.tipoRegistro = 'cobro'; datosExpediente.push(data); });
+                hosp.forEach(d => { let data = d.data(); data.id = d.id; data.coleccion = "Historial_Hospitalizacion"; data.tipoRegistro = 'hospitalizacion'; datosExpediente.push(data); });
+                datosExpediente.sort((a,b) => b.timestamp - a.timestamp); buscarExpediente(); 
+            }).catch(e => { document.getElementById('lista-expediente').innerHTML = '<p style="color:red; text-align:center;">Error al cargar datos.</p>'; });
+        }
+        function buscarExpediente() {
+            let term = document.getElementById('buscador-expediente').value.toLowerCase(); let tipo = document.getElementById('filtro-tipo-exp').value; let fecha = document.getElementById('filtro-fecha-exp').value; let ahora = Date.now();
+            let filtrados = datosExpediente.filter(d => { let txt = (d.paciente||'') + ' ' + (d.dueno||'') + ' ' + (d.codigoConcepto||''); let coincideTexto = txt.toLowerCase().includes(term); let coincideTipo = (tipo === 'todos') || (d.tipoRegistro === tipo); let coincideFecha = true; if(fecha === 'hoy') coincideFecha = (ahora - d.timestamp) <= 86400000; if(fecha === 'semana') coincideFecha = (ahora - d.timestamp) <= 604800000; if(fecha === 'mes') coincideFecha = (ahora - d.timestamp) <= 2592000000; return coincideTexto && coincideTipo && coincideFecha; });
+            let html = ''; if(filtrados.length === 0) { html = '<div style="text-align:center; padding:30px; color:#888;">🔍 No hay resultados.</div>'; } else {
+                filtrados.forEach((d) => {
+                    let btnBorrar = ''; if (usuarioLogueado && (usuarioLogueado.rol === 'Gerente' || usuarioLogueado.rol === 'Sub-Gerente')) { btnBorrar = `<button class="btn-borrar-historial" onclick="borrarRegistro('${d.coleccion}', '${d.id}')">🗑️</button>`; }
+                    if(d.tipoRegistro === 'hospitalizacion') {
+                        let authArr = d.autorizaciones || []; let authTxt = authArr.length > 0 ? `<div style="font-size:0.85em; color:#6f42c1; font-weight:bold; margin-bottom:10px;">✅ Autoriza: ${authArr.join(', ')}</div>` : '';
+                        let descServ = d.articulos ? d.articulos.map(a=>a.nombre).join(', ') : ''; let notaResumen = d.prescripcion ? d.prescripcion.substring(0, 150) + '...' : 'Sin notas';
+                        html += `<div class="tarjeta-expediente hospital"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-hospital">🏥 Hospital / Notas</span> ${d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 Dueño: ${d.dueno}</span><span>⚖️ Peso: ${d.peso||'--'}kg</span><span>🌡️ Temp: ${d.temperatura||'--'}°C</span></div>${authTxt}<div class="exp-content">${notaResumen}<br><br><span style="color:#666; font-size:0.85em;">${descServ ? `🩺 Insumos: ${descServ}` : ''}</span></div><div class="exp-footer"><span><strong style="color:#333;">Dr. ${d.doctor}</strong></span> <div style="display:flex; gap:10px;"><button class="btn-exp-action" style="background:#f3e8ff; color:#6f42c1;" onclick="reimprimirDesdeExpediente(${d.timestamp}, '${d.tipoRegistro}', 'hoja')">🖨️ Hoja</button> <button class="btn-exp-action" style="background:#e3f2fd; color:#0d6efd;" onclick="reimprimirDesdeExpediente(${d.timestamp}, '${d.tipoRegistro}', 'ticket')">🧾 Ticket</button> ${btnBorrar}</div> </div></div>`;
+                    } else {
+                        let desc = d.articulos ? d.articulos.map(a=>a.nombre).join(', ') : d.codigoConcepto; let isVenta = d.ventaMostrador;
+                        html += `<div class="tarjeta-expediente venta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰 ${isVenta ? 'Mostrador' : 'Cobro'}</span> ${isVenta ? 'Público General' : d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 Dueño: ${isVenta ? 'N/A' : d.dueno}</span><span>👨‍⚕️ Atendió: ${d.atendio}</span><span>💳 Pago: ${d.metodoPago}</span></div><div class="exp-content" style="color:#146c43; font-weight:500;">🛒 ${desc}</div><div class="exp-footer"><span style="font-size:1.2em; font-weight:bold; color:#198754;">$${parseFloat(d.totalCobrado).toFixed(2)}</span> <div style="display:flex; gap:10px;"><button class="btn-exp-action btn-venta" onclick="reimprimirDesdeExpediente(${d.timestamp}, 'cobro', 'ticket')">🖨️ Ver Ticket</button> ${btnBorrar}</div> </div></div>`;
+                    }
+                });
+            } document.getElementById('lista-expediente').innerHTML = html;
+        }
+        function reimprimirDesdeExpediente(ts, tipo, formato) { let data = datosExpediente.find(x => x.timestamp == ts && x.tipoRegistro == tipo); if(data) { if(formato === 'hoja') generarHojasLegalesDinamicas(data); else imprimirTicketBoucher(data); } }
+
         // --- CORTE DE CAJA ---
         function abrirCorteCaja(periodo) { 
             cambiarPantalla('pantalla-menu', 'pantalla-corte-caja'); document.querySelectorAll('.btn-filtro').forEach(b => { b.classList.remove('activo'); }); let bt = document.getElementById(`filtro-${periodo}`); if(bt) bt.classList.add('activo'); const lista = document.getElementById('lista-corte-caja'); lista.innerHTML = '<div style="text-align:center; padding:40px;">⏳ Calculando...</div>'; 
@@ -791,36 +784,6 @@
         }
         function filtrarInventario() { let txt = document.getElementById('busqueda-inv-texto').value.toLowerCase(); let stk = document.getElementById('busqueda-inv-stock').value; let tarjetas = document.getElementById('lista-stock-firebase').children; for(let t of tarjetas) { if(t.tagName !== 'DIV') continue; let matchTxt = t.innerText.toLowerCase().includes(txt); let matchStk = (stk === 'todos') || (stk === 'bajo' && t.classList.contains('stock-alerta')) || (stk === 'ok' && t.classList.contains('stock-ok')); t.style.display = (matchTxt && matchStk) ? "" : "none"; } }
 
-        // --- EXPEDIENTE ---
-        function abrirExpediente() { cambiarPantalla('pantalla-menu', 'pantalla-expediente'); document.getElementById('buscador-expediente').value = ''; cargarExpedienteBase(); }
-        function cargarExpedienteBase() {
-            document.getElementById('lista-expediente').innerHTML = '<div style="text-align:center; padding:40px;"><h3 style="color:#0d6efd;">⏳ Cargando expedientes...</h3></div>';
-            Promise.all([ db.collection("Historial_Cobros").orderBy("timestamp", "desc").limit(150).get(), db.collection("Historial_Hospitalizacion").orderBy("timestamp", "desc").limit(150).get() ]).then(([cobros, hosp]) => {
-                datosExpediente = [];
-                cobros.forEach(d => { let data = d.data(); data.id = d.id; data.coleccion = "Historial_Cobros"; data.tipoRegistro = 'cobro'; datosExpediente.push(data); });
-                hosp.forEach(d => { let data = d.data(); data.id = d.id; data.coleccion = "Historial_Hospitalizacion"; data.tipoRegistro = 'hospitalizacion'; datosExpediente.push(data); });
-                datosExpediente.sort((a,b) => b.timestamp - a.timestamp); buscarExpediente(); 
-            }).catch(e => { document.getElementById('lista-expediente').innerHTML = '<p style="color:red; text-align:center;">Error al cargar datos.</p>'; });
-        }
-        function buscarExpediente() {
-            let term = document.getElementById('buscador-expediente').value.toLowerCase(); let tipo = document.getElementById('filtro-tipo-exp').value; let fecha = document.getElementById('filtro-fecha-exp').value; let ahora = Date.now();
-            let filtrados = datosExpediente.filter(d => { let txt = (d.paciente||'') + ' ' + (d.dueno||'') + ' ' + (d.codigoConcepto||''); let coincideTexto = txt.toLowerCase().includes(term); let coincideTipo = (tipo === 'todos') || (d.tipoRegistro === tipo); let coincideFecha = true; if(fecha === 'hoy') coincideFecha = (ahora - d.timestamp) <= 86400000; if(fecha === 'semana') coincideFecha = (ahora - d.timestamp) <= 604800000; if(fecha === 'mes') coincideFecha = (ahora - d.timestamp) <= 2592000000; return coincideTexto && coincideTipo && coincideFecha; });
-            let html = ''; if(filtrados.length === 0) { html = '<div style="text-align:center; padding:30px; color:#888;">🔍 No hay resultados.</div>'; } else {
-                filtrados.forEach((d) => {
-                    let btnBorrar = ''; if (usuarioLogueado && (usuarioLogueado.rol === 'Gerente' || usuarioLogueado.rol === 'Sub-Gerente')) { btnBorrar = `<button class="btn-borrar-historial" onclick="borrarRegistro('${d.coleccion}', '${d.id}')">🗑️</button>`; }
-                    if(d.tipoRegistro === 'hospitalizacion') {
-                        let authArr = d.autorizaciones || []; let authTxt = authArr.length > 0 ? `<div style="font-size:0.85em; color:#6f42c1; font-weight:bold; margin-bottom:10px;">✅ Autoriza: ${authArr.join(', ')}</div>` : '';
-                        let descServ = d.articulos ? d.articulos.map(a=>a.nombre).join(', ') : ''; let notaResumen = d.prescripcion ? d.prescripcion.substring(0, 150) + '...' : 'Sin notas';
-                        html += `<div class="tarjeta-expediente hospital"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-hospital">🏥 Hospital / Notas</span> ${d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 Dueño: ${d.dueno}</span><span>⚖️ Peso: ${d.peso||'--'}kg</span><span>🌡️ Temp: ${d.temperatura||'--'}°C</span></div>${authTxt}<div class="exp-content">${notaResumen}<br><br><span style="color:#666; font-size:0.85em;">${descServ ? `🩺 Insumos: ${descServ}` : ''}</span></div><div class="exp-footer"><span><strong style="color:#333;">Dr. ${d.doctor}</strong></span> <div style="display:flex; gap:10px;"><button class="btn-exp-action" style="background:#f3e8ff; color:#6f42c1;" onclick="reimprimirDesdeExpediente(${d.timestamp}, '${d.tipoRegistro}', 'hoja')">🖨️ Hoja</button> <button class="btn-exp-action" style="background:#e3f2fd; color:#0d6efd;" onclick="reimprimirDesdeExpediente(${d.timestamp}, '${d.tipoRegistro}', 'ticket')">🧾 Ticket</button> ${btnBorrar}</div> </div></div>`;
-                    } else {
-                        let desc = d.articulos ? d.articulos.map(a=>a.nombre).join(', ') : d.codigoConcepto; let isVenta = d.ventaMostrador;
-                        html += `<div class="tarjeta-expediente venta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰 ${isVenta ? 'Mostrador' : 'Cobro'}</span> ${isVenta ? 'Público General' : d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 Dueño: ${isVenta ? 'N/A' : d.dueno}</span><span>👨‍⚕️ Atendió: ${d.atendio}</span><span>💳 Pago: ${d.metodoPago}</span></div><div class="exp-content" style="color:#146c43; font-weight:500;">🛒 ${desc}</div><div class="exp-footer"><span style="font-size:1.2em; font-weight:bold; color:#198754;">$${parseFloat(d.totalCobrado).toFixed(2)}</span> <div style="display:flex; gap:10px;"><button class="btn-exp-action btn-venta" onclick="reimprimirDesdeExpediente(${d.timestamp}, 'cobro', 'ticket')">🖨️ Ver Ticket</button> ${btnBorrar}</div> </div></div>`;
-                    }
-                });
-            } document.getElementById('lista-expediente').innerHTML = html;
-        }
-        function reimprimirDesdeExpediente(ts, tipo, formato) { let data = datosExpediente.find(x => x.timestamp == ts && x.tipoRegistro == tipo); if(data) { if(formato === 'hoja') generarHojasLegalesDinamicas(data); else imprimirTicketBoucher(data); } }
-
         // --- HISTORIAL ALMACÉN ---
         function abrirHistorialInventario() { cambiarPantalla('pantalla-menu', 'pantalla-historial-inventario'); document.getElementById('buscador-hist-inv').value = ''; cargarHistorialInventario(); }
         function cargarHistorialInventario() {
@@ -832,10 +795,39 @@
             let filtrados = datosHistorialInv.filter(d => { let txt = (d.medicamento||'') + ' ' + (d.registradoPor||''); let cTxt = txt.toLowerCase().includes(term); let cTipo = (tipo === 'todos') || (d.tipoMovimiento === tipo || d.tipoMovimiento.includes(tipo)); let cFch = true; if(fecha === 'hoy') cFch = (ahora - d.timestamp) <= 86400000; if(fecha === 'semana') cFch = (ahora - d.timestamp) <= 604800000; if(fecha === 'mes') cFch = (ahora - d.timestamp) <= 2592000000; return cTxt && cTipo && cFch; });
             let html = ''; if(filtrados.length === 0) html = '<p style="text-align:center; color:#888;">No hay resultados.</p>';
             filtrados.forEach(d => { 
-                let isAlta = d.tipoMovimiento === 'Alta'; let isMerma = d.tipoMovimiento === 'Merma'; let cl = isAlta ? 'alta' : (isMerma ? 'merma' : 'edicion'); let bdg = isAlta ? 'badge-alta' : (isMerma ? 'badge-merma' : 'badge-edicion'); let icon = isAlta ? '📦 Alta' : (isMerma ? '📉 Devolución' : '✏️ Edición'); 
+                let isAlta = d.tipoMovimiento === 'Alta' || d.tipoMovimiento.includes('Alta'); let isMerma = d.tipoMovimiento === 'Merma'; let cl = isAlta ? 'alta' : (isMerma ? 'merma' : 'edicion'); let bdg = isAlta ? 'badge-alta' : (isMerma ? 'badge-merma' : 'badge-edicion'); let icon = isAlta ? '📦 Alta' : (isMerma ? '📉 Devolución' : '✏️ Edición'); 
                 let btnBorrar = ''; if (usuarioLogueado && (usuarioLogueado.rol === 'Gerente' || usuarioLogueado.rol === 'Sub-Gerente')) { btnBorrar = `<button class="btn-borrar-historial" onclick="borrarRegistro('${d.coleccion}', '${d.id}')">🗑️</button>`; }
                 html += `<div class="tarjeta-expediente ${cl}" style="padding:15px;"><div class="exp-header" style="margin-bottom:5px;"><span class="exp-title"><span class="badge-tipo ${bdg}">${icon}</span> ${d.medicamento}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-content" style="margin-bottom:8px; padding:8px;"><strong>Cantidad/Cambio:</strong> ${d.cantidad||'N/A'} ${d.unidad||''} <br><strong>Motivo/Detalle:</strong> ${d.motivo || 'N/A'}</div><div class="exp-footer"><span>Por: ${d.registradoPor}</span> ${btnBorrar}</div></div>`; 
             }); document.getElementById('lista-historial-inventario').innerHTML = html;
+        }
+
+        // --- MODO SISTEMAS (EXCEL) ---
+        function abrirModoSistemas() { cambiarPantalla('pantalla-menu', 'pantalla-sistemas'); document.getElementById('excel-file').value = ''; document.getElementById('excel-resultado').innerHTML = ''; }
+        async function procesarExcel() {
+            const fileInput = document.getElementById('excel-file'); if (!fileInput.files.length) return alert("⚠️ Selecciona un archivo Excel primero."); const file = fileInput.files[0];
+            document.getElementById('excel-resultado').innerHTML = '⏳ Procesando archivo...'; document.body.style.cursor = 'wait';
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, {type: 'array'}); const firstSheetName = workbook.SheetNames[0]; const worksheet = workbook.Sheets[firstSheetName]; const rows = XLSX.utils.sheet_to_json(worksheet);
+                    if(rows.length === 0) throw new Error("El archivo está vacío.");
+                    let exitosos = 0; let errores = 0; document.getElementById('excel-resultado').innerHTML = `⏳ Subiendo ${rows.length} registros a la nube...`;
+                    let batch = db.batch(); let operaciones = 0; let batchPromises = [];
+                    rows.forEach((row, index) => {
+                        let codigo = row['Código'] || row['Codigo'] || `SKU-${Date.now()}-${index}`; let nombre = row['Nombre'] || row['Medicamento'] || row['Producto']; let precio = parseFloat(row['Precio']) || 0; let cantidad = parseInt(row['Cantidad']) || 0; let tipo = row['Tipo'] || 'Medicamento/Producto'; let unidad = row['Unidad'] || 'Piezas'; let min = parseInt(row['Mínimo']) || 5; let max = parseInt(row['Máximo']) || 50; let desc = row['Descripción'] || '';
+                        if(!nombre) { errores++; return; } 
+                        let refInv = db.collection("Inventario").doc(String(nombre));
+                        batch.set(refInv, { tipoArticulo: tipo, codigoQR: String(codigo), medicamento: String(nombre), descripcion: String(desc), precioVenta: precio, cantidad: cantidad, unidad: unidad, minimo: min, maximo: max, registradoPor: usuarioLogueado.nombre + " (Excel)", fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() }, {merge: true});
+                        let refHist = db.collection("Historial_Inventario").doc();
+                        batch.set(refHist, { tipoMovimiento: "Alta (Masiva Excel)", medicamento: String(nombre), cantidad: cantidad, unidad: unidad, precio: precio, motivo: "Carga Inicial / Masiva", registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now() });
+                        operaciones += 2; exitosos++;
+                        if (operaciones >= 490) { batchPromises.push(batch.commit()); batch = db.batch(); operaciones = 0; }
+                    });
+                    if (operaciones > 0) { batchPromises.push(batch.commit()); }
+                    await Promise.all(batchPromises);
+                    document.getElementById('excel-resultado').innerHTML = `✅ Carga completada.<br>Exitosos: ${exitosos}<br>Errores/Omitidos: ${errores}`; cargarSugerenciasInventario();
+                } catch (error) { document.getElementById('excel-resultado').innerHTML = `❌ Error al procesar: ${error.message}`; } finally { document.body.style.cursor = 'default'; }
+            }; reader.readAsArrayBuffer(file);
         }
 
         // --- HISTORIAL VENTAS ---
