@@ -1,21 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hospital Veterinario ERP</title>
-    
-    <!-- Firebase y Excel -->
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Hospital Veterinario ERP</title>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
     <style>
-        /* --- ESTILOS COMPRIMIDOS --- */
         body{font-family:'Segoe UI',Roboto,sans-serif;background:#eef2f6;margin:0;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;color:#2b3035;box-sizing:border-box;padding:40px 10px 100px 10px}
         .contenedor{background:#fff;padding:35px;border-radius:24px;box-shadow:0 12px 35px rgba(0,0,0,0.06);width:100%;max-width:680px;max-height:calc(100vh - 80px);overflow-y:auto;box-sizing:border-box;position:relative;margin:auto}
         .contenedor-ancho{max-width:850px} .seccion-separador{border-top:2px dashed #e9ecef;margin:25px 0;padding-top:15px}
-        .pantalla-pin{font-size:2.2em;letter-spacing:10px;margin-bottom:25px;padding:15px;width:100%;text-align:center;background:#f8f9fa;border:2px solid #e9ecef;border-radius:16px;box-sizing:border-box;color:#333;font-weight:bold;outline:none}
+        .pantalla-pin{font-size:2.5em;letter-spacing:15px;margin-bottom:25px;padding:15px;width:100%;text-align:center;background:#f8f9fa;border:2px solid #e9ecef;border-radius:16px;box-sizing:border-box;color:#333;font-weight:bold;outline:none}
         .cuadricula-teclas{display:grid;grid-template-columns:repeat(3,1fr);gap:15px} .tecla{padding:20px 0;font-size:1.8em;background:#fff;border:1px solid #dee2e6;border-radius:16px;box-shadow:0 4px 6px rgba(0,0,0,0.02);cursor:pointer;transition:all 0.2s;color:#333;font-weight:500}
         .tecla:active{background:#e9ecef;transform:scale(0.92)} .tecla-borrar{background:#fff0f0;color:#dc3545;border-color:#ffc9c9}
         .header-usuario{background:linear-gradient(135deg,#0caeb9,#088c96);color:#fff;padding:18px;border-radius:16px;margin-bottom:25px;font-weight:bold;font-size:1.1em;text-align:center;box-shadow:0 6px 15px rgba(12,174,185,0.25)}
@@ -23,7 +17,7 @@
         .btn-menu:hover{background:#fcfcfd;transform:translateY(-4px);border-color:#0caeb9} .alerta-banner{background:#fff3cd;border-left:6px solid #ffc107;border-radius:12px;padding:18px;margin-bottom:20px;text-align:left}
         .form-row{display:flex;flex-wrap:wrap;gap:20px;margin-bottom:20px;align-items:flex-end} .form-row .grupo-formulario{margin-bottom:0;flex:1 1 200px}
         .grupo-formulario{margin-bottom:20px;text-align:left;width:100%;box-sizing:border-box} .grupo-formulario label{display:block;font-weight:700;margin-bottom:8px;color:#495057;font-size:0.8em;text-transform:uppercase}
-        .grupo-formulario input,.grupo-formulario select,.grupo-formulario textarea{width:100%;padding:14px;font-size:1em;border:2px solid #e9ecef;border-radius:12px;box-sizing:border-box;font-family:inherit;background:#f8f9fa;color:#333;outline:none}
+        .grupo-formulario input,.grupo-formulario select,.grupo-formulario textarea{width:100%;padding:14px;font-size:1em;border:2px solid #e9ecef;border-radius:12px;box-sizing:border-box;font-family:inherit;background:#f8f9fa;color:#333;outline:none;appearance:none;-webkit-appearance:none}
         .grupo-formulario input:focus,.grupo-formulario select:focus,.grupo-formulario textarea:focus{border-color:#0caeb9;background:#fff;box-shadow:0 0 0 4px rgba(12,174,185,0.1)}
         .input-buscador{font-size:1.05em!important;border:2px solid #0caeb9!important;background:#fff!important}
         .autocomplete-container{position:relative;width:100%} .autocomplete-dropdown{position:absolute;top:calc(100% + 5px);left:0;right:0;background:#fff;border:2px solid #0caeb9;border-radius:12px;max-height:250px;overflow-y:auto;z-index:10000;box-shadow:0 8px 25px rgba(0,0,0,0.15)}
@@ -44,7 +38,7 @@
         .lista-vertical{display:block;max-height:500px;overflow-y:auto;padding-right:10px;margin-bottom:15px} .tarjeta-expediente,.tarjeta-info{border:1px solid #e9ecef;border-radius:16px;padding:20px;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.03);text-align:left;position:relative;overflow:hidden;margin-bottom:18px;display:block;width:100%;box-sizing:border-box}
         .badge-tipo{padding:5px 10px;border-radius:8px;font-size:0.8em;font-weight:bold;margin-right:10px;display:inline-block} .exp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;border-bottom:1px solid #f1f3f5;padding-bottom:10px;flex-wrap:wrap;gap:10px} .exp-title{font-weight:800;font-size:1.1em;color:#2b3035;display:flex;align-items:center} .exp-date{font-size:0.85em;color:#888;font-weight:500} .exp-content{background:#f8f9fa;padding:15px;border-radius:12px;font-size:0.95em;color:#444;white-space:pre-wrap;margin-bottom:15px;border:1px solid #f1f3f5;line-height:1.6} .exp-footer{display:flex;justify-content:space-between;align-items:center;font-size:0.9em;color:#666;flex-wrap:wrap;gap:10px}
         .btn-exp-action{background:#e0f7fa;color:#0caeb9;border:none;padding:10px 18px;border-radius:10px;cursor:pointer;font-weight:bold;font-size:0.9em;display:flex;align-items:center;gap:6px} .btn-borrar-historial{background:#fff0f0;color:#dc3545;border:1px solid #ffc9c9;padding:10px 15px;border-radius:10px;cursor:pointer;font-weight:bold;font-size:0.9em}
-        .hosp-listas-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px} .hosp-columna{background:#fff;border:1px solid #e9ecef;border-radius:12px;padding:15px} .hosp-columna h5{margin:0 0 10px 0;border-bottom:2px dashed #e9ecef;padding-bottom:8px;text-transform:uppercase;font-size:0.85em}
+        .hosp-listas-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px} .hosp-columna{background:#fff;border:1px solid #e9ecef;border-radius:12px;padding:15px} .hosp-columna h5{margin:0 0 10px 0;border-bottom:2px dashed #e9ecef;padding-bottom:8px;text-transform:uppercase;font-size:0.85em;letter-spacing:0.5px}
         @media (max-width:600px){.hosp-listas-grid{grid-template-columns:1fr}}
         #zona-impresion{display:none}
         @media print{
@@ -83,7 +77,7 @@
     <!-- PANTALLA LOGIN -->
     <div id="pantalla-login" class="contenedor">
         <h2 style="color:#333;margin-top:0;font-size:1.8em;text-align:center">🔐 Ingreso</h2>
-        <input type="text" id="input-pin" class="pantalla-pin" readonly placeholder="• • • •">
+        <input type="password" id="input-pin" class="pantalla-pin" readonly placeholder="••••">
         <div class="cuadricula-teclas">
             <button class="tecla" onclick="window.agregarNumero('1')">1</button>
             <button class="tecla" onclick="window.agregarNumero('2')">2</button>
@@ -131,12 +125,15 @@
         <div class="form-row" style="background:#fff;padding:15px;border-radius:14px;border:1px solid #ced4da">
             <div class="grupo-formulario autocomplete-container" style="flex:2;margin:0"><label>Buscar Producto (Mín 3 letras):</label><input type="text" id="buscador-pos" class="input-buscador" placeholder="Nombre..." oninput="window.buscarAutocomplete('buscador-pos','dropdown-pos',window.seleccionarItemPos)" autocomplete="off"><div id="dropdown-pos" class="autocomplete-dropdown oculto"></div></div>
             <div class="grupo-formulario" style="flex:1;max-width:120px;margin:0"><label>Precio ($):</label><input type="number" id="precio-pos" placeholder="Manual"></div>
-            <div class="grupo-formulario" style="flex:0 0 auto;margin:0"><button class="btn btn-guardar-azul" style="margin:0;padding:14px 20px" onclick="window.agregarAlCarrito()">➕ Añadir</button></div>
+            <div class="grupo-formulario" style="flex:0 0 auto;margin:0"><button class="btn btn-guardar-azul" style="margin:0;padding:14px 20px;border-radius:12px" onclick="window.agregarAlCarrito()">➕ Añadir</button></div>
         </div>
         <label style="font-weight:bold;font-size:0.85em;text-transform:uppercase">Artículos en la cuenta:</label><div id="carrito-lista" class="carrito-box"><p style="text-align:center;color:#adb5bd">Vacío</p></div>
-        <div style="background:#f8f9fa;padding:15px;border-radius:12px;margin-bottom:20px;border:1px solid #e9ecef"><label style="font-weight:600;display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" id="venta-mostrador" onchange="window.toggleMostrador()" style="width:22px;height:22px;accent-color:#0caeb9"> Venta a Público General</label></div>
+        <div style="background:#f8f9fa;padding:15px;border-radius:12px;margin-bottom:20px;border:1px solid #e9ecef;display:flex;align-items:center;">
+            <input type="checkbox" id="venta-mostrador" onchange="window.toggleMostrador()" style="width:24px;height:24px;margin:0 10px 0 0;appearance:auto;-webkit-appearance:auto;flex:none;"> 
+            <label style="font-weight:600;font-size:0.95em;color:#495057;margin:0;">Venta a Público General (Mostrador)</label>
+        </div>
         <div id="campos-paciente"><div class="form-row"><div class="grupo-formulario"><label>Dueño:</label><input type="text" id="nombre-dueno"></div><div class="grupo-formulario"><label>Teléfono:</label><input type="number" id="tel-dueno"></div></div><div class="form-row"><div class="grupo-formulario"><label>Paciente:</label><input type="text" id="nombre-perro"></div><div class="grupo-formulario"><label>Raza:</label><input type="text" id="raza-paciente"></div></div></div>
-        <div class="caja-cobro"><h4 style="margin:0 0 15px 0;color:#856404;border-bottom:1px solid #ffeeba;padding-bottom:8px">💳 Cobro</h4><div class="form-row"><div class="grupo-formulario"><label>Descuento ($):</label><input type="number" id="valor-descuento" placeholder="0.00" oninput="window.calcularTotal()"></div><div class="grupo-formulario"><label>Método de Pago:</label><select id="metodo-pago"><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Transferencia</option><option>Sin Cobro (Interno)</option></select></div></div><h2 style="text-align:right;color:#198754">Total: $<span id="total-cobrar">0.00</span></h2></div>
+        <div class="caja-cobro"><h4 style="margin:0 0 15px 0;color:#856404;border-bottom:1px solid #ffeeba;padding-bottom:8px">💳 Cobro</h4><div class="form-row"><div class="grupo-formulario"><label>Descuento Directo ($):</label><input type="number" id="valor-descuento" placeholder="0.00" oninput="window.calcularTotal()"></div><div class="grupo-formulario"><label>Método de Pago:</label><select id="metodo-pago"><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Transferencia</option><option>Sin Cobro (Interno)</option></select></div></div><h2 style="text-align:right;color:#198754">Total: $<span id="total-cobrar">0.00</span></h2></div>
         <button class="btn btn-guardar" onclick="window.procesarVenta(true)">🖨️ Guardar e Imprimir Ticket</button>
     </div>
 
@@ -166,7 +163,10 @@
                 <label style="font-weight:bold;color:#0caeb9">Vacunas:</label>
                 <div class="form-row"><div class="grupo-formulario"><label>Séxtuple:</label><input type="date" id="hosp-vac-sextuple"></div><div class="grupo-formulario"><label>Rabia:</label><input type="date" id="hosp-vac-rabia"></div><div class="grupo-formulario"><label>Desparasitación:</label><input type="date" id="hosp-vac-desp"></div></div>
                 <div class="grupo-formulario"><label>Manejo Médico:</label><input type="text" id="hosp-manejo-medico" placeholder="Ej. Cirugía..."></div>
-                <div class="grupo-formulario"><label><input type="checkbox" id="check-hosp" checked> Autoriza Hospitalización</label></div>
+                <div class="grupo-formulario" style="display:flex;align-items:center;">
+                    <input type="checkbox" id="check-hosp" checked style="width:24px;height:24px;padding:0;margin:0 10px 0 0;appearance:auto;-webkit-appearance:auto;flex:none;"> 
+                    <label style="margin:0;text-transform:none;font-weight:bold;color:#0caeb9;">Autoriza Hospitalización</label>
+                </div>
             </div>
 
             <div id="campos-pension" class="campos-dinamicos oculto">
@@ -262,7 +262,7 @@
 
     <!-- PANTALLA HISTORIAL VENTAS -->
     <div id="pantalla-historial-ventas" class="contenedor contenedor-ancho oculto">
-        <h2 style="color:#333;margin-top:0">📋 Historial de Ventas</h2>
+        <h2 style="color:#333;margin-top:0">📋 Historial de Ventas / Hosp</h2>
         <div class="panel-busqueda"><div class="grupo-formulario busqueda-ancha"><input type="text" id="buscador-hist-ventas" class="input-buscador" placeholder="Buscar..." oninput="window.buscarHistorialVentas()"></div><div class="grupo-formulario"><select id="filtro-fecha-hist-ventas" onchange="window.buscarHistorialVentas()"><option value="todos">Cualquier fecha</option><option value="hoy">Hoy</option><option value="semana">Semana</option><option value="mes">Mes</option></select></div></div>
         <div id="lista-historial-ventas" class="lista-vertical"></div>
     </div>
@@ -270,7 +270,7 @@
     <!-- PANTALLA BAJA INVENTARIO -->
     <div id="pantalla-baja-inventario" class="contenedor oculto">
         <h2 style="color:#dc3545;margin-top:0">📉 Devolución / Baja</h2>
-        <div class="grupo-formulario autocomplete-container"><label>Nombre del Medicamento:</label><input type="text" id="qr-baja-inv" class="input-buscador" placeholder="Teclea para buscar..." oninput="window.buscarAutocomplete('qr-baja-inv','dropdown-baja',()=>console.log('sel'))" autocomplete="off"><div id="dropdown-baja" class="autocomplete-dropdown oculto"></div></div>
+        <div class="grupo-formulario autocomplete-container"><label>Nombre del Medicamento:</label><input type="text" id="qr-baja-inv" class="input-buscador" oninput="window.buscarAutocomplete('qr-baja-inv','dropdown-baja',()=>console.log('sel'))" autocomplete="off"><div id="dropdown-baja" class="autocomplete-dropdown oculto"></div></div>
         <div class="grupo-formulario"><label>Motivo:</label><input type="text" id="motivo-baja-inv"></div>
         <div class="form-row"><div class="grupo-formulario"><label>Descontar (Cantidad):</label><input type="number" id="cantidad-baja-inv"></div></div>
         <button class="btn btn-guardar-rojo" onclick="window.guardarBajaInventario()">Registrar Baja</button>
@@ -278,26 +278,37 @@
 
     <!-- PANTALLA USUARIOS -->
     <div id="pantalla-usuarios" class="contenedor contenedor-ancho oculto">
-        <h2 style="color:#333;margin-top:0">👥 Personal</h2>
+        <h2 style="color:#333;margin-top:0">👥 Administrar Personal</h2>
         <div class="form-row"><input type="text" id="nuevo-usuario-nombre" placeholder="Nombre" style="flex:1;padding:10px;border-radius:10px;border:1px solid #ccc"><input type="number" id="nuevo-usuario-pin" placeholder="PIN 4 digitos" style="flex:1;padding:10px;border-radius:10px;border:1px solid #ccc"><select id="nuevo-usuario-rol" style="flex:1;padding:10px;border-radius:10px;border:1px solid #ccc"><option>Doctor</option><option>Sub-Gerente</option><option>Gerente</option></select><button class="btn btn-guardar-azul" style="flex:1;margin:0" onclick="window.crearUsuario()">Añadir</button></div>
         <div class="panel-busqueda" style="padding:15px;margin-top:20px"><div class="grupo-formulario busqueda-ancha" style="margin:0"><label>🔍 Buscar personal:</label><input type="text" class="input-buscador" oninput="window.filtrarTarjetas('lista-usuarios-firebase', this.value)"></div></div>
         <div id="lista-usuarios-firebase" class="lista-vertical"></div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- LÓGICA CORE -->
     <script>
-        // 1. CONFIGURACIÓN FIREBASE
-        const firebaseConfig = { apiKey: "AIzaSyABktLytyy6fBXXDOrJq9B0nErrOzc30a4", authDomain: "kioscovet-93eae.firebaseapp.com", projectId: "kioscovet-93eae", storageBucket: "kioscovet-93eae.firebasestorage.app", messagingSenderId: "571603121447", appId: "1:571603121447:web:ad4a7d439050ec82812502" };
-        firebase.initializeApp(firebaseConfig); const db = firebase.firestore(); 
+        // Declaración global explícita de Funciones de Canvas
+        window.resizeCanvases = function() {
+            let cv = document.getElementById('canvas-cliente');
+            if(cv) { let pW = cv.parentElement.clientWidth; cv.width = pW ? pW - 4 : 250; }
+        };
+        
+        window.initFirmas = function() {
+            let cv = document.getElementById('canvas-cliente'); 
+            if(!cv) return; 
+            let cx = cv.getContext('2d');
+            let down = (e) => { e.preventDefault(); isDrawing = true; ctxActivo = cx; cx.beginPath(); const rect = cv.getBoundingClientRect(); const x = e.touches ? e.touches[0].clientX : e.clientX; const y = e.touches ? e.touches[0].clientY : e.clientY; cx.moveTo(x - rect.left, y - rect.top); firmaCapturada = true; };
+            let move = (e) => { e.preventDefault(); if(!isDrawing || ctxActivo !== cx) return; const rect = cv.getBoundingClientRect(); const x = e.touches ? e.touches[0].clientX : e.clientX; const y = e.touches ? e.touches[0].clientY : e.clientY; cx.lineWidth = 3; cx.lineCap = 'round'; cx.strokeStyle = '#000'; cx.lineTo(x - rect.left, y - rect.top); cx.stroke(); };
+            let up = () => { isDrawing = false; ctxActivo = null; };
+            cv.addEventListener('mousedown', down); cv.addEventListener('touchstart', down, {passive:false}); cv.addEventListener('mousemove', move); cv.addEventListener('touchmove', move, {passive:false}); cv.addEventListener('mouseup', up); cv.addEventListener('touchend', up); cv.addEventListener('mouseout', up);
+        };
+        
+        window.limpiarFirma = function(id) {
+            let cv = document.getElementById('canvas-'+id); 
+            if(cv) cv.getContext('2d').clearRect(0,0,cv.width,cv.height); 
+            firmaCapturada = false;
+        };
 
-        // 2. VARIABLES GLOBALES
-        let pinActual = ""; let usuarioLogueado = null; let temporizadorInactividad; 
-        let totalCobroCalculado = 0; let inventarioGlobal = []; let carrito = []; let carritoHosp = [];
-        let datosHistorialInv = []; let datosHistorialVentas = []; let firmaCapturada = false; 
-        let guardandoBloqueo = false; let modoEdicion = false;
-        let ctxActivo = null; let isDrawing = false; let canvasActivo = false;
-
-        // 3. FUNCIONES DE IMPRESIÓN Y FORMATOS (DECLARADAS PRIMERO)
+        // IMPRESIONES GLOBALES
         window.imprimirTicketBoucher = function(venta) {
             let esHosp = venta.tipoRegistro === 'hospitalizacion' || venta.formatoLegal; let titulo = esHosp ? "TICKET HOSPITALIZACIÓN" : "TICKET DE VENTA";
             let arts = ''; venta.articulos.forEach(a => { let n = a.nombre?a.nombre.substring(0,20):'Prod'; arts+=`<tr><td>1</td><td>${n}</td><td class="col-precio">$${Number(a.precio).toFixed(2)}</td></tr>`; });
@@ -329,35 +340,20 @@
             else { document.getElementById('zona-impresion').innerHTML = htmlFinal; setTimeout(()=>window.print(), 500); }
         };
 
-        // --- SISTEMA DE FIRMA ---
-        window.resizeCanvases = function() {
-            let cv = document.getElementById('canvas-cliente');
-            if(cv) { let pW = cv.parentElement.clientWidth; cv.width = pW ? pW - 4 : 250; }
-        };
-        
-        window.initFirmas = function() {
-            let cv = document.getElementById('canvas-cliente'); 
-            if(!cv) return; 
-            let cx = cv.getContext('2d');
-            let down = (e) => { e.preventDefault(); isDrawing = true; ctxActivo = cx; cx.beginPath(); const rect = cv.getBoundingClientRect(); const x = e.touches ? e.touches[0].clientX : e.clientX; const y = e.touches ? e.touches[0].clientY : e.clientY; cx.moveTo(x - rect.left, y - rect.top); firmaCapturada = true; };
-            let move = (e) => { e.preventDefault(); if(!isDrawing || ctxActivo !== cx) return; const rect = cv.getBoundingClientRect(); const x = e.touches ? e.touches[0].clientX : e.clientX; const y = e.touches ? e.touches[0].clientY : e.clientY; cx.lineWidth = 3; cx.lineCap = 'round'; cx.strokeStyle = '#000'; cx.lineTo(x - rect.left, y - rect.top); cx.stroke(); };
-            let up = () => { isDrawing = false; ctxActivo = null; };
-            cv.addEventListener('mousedown', down); cv.addEventListener('touchstart', down, {passive:false}); cv.addEventListener('mousemove', move); cv.addEventListener('touchmove', move, {passive:false}); cv.addEventListener('mouseup', up); cv.addEventListener('touchend', up); cv.addEventListener('mouseout', up);
-        };
-        
-        window.limpiarFirma = function(id) {
-            let cv = document.getElementById('canvas-'+id); 
-            if(cv) cv.getContext('2d').clearRect(0,0,cv.width,cv.height); 
-            firmaCapturada = false;
-        };
-
-        // --- NAVEGACIÓN Y UTILIDADES ---
+        // --- SISTEMA Y NAVEGACION ---
         window.cambiarPantalla = function(idOcultar, idMostrar) { 
             document.querySelectorAll('.contenedor').forEach(el=>el.classList.add('oculto')); 
             document.getElementById(idMostrar).classList.remove('oculto'); 
             let fab = document.getElementById('fab-container'); 
-            if(fab){(idMostrar==='pantalla-menu'||idMostrar==='pantalla-login')?fab.classList.add('oculto'):fab.classList.remove('oculto');} 
-            let fp = document.getElementById('fab-preview'); if(fp) fp.style.display='none';
+            if(fab){
+                if(idMostrar==='pantalla-menu'||idMostrar==='pantalla-login') { fab.classList.add('oculto'); } 
+                else { fab.classList.remove('oculto'); }
+            } 
+            let fp = document.getElementById('fab-preview'); 
+            if(fp) {
+                if(idMostrar==='pantalla-hospitalizacion' && document.getElementById('select-formato-legal').value !== "") { fp.style.display='flex'; } 
+                else { fp.style.display='none'; }
+            }
             if(idMostrar==='pantalla-menu') window.revisarAlertasInventario(); 
         };
         
@@ -378,7 +374,7 @@
             window.cambiarPantalla('todas','pantalla-menu'); 
         };
 
-        // --- LOGIN Y SEGURIDAD ---
+        // --- LOGIN Y SEGURIDAD BLINDADA ---
         window.agregarNumero = function(n) { 
             if(pinActual.length >= 4) return; 
             pinActual += n; 
@@ -386,12 +382,8 @@
             if(pinActual.length === 4) {
                 document.getElementById('input-pin').value = "⏳ Espere...";
                 setTimeout(() => {
-                    if(typeof window.validarPin === 'function') {
-                        window.validarPin();
-                    } else {
-                        alert("Error de carga. Haz un Hard Refresh (Ctrl + F5)");
-                        window.limpiarPin();
-                    }
+                    if(typeof window.validarPin === 'function') { window.validarPin(); } 
+                    else { alert("Error de carga. Haz un Hard Refresh (Ctrl + F5)"); window.limpiarPin(); }
                 }, 300);
             }
         };
@@ -461,18 +453,48 @@
         };
 
         // --- HOSPITALIZACION ---
-        window.abrirHospitalizacion = function() { window.cambiarPantalla('pantalla-menu', 'pantalla-hospitalizacion'); document.getElementById('zona-firmas-oculta').classList.add('oculto'); document.getElementById('btn-leer-firmar').classList.add('oculto'); window.limpiarFirma('cliente'); canvasActivo=false; carritoHosp=[]; window.actualizarCarritoHospUI(); document.getElementById('select-formato-legal').value=""; window.mostrarCamposDinamicos(); window.initFirmas(); };
-        window.mostrarCamposDinamicos = function() { const s = document.getElementById('select-formato-legal').value; document.querySelectorAll('.campos-dinamicos').forEach(d=>d.classList.add('oculto')); let bl = document.getElementById('btn-leer-firmar'); if(bl) bl.classList.add('oculto'); let fb = document.getElementById('fab-preview'); if(fb) fb.style.display='none'; if(s) { let map={"AUTORIZACIÓN HOSPITALARIA":'campos-auth-hospital',"CONTRATO DE PENSIÓN":'campos-pension',"ALTA VOLUNTARIA":'campos-alta-voluntaria'}; document.getElementById(map[s]).classList.remove('oculto'); if(bl) bl.classList.remove('oculto'); if(fb) fb.style.display='flex'; } };
+        window.abrirHospitalizacion = function() { 
+            window.cambiarPantalla('pantalla-menu', 'pantalla-hospitalizacion'); 
+            document.getElementById('zona-firmas-oculta').classList.add('oculto'); 
+            document.getElementById('btn-leer-firmar').classList.add('oculto'); 
+            window.limpiarFirma('cliente'); canvasActivo=false; carritoHosp=[]; window.actualizarCarritoHospUI(); 
+            document.getElementById('select-formato-legal').value=""; window.mostrarCamposDinamicos(); window.initFirmas(); 
+        };
+        
+        window.mostrarCamposDinamicos = function() { 
+            const s = document.getElementById('select-formato-legal').value; 
+            document.querySelectorAll('.campos-dinamicos').forEach(d=>d.classList.add('oculto')); 
+            let bl = document.getElementById('btn-leer-firmar'); if(bl) bl.classList.add('oculto'); 
+            let fb = document.getElementById('fab-preview'); if(fb) fb.style.display='none'; 
+            if(s) { 
+                let map={"AUTORIZACIÓN HOSPITALARIA":'campos-auth-hospital',"CONTRATO DE PENSIÓN":'campos-pension',"ALTA VOLUNTARIA":'campos-alta-voluntaria'}; 
+                document.getElementById(map[s]).classList.remove('oculto'); 
+                if(bl) bl.classList.remove('oculto'); 
+                if(fb) fb.style.display='flex'; 
+            } 
+        };
         
         window.recopilarDatosHosp = function() {
-            const f = document.getElementById('select-formato-legal').value; let d = { doctor:usuarioLogueado.nombre, dueno:document.getElementById('hosp-dueno').value, paciente:document.getElementById('hosp-paciente').value, telefono:document.getElementById('hosp-tel').value, raza:document.getElementById('hosp-raza').value, edad:document.getElementById('hosp-edad').value, sexo:document.getElementById('hosp-sexo').value, peso:document.getElementById('hosp-peso').value, temperatura:document.getElementById('hosp-temp').value, prescripcion:document.getElementById('hosp-notas').value, formatoLegal:f };
-            if(f==="AUTORIZACIÓN HOSPITALARIA"){d.domicilio=document.getElementById('hosp-domicilio').value;d.correo=document.getElementById('hosp-correo').value;d.color=document.getElementById('hosp-color').value;d.nacimiento=document.getElementById('hosp-nacimiento').value;d.vacSextuple=document.getElementById('hosp-vac-sextuple').value;d.vacRabia=document.getElementById('hosp-vac-rabia').value;d.vacDesp=document.getElementById('hosp-vac-desp').value;d.manejoMedico=document.getElementById('hosp-manejo-medico').value;d.autorizaHosp=document.getElementById('check-hosp').checked;}
-            if(f==="CONTRATO DE PENSIÓN"){d.penEntrada=document.getElementById('pen-entrada').value;d.penSalida=document.getElementById('pen-salida').value;d.penCosto=document.getElementById('pen-costo').value;d.penAlergias=document.getElementById('pen-alergias').value;d.penSinComida=document.getElementById('pen-sin-comida').value;d.penMarca=document.getElementById('pen-marca').value;d.penHorario=document.getElementById('pen-horario').value;d.penCantidad=document.getElementById('pen-cantidad').value;d.penCuidados=document.getElementById('pen-cuidados').value;}
-            if(f==="ALTA VOLUNTARIA"){d.altaFechaIn=document.getElementById('alta-f-ingreso').value;d.altaDxIn=document.getElementById('alta-dx-ingreso').value;d.altaFechaOut=document.getElementById('alta-f-egreso').value;d.altaDxOut=document.getElementById('alta-dx-egreso').value;d.altaMotivo=document.getElementById('alta-motivo').value;}
+            const f = document.getElementById('select-formato-legal').value; 
+            const val = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
+            const isChecked = (id) => { const el = document.getElementById(id); return el ? el.checked : false; };
+            
+            let d = { doctor:usuarioLogueado?.nombre || '', dueno:val('hosp-dueno'), paciente:val('hosp-paciente'), telefono:val('hosp-tel'), raza:val('hosp-raza'), edad:val('hosp-edad'), sexo:val('hosp-sexo'), peso:val('hosp-peso'), prescripcion:val('hosp-notas'), formatoLegal:f };
+            if(f==="AUTORIZACIÓN HOSPITALARIA"){d.domicilio=val('hosp-domicilio');d.correo=val('hosp-correo');d.color=val('hosp-color');d.nacimiento=val('hosp-nacimiento');d.vacSextuple=val('hosp-vac-sextuple');d.vacRabia=val('hosp-vac-rabia');d.vacDesp=val('hosp-vac-desp');d.manejoMedico=val('hosp-manejo-medico');d.autorizaHosp=isChecked('check-hosp');}
+            if(f==="CONTRATO DE PENSIÓN"){d.penEntrada=val('pen-entrada');d.penSalida=val('pen-salida');d.penCosto=val('pen-costo');d.penAlergias=val('pen-alergias');d.penSinComida=val('pen-sin-comida');d.penMarca=val('pen-marca');d.penHorario=val('pen-horario');d.penCantidad=val('pen-cantidad');d.penCuidados=val('pen-cuidados');}
+            if(f==="ALTA VOLUNTARIA"){d.altaFechaIn=val('alta-f-ingreso');d.altaDxIn=val('alta-dx-ingreso');d.altaFechaOut=val('alta-f-egreso');d.altaDxOut=val('alta-dx-egreso');d.altaMotivo=val('alta-motivo');}
             return d;
         };
 
-        window.abrirLecturaYFirma = function() { let dp = window.recopilarDatosHosp(); dp.fechaTexto=new Date().toLocaleString('es-MX'); window.generarHojasLegalesDinamicas(dp, true); document.getElementById('modal-lectura').classList.remove('oculto'); document.getElementById('zona-firmas-oculta').classList.remove('oculto'); document.getElementById('btn-final-hosp').disabled=false; setTimeout(window.resizeCanvases,50); canvasActivo=true; };
+        window.abrirLecturaYFirma = function() { 
+            let dp = window.recopilarDatosHosp(); 
+            dp.fechaTexto=new Date().toLocaleString('es-MX'); 
+            window.generarHojasLegalesDinamicas(dp, true); 
+            document.getElementById('modal-lectura').classList.remove('oculto'); 
+            document.getElementById('zona-firmas-oculta').classList.remove('oculto'); 
+            document.getElementById('btn-final-hosp').disabled=false; 
+            setTimeout(window.resizeCanvases,50); canvasActivo=true; 
+        };
         
         window.seleccionarItemHosp = function(i) { const p=document.getElementById('precio-hosp-item'); document.getElementById('tipo-hosp-item').value=i.tipoArticulo; p.readOnly=(i.tipoArticulo!=='Servicio Médico'); p.value=i.precioVenta||0; p.style.background=p.readOnly?"#e9ecef":"#fff"; if(!p.readOnly)p.focus(); };
         window.agregarAlCarritoHosp = function() { const v=document.getElementById('buscador-hosp-item').value; const inp=document.getElementById('precio-hosp-item'); let p=parseFloat(inp.value)||0; let t=document.getElementById('tipo-hosp-item').value; if(!v)return alert("⚠️ Escribe un producto."); const iDb=inventarioGlobal.find(i=>i.medicamento.toLowerCase()===v.toLowerCase()); if(iDb&&iDb.tipoArticulo!=='Servicio Médico'){p=parseFloat(iDb.precioVenta)||0;t=iDb.tipoArticulo;} carritoHosp.push({nombre:iDb?iDb.medicamento:v,precio:p,tipo:t}); window.actualizarCarritoHospUI(); document.getElementById('buscador-hosp-item').value=''; inp.value=''; };
@@ -507,6 +529,7 @@
         window.buscarHistorialVentas = function() { let tm=document.getElementById('buscador-hist-ventas').value.toLowerCase(); let fc=document.getElementById('filtro-fecha-hist-ventas').value; let n=Date.now(); let filt=datosHistorialVentas.filter(d=>{ let tx=(d.paciente||' ')+(d.dueno||' ')+(d.atendio||d.doctor||' ')+(d.telefono||' '); let mt=tx.toLowerCase().includes(tm); let mfc=true; if(fc==='hoy')mfc=(n-d.timestamp)<=86400000; if(fc==='semana')mfc=(n-d.timestamp)<=604800000; if(fc==='mes')mfc=(n-d.timestamp)<=2592000000; return mt&&mfc; }); let ht=''; filt.forEach(d=>{ let bb=(usuarioLogueado.rol==='Gerente'||usuarioLogueado.rol==='Sub-Gerente'||usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('${d.coleccion}','${d.id}')">🗑️</button>`:''; if(d.tipoRegistro==='hospitalizacion'){ let authStr=d.formatoLegal||""; let authTxt=authStr?`<div style="font-size:0.85em;color:#0caeb9;font-weight:bold;margin-bottom:10px">✅ ${authStr}</div>`:''; let dS=d.articulos?d.articulos.map(a=>a.nombre).join(', '):''; ht+=`<div class="tarjeta-expediente hospital"><div class="exp-header"><span class="exp-title"><span class="badge-tipo" style="background:#e0f7fa;color:#0caeb9">🏥 Hosp/Notas</span> ${d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 ${d.dueno}</span><span>⚖️ ${d.peso||'--'}kg</span></div>${authTxt}<div class="exp-content">${d.prescripcion?d.prescripcion.substring(0,100)+'...':'Sin notas'}<br><span style="color:#666;font-size:0.85em">${dS?`🩺: ${dS}`:''}</span></div><div class="exp-footer"><span><strong>Dr. ${d.doctor}</strong></span> <div style="display:flex;gap:10px"><button class="btn-exp-action" onclick="window.reimprimirDesdeExpediente(${d.timestamp},'${d.tipoRegistro}','hoja')">🖨️ Hoja</button><button class="btn-exp-action" onclick="window.reimprimirDesdeExpediente(${d.timestamp},'${d.tipoRegistro}','ticket')">🧾 Tck</button>${bb}</div></div></div>`; } else { let dS=d.articulos?d.articulos.map(a=>a.nombre).join(','):'Vta Gral'; ht+=`<div class="tarjeta-expediente venta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰</span> ${d.ventaMostrador?'Mostrador':d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 ${d.ventaMostrador?'N/A':d.dueno} ${d.telefono?`(${d.telefono})`:''}</span><span>👨‍⚕️ ${d.atendio}</span></div><div class="exp-content" style="color:#146c43">🛒 ${dS}</div><div class="exp-footer"><span style="font-weight:bold;color:#198754">$${parseFloat(d.totalCobrado).toFixed(2)}</span><div style="display:flex;gap:10px"><button class="btn-exp-action btn-venta" onclick="window.reimprimirDesdeExpediente(${d.timestamp},'${d.tipoRegistro}','ticket')">🖨️ Tck</button>${bb}</div></div></div>`; } }); document.getElementById('lista-historial-ventas').innerHTML=ht||'<p style="text-align:center">Vacio</p>'; };
         window.reimprimirDesdeExpediente = function(ts, tipo, formato) { let data = datosHistorialVentas.find(x => x.timestamp == ts && x.tipoRegistro == tipo); if(data) { if(formato === 'hoja') window.generarHojasLegalesDinamicas(data, false); else window.imprimirTicketBoucher(data); } };
 
+        // --- ALTA, BAJA Y USUARIOS ---
         window.toggleServicio = function() { let t=document.getElementById('inv-tipo-prod').value; let e=(t==='Servicio Médico'); document.getElementById('caja-cantidades-inv').classList.toggle('oculto',e); document.getElementById('caja-unidad-inv').classList.toggle('oculto',e); if(e) document.getElementById('cantidad-inventario').value=9999; };
         window.abrirInventario = function() { modoEdicion=false; window.cambiarPantalla('pantalla-menu','pantalla-inventario'); document.getElementById('titulo-pantalla-inventario').innerText="📦 Alta de productos/servicios"; document.getElementById('inv-nombre').readOnly=false; document.querySelectorAll('#pantalla-inventario input').forEach(i=>i.value=''); document.getElementById('inv-tipo-prod').value='Medicamento/Producto'; window.toggleServicio(); document.getElementById('btn-guardar-inventario').innerText="Guardar Alta"; };
         window.editarProducto = function(nom) { let i=inventarioGlobal.find(x=>x.medicamento===nom); if(!i)return; modoEdicion=true; window.cambiarPantalla('pantalla-ver-inventario','pantalla-inventario'); document.getElementById('titulo-pantalla-inventario').innerText="✏️ Editar Producto"; document.getElementById('inv-tipo-prod').value=i.tipoArticulo||'Medicamento/Producto'; window.toggleServicio(); document.getElementById('inv-nombre').value=i.medicamento; document.getElementById('inv-nombre').readOnly=true; document.getElementById('inv-precio').value=i.precioVenta||''; document.getElementById('cantidad-inventario').value=i.cantidad||''; document.getElementById('min-inventario').value=i.minimo!==undefined?i.minimo:''; document.getElementById('max-inventario').value=i.maximo||''; document.getElementById('inv-unidad').value=i.unidad||'Piezas'; document.getElementById('inv-proveedor').value=i.proveedor||''; document.getElementById('inv-descripcion').value=i.descripcion||''; document.getElementById('inv-presentacion').value=i.presentacion||''; document.getElementById('btn-guardar-inventario').innerText="Guardar Cambios"; };
