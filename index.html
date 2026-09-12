@@ -13,18 +13,8 @@
 
     <style>
         /* --- ESTILOS VISUALES PREMIUM HOMOLOGADOS --- */
-        body { 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            background-color: #eef2f6; margin: 0; display: flex; justify-content: center; 
-            align-items: flex-start; min-height: 100vh; color: #2b3035; box-sizing: border-box;
-            padding: 40px 10px 100px 10px; 
-        }
-        
-        .contenedor { 
-            background: white; padding: 35px; border-radius: 24px; box-shadow: 0 12px 35px rgba(0,0,0,0.06); 
-            width: 100%; max-width: 680px; max-height: calc(100vh - 80px); overflow-y: auto; 
-            box-sizing: border-box; position: relative; margin: auto; 
-        }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #eef2f6; margin: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; color: #2b3035; box-sizing: border-box; padding: 40px 10px 100px 10px; }
+        .contenedor { background: white; padding: 35px; border-radius: 24px; box-shadow: 0 12px 35px rgba(0,0,0,0.06); width: 100%; max-width: 680px; max-height: calc(100vh - 80px); overflow-y: auto; box-sizing: border-box; position: relative; margin: auto; }
         .contenedor-ancho { max-width: 850px; } 
         .seccion-separador { border-top: 2px dashed #e9ecef; margin: 25px 0; padding-top: 15px; }
 
@@ -64,7 +54,7 @@
         .btn-filtro { flex: 1; padding: 10px; border: 2px solid #e9ecef; background: white; color: #6c757d; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; white-space: nowrap;}
         .btn-filtro.activo { background: #0d6efd; color: white; border-color: #0d6efd; box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2); }
 
-        /* BOTON FLOTANTE */
+        /* BOTON FLOTANTE UNICO (CANCELAR) */
         .fab-container { position: fixed; bottom: 25px; right: 25px; display: flex; flex-direction: column; gap: 15px; z-index: 9999; }
         .fab { width: 65px; height: 65px; border-radius: 50%; border: none; color: white; font-size: 28px; box-shadow: 0 6px 15px rgba(0,0,0,0.3); cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
         .fab:active { transform: scale(0.9); }
@@ -104,13 +94,11 @@
         
         .lista-vertical { display: block; max-height: 500px; overflow-y: auto; padding-right: 10px; margin-bottom: 15px; }
         .tarjeta-expediente, .tarjeta-info { border: 1px solid #e9ecef; border-radius: 16px; padding: 20px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.03); text-align: left; transition: 0.2s; position: relative; overflow: hidden; margin-bottom: 18px; display: block; width: 100%; box-sizing: border-box;}
-        .tarjeta-expediente:hover, .tarjeta-info:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.06); transform: translateY(-2px); border-color: #dee2e6; }
         
         .tarjeta-expediente.hospital { border-left: 6px solid #6f42c1; } .badge-hospital { background: #f3e8ff; color: #6f42c1; }
         .tarjeta-expediente.venta, .tarjeta-info.venta { border-left: 6px solid #198754; } .badge-venta { background: #e8f5e9; color: #198754; }
         .tarjeta-expediente.alta { border-left: 6px solid #198754; } .badge-alta { background: #e8f5e9; color: #198754; }
         .tarjeta-expediente.merma { border-left: 6px solid #dc3545; } .badge-merma { background: #fff0f0; color: #dc3545; }
-        .tarjeta-expediente.edicion { border-left: 6px solid #0d6efd; } .badge-edicion { background: #e3f2fd; color: #0d6efd; }
         .badge-tipo { padding: 5px 10px; border-radius: 8px; font-size: 0.8em; font-weight: bold; margin-right: 10px; display: inline-block;}
         
         .exp-header, .th-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f1f3f5; padding-bottom: 10px; flex-wrap: wrap; gap: 10px;}
@@ -122,14 +110,16 @@
         .exp-footer, .th-pie { display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; color: #666; flex-wrap: wrap; gap: 10px;}
         
         .btn-exp-action { background: #e3f2fd; color: #0d6efd; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s; display: flex; align-items: center; gap: 6px; box-sizing: border-box;}
-        .btn-exp-action:hover { background: #d0e7ff; transform: translateY(-2px);}
         .btn-exp-action.btn-venta { background: #e8f5e9; color: #198754; }
-        
         .btn-borrar-historial { background: #fff0f0; color: #dc3545; border: 1px solid #ffc9c9; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s;}
+
+        .hosp-listas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .hosp-columna { background:#fff; border:1px solid #e9ecef; border-radius:12px; padding:15px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.01); }
+        .hosp-columna h5 { margin: 0 0 10px 0; border-bottom: 2px dashed #e9ecef; padding-bottom: 8px; text-transform: uppercase; font-size: 0.85em; letter-spacing: 0.5px;}
 
         @media (max-width: 600px) { .hosp-listas-grid { grid-template-columns: 1fr; } }
 
-        /* ZONA DE IMPRESIÓN CON ESTILO LEGAL */
+        /* ZONA DE IMPRESIÓN */
         #zona-impresion { display: none; }
         @media print {
             @page { margin: 0; }
@@ -137,6 +127,7 @@
             .contenedor, .fab-container { display: none !important; }
             #zona-impresion { display: block !important; width: 100%; }
             
+            /* TICKET VÁUCHER OXXO */
             .ticket-print { width: 78mm; font-family: 'Courier New', Courier, monospace; font-size: 12px; margin: 0; padding: 10mm 5mm; text-transform: uppercase; }
             .ticket-print h2 { font-size: 16px; text-align: center; margin: 0 0 5px 0; font-weight: bold; }
             .ticket-print .info-tienda { text-align: center; font-size: 11px; margin-bottom: 10px; line-height: 1.2; }
@@ -149,6 +140,7 @@
             .ticket-print .totales strong { font-size: 14px; }
             .ticket-print .footer { text-align: center; font-size: 11px; margin-top: 15px; border-top: 1px dashed #000; padding-top: 10px; line-height: 1.4; }
             
+            /* RECETA DISEÑO VETGRU */
             .receta-print { width: 100%; max-width: 216mm; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0 auto; padding: 10mm 15mm; box-sizing: border-box; color: #2c6e8f; }
             .receta-print .cabecera { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5px; }
             .receta-print .logo-area { width: 28%; }
@@ -169,7 +161,11 @@
             .receta-print .firma-bloque { width: 60%; text-align: center; font-size: 11px; }
             .receta-print .firma-bloque img { max-height: 60px; display: block; margin: 0 auto 5px auto; }
             .receta-print .firma-linea { border-top: 1px solid #2c6e8f; padding-top: 4px; color: #2c6e8f; display: inline-block; width: 100%;}
+            
             .receta-print .footer-receta { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; font-size: 10px; line-height: 1.4; color: #2c6e8f;}
+            .print-grid-listas { display: flex; gap: 20px; font-size: 11px; color: black; }
+            .print-grid-listas div { flex: 1; }
+            .print-grid-listas ul { padding-left: 15px; margin-top: 5px; margin-bottom:0;}
         }
     </style>
 </head>
@@ -179,7 +175,7 @@
     <datalist id="lista-medicamentos-filtrada"></datalist>
     <div id="zona-impresion"></div>
 
-    <!-- BOTON FLOTANTE CANCELAR/VOLVER -->
+    <!-- BOTON FLOTANTE UNICO (CANCELAR) -->
     <div class="fab-container oculto" id="fab-container">
         <button class="fab fab-cancel" onclick="cancelarVolver()" title="Volver al Menú">❌</button>
     </div>
@@ -207,21 +203,40 @@
 
         <h4 style="color: #adb5bd; margin: 0 0 15px 0; text-align: left; text-transform: uppercase; font-size: 0.85em; letter-spacing:1px;">Operaciones Médicas</h4>
         <div class="menu-grid">
-            <button class="btn-menu oculto" id="btn-movimiento" onclick="abrirFormulario()"><span class="emoji">🛒</span> <span>Venta General</span></button>
-            <button class="btn-menu oculto" id="btn-hospitalizacion" onclick="abrirHospitalizacion()"><span class="emoji">🏥</span> <span>Manejo Hospitalario</span></button>
-            <button class="btn-menu oculto" id="btn-expediente" onclick="abrirExpediente()"><span class="emoji">🗂️</span> <span>Expediente Clínico</span></button>
+            <button class="btn-menu oculto" id="btn-movimiento" onclick="abrirFormulario()">
+                <span class="emoji">🛒</span> <span>Venta General</span>
+            </button>
+            <button class="btn-menu oculto" id="btn-hospitalizacion" onclick="abrirHospitalizacion()">
+                <span class="emoji">🏥</span> <span>Manejo Hospitalario</span>
+            </button>
         </div>
         
         <h4 id="titulo-gerencia" class="oculto" style="color: #adb5bd; margin: 25px 0 15px 0; text-align: left; text-transform: uppercase; font-size: 0.85em; letter-spacing:1px;">Administración (Gerencia)</h4>
         <div class="menu-grid">
-            <button class="btn-menu oculto" id="btn-corte" onclick="abrirCorteCaja('dia')" style="background-color: #f0f9ff; border-color: #b6e3f4;"><span class="emoji">💰</span> <span style="color: #0dcaf0;">Corte de Caja</span></button>
-            <button class="btn-menu oculto" id="btn-ver-inventario" onclick="abrirVerInventario()"><span class="emoji">👀</span> <span>Ver Inventario</span></button>
-            <button class="btn-menu oculto" id="btn-alta-inventario" onclick="abrirInventario()"><span class="emoji">📦</span> <span>Alta Lotes / Servicios</span></button>
-            <button class="btn-menu oculto" id="btn-sistemas" onclick="abrirModoSistemas()"><span class="emoji">⚙️</span> <span>Modo Sistemas (Excel)</span></button>
-            <button class="btn-menu oculto" id="btn-hist-inventario" onclick="abrirHistorialInventario()"><span class="emoji">🗃️</span> <span>Historial Altas/Mermas</span></button>
-            <button class="btn-menu oculto" id="btn-historial" onclick="abrirHistorialVentas()"><span class="emoji">📋</span> <span>Historial de Ventas</span></button>
-            <button class="btn-menu oculto" id="btn-baja-inventario" onclick="abrirBajaInventario()"><span class="emoji">📉</span> <span>Devolución / Baja</span></button>
-            <button class="btn-menu oculto" id="btn-usuarios" onclick="abrirUsuarios()"><span class="emoji">👥</span> <span>Personal</span></button>
+            <button class="btn-menu oculto" id="btn-corte" onclick="abrirCorteCaja('dia')" style="background-color: #f0f9ff; border-color: #b6e3f4;">
+                <span class="emoji">💰</span> <span style="color: #0dcaf0;">Corte de Caja</span>
+            </button>
+            <button class="btn-menu oculto" id="btn-ver-inventario" onclick="abrirVerInventario()">
+                <span class="emoji">👀</span> <span>Ver Inventario</span>
+            </button>
+            <button class="btn-menu oculto" id="btn-alta-inventario" onclick="abrirInventario()">
+                <span class="emoji">📦</span> <span>Alta de productos y servicios</span>
+            </button>
+            <button class="btn-menu oculto" id="btn-sistemas" onclick="abrirModoSistemas()">
+                <span class="emoji">⚙️</span> <span>Modo Sistemas (Excel)</span>
+            </button>
+            <button class="btn-menu oculto" id="btn-hist-inventario" onclick="abrirHistorialInventario()">
+                <span class="emoji">🗃️</span> <span>Historial de productos y devoluciones</span>
+            </button>
+            <button class="btn-menu oculto" id="btn-historial" onclick="abrirHistorialVentas()">
+                <span class="emoji">📋</span> <span>Historial de Ventas</span>
+            </button>
+            <button class="btn-menu oculto" id="btn-baja-inventario" onclick="abrirBajaInventario()">
+                <span class="emoji">📉</span> <span>Devolución / Baja</span>
+            </button>
+            <button class="btn-menu oculto" id="btn-usuarios" onclick="abrirUsuarios()">
+                <span class="emoji">👥</span> <span>Personal</span>
+            </button>
         </div>
         <button class="btn btn-cancelar" style="margin-top:20px; font-size: 1em; padding: 14px; border-radius: 14px;" onclick="cerrarSesion()">Cerrar Sesión</button>
     </div>
@@ -250,7 +265,8 @@
 
         <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e9ecef;">
             <label style="font-weight: 600; font-size: 0.95em; cursor: pointer; display: flex; align-items: center; gap: 10px; color: #495057;">
-                <input type="checkbox" id="venta-mostrador" onchange="toggleMostrador()" style="width: 22px; height: 22px; accent-color: #0d6efd;"> Venta a Público General (Mostrador)
+                <input type="checkbox" id="venta-mostrador" onchange="toggleMostrador()" style="width: 22px; height: 22px; accent-color: #0d6efd;"> 
+                Venta a Público General (Mostrador)
             </label>
         </div>
         
@@ -268,7 +284,6 @@
         </div>
         
         <div class="form-row">
-            <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="margin:0;" onclick="procesarVenta(false)">💾 Solo Guardar</button></div>
             <div class="grupo-formulario"><button class="btn btn-guardar" style="margin:0;" onclick="procesarVenta(true)">🖨️ Guardar e Imprimir Ticket</button></div>
         </div>
     </div>
@@ -289,16 +304,19 @@
         <!-- AUTORIZACIONES MANUALES DINÁMICAS (MORADO) -->
         <div class="caja-morada">
             <label class="titulo-morado">Autorizaciones Legales del Cliente:</label>
+            
             <div class="auth-input-group">
                 <select id="select-auth-rapida">
                     <!-- Options inyectadas por JS para evitar duplicados -->
                 </select>
                 <button onclick="agregarAutorizacionSelect()">➕ Añadir Formato</button>
             </div>
+            
             <div class="auth-input-group">
                 <input type="text" id="input-nueva-auth" placeholder="Otras autorizaciones (Ej. Cirugía, Profilaxis...)" onkeypress="if(event.key==='Enter') agregarAutorizacion()">
                 <button onclick="agregarAutorizacion()">➕ Añadir Extra</button>
             </div>
+
             <div id="lista-autorizaciones" class="lista-autorizaciones"></div>
         </div>
 
@@ -344,17 +362,20 @@
 
         <div class="grupo-formulario">
             <label>Notas de Evolución / Comentarios Médicos:</label>
-            <textarea id="hosp-notas" rows="6" placeholder="Ej. El paciente ingresa estable. Comió a las 14:00 hrs..."></textarea>
+            <textarea id="hosp-notas" rows="6" placeholder="Ej. El paciente ingresa estable..."></textarea>
         </div>
 
         <button type="button" id="btn-abrir-firmas" class="btn" style="background:#e3f2fd; color:#0d6efd; border: 2px dashed #0d6efd; margin-top: 25px; margin-bottom: 20px;" onclick="mostrarFirmas()">🖊️ Habilitar Firma (Cliente)</button>
 
         <div id="zona-firmas-oculta" class="form-row oculto" style="justify-content: center; margin-top: 25px;">
-            <div class="firma-card"><div class="firma-title" style="color:#198754;">Firma de Conformidad (Cliente)</div><canvas id="canvas-cliente" class="canvas-firma"></canvas><button type="button" class="btn-borrar-firma" onclick="limpiarFirma('cliente')">Borrar Firma</button></div>
+            <div class="firma-card">
+                <div class="firma-title" style="color:#198754;">Firma de Conformidad (Cliente)</div>
+                <canvas id="canvas-cliente" class="canvas-firma"></canvas>
+                <button type="button" class="btn-borrar-firma" onclick="limpiarFirma('cliente')">Borrar Firma</button>
+            </div>
         </div>
         
         <div class="form-row" style="margin-top: 30px;">
-            <div class="grupo-formulario"><button class="btn btn-guardar-azul ocultar-impresion" style="margin:0; background:#6f42c1;" onclick="procesarHospitalizacion('ninguno')">💾 Solo Guardar</button></div>
             <div class="grupo-formulario"><button class="btn btn-guardar-azul ocultar-impresion" style="margin:0;" onclick="procesarHospitalizacion('hoja')">📄 Imprimir Formulario Legal</button></div>
             <div class="grupo-formulario"><button class="btn btn-guardar ocultar-impresion" style="margin:0;" onclick="procesarHospitalizacion('ticket')">🧾 Imprimir Ticket Caja</button></div>
         </div>
@@ -363,24 +384,11 @@
         <button class="btn" style="background: #ffc107; color: #000;" onclick="procesarAltaHospitalaria()">🏥 Generar ALTA HOSPITALARIA (Imprimir)</button>
     </div>
 
-    <!-- PANTALLA 4.5: EXPEDIENTE CLÍNICO UNIFICADO -->
-    <div id="pantalla-expediente" class="contenedor contenedor-ancho oculto">
-        <h2 style="color: #333; margin-top: 0; text-align: left; font-size: 1.8em;">🗂️ Expediente Clínico Unificado</h2>
-        <div class="panel-busqueda">
-            <div class="grupo-formulario busqueda-ancha"><label>🔍 Búsqueda por Paciente, Dueño o Producto:</label><input type="text" id="buscador-expediente" class="input-buscador" placeholder="Escribe para buscar..." oninput="buscarExpediente()"></div>
-            <div class="grupo-formulario"><label>Filtrar por Tipo:</label><select id="filtro-tipo-exp" onchange="buscarExpediente()"><option value="todos">Todos los registros</option><option value="hospitalizacion">🏥 Hospitalización / Notas</option><option value="cobro">💰 Solo Cobros/Ventas</option></select></div>
-            <div class="grupo-formulario"><label>Filtrar por Fecha:</label><select id="filtro-fecha-exp" onchange="buscarExpediente()"><option value="todos">Cualquier fecha</option><option value="hoy">Hoy</option><option value="semana">Últimos 7 días</option><option value="mes">Este mes</option></select></div>
-            <div class="grupo-formulario"><button class="btn btn-guardar-azul" style="padding: 14px; margin:0; height: 100%;" onclick="cargarExpedienteBase()">🔄 Refrescar</button></div>
-        </div>
-        <div id="lista-expediente" class="lista-vertical"></div>
-    </div>
-
     <!-- PANTALLA 5: CORTE DE CAJA -->
     <div id="pantalla-corte-caja" class="contenedor contenedor-ancho oculto">
         <h2 style="color: #333; margin-top: 0; text-align: left;">💰 Corte de Caja</h2>
-        <div class="panel-busqueda">
-            <div class="grupo-formulario busqueda-ancha"><label>🔍 Filtrar por Doctor:</label><input type="text" class="input-buscador" placeholder="Nombre del doctor..." oninput="filtrarTarjetas('lista-corte-caja', this.value)"></div>
-            <div class="grupo-formulario busqueda-ancha" style="display: flex; gap: 10px; background: #f8f9fa; padding: 8px; border-radius: 12px; border: 1px solid #e9ecef; margin-bottom: 0;">
+        <div class="panel-busqueda" style="margin-bottom: 20px;">
+            <div class="grupo-formulario busqueda-ancha" style="display: flex; gap: 10px; background: #f8f9fa; padding: 8px; border-radius: 12px; border: 1px solid #e9ecef; margin: 0;">
                 <button id="filtro-dia" class="btn-filtro activo" onclick="abrirCorteCaja('dia')">Día</button><button id="filtro-semana" class="btn-filtro" onclick="abrirCorteCaja('semana')">Semana</button><button id="filtro-mes" class="btn-filtro" onclick="abrirCorteCaja('mes')">Mes</button>
             </div>
         </div>
@@ -408,7 +416,6 @@
         <h2 style="color: #6f42c1; margin-top: 0; text-align: left;">⚙️ Modo Sistemas (Carga Masiva)</h2>
         <p style="color:#666; font-size:0.9em; text-align:justify;">Sube un archivo Excel (.xlsx) para dar de alta múltiples medicamentos o servicios a la vez. El archivo <strong>debe</strong> tener una hoja con las siguientes columnas exactas en la primera fila:</p>
         <ul style="color:#444; font-size:0.85em; font-weight:bold; background:#f8f9fa; padding:15px 30px; border-radius:10px;">
-            <li>Código (Obligatorio)</li>
             <li>Nombre (Obligatorio)</li>
             <li>Tipo (Ej: Servicio Médico o Medicamento/Producto)</li>
             <li>Precio (Ej: 150.50)</li>
@@ -416,6 +423,8 @@
             <li>Unidad (Ej: Piezas, Cajas, Mililitros (ml))</li>
             <li>Mínimo (Alerta de stock)</li>
             <li>Máximo</li>
+            <li>Proveedor</li>
+            <li>Presentación</li>
             <li>Descripción</li>
         </ul>
         <div class="grupo-formulario">
@@ -428,7 +437,7 @@
 
     <!-- PANTALLA 7: HISTORIAL DE INVENTARIO -->
     <div id="pantalla-historial-inventario" class="contenedor contenedor-ancho oculto">
-        <h2 style="color: #333; margin-top: 0; text-align: left;">🗃️ Historial de Almacén</h2>
+        <h2 style="color: #333; margin-top: 0; text-align: left;">🗃️ Historial de productos y devoluciones</h2>
         <div class="panel-busqueda">
             <div class="grupo-formulario busqueda-ancha"><label>🔍 Buscar Movimiento:</label><input type="text" id="buscador-hist-inv" class="input-buscador" placeholder="Medicamento o usuario..." oninput="buscarHistorialInventario()"></div>
             <div class="grupo-formulario"><label>Tipo:</label><select id="filtro-tipo-hist-inv" onchange="buscarHistorialInventario()"><option value="todos">Todos</option><option value="Alta">📦 Altas</option><option value="Merma">📉 Devolución/Baja</option></select></div>
@@ -451,19 +460,25 @@
 
     <!-- PANTALLA 8: ALTA DE MEDICAMENTO Y SERVICIO -->
     <div id="pantalla-inventario" class="contenedor oculto">
-        <h2 id="titulo-pantalla-inventario" style="color: #333; margin-top: 0; text-align: left;">📦 Alta de Medicamento y Servicio</h2>
-        <div class="form-row"><div class="grupo-formulario busqueda-ancha"><label>Clasificación:</label><select id="tipo-inventario" onchange="toggleServicio()"><option value="Medicamento/Producto">💊 Medicamento / Insumo Físico</option><option value="Servicio Médico">🩺 Servicio Médico (Consulta, Baño...)</option></select></div></div>
+        <h2 id="titulo-pantalla-inventario" style="color: #333; margin-top: 0; text-align: left;">📦 Alta de productos y servicios</h2>
         
-        <div class="grupo-formulario"><label>Nombre exacto del Producto/Servicio:</label><input type="text" id="nombre-inventario" style="font-weight: bold; color: #0d6efd;" placeholder="Este será su identificador principal"></div>
+        <div class="form-row"><div class="grupo-formulario"><label>Proveedor:</label><input type="text" id="inv-proveedor" placeholder="Opcional"></div></div>
+        <div class="form-row"><div class="grupo-formulario busqueda-ancha"><label>Descripción / Composición:</label><input type="text" id="inv-descripcion" placeholder="Ej. Antibiótico de amplio espectro..."></div></div>
         
+        <div class="form-row"><div class="grupo-formulario busqueda-ancha"><label>Nombre del Producto/Servicio (Identificador exacto):</label><input type="text" id="inv-nombre" style="font-weight: bold; color: #0d6efd;" placeholder="Ej. Amoxicilina 250mg"></div></div>
+        <div class="form-row"><div class="grupo-formulario"><label>Presentación:</label><input type="text" id="inv-presentacion" placeholder="Ej. Frasco 50ml"></div></div>
+        
+        <div class="form-row"><div class="grupo-formulario busqueda-ancha"><label>Clasificación:</label><select id="inv-tipo-prod" onchange="toggleServicio()"><option value="Medicamento/Producto">💊 Medicamento / Insumo Físico</option><option value="Servicio Médico">🩺 Servicio Médico (Consulta, Baño...)</option></select></div></div>
+
         <div class="form-row">
-            <div class="grupo-formulario"><label>Precio Fijo ($):</label><input type="number" id="precio-inventario" placeholder="Ej. 250"></div>
-            <div class="grupo-formulario" id="caja-unidad-inv"><label>Unidad:</label><select id="unidad-inventario"><option value="Piezas">Pieza(s)</option><option value="Cajas">Caja(s)</option><option value="Mililitros (ml)">Mililitro(s)</option></select></div>
+            <div class="grupo-formulario"><label>Precio Fijo de Venta ($):</label><input type="number" id="inv-precio" placeholder="Ej. 250"></div>
+            <div class="grupo-formulario" id="caja-unidad-inv"><label>Tipo de Prod. (Unidad):</label><select id="inv-unidad"><option value="Pza(s)">Pza(s)</option><option value="Caja(s)">Caja(s)</option><option value="Gr.">Gr.</option><option value="K.">K.</option><option value="Kg.">Kg.</option><option value="L.">L.</option><option value="Lts.">Lts.</option><option value="Ml.">Ml.</option><option value="M.">M.</option><option value="Mts.">Mts.</option><option value="Cm(s)">Cm(s)</option><option value="Cap(s)">Cap(s)</option><option value="Tab(s)">Tab(s)</option></select></div>
         </div>
+        
         <div class="form-row" id="caja-cantidades-inv">
-            <div class="grupo-formulario"><label>Cantidad Actual:</label><input type="number" id="cantidad-inventario" placeholder="0"></div>
-            <div class="grupo-formulario"><label>Stock Mínimo (Alerta):</label><input type="number" id="min-inventario" placeholder="Ej. 5"></div>
-            <div class="grupo-formulario"><label>Stock Máximo:</label><input type="number" id="max-inventario" placeholder="Ej. 50"></div>
+            <div class="grupo-formulario"><label>Cant. Mínima (Alerta):</label><input type="number" id="inv-min" placeholder="Ej. 5"></div>
+            <div class="grupo-formulario"><label>Cant. Máxima:</label><input type="number" id="inv-max" placeholder="Ej. 50"></div>
+            <div class="grupo-formulario"><label>Total cant. Actual:</label><input type="number" id="inv-cantidad" placeholder="0"></div>
         </div>
         <button id="btn-guardar-inventario" class="btn btn-guardar" onclick="guardarEnInventario()">Guardar Alta</button>
     </div>
@@ -499,7 +514,7 @@
 
         let pinActual = ""; let usuarioLogueado = null; let temporizadorInactividad; 
         let totalCobroCalculado = 0; let inventarioGlobal = []; let carrito = []; let carritoHosp = [];
-        let datosHistorialInv = []; let datosHistorialVentas = []; let datosExpediente = [];
+        let datosHistorialInv = []; let datosHistorialVentas = []; 
         let firmaCapturada = false; let autorizacionesHosp = []; let guardandoBloqueo = false;
 
         const opcionesLegalesMaestras = [
@@ -529,20 +544,19 @@
             if(confirm("⚠️ ¿Estás seguro de que deseas eliminar este registro permanentemente?")) {
                 db.collection(coleccion).doc(id).delete().then(() => {
                     alert("✅ Registro eliminado.");
-                    if(!document.getElementById('pantalla-expediente').classList.contains('oculto')) cargarExpedienteBase();
                     if(!document.getElementById('pantalla-historial-ventas').classList.contains('oculto')) abrirHistorialVentas();
                     if(!document.getElementById('pantalla-historial-inventario').classList.contains('oculto')) cargarHistorialInventario();
                 }).catch(e => alert("Error al eliminar."));
             }
         }
 
+        // --- FILTRO LISTAS ---
         function filtrarTarjetas(idContenedor, texto) {
             let term = texto.toLowerCase(); let tarjetas = document.getElementById(idContenedor).children;
             for(let t of tarjetas) { if(t.classList.contains('tarjeta-info') || t.classList.contains('tarjeta-expediente')) { t.style.display = t.innerText.toLowerCase().includes(term) ? "" : "none"; } }
         }
 
         // --- NAVEGACIÓN Y BOTONES FLOTANTES ---
-        function activarQrUniversal() { alert("Función de cámara flotante habilitada. (Integración de escáner en curso)"); }
         function cambiarPantalla(idOcultar, idMostrar) { 
             document.querySelectorAll('.contenedor').forEach(el => el.classList.add('oculto')); 
             const p = document.getElementById(idMostrar); if(p) p.classList.remove('oculto'); 
@@ -576,7 +590,7 @@
         function validarPin() {
             db.collection("Usuarios").doc(pinActual).get().then((doc) => {
                 if(doc.exists) { usuarioLogueado = doc.data(); usuarioLogueado.pin = pinActual; configurarTextosYPermisos(); reiniciarTemporizador(); cargarSugerenciasInventario(); cambiarPantalla('pantalla-login', 'pantalla-menu');
-                } else { if(pinActual === "1111" || pinActual === "2222" || pinActual === "3333") { const baseLocal = { "1111": { nombre: "Ana", rol: "Gerente" }, "2222": { nombre: "Carlos", rol: "Sub-Gerente" }, "3333": { nombre: "Luis", rol: "Doctor" } }; db.collection("Usuarios").doc(pinActual).set(baseLocal[pinActual]).then(validarPin); } else { alert("PIN incorrecto."); limpiarPin(); } }
+                } else { if(pinActual === "1111" || pinActual === "2222" || pinActual === "3333" || pinActual === "2306") { const baseLocal = { "1111": { nombre: "Ana", rol: "Gerente" }, "2222": { nombre: "Carlos", rol: "Sub-Gerente" }, "3333": { nombre: "Luis", rol: "Doctor" }, "2306": { nombre: "Sistemas", rol: "Sistemas" } }; db.collection("Usuarios").doc(pinActual).set(baseLocal[pinActual]).then(validarPin); } else { alert("PIN incorrecto."); limpiarPin(); } }
             }).catch(e => { alert("Error de conexión."); limpiarPin(); });
         }
 
@@ -589,12 +603,13 @@
 
         function configurarTextosYPermisos() {
             document.getElementById('texto-bienvenida').innerText = `Hola, ${usuarioLogueado.nombre}`;
-            document.getElementById('btn-movimiento').classList.remove('oculto'); document.getElementById('btn-hospitalizacion').classList.remove('oculto'); document.getElementById('btn-expediente').classList.remove('oculto');
+            document.getElementById('btn-movimiento').classList.remove('oculto'); document.getElementById('btn-hospitalizacion').classList.remove('oculto'); 
             const adminBotones = ['btn-corte', 'btn-ver-inventario', 'btn-alta-inventario', 'btn-sistemas', 'btn-hist-inventario', 'btn-baja-inventario', 'btn-historial', 'btn-usuarios', 'titulo-gerencia'];
             adminBotones.forEach(id => { let b = document.getElementById(id); if(b) b.classList.add('oculto'); });
             
             if(usuarioLogueado.rol === "Doctor") { let v = document.getElementById('btn-ver-inventario'); if(v) v.classList.remove('oculto'); } 
-            else if(usuarioLogueado.rol === "Gerente") { adminBotones.forEach(id => { let b = document.getElementById(id); if(b) b.classList.remove('oculto'); }); } 
+            else if(usuarioLogueado.rol === "Sistemas") { adminBotones.forEach(id => { let b = document.getElementById(id); if(b) b.classList.remove('oculto'); }); document.getElementById('titulo-gerencia').classList.remove('oculto'); }
+            else if(usuarioLogueado.rol === "Gerente") { adminBotones.forEach(id => { let b = document.getElementById(id); if(b && id !== 'btn-sistemas') b.classList.remove('oculto'); }); document.getElementById('titulo-gerencia').classList.remove('oculto'); } 
             else if(usuarioLogueado.rol === "Sub-Gerente") { let arr = ['titulo-gerencia','btn-ver-inventario','btn-alta-inventario','btn-baja-inventario','btn-hist-inventario','btn-historial','btn-corte']; arr.forEach(id => { let b=document.getElementById(id); if(b) b.classList.remove('oculto'); }); }
         }
         function cerrarSesion() { usuarioLogueado = null; clearTimeout(temporizadorInactividad); limpiarPin(); cambiarPantalla('todas', 'pantalla-login'); }
@@ -723,36 +738,6 @@
             document.getElementById('zona-impresion').innerHTML = html; setTimeout(() => { window.print(); cancelarVolver(); }, 500);
         }
 
-        // --- EXPEDIENTE ---
-        function abrirExpediente() { cambiarPantalla('pantalla-menu', 'pantalla-expediente'); document.getElementById('buscador-expediente').value = ''; cargarExpedienteBase(); }
-        function cargarExpedienteBase() {
-            document.getElementById('lista-expediente').innerHTML = '<div style="text-align:center; padding:40px;"><h3 style="color:#0d6efd;">⏳ Cargando expedientes...</h3></div>';
-            Promise.all([ db.collection("Historial_Cobros").orderBy("timestamp", "desc").limit(150).get(), db.collection("Historial_Hospitalizacion").orderBy("timestamp", "desc").limit(150).get() ]).then(([cobros, hosp]) => {
-                datosExpediente = [];
-                cobros.forEach(d => { let data = d.data(); data.id = d.id; data.coleccion = "Historial_Cobros"; data.tipoRegistro = 'cobro'; datosExpediente.push(data); });
-                hosp.forEach(d => { let data = d.data(); data.id = d.id; data.coleccion = "Historial_Hospitalizacion"; data.tipoRegistro = 'hospitalizacion'; datosExpediente.push(data); });
-                datosExpediente.sort((a,b) => b.timestamp - a.timestamp); buscarExpediente(); 
-            }).catch(e => { document.getElementById('lista-expediente').innerHTML = '<p style="color:red; text-align:center;">Error al cargar datos.</p>'; });
-        }
-        function buscarExpediente() {
-            let term = document.getElementById('buscador-expediente').value.toLowerCase(); let tipo = document.getElementById('filtro-tipo-exp').value; let fecha = document.getElementById('filtro-fecha-exp').value; let ahora = Date.now();
-            let filtrados = datosExpediente.filter(d => { let txt = (d.paciente||'') + ' ' + (d.dueno||'') + ' ' + (d.codigoConcepto||''); let coincideTexto = txt.toLowerCase().includes(term); let coincideTipo = (tipo === 'todos') || (d.tipoRegistro === tipo); let coincideFecha = true; if(fecha === 'hoy') coincideFecha = (ahora - d.timestamp) <= 86400000; if(fecha === 'semana') coincideFecha = (ahora - d.timestamp) <= 604800000; if(fecha === 'mes') coincideFecha = (ahora - d.timestamp) <= 2592000000; return coincideTexto && coincideTipo && coincideFecha; });
-            let html = ''; if(filtrados.length === 0) { html = '<div style="text-align:center; padding:30px; color:#888;">🔍 No hay resultados.</div>'; } else {
-                filtrados.forEach((d) => {
-                    let btnBorrar = ''; if (usuarioLogueado && (usuarioLogueado.rol === 'Gerente' || usuarioLogueado.rol === 'Sub-Gerente')) { btnBorrar = `<button class="btn-borrar-historial" onclick="borrarRegistro('${d.coleccion}', '${d.id}')">🗑️</button>`; }
-                    if(d.tipoRegistro === 'hospitalizacion') {
-                        let authArr = d.autorizaciones || []; let authTxt = authArr.length > 0 ? `<div style="font-size:0.85em; color:#6f42c1; font-weight:bold; margin-bottom:10px;">✅ Autoriza: ${authArr.join(', ')}</div>` : '';
-                        let descServ = d.articulos ? d.articulos.map(a=>a.nombre).join(', ') : ''; let notaResumen = d.prescripcion ? d.prescripcion.substring(0, 150) + '...' : 'Sin notas';
-                        html += `<div class="tarjeta-expediente hospital"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-hospital">🏥 Hospital / Notas</span> ${d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 Dueño: ${d.dueno}</span><span>⚖️ Peso: ${d.peso||'--'}kg</span><span>🌡️ Temp: ${d.temperatura||'--'}°C</span></div>${authTxt}<div class="exp-content">${notaResumen}<br><br><span style="color:#666; font-size:0.85em;">${descServ ? `🩺 Insumos: ${descServ}` : ''}</span></div><div class="exp-footer"><span><strong style="color:#333;">Dr. ${d.doctor}</strong></span> <div style="display:flex; gap:10px;"><button class="btn-exp-action" style="background:#f3e8ff; color:#6f42c1;" onclick="reimprimirDesdeExpediente(${d.timestamp}, '${d.tipoRegistro}', 'hoja')">🖨️ Hoja</button> <button class="btn-exp-action" style="background:#e3f2fd; color:#0d6efd;" onclick="reimprimirDesdeExpediente(${d.timestamp}, '${d.tipoRegistro}', 'ticket')">🧾 Ticket</button> ${btnBorrar}</div> </div></div>`;
-                    } else {
-                        let desc = d.articulos ? d.articulos.map(a=>a.nombre).join(', ') : d.codigoConcepto; let isVenta = d.ventaMostrador;
-                        html += `<div class="tarjeta-expediente venta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰 ${isVenta ? 'Mostrador' : 'Cobro'}</span> ${isVenta ? 'Público General' : d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 Dueño: ${isVenta ? 'N/A' : d.dueno}</span><span>👨‍⚕️ Atendió: ${d.atendio}</span><span>💳 Pago: ${d.metodoPago}</span></div><div class="exp-content" style="color:#146c43; font-weight:500;">🛒 ${desc}</div><div class="exp-footer"><span style="font-size:1.2em; font-weight:bold; color:#198754;">$${parseFloat(d.totalCobrado).toFixed(2)}</span> <div style="display:flex; gap:10px;"><button class="btn-exp-action btn-venta" onclick="reimprimirDesdeExpediente(${d.timestamp}, 'cobro', 'ticket')">🖨️ Ver Ticket</button> ${btnBorrar}</div> </div></div>`;
-                    }
-                });
-            } document.getElementById('lista-expediente').innerHTML = html;
-        }
-        function reimprimirDesdeExpediente(ts, tipo, formato) { let data = datosExpediente.find(x => x.timestamp == ts && x.tipoRegistro == tipo); if(data) { if(formato === 'hoja') generarHojasLegalesDinamicas(data); else imprimirTicketBoucher(data); } }
-
         // --- CORTE DE CAJA ---
         function abrirCorteCaja(periodo) { 
             cambiarPantalla('pantalla-menu', 'pantalla-corte-caja'); document.querySelectorAll('.btn-filtro').forEach(b => { b.classList.remove('activo'); }); let bt = document.getElementById(`filtro-${periodo}`); if(bt) bt.classList.add('activo'); const lista = document.getElementById('lista-corte-caja'); lista.innerHTML = '<div style="text-align:center; padding:40px;">⏳ Calculando...</div>'; 
@@ -777,29 +762,12 @@
                 inventarioHTML.forEach((d) => { 
                     if(d.tipoArticulo === 'Servicio Médico') return; 
                     let limite = d.minimo || 5; const claseAlerta = d.cantidad <= limite ? 'stock-alerta' : 'stock-ok'; const mensajeAlerta = d.cantidad <= limite ? `<div style="margin-top:8px; padding:5px; background:#fff0f0; color:#dc3545; border-radius:5px; text-align:center; font-size:0.85em; font-weight:bold;">¡Bajo Stock!</div>` : ''; 
-                    let btnEdit = (usuarioLogueado.rol === 'Gerente' || usuarioLogueado.rol === 'Sub-Gerente') ? `<div class="th-pie" style="margin-top: 10px; border-top: 1px dashed #eee; padding-top: 10px;"><button class="btn-exp-action" style="padding: 6px 12px; font-size: 0.85em;" onclick="editarProducto('${d.medicamento}')">✏️ Editar Detalles</button></div>` : '';
-                    html += `<div class="tarjeta-info ${claseAlerta}" data-unidad="${d.unidad}"><div class="th-header"><strong style="font-size:1.1em;">${d.medicamento}</strong> <span style="font-size: 1.2em; font-weight: bold; background:#f8f9fa; padding:2px 10px; border-radius:8px; color: ${d.cantidad <= limite ? '#dc3545' : '#198754'};">${d.cantidad} <span style="font-size:0.6em; font-weight:normal; color:#666;">${d.unidad || 'U.'}</span></span></div><div class="th-cuerpo" style="color:#0d6efd; font-family:monospace;">$${d.precioVenta || 0}</div>${mensajeAlerta}${btnEdit}</div>`; 
+                    let btnEdit = (usuarioLogueado.rol === 'Gerente' || usuarioLogueado.rol === 'Sub-Gerente' || usuarioLogueado.rol === 'Sistemas') ? `<div class="th-pie" style="margin-top: 10px; border-top: 1px dashed #eee; padding-top: 10px;"><button class="btn-exp-action" style="padding: 6px 12px; font-size: 0.85em;" onclick="editarProducto('${d.medicamento}')">✏️ Editar Detalles</button></div>` : '';
+                    html += `<div class="tarjeta-info ${claseAlerta}"><div class="th-header"><strong style="font-size:1.1em;">${d.medicamento}</strong> <span style="font-size: 1.2em; font-weight: bold; background:#f8f9fa; padding:2px 10px; border-radius:8px; color: ${d.cantidad <= limite ? '#dc3545' : '#198754'};">${d.cantidad} <span style="font-size:0.6em; font-weight:normal; color:#666;">${d.unidad || 'U.'}</span></span></div><div class="th-cuerpo" style="color:#0d6efd; font-family:monospace;">$${d.precioVenta || 0}</div>${mensajeAlerta}${btnEdit}</div>`; 
                 }); lista.innerHTML = html; 
             });
         }
         function filtrarInventario() { let txt = document.getElementById('busqueda-inv-texto').value.toLowerCase(); let stk = document.getElementById('busqueda-inv-stock').value; let tarjetas = document.getElementById('lista-stock-firebase').children; for(let t of tarjetas) { if(t.tagName !== 'DIV') continue; let matchTxt = t.innerText.toLowerCase().includes(txt); let matchStk = (stk === 'todos') || (stk === 'bajo' && t.classList.contains('stock-alerta')) || (stk === 'ok' && t.classList.contains('stock-ok')); t.style.display = (matchTxt && matchStk) ? "" : "none"; } }
-
-        // --- HISTORIAL ALMACÉN ---
-        function abrirHistorialInventario() { cambiarPantalla('pantalla-menu', 'pantalla-historial-inventario'); document.getElementById('buscador-hist-inv').value = ''; cargarHistorialInventario(); }
-        function cargarHistorialInventario() {
-            document.getElementById('lista-historial-inventario').innerHTML = '<div style="text-align:center; padding:40px;">⏳ Cargando...</div>';
-            db.collection("Historial_Inventario").orderBy("timestamp", "desc").limit(200).get().then((q) => { datosHistorialInv = []; q.forEach(d => { let data = d.data(); data.id = d.id; data.coleccion = "Historial_Inventario"; datosHistorialInv.push(data);}); buscarHistorialInventario(); }).catch(e => document.getElementById('lista-historial-inventario').innerHTML = '<p style="color:red; text-align:center;">Error al cargar.</p>');
-        }
-        function buscarHistorialInventario() {
-            let term = document.getElementById('buscador-hist-inv').value.toLowerCase(); let tipo = document.getElementById('filtro-tipo-hist-inv').value; let fecha = document.getElementById('filtro-fecha-hist-inv').value; let ahora = Date.now();
-            let filtrados = datosHistorialInv.filter(d => { let txt = (d.medicamento||'') + ' ' + (d.registradoPor||''); let cTxt = txt.toLowerCase().includes(term); let cTipo = (tipo === 'todos') || (d.tipoMovimiento === tipo || d.tipoMovimiento.includes(tipo)); let cFch = true; if(fecha === 'hoy') cFch = (ahora - d.timestamp) <= 86400000; if(fecha === 'semana') cFch = (ahora - d.timestamp) <= 604800000; if(fecha === 'mes') cFch = (ahora - d.timestamp) <= 2592000000; return cTxt && cTipo && cFch; });
-            let html = ''; if(filtrados.length === 0) html = '<p style="text-align:center; color:#888;">No hay resultados.</p>';
-            filtrados.forEach(d => { 
-                let isAlta = d.tipoMovimiento === 'Alta' || d.tipoMovimiento.includes('Alta'); let isMerma = d.tipoMovimiento === 'Merma'; let cl = isAlta ? 'alta' : (isMerma ? 'merma' : 'edicion'); let bdg = isAlta ? 'badge-alta' : (isMerma ? 'badge-merma' : 'badge-edicion'); let icon = isAlta ? '📦 Alta' : (isMerma ? '📉 Devolución' : '✏️ Edición'); 
-                let btnBorrar = ''; if (usuarioLogueado && (usuarioLogueado.rol === 'Gerente' || usuarioLogueado.rol === 'Sub-Gerente')) { btnBorrar = `<button class="btn-borrar-historial" onclick="borrarRegistro('${d.coleccion}', '${d.id}')">🗑️</button>`; }
-                html += `<div class="tarjeta-expediente ${cl}" style="padding:15px;"><div class="exp-header" style="margin-bottom:5px;"><span class="exp-title"><span class="badge-tipo ${bdg}">${icon}</span> ${d.medicamento}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-content" style="margin-bottom:8px; padding:8px;"><strong>Cantidad/Cambio:</strong> ${d.cantidad||'N/A'} ${d.unidad||''} <br><strong>Motivo/Detalle:</strong> ${d.motivo || 'N/A'}</div><div class="exp-footer"><span>Por: ${d.registradoPor}</span> ${btnBorrar}</div></div>`; 
-            }); document.getElementById('lista-historial-inventario').innerHTML = html;
-        }
 
         // --- MODO SISTEMAS (EXCEL) ---
         function abrirModoSistemas() { cambiarPantalla('pantalla-menu', 'pantalla-sistemas'); document.getElementById('excel-file').value = ''; document.getElementById('excel-resultado').innerHTML = ''; }
@@ -814,10 +782,10 @@
                     let exitosos = 0; let errores = 0; document.getElementById('excel-resultado').innerHTML = `⏳ Subiendo ${rows.length} registros a la nube...`;
                     let batch = db.batch(); let operaciones = 0; let batchPromises = [];
                     rows.forEach((row, index) => {
-                        let codigo = row['Código'] || row['Codigo'] || `SKU-${Date.now()}-${index}`; let nombre = row['Nombre'] || row['Medicamento'] || row['Producto']; let precio = parseFloat(row['Precio']) || 0; let cantidad = parseInt(row['Cantidad']) || 0; let tipo = row['Tipo'] || 'Medicamento/Producto'; let unidad = row['Unidad'] || 'Piezas'; let min = parseInt(row['Mínimo']) || 5; let max = parseInt(row['Máximo']) || 50; let desc = row['Descripción'] || '';
+                        let nombre = row['Nombre'] || row['Medicamento'] || row['Producto']; let precio = parseFloat(row['Precio']) || 0; let cantidad = parseInt(row['Cantidad']) || 0; let tipo = row['Tipo'] || 'Medicamento/Producto'; let unidad = row['Unidad'] || 'Piezas'; let min = parseInt(row['Mínimo']) || 5; let max = parseInt(row['Máximo']) || 50; let desc = row['Descripción'] || ''; let prov = row['Proveedor'] || ''; let pres = row['Presentación'] || '';
                         if(!nombre) { errores++; return; } 
                         let refInv = db.collection("Inventario").doc(String(nombre));
-                        batch.set(refInv, { tipoArticulo: tipo, codigoQR: String(codigo), medicamento: String(nombre), descripcion: String(desc), precioVenta: precio, cantidad: cantidad, unidad: unidad, minimo: min, maximo: max, registradoPor: usuarioLogueado.nombre + " (Excel)", fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() }, {merge: true});
+                        batch.set(refInv, { tipoArticulo: tipo, medicamento: String(nombre), descripcion: String(desc), proveedor: String(prov), presentacion: String(pres), precioVenta: precio, cantidad: cantidad, unidad: unidad, minimo: min, maximo: max, registradoPor: usuarioLogueado.nombre + " (Excel)", fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() }, {merge: true});
                         let refHist = db.collection("Historial_Inventario").doc();
                         batch.set(refHist, { tipoMovimiento: "Alta (Masiva Excel)", medicamento: String(nombre), cantidad: cantidad, unidad: unidad, precio: precio, motivo: "Carga Inicial / Masiva", registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now() });
                         operaciones += 2; exitosos++;
@@ -830,6 +798,23 @@
             }; reader.readAsArrayBuffer(file);
         }
 
+        // --- HISTORIAL ALMACÉN ---
+        function abrirHistorialInventario() { cambiarPantalla('pantalla-menu', 'pantalla-historial-inventario'); document.getElementById('buscador-hist-inv').value = ''; cargarHistorialInventario(); }
+        function cargarHistorialInventario() {
+            document.getElementById('lista-historial-inventario').innerHTML = '<div style="text-align:center; padding:40px;">⏳ Cargando...</div>';
+            db.collection("Historial_Inventario").orderBy("timestamp", "desc").limit(200).get().then((q) => { datosHistorialInv = []; q.forEach(d => { let data = d.data(); data.id = d.id; data.coleccion = "Historial_Inventario"; datosHistorialInv.push(data);}); buscarHistorialInventario(); }).catch(e => document.getElementById('lista-historial-inventario').innerHTML = '<p style="color:red; text-align:center;">Error al cargar.</p>');
+        }
+        function buscarHistorialInventario() {
+            let term = document.getElementById('buscador-hist-inv').value.toLowerCase(); let tipo = document.getElementById('filtro-tipo-hist-inv').value; let fecha = document.getElementById('filtro-fecha-hist-inv').value; let ahora = Date.now();
+            let filtrados = datosHistorialInv.filter(d => { let txt = (d.medicamento||'') + ' ' + (d.registradoPor||''); let cTxt = txt.toLowerCase().includes(term); let cTipo = (tipo === 'todos') || (d.tipoMovimiento === tipo || d.tipoMovimiento.includes(tipo)); let cFch = true; if(fecha === 'hoy') cFch = (ahora - d.timestamp) <= 86400000; if(fecha === 'semana') cFch = (ahora - d.timestamp) <= 604800000; if(fecha === 'mes') cFch = (ahora - d.timestamp) <= 2592000000; return cTxt && cTipo && cFch; });
+            let html = ''; if(filtrados.length === 0) html = '<p style="text-align:center; color:#888;">No hay resultados.</p>';
+            filtrados.forEach(d => { 
+                let isAlta = d.tipoMovimiento === 'Alta' || d.tipoMovimiento.includes('Alta'); let isMerma = d.tipoMovimiento === 'Merma'; let cl = isAlta ? 'alta' : (isMerma ? 'merma' : 'edicion'); let bdg = isAlta ? 'badge-alta' : (isMerma ? 'badge-merma' : 'badge-edicion'); let icon = isAlta ? '📦 Alta' : (isMerma ? '📉 Devolución' : '✏️ Edición'); 
+                let btnBorrar = ''; if (usuarioLogueado && (usuarioLogueado.rol === 'Gerente' || usuarioLogueado.rol === 'Sub-Gerente' || usuarioLogueado.rol === 'Sistemas')) { btnBorrar = `<button class="btn-borrar-historial" onclick="borrarRegistro('${d.coleccion}', '${d.id}')">🗑️</button>`; }
+                html += `<div class="tarjeta-expediente ${cl}" style="padding:15px;"><div class="exp-header" style="margin-bottom:5px;"><span class="exp-title"><span class="badge-tipo ${bdg}">${icon}</span> ${d.medicamento}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-content" style="margin-bottom:8px; padding:8px;"><strong>Cantidad/Cambio:</strong> ${d.cantidad||'N/A'} ${d.unidad||''} <br><strong>Motivo/Detalle:</strong> ${d.motivo || 'N/A'}</div><div class="exp-footer"><span>Por: ${d.registradoPor}</span> ${btnBorrar}</div></div>`; 
+            }); document.getElementById('lista-historial-inventario').innerHTML = html;
+        }
+
         // --- HISTORIAL VENTAS ---
         function abrirHistorialVentas() { cambiarPantalla('pantalla-menu', 'pantalla-historial-ventas'); document.getElementById('buscador-hist-ventas').value = ''; document.getElementById('filtro-fecha-hist-ventas').value = 'todos'; const lista = document.getElementById('lista-historial-ventas'); lista.innerHTML = '<div style="text-align:center; padding:40px;">⏳ Cargando...</div>'; db.collection("Historial_Cobros").orderBy("fechaReal", "desc").limit(200).get().then((q) => { datosHistorialVentas = []; q.forEach((doc) => { const d = doc.data(); d.id = doc.id; d.coleccion = "Historial_Cobros"; d.tipoRegistro='cobro'; datosHistorialVentas.push(d); }); buscarHistorialVentas(); }); }
         function buscarHistorialVentas() {
@@ -837,7 +822,7 @@
             let filtrados = datosHistorialVentas.filter(d => { let txt = (d.paciente||'') + ' ' + (d.dueno||'') + ' ' + (d.telefono||'') + ' ' + (d.atendio||''); let coincideTexto = txt.toLowerCase().includes(term); let coincideFecha = true; if(fecha === 'hoy') coincideFecha = (ahora - d.timestamp) <= 86400000; if(fecha === 'semana') coincideFecha = (ahora - d.timestamp) <= 604800000; if(fecha === 'mes') coincideFecha = (ahora - d.timestamp) <= 2592000000; return coincideTexto && coincideFecha; });
             let html = ''; if(filtrados.length === 0) { html = '<p style="text-align:center; color:#888;">No hay ventas recientes.</p>'; } else {
                 filtrados.forEach(d => { 
-                    let desc = d.articulos ? d.articulos.map(a=>a.nombre).join(', ') : 'Venta General'; let isVenta = d.ventaMostrador; let btnBorrar = ''; if (usuarioLogueado && (usuarioLogueado.rol === 'Gerente' || usuarioLogueado.rol === 'Sub-Gerente')) { btnBorrar = `<button class="btn-borrar-historial" onclick="borrarRegistro('${d.coleccion}', '${d.id}')">🗑️</button>`; } html += `<div class="tarjeta-expediente venta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰</span> ${isVenta ? 'Público General' : d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 Dueño: ${isVenta ? 'N/A' : d.dueno} ${d.telefono ? `(${d.telefono})`:''}</span><span>👨‍⚕️ Atendió: ${d.atendio}</span><span>💳 Pago: ${d.metodoPago}</span></div><div class="exp-content" style="color:#146c43; font-weight:500;">🛒 ${desc}</div><div class="exp-footer"><span style="font-size:1.2em; font-weight:bold; color:#198754;">$${parseFloat(d.totalCobrado).toFixed(2)}</span> <div style="display:flex; gap:10px;"><button class="btn-exp-action btn-venta" onclick="reimprimirVentaDirecta(${d.timestamp})">🖨️ Ticket</button> ${btnBorrar}</div> </div></div>`; 
+                    let desc = d.articulos ? d.articulos.map(a=>a.nombre).join(', ') : 'Venta General'; let isVenta = d.ventaMostrador; let btnBorrar = ''; if (usuarioLogueado && (usuarioLogueado.rol === 'Gerente' || usuarioLogueado.rol === 'Sub-Gerente' || usuarioLogueado.rol === 'Sistemas')) { btnBorrar = `<button class="btn-borrar-historial" onclick="borrarRegistro('${d.coleccion}', '${d.id}')">🗑️</button>`; } html += `<div class="tarjeta-expediente venta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰</span> ${isVenta ? 'Público General' : d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 Dueño: ${isVenta ? 'N/A' : d.dueno} ${d.telefono ? `(${d.telefono})`:''}</span><span>👨‍⚕️ Atendió: ${d.atendio}</span><span>💳 Pago: ${d.metodoPago}</span></div><div class="exp-content" style="color:#146c43; font-weight:500;">🛒 ${desc}</div><div class="exp-footer"><span style="font-size:1.2em; font-weight:bold; color:#198754;">$${parseFloat(d.totalCobrado).toFixed(2)}</span> <div style="display:flex; gap:10px;"><button class="btn-exp-action btn-venta" onclick="reimprimirVentaDirecta(${d.timestamp})">🖨️ Ticket</button> ${btnBorrar}</div> </div></div>`; 
                 });
             } document.getElementById('lista-historial-ventas').innerHTML = html;
         }
@@ -845,7 +830,7 @@
 
         // --- ALTA Y EDICIÓN INVENTARIO ---
         function toggleServicio() { const tipo = document.getElementById('tipo-inventario').value; if(tipo === 'Servicio Médico') { document.getElementById('caja-cantidades-inv').classList.add('oculto'); document.getElementById('caja-unidad-inv').classList.add('oculto'); document.getElementById('cantidad-inventario').value = 9999; } else { document.getElementById('caja-cantidades-inv').classList.remove('oculto'); document.getElementById('caja-unidad-inv').classList.remove('oculto'); if(!modoEdicion) { document.getElementById('cantidad-inventario').value = ""; document.getElementById('min-inventario').value = ""; document.getElementById('max-inventario').value = "";} } }
-        function abrirInventario() { modoEdicion = false; cambiarPantalla('pantalla-menu', 'pantalla-inventario'); document.getElementById('titulo-pantalla-inventario').innerText = "📦 Alta Medicamento y Servicio"; document.getElementById('nombre-inventario').readOnly = false; document.getElementById('nombre-inventario').value = ''; document.getElementById('precio-inventario').value = ''; document.getElementById('cantidad-inventario').value = ''; document.getElementById('min-inventario').value = ''; document.getElementById('max-inventario').value = ''; document.getElementById('tipo-inventario').value = 'Medicamento/Producto'; toggleServicio(); document.getElementById('btn-guardar-inventario').innerText = "Guardar Alta"; }
+        function abrirInventario() { modoEdicion = false; cambiarPantalla('pantalla-menu', 'pantalla-inventario'); document.getElementById('titulo-pantalla-inventario').innerText = "📦 Alta de productos y servicios"; document.getElementById('nombre-inventario').readOnly = false; document.getElementById('nombre-inventario').value = ''; document.getElementById('precio-inventario').value = ''; document.getElementById('cantidad-inventario').value = ''; document.getElementById('min-inventario').value = ''; document.getElementById('max-inventario').value = ''; document.getElementById('inv-proveedor').value = ''; document.getElementById('inv-descripcion').value = ''; document.getElementById('inv-presentacion').value = ''; document.getElementById('tipo-inventario').value = 'Medicamento/Producto'; toggleServicio(); document.getElementById('btn-guardar-inventario').innerText = "Guardar Alta"; }
         
         function editarProducto(nombre) {
             let item = inventarioGlobal.find(i => i.medicamento === nombre); if(!item) return;
@@ -855,14 +840,16 @@
             document.getElementById('precio-inventario').value = item.precioVenta || ''; document.getElementById('cantidad-inventario').value = item.cantidad || '';
             document.getElementById('min-inventario').value = item.minimo || ''; document.getElementById('max-inventario').value = item.maximo || '';
             document.getElementById('unidad-inventario').value = item.unidad || 'Piezas';
+            document.getElementById('inv-proveedor').value = item.proveedor || ''; document.getElementById('inv-descripcion').value = item.descripcion || ''; document.getElementById('inv-presentacion').value = item.presentacion || '';
             document.getElementById('btn-guardar-inventario').innerText = "Guardar Cambios";
         }
 
         function guardarEnInventario() { 
             const n = document.getElementById('nombre-inventario').value.trim(); let c = document.getElementById('cantidad-inventario').value; const u = document.getElementById('unidad-inventario').value; let p = document.getElementById('precio-inventario').value; const t = document.getElementById('tipo-inventario').value; const min = document.getElementById('min-inventario').value; const max = document.getElementById('max-inventario').value;
+            const prov = document.getElementById('inv-proveedor').value.trim(); const desc = document.getElementById('inv-descripcion').value.trim(); const pres = document.getElementById('inv-presentacion').value.trim();
             if(t === 'Servicio Médico') { if(!n) return alert("⚠️ Llena nombre del servicio."); if(!p) p = 0; c = 9999; } 
             else { if(!n || !c || !p) return alert("⚠️ Llena nombre, precio y cantidad actual."); }
-            db.collection("Inventario").doc(n).set({ tipoArticulo: t, medicamento: n, precioVenta: parseFloat(p), cantidad: parseInt(c), unidad: u, minimo: parseInt(min)||5, maximo: parseInt(max)||100, registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() }, {merge: true}).then(() => { 
+            db.collection("Inventario").doc(n).set({ tipoArticulo: t, medicamento: n, descripcion: desc, proveedor: prov, presentacion: pres, precioVenta: parseFloat(p), cantidad: parseInt(c), unidad: u, minimo: parseInt(min)||5, maximo: parseInt(max)||100, registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), fechaReal: firebase.firestore.FieldValue.serverTimestamp() }, {merge: true}).then(() => { 
                 let mov = modoEdicion ? "Edición" : "Alta"; let mot = modoEdicion ? `Actualización de datos` : "Ingreso nuevo";
                 db.collection("Historial_Inventario").add({ tipoMovimiento: mov, medicamento: n, cantidad: parseInt(c), unidad: u, precio: parseFloat(p), motivo: mot, registradoPor: usuarioLogueado.nombre, fechaTexto: new Date().toLocaleString('es-MX'), timestamp: Date.now() }); 
                 alert(modoEdicion ? "✅ Cambios guardados." : "✅ Alta Guardada."); cargarSugerenciasInventario(); cancelarVolver(); 
