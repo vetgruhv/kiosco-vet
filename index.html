@@ -35,7 +35,7 @@
         .carrito-box{background:#fff;border:2px solid #e9ecef;border-radius:14px;padding:15px;margin-bottom:20px;max-height:200px;overflow-y:auto} .item-carrito{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed #e9ecef;font-size:0.95em} .btn-eliminar-item{background:#ffe3e3;color:#dc3545;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:bold}
         .caja-morada{background:#fdfaf6;padding:25px;border-radius:18px;border:1px solid #0caeb9;margin-bottom:25px} .titulo-morado{color:#0caeb9;font-weight:900;font-size:0.85em;text-transform:uppercase;margin-bottom:15px;display:block} .campos-dinamicos{background:#fff;padding:15px;border-radius:12px;border:1px dashed #0caeb9;margin-bottom:15px}
         .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:100000;display:flex;justify-content:center;align-items:center} .modal-content{background:#fff;width:95%;max-width:800px;height:90vh;border-radius:16px;display:flex;flex-direction:column;overflow:hidden} .modal-header{background:#0caeb9;color:#fff;padding:15px 20px;font-weight:bold;display:flex;justify-content:space-between;align-items:center} .modal-body{padding:20px;overflow-y:auto;flex:1;font-family:Arial,sans-serif;font-size:13px;line-height:1.5;color:#333} .modal-footer{padding:15px;border-top:1px solid #eee;text-align:center;background:#f8f9fa}
-        .firma-card{width:100%;max-width:450px;margin:0 auto;border:1px solid #e9ecef;border-radius:14px;padding:15px;background:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;box-sizing:border-box} .firma-title{font-size:0.85em;font-weight:800;margin-bottom:12px;text-transform:uppercase;color:#0caeb9} .canvas-firma{border:2px dashed #ced4da;border-radius:10px;width:100%;height:140px;background:#fafafa;touch-action:none;margin-bottom:12px;cursor:crosshair;box-sizing:border-box} .btn-borrar-firma{border:1px solid #ffc9c9;background:#fff0f0;color:#dc3545;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:0.85em;font-weight:bold}
+        .firma-card{width:100%;max-width:450px;margin:0 auto;border:1px solid #e9ecef;border-radius:14px;padding:15px;background:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;box-sizing:border-box} .firma-title{font-size:0.85em;font-weight:800;margin-bottom:12px;text-transform:uppercase;color:#198754} .canvas-firma{border:2px dashed #ced4da;border-radius:10px;width:100%;height:140px;background:#fafafa;touch-action:none;margin-bottom:12px;cursor:crosshair;box-sizing:border-box} .btn-borrar-firma{border:1px solid #ffc9c9;background:#fff0f0;color:#dc3545;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:0.85em;font-weight:bold}
         .panel-busqueda{background:#fff;padding:20px;border-radius:18px;margin-bottom:25px;border:1px solid #e9ecef;display:flex;flex-wrap:wrap;gap:15px;align-items:flex-end} .panel-busqueda .grupo-formulario{flex:1 1 200px;margin:0} .busqueda-ancha{flex:1 1 100%!important}
         .lista-vertical{display:block;max-height:500px;overflow-y:auto;padding-right:10px;margin-bottom:15px} .tarjeta-expediente,.tarjeta-info{border:1px solid #e9ecef;border-radius:16px;padding:20px;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.03);text-align:left;position:relative;overflow:hidden;margin-bottom:18px;display:block;width:100%;box-sizing:border-box}
         .badge-tipo{padding:5px 10px;border-radius:8px;font-size:0.8em;font-weight:bold;margin-right:10px;display:inline-block} .exp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;border-bottom:1px solid #f1f3f5;padding-bottom:10px;flex-wrap:wrap;gap:10px} .exp-title{font-weight:800;font-size:1.1em;color:#2b3035;display:flex;align-items:center} .exp-date{font-size:0.85em;color:#888;font-weight:500} .exp-content{background:#f8f9fa;padding:15px;border-radius:12px;font-size:0.95em;color:#444;white-space:pre-wrap;margin-bottom:15px;border:1px solid #f1f3f5;line-height:1.6} .exp-footer{display:flex;justify-content:space-between;align-items:center;font-size:0.9em;color:#666;flex-wrap:wrap;gap:10px}
@@ -73,6 +73,7 @@
 
     <!-- BOTONES FLOTANTES CANCELAR -->
     <div class="fab-container oculto" id="fab-container">
+        <button class="fab fab-preview" id="fab-preview" onclick="window.abrirLecturaYFirma()" title="Previsualizar y Firmar">📝</button>
         <button class="fab fab-cancel" onclick="window.cancelarVolver()" title="Volver al Menú">❌</button>
     </div>
 
@@ -115,13 +116,14 @@
             <button class="btn-menu oculto" id="btn-alta-inventario" onclick="window.abrirInventario()"><span>📦 Alta productos/servicios</span></button>
             <button class="btn-menu oculto" id="btn-sistemas" onclick="window.abrirModoSistemas()"><span>⚙️ Modo Sistemas (Excel)</span></button>
             <button class="btn-menu oculto" id="btn-hist-inventario" onclick="window.abrirHistorialInventario()"><span>🗃️ Historial Almacén</span></button>
+            <button class="btn-menu oculto" id="btn-historial" onclick="window.abrirHistorialVentas()"><span>📋 Historial de Ventas</span></button>
             <button class="btn-menu oculto" id="btn-baja-inventario" onclick="window.abrirBajaInventario()"><span>📉 Devolución / Baja</span></button>
             <button class="btn-menu oculto" id="btn-usuarios" onclick="window.abrirUsuarios()"><span>👥 Personal</span></button>
         </div>
         <button class="btn btn-cancelar" onclick="window.cerrarSesion()">Cerrar Sesión</button>
     </div>
-    
-    <!-- PANTALLA EXPEDIENTE CLINICO -->
+
+    <!-- PANTALLA EXPEDIENTE CLINICO (AQUI SE RESTAURO EL HTML) -->
     <div id="pantalla-expediente" class="contenedor contenedor-ancho oculto">
         <h2 style="color:#333;margin-top:0">🗂️ Expediente Clínico</h2>
         <div class="panel-busqueda">
@@ -131,7 +133,7 @@
         </div>
         <div id="lista-expediente" class="lista-vertical"></div>
     </div>
-
+    
     <!-- PANTALLA VENTA GENERAL -->
     <div id="pantalla-registro-baja" class="contenedor oculto">
         <h2 style="color:#333;margin-top:0">🛒 Venta General</h2>
@@ -233,7 +235,7 @@
         <h3 style="text-align:right;color:#0caeb9">Acumulado: $<span id="total-hosp">0.00</span></h3>
         
         <div class="grupo-formulario"><label>Notas Médicas:</label><textarea id="hosp-notas" rows="4"></textarea></div>
-
+        
         <div class="form-row">
             <div class="grupo-formulario"><button class="btn btn-guardar-azul" id="btn-final-hosp" onclick="window.procesarHospitalizacion('hoja')" disabled>📄 Guardar e Imprimir Formato</button></div>
             <div class="grupo-formulario"><button class="btn btn-guardar" onclick="window.procesarHospitalizacion('ticket')">🧾 Imprimir Solo Ticket</button></div>
@@ -284,6 +286,13 @@
         <div id="lista-historial-inventario" class="lista-vertical"></div>
     </div>
 
+    <!-- PANTALLA HISTORIAL VENTAS -->
+    <div id="pantalla-historial-ventas" class="contenedor contenedor-ancho oculto">
+        <h2 style="color:#333;margin-top:0">📋 Historial de Ventas / Hosp</h2>
+        <div class="panel-busqueda"><div class="grupo-formulario busqueda-ancha"><input type="text" id="buscador-hist-ventas" class="input-buscador" placeholder="Buscar..." oninput="window.buscarHistorialVentas()"></div><div class="grupo-formulario"><select id="filtro-fecha-hist-ventas" onchange="window.buscarHistorialVentas()"><option value="todos">Cualquier fecha</option><option value="hoy">Hoy</option><option value="semana">Semana</option><option value="mes">Mes</option></select></div></div>
+        <div id="lista-historial-ventas" class="lista-vertical"></div>
+    </div>
+
     <!-- PANTALLA BAJA INVENTARIO -->
     <div id="pantalla-baja-inventario" class="contenedor oculto">
         <h2 style="color:#dc3545;margin-top:0">📉 Devolución / Baja</h2>
@@ -301,7 +310,7 @@
         <div id="lista-usuarios-firebase" class="lista-vertical"></div>
     </div>
 
-    <!-- LÓGICA CORE -->
+    <!-- LÓGICA JAVASCRIPT SEGURA Y ORGANIZADA -->
     <script>
         // 1. INICIALIZAR FIREBASE
         window.db = null;
@@ -314,8 +323,8 @@
         // 2. VARIABLES GLOBALES
         let pinActual = ""; let usuarioLogueado = null; let temporizadorInactividad; 
         let totalCobroCalculado = 0; let inventarioGlobal = []; let carrito = []; let carritoHosp = [];
-        let datosHistorialInv = []; let datosExpediente = []; let firmaCapturada = false; 
-        let guardandoBloqueo = false; let modoEdicion = false;
+        let datosHistorialInv = []; let datosHistorialVentas = []; let datosExpediente = []; 
+        let firmaCapturada = false; let guardandoBloqueo = false; let modoEdicion = false;
         let ctxActivo = null; let isDrawing = false; let canvasActivo = false;
 
         // 3. FUNCIONES DE IMPRESIÓN LEGAL
@@ -514,7 +523,7 @@
             window.db.collection("Historial_Cobros").add(vData).then(()=>{ carrito.forEach(i=>{if(i.tipo!=='Servicio Médico'){let sN=String(i.nombre).replace(/\//g,'-');window.db.collection("Inventario").doc(sN).get().then(d=>{if(d.exists)window.db.collection("Inventario").doc(sN).update({cantidad:d.data().cantidad-1});});}}); if(imprimir) window.imprimirTicketBoucher(vData); else alert("✅ Venta OK."); window.cancelarVolver(); }).catch(e=>alert("Error: "+e.message)).finally(()=>{guardandoBloqueo=false;document.body.style.cursor='default';});
         };
 
-        // 9. HOSPITALIZACION
+        // 9. HOSPITALIZACION Y EXPEDIENTE
         window.abrirHospitalizacion = function() { 
             window.cambiarPantalla('pantalla-menu', 'pantalla-hospitalizacion'); 
             document.getElementById('zona-firmas-oculta').classList.add('oculto'); 
@@ -540,7 +549,7 @@
                 }; 
                 document.getElementById(map[s]).classList.remove('oculto'); 
                 if(bl) bl.classList.remove('oculto'); 
-                if(zf) zf.classList.remove('oculto'); // Muestra la firma inmediatamente abajo
+                if(zf) zf.classList.remove('oculto'); // Muestra la firma inmediatamente
                 if(bf) bf.disabled = false;
                 setTimeout(window.resizeCanvases, 50); canvasActivo=true;
             } else {
@@ -555,7 +564,6 @@
             const val = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
             const isChecked = (id) => { const el = document.getElementById(id); return el ? el.checked : false; };
             
-            // Blindaje: Solo captura los valores si existen los campos
             let d = { doctor:usuarioLogueado?.nombre || '', dueno:val('hosp-dueno'), paciente:val('hosp-paciente'), telefono:val('hosp-tel'), raza:val('hosp-raza'), edad:val('hosp-edad'), sexo:val('hosp-sexo'), peso:val('hosp-peso'), prescripcion:val('hosp-notas'), formatoLegal:f };
             if(f==="AUTORIZACIÓN HOSPITALARIA"){d.domicilio=val('hosp-domicilio');d.correo=val('hosp-correo');d.color=val('hosp-color');d.nacimiento=val('hosp-nacimiento');d.vacSextuple=val('hosp-vac-sextuple');d.vacRabia=val('hosp-vac-rabia');d.vacDesp=val('hosp-vac-desp');d.manejoMedico=val('hosp-manejo-medico');d.autorizaHosp=isChecked('check-hosp');}
             if(f==="CONTRATO DE PENSIÓN"){d.domicilioPension=val('pen-domicilio');d.penTelEmergencia=val('pen-tel-emergencia');d.penEntrada=val('pen-entrada');d.penSalida=val('pen-salida');d.penCosto=val('pen-costo');d.penAlergias=val('pen-alergias');d.penSinComida=val('pen-sin-comida');d.penMarca=val('pen-marca');d.penHorario=val('pen-horario');d.penCantidad=val('pen-cantidad');d.penCuidados=val('pen-cuidados');}
@@ -583,7 +591,6 @@
             window.db.collection("Historial_Hospitalizacion").add(hD).then(()=>{ carritoHosp.forEach(i=>{if(i.tipo!=='Servicio Médico'){let sN=String(i.nombre).replace(/\//g,'-');window.db.collection("Inventario").doc(sN).get().then(d=>{if(d.exists)window.db.collection("Inventario").doc(sN).update({cantidad:d.data().cantidad-1});});}}); if(imprimir==='hoja') window.generarHojasLegalesDinamicas(hD); else if(imprimir==='ticket') window.imprimirTicketBoucher(hD); window.cancelarVolver(); }).catch(e=>alert("Error: "+e.message)).finally(()=>{guardandoBloqueo=false;document.body.style.cursor='default';});
         };
 
-        // 10. EXPEDIENTE (HISTORIAL GENERAL HOSP/VENTAS UNIFICADO)
         window.abrirExpediente = function() { window.cambiarPantalla('pantalla-menu', 'pantalla-expediente'); document.getElementById('buscador-expediente').value = ''; window.cargarExpedienteBase(); };
         window.cargarExpedienteBase = function() {
             document.getElementById('lista-expediente').innerHTML = '<div style="text-align:center; padding:40px;">⏳ Cargando expedientes...</div>';
