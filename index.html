@@ -38,6 +38,8 @@
         .lista-vertical{display:block;max-height:500px;overflow-y:auto;padding-right:10px;margin-bottom:15px} .tarjeta-expediente,.tarjeta-info{border:1px solid #e9ecef;border-radius:16px;padding:20px;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.03);text-align:left;position:relative;overflow:hidden;margin-bottom:18px;display:block;width:100%;box-sizing:border-box}
         .badge-tipo{padding:5px 10px;border-radius:8px;font-size:0.8em;font-weight:bold;margin-right:10px;display:inline-block} .exp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;border-bottom:1px solid #f1f3f5;padding-bottom:10px;flex-wrap:wrap;gap:10px} .exp-title{font-weight:800;font-size:1.1em;color:#2b3035;display:flex;align-items:center} .exp-date{font-size:0.85em;color:#888;font-weight:500} .exp-content{background:#f8f9fa;padding:15px;border-radius:12px;font-size:0.95em;color:#444;white-space:pre-wrap;margin-bottom:15px;border:1px solid #f1f3f5;line-height:1.6} .exp-footer{display:flex;justify-content:space-between;align-items:center;font-size:0.9em;color:#666;flex-wrap:wrap;gap:10px}
         .btn-exp-action{background:#e0f7fa;color:#0caeb9;border:none;padding:10px 18px;border-radius:10px;cursor:pointer;font-weight:bold;font-size:0.9em;display:flex;align-items:center;gap:6px} .btn-borrar-historial{background:#fff0f0;color:#dc3545;border:1px solid #ffc9c9;padding:10px 15px;border-radius:10px;cursor:pointer;font-weight:bold;font-size:0.9em}
+        .hosp-listas-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px} .hosp-columna{background:#fff;border:1px solid #e9ecef;border-radius:12px;padding:15px} .hosp-columna h5{margin:0 0 10px 0;border-bottom:2px dashed #e9ecef;padding-bottom:8px;text-transform:uppercase;font-size:0.85em}
+        @media (max-width:600px){.hosp-listas-grid{grid-template-columns:1fr}}
         #zona-impresion{display:none}
         @media print{
             @page{margin:0} body{background:#fff;margin:0;padding:0;color:#000} .contenedor,.fab-container,#modal-lectura{display:none!important} #zona-impresion{display:block!important;width:100%}
@@ -53,22 +55,23 @@
     <datalist id="lista-medicamentos-general"></datalist>
     <div id="zona-impresion"></div>
 
-    <!-- MODAL DE PREVISUALIZACIÓN -->
+    <!-- MODAL DE LECTURA (DOCUMENTOS LEGALES) -->
     <div id="modal-lectura" class="modal-overlay oculto">
         <div class="modal-content">
             <div class="modal-header">
                 <span>📄 Vista Previa y Lectura de Contrato</span>
-                <button onclick="document.getElementById('modal-lectura').classList.add('oculto')" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">✖</button>
+                <button onclick="document.getElementById('modal-lectura')?.classList.add('oculto')" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">✖</button>
             </div>
             <div id="modal-cuerpo" class="modal-body"></div>
             <div class="modal-footer">
-                <button class="btn btn-guardar" style="width:auto;display:inline-block;padding:12px 30px" onclick="document.getElementById('modal-lectura').classList.add('oculto')">✅ He leído y acepto (Cerrar para Firmar)</button>
+                <button class="btn btn-guardar" style="width:auto;display:inline-block;padding:12px 30px" onclick="document.getElementById('modal-lectura')?.classList.add('oculto')">✅ He leído y acepto (Cerrar para Firmar)</button>
             </div>
         </div>
     </div>
 
-    <!-- BOTONES FLOTANTES -->
+    <!-- BOTONES FLOTANTES CANCELAR Y PREVIEW -->
     <div class="fab-container oculto" id="fab-container">
+        <button class="fab fab-preview" id="fab-preview" onclick="window.abrirLecturaYFirma()" title="Previsualizar y Firmar">📝</button>
         <button class="fab fab-cancel" onclick="window.cancelarVolver()" title="Volver al Menú">❌</button>
     </div>
 
@@ -311,7 +314,7 @@
 
     <!-- LÓGICA JAVASCRIPT SEGURA Y ORGANIZADA -->
     <script>
-        // 1. INICIALIZAR FIREBASE
+        // 1. INICIALIZAR FIREBASE (Protegido con optional chaining por si falla red)
         window.db = null;
         try {
             const firebaseConfig = { apiKey: "AIzaSyABktLytyy6fBXXDOrJq9B0nErrOzc30a4", authDomain: "kioscovet-93eae.firebaseapp.com", projectId: "kioscovet-93eae", storageBucket: "kioscovet-93eae.firebasestorage.app", messagingSenderId: "571603121447", appId: "1:571603121447:web:ad4a7d439050ec82812502" };
@@ -329,7 +332,7 @@
         // 3. FUNCIONES DE IMPRESIÓN LEGAL
         window.imprimirTicketBoucher = function(venta) {
             let esHosp = venta.tipoRegistro === 'hospitalizacion' || venta.formatoLegal; let titulo = esHosp ? "TICKET HOSPITALIZACIÓN" : "TICKET DE VENTA";
-            let arts = ''; venta.articulos.forEach(a => { let n = a.nombre?a.nombre.substring(0,20):'Prod'; arts+=`<tr><td>${a.cantidad||1}</td><td>${n}</td><td class="col-precio">$${Number(a.precio).toFixed(2)}</td></tr>`; });
+            let arts = ''; venta.articulos?.forEach(a => { let n = a.nombre?a.nombre.substring(0,20):'Prod'; arts+=`<tr><td>${a.cantidad||1}</td><td>${n}</td><td class="col-precio">$${Number(a.precio).toFixed(2)}</td></tr>`; });
             let desc = (venta.subtotal||0)-(venta.totalCobrado||0);
             let pgs = ''; if(venta.pagos) { venta.pagos.forEach(p => { pgs += `PAGO EN ${String(p.metodo).toUpperCase()}: $${Number(p.monto).toFixed(2)}<br>`; }); } else { pgs = `PAGO EN ${String(venta.metodoPago||'ESTANCIA HOSP.').toUpperCase()}`; }
             let html = `<div class="ticket-print"><div class="info-tienda"><strong>CLÍNICA VETERINARIA VETGRU</strong><br>844-227-5808</div><h2>${titulo}</h2><div class="info-ticket">Fch: ${String(venta.fechaTexto).split(',')[0]}<br>Atendió: ${venta.atendio||venta.doctor||''}<br>Paciente/Cliente: ${venta.paciente||'Público General'}</div><table><thead><tr><th>CANT</th><th>ART</th><th class="col-precio">TOT</th></tr></thead><tbody>${arts}</tbody></table><div class="totales">SUBTOTAL: $${Number(venta.subtotal||0).toFixed(2)}<br>${desc>0?`DESC: -$${desc.toFixed(2)}<br>`:''}<strong>TOTAL: $${Number(venta.totalCobrado||0).toFixed(2)}</strong></div><div class="footer">${pgs}<br><br>Sin validez fiscal</div></div>`;
@@ -393,8 +396,14 @@
                 htmlFinal = `<div class="receta-print">${cabecera}<br><p style="text-align:right;font-size:12px;font-weight:bold;">Fecha: <u>${fch}</u></p><div class="cuerpo-texto" style="font-size: 13px; line-height: 1.8; margin-top: 30px;"><p>Agradecemos plenamente su confianza y habernos permitido cuidar de <strong>${hosp.paciente}</strong>.</p><p>Yo Sr. O Sra. <strong>${hosp.dueno}</strong> he recibido a mi mascota en óptimas condiciones, entregándome todos mis artículos personales.</p><p>Para ofrecerle un mejor servicio le pedimos que cualquier anormalidad que note en su mascota, nos sea notificada previo a las 24 horas de haberse entregado a la mascota, ya que de otra manera VETGRU HOSPITAL VETERINARIO no podrá hacerse responsable de los actos sucedidos después de la entrega.</p></div><div class="firmas-area" style="margin-top:80px;"><div class="firma-bloque">${htmlFirma}<div class="firma-linea">NOMBRE Y FIRMA DE AUTORIZACION DE PROPIETARIO</div></div></div></div>`;
             } else { htmlFinal = `<div class="receta-print">${cabecera}<h2>REGISTRO INTERNO</h2><p style="text-align:center;">Solo consulta interna.</p></div>`; }
             
-            if(isPreview) { document.getElementById('modal-cuerpo').innerHTML = htmlFinal; } 
-            else { document.getElementById('zona-impresion').innerHTML = htmlFinal; setTimeout(()=>window.print(), 500); }
+            if(isPreview) { 
+                let b = document.getElementById('modal-cuerpo');
+                if(b) b.innerHTML = htmlFinal; 
+            } else { 
+                let i = document.getElementById('zona-impresion');
+                if(i) i.innerHTML = htmlFinal; 
+                setTimeout(()=>window.print(), 500); 
+            }
         };
 
         // 4. FUNCIONES DE DIBUJO EN CANVAS
@@ -415,12 +424,20 @@
         
         window.limpiarFirma = function(id) { let cv = document.getElementById('canvas-'+id); if(cv) cv.getContext('2d').clearRect(0,0,cv.width,cv.height); firmaCapturada = false; };
 
-        // 5. NAVEGACIÓN Y MENÚS
+        // 5. NAVEGACIÓN Y MENÚS (Protegido con ?.)
         window.cambiarPantalla = function(idOcultar, idMostrar) { 
             document.querySelectorAll('.contenedor').forEach(el=>el.classList.add('oculto')); 
-            document.getElementById(idMostrar).classList.remove('oculto'); 
+            document.getElementById(idMostrar)?.classList.remove('oculto'); 
             let fab = document.getElementById('fab-container'); 
-            if(fab){ if(idMostrar==='pantalla-menu'||idMostrar==='pantalla-login') { fab.classList.add('oculto'); } else { fab.classList.remove('oculto'); } } 
+            if(fab){
+                if(idMostrar==='pantalla-menu'||idMostrar==='pantalla-login') { fab.classList.add('oculto'); } 
+                else { fab.classList.remove('oculto'); }
+            } 
+            let fp = document.getElementById('fab-preview'); 
+            if(fp) {
+                if(idMostrar==='pantalla-hospitalizacion' && document.getElementById('select-formato-legal')?.value !== "") { fp.style.display='flex'; } 
+                else { fp.style.display='none'; }
+            }
             if(idMostrar==='pantalla-menu') window.revisarAlertasInventario(); 
         };
         
@@ -430,32 +447,38 @@
             document.querySelectorAll('input, textarea').forEach(i=>i.value=''); 
             let tc = document.getElementById('total-cobrar'); if(tc) tc.innerText="0.00"; 
             let vm = document.getElementById('venta-mostrador'); if(vm) { vm.checked = true; window.toggleMostrador(); } 
-            let zf = document.getElementById('zona-firmas-oculta'); if(zf) zf.classList.add('oculto'); 
-            let ml = document.getElementById('modal-lectura'); if(ml) ml.classList.add('oculto'); 
+            document.getElementById('zona-firmas-oculta')?.classList.add('oculto'); 
+            document.getElementById('modal-lectura')?.classList.add('oculto'); 
             let sel = document.getElementById('select-formato-legal'); if(sel) sel.value=''; 
             document.querySelectorAll('.campos-dinamicos').forEach(d=>d.classList.add('oculto')); 
-            let bl = document.getElementById('btn-leer-firmar'); if(bl) bl.classList.add('oculto'); 
+            document.getElementById('btn-leer-firmar')?.classList.add('oculto'); 
             canvasActivo = false; 
             window.cambiarPantalla('todas','pantalla-menu'); 
         };
 
-        // 6. LOGIN Y SEGURIDAD BLINDADA
+        // 6. LOGIN Y SEGURIDAD BLINDADA (Protegido con ?.)
         window.agregarNumero = function(n) { 
             if(pinActual.length >= 4) return; 
             pinActual += n; 
             let inputPin = document.getElementById('input-pin');
-            inputPin.value = pinActual; 
-            if(pinActual.length === 4) {
-                inputPin.type = "text"; 
-                inputPin.value = "⏳ Cargando...";
-                setTimeout(() => {
-                    if(typeof window.validarPin === 'function') { window.validarPin(); } 
-                    else { alert("Error de carga. Haz un Hard Refresh (Ctrl + F5)"); window.limpiarPin(); }
-                }, 300);
+            if(inputPin) {
+                inputPin.value = pinActual; 
+                if(pinActual.length === 4) {
+                    inputPin.type = "text"; 
+                    inputPin.value = "⏳ Cargando...";
+                    setTimeout(() => {
+                        if(typeof window.validarPin === 'function') { window.validarPin(); } 
+                        else { alert("Error de carga. Haz un Hard Refresh (Ctrl + F5)"); window.limpiarPin(); }
+                    }, 300);
+                }
             }
         };
 
-        window.limpiarPin = function() { pinActual=""; let inputPin = document.getElementById('input-pin'); inputPin.type = "password"; inputPin.value=""; };
+        window.limpiarPin = function() { 
+            pinActual=""; 
+            let inputPin = document.getElementById('input-pin'); 
+            if(inputPin) { inputPin.type = "password"; inputPin.value=""; }
+        };
         window.cerrarSesion = function() { usuarioLogueado=null; window.limpiarPin(); window.cambiarPantalla('todas','pantalla-login'); };
 
         window.validarPin = function() {
@@ -464,20 +487,24 @@
                 if(doc.exists) { 
                     usuarioLogueado = doc.data(); usuarioLogueado.pin = pinActual; 
                     let r = usuarioLogueado.rol || "Doctor"; 
-                    let btnS = document.getElementById('btn-sistemas'); let tit = document.getElementById('titulo-gerencia'); let inv = document.getElementById('btn-ver-inventario');
                     document.querySelectorAll('.btn-menu').forEach(b => b.classList.add('oculto'));
-                    document.getElementById('btn-movimiento').classList.remove('oculto'); 
-                    document.getElementById('btn-hospitalizacion').classList.remove('oculto');
-                    document.getElementById('btn-expediente').classList.remove('oculto');
-                    if(r === "Doctor") { inv.classList.remove('oculto'); } 
+                    
+                    document.getElementById('btn-movimiento')?.classList.remove('oculto'); 
+                    document.getElementById('btn-hospitalizacion')?.classList.remove('oculto');
+                    document.getElementById('btn-expediente')?.classList.remove('oculto');
+                    
+                    if(r === "Doctor") { document.getElementById('btn-ver-inventario')?.classList.remove('oculto'); } 
                     else if(r === "Sistemas" || r === "Gerente" || r === "Sub-Gerente") { 
-                        ['btn-corte','btn-ver-inventario','btn-alta-inventario','btn-hist-inventario','btn-baja-inventario','btn-historial'].forEach(id => document.getElementById(id).classList.remove('oculto')); 
-                        tit.classList.remove('oculto'); 
-                        if(r === "Sistemas") btnS.classList.remove('oculto');
-                        if(r === "Gerente" || r === "Sistemas") document.getElementById('btn-usuarios').classList.remove('oculto');
+                        ['btn-corte','btn-ver-inventario','btn-alta-inventario','btn-sistemas','btn-hist-inventario','btn-baja-inventario','btn-historial','btn-usuarios'].forEach(id => {
+                            document.getElementById(id)?.classList.remove('oculto');
+                        }); 
+                        document.getElementById('titulo-gerencia')?.classList.remove('oculto'); 
                         window.limpiarRegistrosViejos();
                     }
-                    document.getElementById('texto-bienvenida').innerText = `Hola, ${usuarioLogueado.nombre}`;
+                    
+                    let txtB = document.getElementById('texto-bienvenida');
+                    if(txtB) txtB.innerText = `Hola, ${usuarioLogueado.nombre}`;
+                    
                     window.cargarSugerenciasInventario(); window.limpiarPin(); window.cambiarPantalla('pantalla-login', 'pantalla-menu');
                 } else { 
                     if(["1111","2222","3333","2306"].includes(pinActual)){
@@ -493,67 +520,68 @@
 
         // 7. BUSCADOR E INVENTARIO
         window.revisarAlertasInventario = function() { 
-            const caja = document.getElementById('alerta-inventario-menu'); const lista = document.getElementById('lista-alertas-menu'); lista.innerHTML = ''; 
+            const caja = document.getElementById('alerta-inventario-menu'); const lista = document.getElementById('lista-alertas-menu'); 
+            if(lista) lista.innerHTML = ''; 
             if(!window.db) return;
-            window.db.collection("Inventario").get().then(q => { let items = []; q.forEach(doc => { const d = doc.data(); if(d.tipoArticulo === 'Servicio Médico') return; let lim = isNaN(parseInt(d.minimo)) ? 5 : parseInt(d.minimo); if (lim > 0 && d.cantidad <= lim) items.push(`<strong>${d.medicamento}</strong>: Quedan ${d.cantidad}`); }); if(items.length > 0) { caja.classList.remove('oculto'); lista.innerHTML = items.slice(0,3).map(i=>`<li>${i}</li>`).join('') + (items.length>3?`<li style="color:#0caeb9;cursor:pointer" onclick="window.abrirVerInventario()">+ ${items.length-3} más</li>`:''); } else { caja.classList.add('oculto'); } }).catch(e=>{}); 
+            window.db.collection("Inventario").get().then(q => { let items = []; q.forEach(doc => { const d = doc.data(); if(d.tipoArticulo === 'Servicio Médico') return; let lim = isNaN(parseInt(d.minimo)) ? 5 : parseInt(d.minimo); if (lim > 0 && d.cantidad <= lim) items.push(`<strong>${d.medicamento}</strong>: Quedan ${d.cantidad}`); }); if(items.length > 0) { caja?.classList.remove('oculto'); if(lista) lista.innerHTML = items.slice(0,3).map(i=>`<li>${i}</li>`).join('') + (items.length>3?`<li style="color:#0caeb9;cursor:pointer" onclick="window.abrirVerInventario()">+ ${items.length-3} más</li>`:''); } else { caja?.classList.add('oculto'); } }).catch(e=>{}); 
         };
 
         window.cargarSugerenciasInventario = function() { inventarioGlobal = []; if(!window.db) return; window.db.collection("Inventario").get().then(q => { q.forEach(doc => inventarioGlobal.push(doc.data())); inventarioGlobal.sort((a,b)=>a.medicamento.localeCompare(b.medicamento)); }); };
-        window.buscarAutocomplete = function(inId, dropId, cb, fTipo=null) { const input = document.getElementById(inId); const drop = document.getElementById(dropId); const val = input.value.toLowerCase().trim(); drop.innerHTML=''; if(val.length<3){drop.classList.add('oculto');return;} let filt = inventarioGlobal.filter(i => i.medicamento.toLowerCase().includes(val) && (fTipo?i.tipoArticulo===fTipo:true)); if(filt.length===0){drop.classList.add('oculto');return;} drop.classList.remove('oculto'); filt.slice(0,15).forEach(item => { let d = document.createElement('div'); d.className='sugerencia-item'; d.innerHTML=`<div><span class="sugerencia-icon">${item.tipoArticulo==='Servicio Médico'?'🩺':'💊'}</span><strong>${item.medicamento}</strong></div><span style="color:#198754;font-weight:bold">$${item.precioVenta}</span>`; d.onclick=()=>{input.value=item.medicamento;drop.classList.add('oculto');cb(item);}; drop.appendChild(d); }); };
+        window.buscarAutocomplete = function(inId, dropId, cb, fTipo=null) { const input = document.getElementById(inId); const drop = document.getElementById(dropId); if(!input || !drop) return; const val = input.value.toLowerCase().trim(); drop.innerHTML=''; if(val.length<3){drop.classList.add('oculto');return;} let filt = inventarioGlobal.filter(i => i.medicamento.toLowerCase().includes(val) && (fTipo?i.tipoArticulo===fTipo:true)); if(filt.length===0){drop.classList.add('oculto');return;} drop.classList.remove('oculto'); filt.slice(0,15).forEach(item => { let d = document.createElement('div'); d.className='sugerencia-item'; d.innerHTML=`<div><span class="sugerencia-icon">${item.tipoArticulo==='Servicio Médico'?'🩺':'💊'}</span><strong>${item.medicamento}</strong></div><span style="color:#198754;font-weight:bold">$${item.precioVenta}</span>`; d.onclick=()=>{input.value=item.medicamento;drop.classList.add('oculto');cb(item);}; drop.appendChild(d); }); };
+        window.buscarAutocompleteHosp = function(i,d,c) { let t = document.getElementById('tipo-hosp-item'); window.buscarAutocomplete(i,d,c,t?t.value:null); };
         document.addEventListener('click', e => { if(!e.target.closest('.autocomplete-container')) document.querySelectorAll('.autocomplete-dropdown').forEach(d=>d.classList.add('oculto')); });
-        window.filtrarTarjetas = function(idContenedor, texto) { let term = texto.toLowerCase(); let tarjetas = document.getElementById(idContenedor).children; for(let t of tarjetas) { if(t.classList.contains('tarjeta-info') || t.classList.contains('tarjeta-expediente')) { t.style.display = t.innerText.toLowerCase().includes(term) ? "" : "none"; } } };
+        window.filtrarTarjetas = function(idContenedor, texto) { let term = texto.toLowerCase(); let tarjetas = document.getElementById(idContenedor)?.children; if(!tarjetas) return; for(let t of tarjetas) { if(t.classList.contains('tarjeta-info') || t.classList.contains('tarjeta-expediente')) { t.style.display = t.innerText.toLowerCase().includes(term) ? "" : "none"; } } };
 
-        // 8. VENTA GENERAL (CARRITO Y COBRO FRACCIONADO)
-        window.seleccionarItemPos = function(item) { const p = document.getElementById('precio-pos'); p.readOnly = (item.tipoArticulo !== 'Servicio Médico'); p.value = item.precioVenta||0; p.style.background = p.readOnly ? "#e9ecef" : "#fff"; if(!p.readOnly) p.focus(); };
+        // 8. VENTA GENERAL
+        window.seleccionarItemPos = function(item) { const p = document.getElementById('precio-pos'); if(p){ p.readOnly = (item.tipoArticulo !== 'Servicio Médico'); p.value = item.precioVenta||0; p.style.background = p.readOnly ? "#e9ecef" : "#fff"; if(!p.readOnly) p.focus(); } };
         window.agregarAlCarrito = function() { 
-            const v = document.getElementById('buscador-pos').value; const inp = document.getElementById('precio-pos'); const cInp = document.getElementById('cantidad-pos');
-            let p = parseFloat(inp.value)||0; let c = parseFloat(cInp.value)||1; 
+            const v = document.getElementById('buscador-pos')?.value; const inp = document.getElementById('precio-pos'); const cInp = document.getElementById('cantidad-pos');
+            let p = parseFloat(inp?.value)||0; let c = parseFloat(cInp?.value)||1; 
             if(!v) return alert("⚠️ Escribe un producto."); 
             const item = inventarioGlobal.find(i=>i.medicamento.toLowerCase()===v.toLowerCase()); 
             if(item && item.tipoArticulo!=='Servicio Médico') p = parseFloat(item.precioVenta)||0; else if((!item||item.tipoArticulo==='Servicio Médico')&&p<=0) return alert("⚠️ Ingresa precio."); 
             carrito.push({nombre:item?item.medicamento:v, precio:p, cantidad:c, total:p*c, tipo:item?item.tipoArticulo:'Servicio Médico'}); 
-            window.actualizarCarritoUI(); document.getElementById('buscador-pos').value=''; inp.value=''; cInp.value='1'; 
+            window.actualizarCarritoUI(); document.getElementById('buscador-pos').value=''; if(inp)inp.value=''; if(cInp)cInp.value='1'; 
         };
         window.eliminarDelCarrito = function(idx) { carrito.splice(idx,1); window.actualizarCarritoUI(); };
         window.actualizarCarritoUI = function() { 
-            const d = document.getElementById('carrito-lista'); 
+            const d = document.getElementById('carrito-lista'); if(!d) return;
             if(carrito.length===0) d.innerHTML='<p style="text-align:center;color:#adb5bd">Vacío</p>'; 
             else d.innerHTML=carrito.map((i,idx)=>`<div class="item-carrito"><span>${i.tipo==='Servicio Médico'?'🩺':'💊'} <strong>${i.nombre}</strong> <span style="color:#666;font-size:0.85em;">(${i.cantidad} x $${i.precio})</span></span><span>$${i.total.toFixed(2)} <button class="btn-eliminar-item" onclick="window.eliminarDelCarrito(${idx})">X</button></span></div>`).join(''); 
-            let sub = carrito.reduce((s,i)=>s+i.total,0); let desc = parseFloat(document.getElementById('valor-descuento').value)||0; 
-            totalCobroCalculado = Math.max(0, sub-desc); document.getElementById('total-cobrar').innerText = totalCobroCalculado.toFixed(2); 
-            window.calcularMontoFaltante(); // Auto actualiza pago mixto
+            let sub = carrito.reduce((s,i)=>s+i.total,0); let desc = parseFloat(document.getElementById('valor-descuento')?.value)||0; 
+            totalCobroCalculado = Math.max(0, sub-desc); let tc = document.getElementById('total-cobrar'); if(tc) tc.innerText = totalCobroCalculado.toFixed(2); 
+            window.calcularMontoFaltante(); 
         };
         
         window.calcularTotal = function() { window.actualizarCarritoUI(); };
         window.calcularMontoFaltante = function() {
-            let m1 = parseFloat(document.getElementById('monto-pago-1').value) || 0;
+            let m1 = parseFloat(document.getElementById('monto-pago-1')?.value) || 0;
             let m2Inp = document.getElementById('monto-pago-2'); let m2Sel = document.getElementById('metodo-pago-2');
             let faltante = totalCobroCalculado - m1;
-            if(faltante > 0 && m1 > 0) { m2Inp.value = faltante.toFixed(2); if(m2Sel.value==="") m2Sel.value = "Tarjeta Débito"; } 
-            else if (m1 <= 0 || faltante <= 0) { m2Inp.value = ""; m2Sel.value = ""; }
+            if(faltante > 0 && m1 > 0) { if(m2Inp) m2Inp.value = faltante.toFixed(2); if(m2Sel && m2Sel.value==="") m2Sel.value = "Tarjeta Débito"; } 
+            else if (m1 <= 0 || faltante <= 0) { if(m2Inp) m2Inp.value = ""; if(m2Sel) m2Sel.value = ""; }
         };
 
-        window.abrirFormulario = function() { window.cambiarPantalla('pantalla-menu', 'pantalla-registro-baja'); document.getElementById('texto-registro-usuario').innerText = `👨‍⚕️ Cajero: ${usuarioLogueado.nombre}`; carrito=[]; window.actualizarCarritoUI(); };
-        window.toggleMostrador = function() { let ch = document.getElementById('venta-mostrador').checked; document.getElementById('campos-paciente').classList.toggle('oculto', ch); if(ch){document.getElementById('nombre-dueno').value="Público General";document.getElementById('nombre-perro').value="N/A";}else{document.getElementById('nombre-dueno').value="";document.getElementById('nombre-perro').value="";} };
+        window.abrirFormulario = function() { window.cambiarPantalla('pantalla-menu', 'pantalla-registro-baja'); let t = document.getElementById('texto-registro-usuario'); if(t) t.innerText = `👨‍⚕️ Cajero: ${usuarioLogueado.nombre}`; carrito=[]; window.actualizarCarritoUI(); };
+        window.toggleMostrador = function() { let ch = document.getElementById('venta-mostrador')?.checked; document.getElementById('campos-paciente')?.classList.toggle('oculto', ch); let nd = document.getElementById('nombre-dueno'); let np = document.getElementById('nombre-perro'); if(ch){if(nd)nd.value="Público General";if(np)np.value="N/A";}else{if(nd)nd.value="";if(np)np.value="";} };
 
         window.procesarVenta = async function(imprimir) {
-            if(guardandoBloqueo) return; const du = document.getElementById('nombre-dueno').value; const pe = document.getElementById('nombre-perro').value; const desc = parseFloat(document.getElementById('valor-descuento').value)||0;
-            if(carrito.length===0) return alert("⚠️ Carrito vacío."); if(!document.getElementById('venta-mostrador').checked && !pe) return alert("⚠️ Faltan el nombre del paciente.");
+            if(guardandoBloqueo) return; const du = document.getElementById('nombre-dueno')?.value; const pe = document.getElementById('nombre-perro')?.value; const desc = parseFloat(document.getElementById('valor-descuento')?.value)||0;
+            if(carrito.length===0) return alert("⚠️ Carrito vacío."); if(!document.getElementById('venta-mostrador')?.checked && !pe) return alert("⚠️ Faltan el nombre del paciente.");
             if(desc>0 && usuarioLogueado.rol==='Doctor') { if(!await window.solicitarPinSupervisor()) return; }
             
-            // PAGOS MIXTOS
             let pagos = [];
-            let m1 = parseFloat(document.getElementById('monto-pago-1').value) || 0; let mP1 = document.getElementById('metodo-pago-1').value;
-            let m2 = parseFloat(document.getElementById('monto-pago-2').value) || 0; let mP2 = document.getElementById('metodo-pago-2').value;
+            let m1 = parseFloat(document.getElementById('monto-pago-1')?.value) || 0; let mP1 = document.getElementById('metodo-pago-1')?.value;
+            let m2 = parseFloat(document.getElementById('monto-pago-2')?.value) || 0; let mP2 = document.getElementById('metodo-pago-2')?.value;
             if(m1 > 0) pagos.push({metodo: mP1, monto: m1});
             if(m2 > 0 && mP2 !== "") pagos.push({metodo: mP2, monto: m2});
-            if(pagos.length === 0) pagos.push({metodo: mP1, monto: totalCobroCalculado}); // Si no escribieron monto 1, asume el total
+            if(pagos.length === 0) pagos.push({metodo: mP1, monto: totalCobroCalculado}); 
             
             let sumaPagos = pagos.reduce((s,p)=>s+p.monto,0);
             if(Math.abs(sumaPagos - totalCobroCalculado) > 0.1 && totalCobroCalculado > 0) { return alert(`⚠️ Los montos de pago no suman el Total ($${sumaPagos} vs $${totalCobroCalculado})`); }
 
             guardandoBloqueo = true; document.body.style.cursor='wait';
-            let vData = { atendio:usuarioLogueado.nombre, paciente:pe||'', dueno:du||'', telefono:document.getElementById('tel-dueno').value||'', articulos:carrito, subtotal:carrito.reduce((s,i)=>s+i.total,0), valorDescuento:desc, totalCobrado:totalCobroCalculado, pagos:pagos, metodoPago: pagos.map(p=>p.metodo).join(' y '), ventaMostrador:document.getElementById('venta-mostrador').checked, fechaTexto:new Date().toLocaleString('es-MX'), timestamp:Date.now() };
+            let vData = { atendio:usuarioLogueado.nombre, paciente:pe||'', dueno:du||'', telefono:document.getElementById('tel-dueno')?.value||'', articulos:carrito, subtotal:carrito.reduce((s,i)=>s+i.total,0), valorDescuento:desc, totalCobrado:totalCobroCalculado, pagos:pagos, metodoPago: pagos.map(p=>p.metodo).join(' y '), ventaMostrador:document.getElementById('venta-mostrador')?.checked, fechaTexto:new Date().toLocaleString('es-MX'), timestamp:Date.now() };
             
             window.db.collection("Historial_Cobros").add(vData).then(()=>{ 
                 carrito.forEach(i=>{if(i.tipo!=='Servicio Médico'){let sN=String(i.nombre).replace(/\//g,'-');window.db.collection("Inventario").doc(sN).get().then(d=>{if(d.exists)window.db.collection("Inventario").doc(sN).update({cantidad:d.data().cantidad-i.cantidad});});}}); 
@@ -564,27 +592,21 @@
         // 9. HOSPITALIZACION Y FORMATOS LEGALES
         window.abrirHospitalizacion = function() { 
             window.cambiarPantalla('pantalla-menu', 'pantalla-hospitalizacion'); 
-            document.getElementById('zona-firmas-oculta').classList.add('oculto'); 
-            document.getElementById('btn-leer-firmar').classList.add('oculto'); 
+            document.getElementById('zona-firmas-oculta')?.classList.add('oculto'); 
+            document.getElementById('btn-leer-firmar')?.classList.add('oculto'); 
             window.limpiarFirma('cliente'); canvasActivo=false; document.getElementById('select-formato-legal').value=""; window.mostrarCamposDinamicos(); window.initFirmas(); 
         };
         
         window.mostrarCamposDinamicos = function() { 
-            const s = document.getElementById('select-formato-legal').value; 
+            let sEl = document.getElementById('select-formato-legal'); if(!sEl) return; const s = sEl.value; 
             document.querySelectorAll('.campos-dinamicos').forEach(d=>d.classList.add('oculto')); 
             let bl = document.getElementById('btn-leer-firmar'); 
             let zf = document.getElementById('zona-firmas-oculta'); 
             let bf = document.getElementById('btn-final-hosp');
 
             if(s) { 
-                let map={
-                    "AUTORIZACIÓN HOSPITALARIA":'campos-auth-hospital',
-                    "CONTRATO DE PENSIÓN":'campos-pension',
-                    "ALTA VOLUNTARIA":'campos-alta-voluntaria',
-                    "ALTA MÉDICA":'campos-alta-medica',
-                    "SALIDA DE PENSIÓN":'campos-salida-pension'
-                }; 
-                document.getElementById(map[s]).classList.remove('oculto'); 
+                let map={ "AUTORIZACIÓN HOSPITALARIA":'campos-auth-hospital', "CONTRATO DE PENSIÓN":'campos-pension', "ALTA VOLUNTARIA":'campos-alta-voluntaria', "ALTA MÉDICA":'campos-alta-medica', "SALIDA DE PENSIÓN":'campos-salida-pension' }; 
+                document.getElementById(map[s])?.classList.remove('oculto'); 
                 if(bl) bl.classList.remove('oculto'); 
                 if(zf) zf.classList.remove('oculto'); 
                 if(bf) bf.disabled = false;
@@ -597,7 +619,7 @@
         };
         
         window.recopilarDatosHosp = function() {
-            const f = document.getElementById('select-formato-legal').value; 
+            let fEl = document.getElementById('select-formato-legal'); const f = fEl ? fEl.value : "";
             const val = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
             const isChecked = (id) => { const el = document.getElementById(id); return el ? el.checked : false; };
             
@@ -612,30 +634,32 @@
             let dp = window.recopilarDatosHosp(); 
             dp.fechaTexto=new Date().toLocaleString('es-MX'); 
             window.generarHojasLegalesDinamicas(dp, true); 
-            document.getElementById('modal-lectura').classList.remove('oculto'); 
+            document.getElementById('modal-lectura')?.classList.remove('oculto'); 
         };
 
         window.procesarHospitalizacion = function(imprimir) {
             if(guardandoBloqueo) return; let hD = window.recopilarDatosHosp(); let firm = canvasActivo&&firmaCapturada ? document.getElementById('canvas-cliente').toDataURL() : "";
-            if(!hD.dueno || !hD.paciente) return alert("⚠️ Llena Dueño y Paciente arriba."); if(!hD.formatoLegal) return alert("⚠️ Selecciona Formato Legal.");
+            if(!hD.dueno || !hD.paciente) return alert("⚠️ Llena Dueño y Paciente arriba."); if(!hD.formatoLegal && imprimir==='hoja') return alert("⚠️ Selecciona Formato Legal.");
             guardandoBloqueo=true; document.body.style.cursor='wait'; 
             hD.firmaCliente=firm; hD.folio=String(Date.now()).slice(-5); hD.fechaTexto=new Date().toLocaleString('es-MX'); hD.timestamp=Date.now(); hD.fechaReal=firebase.firestore.FieldValue.serverTimestamp();
             window.db.collection("Historial_Hospitalizacion").add(hD).then(()=>{ if(imprimir==='hoja') window.generarHojasLegalesDinamicas(hD); else alert("✅ Guardado Historial."); window.cancelarVolver(); }).catch(e=>alert("Error: "+e.message)).finally(()=>{guardandoBloqueo=false;document.body.style.cursor='default';});
         };
 
         // 10. EXPEDIENTE CLINICO (UNIFICADO)
-        window.abrirExpediente = function() { window.cambiarPantalla('pantalla-menu', 'pantalla-expediente'); document.getElementById('buscador-expediente').value = ''; window.cargarExpedienteBase(); };
+        window.abrirExpediente = function() { window.cambiarPantalla('pantalla-menu', 'pantalla-expediente'); let be = document.getElementById('buscador-expediente'); if(be) be.value = ''; window.cargarExpedienteBase(); };
         window.cargarExpedienteBase = function() {
-            document.getElementById('lista-expediente').innerHTML = '<div style="text-align:center; padding:40px;">⏳ Cargando...</div>';
+            let le = document.getElementById('lista-expediente'); if(!le) return;
+            le.innerHTML = '<div style="text-align:center; padding:40px;">⏳ Cargando...</div>';
             Promise.all([ window.db.collection("Historial_Cobros").orderBy("timestamp", "desc").limit(150).get(), window.db.collection("Historial_Hospitalizacion").orderBy("timestamp", "desc").limit(150).get() ]).then(([cobros, hosp]) => {
                 datosExpediente = [];
                 cobros.forEach(d => { let data = d.data(); data.id = d.id; data.coleccion = "Historial_Cobros"; data.tipoRegistro = 'cobro'; datosExpediente.push(data); });
                 hosp.forEach(d => { let data = d.data(); data.id = d.id; data.coleccion = "Historial_Hospitalizacion"; data.tipoRegistro = 'hospitalizacion'; datosExpediente.push(data); });
                 datosExpediente.sort((a,b) => b.timestamp - a.timestamp); window.buscarExpediente(); 
-            }).catch(e => { document.getElementById('lista-expediente').innerHTML = '<p style="color:red; text-align:center;">Error al cargar datos.</p>'; });
+            }).catch(e => { le.innerHTML = '<p style="color:red; text-align:center;">Error al cargar datos.</p>'; });
         };
         window.buscarExpediente = function() {
-            let term = document.getElementById('buscador-expediente').value.toLowerCase(); let tipo = document.getElementById('filtro-tipo-exp').value;
+            let be = document.getElementById('buscador-expediente'); let term = be ? be.value.toLowerCase() : ''; 
+            let fte = document.getElementById('filtro-tipo-exp'); let tipo = fte ? fte.value : 'todos';
             let filtrados = datosExpediente.filter(d => { let txt = (d.paciente||'') + ' ' + (d.dueno||'') + ' ' + (d.telefono||''); let coincideTexto = txt.toLowerCase().includes(term); let coincideTipo = (tipo === 'todos') || (d.tipoRegistro === tipo); return coincideTexto && coincideTipo; });
             let html = ''; if(filtrados.length === 0) { html = '<div style="text-align:center; padding:30px; color:#888;">🔍 No hay resultados.</div>'; } else {
                 filtrados.forEach((d) => {
@@ -648,48 +672,53 @@
                         html += `<div class="tarjeta-expediente venta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo" style="background:#e8f5e9; color:#198754;">💰 ${isVenta ? 'Mostrador' : 'Cobro'}</span> ${isVenta ? 'Público General' : d.paciente}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-meta"><span>👤 Dueño: ${isVenta ? 'N/A' : d.dueno}</span><span>👨‍⚕️ Atendió: ${d.atendio}</span><span>💳 Pago: ${d.metodoPago}</span></div><div class="exp-content" style="color:#146c43; font-weight:500;">🛒 ${desc}</div><div class="exp-footer"><span style="font-size:1.2em; font-weight:bold; color:#198754;">$${parseFloat(d.totalCobrado).toFixed(2)}</span> <div style="display:flex; gap:10px;"><button class="btn-exp-action btn-venta" onclick="window.reimprimirDesdeExpediente(${d.timestamp}, 'cobro', 'ticket')">🖨️ Ver Ticket</button> ${btnBorrar}</div> </div></div>`;
                     }
                 });
-            } document.getElementById('lista-expediente').innerHTML = html;
+            } 
+            let le = document.getElementById('lista-expediente'); if(le) le.innerHTML = html;
         };
         window.reimprimirDesdeExpediente = function(ts, tipo, formato) { let data = datosExpediente.find(x => x.timestamp == ts && x.tipoRegistro == tipo); if(data) { if(formato === 'hoja') window.generarHojasLegalesDinamicas(data, false); else window.imprimirTicketBoucher(data); } };
-        window.borrarRegistro = function(c, id) { if(confirm("¿Borrar definitivamente?")) { window.db.collection(c).doc(id).delete().then(() => { alert("✅ Borrado"); if(!document.getElementById('pantalla-expediente').classList.contains('oculto')) window.cargarExpedienteBase(); if(!document.getElementById('pantalla-historial-inventario').classList.contains('oculto')) window.cargarHistorialInventario(); }); } };
+        window.borrarRegistro = function(c, id) { if(confirm("¿Borrar definitivamente?")) { window.db.collection(c).doc(id).delete().then(() => { alert("✅ Borrado"); if(!document.getElementById('pantalla-expediente')?.classList.contains('oculto')) window.cargarExpedienteBase(); if(!document.getElementById('pantalla-historial-inventario')?.classList.contains('oculto')) window.cargarHistorialInventario(); }); } };
 
         // 11. CORTES, INVENTARIO Y EXCEL
-        window.abrirCorteCaja = function(p) { window.cambiarPantalla('pantalla-menu','pantalla-corte-caja'); document.querySelectorAll('.btn-filtro').forEach(b=>b.classList.remove('activo')); document.getElementById(`filtro-${p}`).classList.add('activo'); const l=document.getElementById('lista-corte-caja'); l.innerHTML='<div style="text-align:center">⏳</div>'; let lim=Date.now()-(p==='dia'?86400000:(p==='semana'?604800000:2592000000)); window.db.collection("Historial_Cobros").orderBy("timestamp","desc").get().then(q=>{ let resumen={},grT=0,grD=0,ht=''; q.forEach(doc=>{ const d=doc.data(); if(d.timestamp>=lim){ let u=d.atendio||'Cajero Desconocido'; if(!resumen[u]) resumen[u]={metodos:{}, total:0}; let pgs=d.pagos||[{metodo:d.metodoPago||'Efectivo',monto:parseFloat(d.totalCobrado)||0}]; pgs.forEach(p=>{let m=p.metodo;let a=parseFloat(p.monto)||0; if(!resumen[u].metodos[m])resumen[u].metodos[m]=0; resumen[u].metodos[m]+=a; resumen[u].total+=a; grT+=a;}); grD+=(parseFloat(d.valorDescuento)||0); } }); document.getElementById('corte-gran-total').innerText=grT.toFixed(2); document.getElementById('corte-gran-descuento').innerText=grD.toFixed(2); for(let usr in resumen){ ht+=`<div class="tarjeta-info" style="border-left:4px solid #0caeb9"><strong style="font-size:1.2em;color:#0caeb9;display:block;margin-bottom:10px">👨‍⚕️ ${usr}</strong>`; for(let met in resumen[usr].metodos){ ht+=`<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #eee;padding:5px 0"><span>${met}</span><strong>$${resumen[usr].metodos[met].toFixed(2)}</strong></div>`; } ht+=`<div style="display:flex;justify-content:space-between;margin-top:10px;font-size:1.1em;color:#198754"><span>Total Vendido:</span><strong>$${resumen[usr].total.toFixed(2)}</strong></div></div>`; } l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; }).catch(e=>l.innerHTML='<p style="color:red">Error</p>'); };
+        window.abrirCorteCaja = function(p) { window.cambiarPantalla('pantalla-menu','pantalla-corte-caja'); document.querySelectorAll('.btn-filtro').forEach(b=>b.classList.remove('activo')); let fd = document.getElementById(`filtro-${p}`); if(fd) fd.classList.add('activo'); const l=document.getElementById('lista-corte-caja'); if(l) l.innerHTML='<div style="text-align:center">⏳</div>'; let lim=Date.now()-(p==='dia'?86400000:(p==='semana'?604800000:2592000000)); window.db.collection("Historial_Cobros").orderBy("timestamp","desc").get().then(q=>{ let resumen={},grT=0,grD=0,ht=''; q.forEach(doc=>{ const d=doc.data(); if(d.timestamp>=lim){ let u=d.atendio||'Cajero Desconocido'; if(!resumen[u]) resumen[u]={metodos:{}, total:0}; let pgs=d.pagos||[{metodo:d.metodoPago||'Efectivo',monto:parseFloat(d.totalCobrado)||0}]; pgs.forEach(p=>{let m=p.metodo;let a=parseFloat(p.monto)||0; if(!resumen[u].metodos[m])resumen[u].metodos[m]=0; resumen[u].metodos[m]+=a; resumen[u].total+=a; grT+=a;}); grD+=(parseFloat(d.valorDescuento)||0); } }); let cgt = document.getElementById('corte-gran-total'); if(cgt) cgt.innerText=grT.toFixed(2); let cgd = document.getElementById('corte-gran-descuento'); if(cgd) cgd.innerText=grD.toFixed(2); for(let usr in resumen){ ht+=`<div class="tarjeta-info" style="border-left:4px solid #0caeb9"><strong style="font-size:1.2em;color:#0caeb9;display:block;margin-bottom:10px">👨‍⚕️ ${usr}</strong>`; for(let met in resumen[usr].metodos){ ht+=`<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #eee;padding:5px 0"><span>${met}</span><strong>$${resumen[usr].metodos[met].toFixed(2)}</strong></div>`; } ht+=`<div style="display:flex;justify-content:space-between;margin-top:10px;font-size:1.1em;color:#198754"><span>Total Vendido:</span><strong>$${resumen[usr].total.toFixed(2)}</strong></div></div>`; } if(l) l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; }).catch(e=>{if(l) l.innerHTML='<p style="color:red">Error</p>';}); };
         
-        window.abrirVerInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-ver-inventario'); document.getElementById('busqueda-inv-texto').value=''; window.cargarInventarioVista(); };
-        window.cargarInventarioVista = function() { const l=document.getElementById('lista-stock-firebase'); l.innerHTML='<div style="text-align:center">⏳</div>'; window.db.collection("Inventario").get().then((q)=>{ let ih=[]; q.forEach(doc=>ih.push(doc.data())); ih.sort((a,b)=>a.medicamento.localeCompare(b.medicamento)); let ht=''; ih.forEach((d)=>{ if(d.tipoArticulo==='Servicio Médico')return; let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); let isB=(min>0&&d.cantidad<=min); let btn=(usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px"><button class="btn-exp-action" onclick="window.editarProducto('${d.medicamento}')">✏️ Editar</button></div>`:''; ht+=`<div class="tarjeta-info ${isB?'stock-alerta':'stock-ok'}" data-unidad="${d.unidad}"><div class="th-header"><strong>${d.medicamento}</strong> <span style="font-size:1.2em;font-weight:bold;color:${isB?'#dc3545':'#198754'}">${d.cantidad} <span style="font-size:0.6em;color:#666">${d.unidad||'U.'}</span></span></div><div class="th-cuerpo">$${d.precioVenta||0}</div>${isB?'<div style="color:#dc3545;font-weight:bold;text-align:center;margin-top:5px">¡Bajo Stock!</div>':''}${btn}</div>`; }); l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; }); };
-        window.filtrarInventario = function() { let t=document.getElementById('busqueda-inv-texto').value.toLowerCase(); let s=document.getElementById('busqueda-inv-stock').value; document.querySelectorAll('#lista-stock-firebase .tarjeta-info').forEach(c=>{ let mT=c.innerText.toLowerCase().includes(t); let mS=(s==='todos')||(s==='bajo'&&c.classList.contains('stock-alerta')); c.style.display=(mT&&mS)?"":"none"; }); };
+        window.abrirVerInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-ver-inventario'); let bi = document.getElementById('busqueda-inv-texto'); if(bi) bi.value=''; window.cargarInventarioVista(); };
+        window.cargarInventarioVista = function() { const l=document.getElementById('lista-stock-firebase'); if(!l)return; l.innerHTML='<div style="text-align:center">⏳</div>'; window.db.collection("Inventario").get().then((q)=>{ let ih=[]; q.forEach(doc=>ih.push(doc.data())); ih.sort((a,b)=>a.medicamento.localeCompare(b.medicamento)); let ht=''; ih.forEach((d)=>{ if(d.tipoArticulo==='Servicio Médico')return; let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); let isB=(min>0&&d.cantidad<=min); let btn=(usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px"><button class="btn-exp-action" onclick="window.editarProducto('${d.medicamento}')">✏️ Editar</button></div>`:''; ht+=`<div class="tarjeta-info ${isB?'stock-alerta':'stock-ok'}" data-unidad="${d.unidad}"><div class="th-header"><strong>${d.medicamento}</strong> <span style="font-size:1.2em;font-weight:bold;color:${isB?'#dc3545':'#198754'}">${d.cantidad} <span style="font-size:0.6em;color:#666">${d.unidad||'U.'}</span></span></div><div class="th-cuerpo">$${d.precioVenta||0}</div>${isB?'<div style="color:#dc3545;font-weight:bold;text-align:center;margin-top:5px">¡Bajo Stock!</div>':''}${btn}</div>`; }); l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; }); };
+        window.filtrarInventario = function() { let bi = document.getElementById('busqueda-inv-texto'); let t=bi?bi.value.toLowerCase():''; let bs = document.getElementById('busqueda-inv-stock'); let s=bs?bs.value:'todos'; document.querySelectorAll('#lista-stock-firebase .tarjeta-info').forEach(c=>{ let mT=c.innerText.toLowerCase().includes(t); let mS=(s==='todos')||(s==='bajo'&&c.classList.contains('stock-alerta')); c.style.display=(mT&&mS)?"":"none"; }); };
 
-        window.abrirModoSistemas = function() { window.cambiarPantalla('pantalla-menu','pantalla-sistemas'); document.getElementById('excel-file').value=''; document.getElementById('excel-resultado').innerHTML=''; };
-        window.procesarExcel = async function() { const fi=document.getElementById('excel-file'); if(!fi.files.length)return alert("⚠️ Selecciona un Excel."); const r=new FileReader(); r.onload=async function(e){ try{ const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'}); const ws=wb.Sheets[wb.SheetNames[0]]; const rows=XLSX.utils.sheet_to_json(ws); if(rows.length===0)throw new Error("Vacío"); let ex=0,err=0,op=0; document.getElementById('excel-resultado').innerHTML=`⏳ Subiendo ${rows.length}...`; let b=window.db.batch(); let p=[]; rows.forEach((r,i)=>{ let nR=r['Nombre']||r['Medicamento']||r['Producto']; if(!nR){err++;return;} let nom=String(nR).trim().replace(/\//g,'-'); let pre=parseFloat(r['Precio'])||0; let can=parseFloat(r['Cantidad'])||0; let t=r['Tipo']||'Medicamento/Producto'; let minR=parseInt(r['Mínimo']); let mIn=isNaN(minR)?5:minR; let rI=window.db.collection("Inventario").doc(nom); b.set(rI,{tipoArticulo:t,medicamento:nom,precioVenta:pre,cantidad:can,unidad:r['Unidad']||'Pza(s)',minimo:mIn,maximo:parseInt(r['Máximo'])||50,proveedor:r['Proveedor']||'',descripcion:r['Descripción']||'',presentacion:r['Presentación']||'',registradoPor:usuarioLogueado.nombre+" (Excel)",fechaTexto:new Date().toLocaleString('es-MX'),fechaReal:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); let rHist=window.db.collection("Historial_Inventario").doc(); b.set(rHist,{tipoMovimiento:"Alta (Excel)",medicamento:nom,cantidad:can,unidad:r['Unidad']||'Pza(s)',precio:pre,motivo:"Masiva",registradoPor:usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); op+=2; ex++; if(op>=490){p.push(b.commit());b=window.db.batch();op=0;} }); if(op>0)p.push(b.commit()); await Promise.all(p); document.getElementById('excel-resultado').innerHTML=`✅ Completado. Exitosos: ${ex}, Errores: ${err}`; window.cargarSugerenciasInventario(); }catch(err){document.getElementById('excel-resultado').innerHTML=`❌ Error: ${err.message}`;} }; r.readAsArrayBuffer(fi.files[0]); };
+        window.abrirModoSistemas = function() { window.cambiarPantalla('pantalla-menu','pantalla-sistemas'); let ef = document.getElementById('excel-file'); if(ef) ef.value=''; let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=''; };
+        window.procesarExcel = async function() { const fi=document.getElementById('excel-file'); if(!fi || !fi.files.length)return alert("⚠️ Selecciona un Excel."); const r=new FileReader(); r.onload=async function(e){ try{ const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'}); const ws=wb.Sheets[wb.SheetNames[0]]; const rows=XLSX.utils.sheet_to_json(ws); if(rows.length===0)throw new Error("Vacío"); let ex=0,err=0,op=0; let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=`⏳ Subiendo ${rows.length}...`; let b=window.db.batch(); let p=[]; rows.forEach((r,i)=>{ let nR=r['Nombre']||r['Medicamento']||r['Producto']; if(!nR){err++;return;} let nom=String(nR).trim().replace(/\//g,'-'); let pre=parseFloat(r['Precio'])||0; let can=parseFloat(r['Cantidad'])||0; let t=r['Tipo']||'Medicamento/Producto'; let minR=parseInt(r['Mínimo']); let mIn=isNaN(minR)?5:minR; let rI=window.db.collection("Inventario").doc(nom); b.set(rI,{tipoArticulo:t,medicamento:nom,precioVenta:pre,cantidad:can,unidad:r['Unidad']||'Pza(s)',minimo:mIn,maximo:parseInt(r['Máximo'])||50,proveedor:r['Proveedor']||'',descripcion:r['Descripción']||'',presentacion:r['Presentación']||'',registradoPor:usuarioLogueado.nombre+" (Excel)",fechaTexto:new Date().toLocaleString('es-MX'),fechaReal:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); let rHist=window.db.collection("Historial_Inventario").doc(); b.set(rHist,{tipoMovimiento:"Alta (Excel)",medicamento:nom,cantidad:can,unidad:r['Unidad']||'Pza(s)',precio:pre,motivo:"Masiva",registradoPor:usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); op+=2; ex++; if(op>=490){p.push(b.commit());b=window.db.batch();op=0;} }); if(op>0)p.push(b.commit()); await Promise.all(p); if(er) er.innerHTML=`✅ Completado. Exitosos: ${ex}, Errores: ${err}`; window.cargarSugerenciasInventario(); }catch(err){ let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=`❌ Error: ${err.message}`;} }; r.readAsArrayBuffer(fi.files[0]); };
 
         window.abrirHistorialInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-historial-inventario'); window.cargarHistorialInventario(); };
-        window.cargarHistorialInventario = function() { const l=document.getElementById('lista-historial-inventario'); l.innerHTML='<div style="text-align:center">⏳</div>'; window.db.collection("Historial_Inventario").orderBy("timestamp","desc").limit(200).get().then(q=>{ datosHistorialInv=[]; q.forEach(d=>{let dD=d.data();dD.id=d.id;dD.coleccion="Historial_Inventario";datosHistorialInv.push(dD);}); window.buscarHistorialInventario(); }).catch(e=>l.innerHTML=`<p style="color:red">Error: ${e.message}</p>`); };
-        window.buscarHistorialInventario = function() { let tm=document.getElementById('buscador-hist-inv').value.toLowerCase(); let tp=document.getElementById('filtro-tipo-hist-inv').value; let fc=document.getElementById('filtro-fecha-hist-inv').value; let n=Date.now(); let filt=datosHistorialInv.filter(d=>{ let mt=(d.medicamento||'').toLowerCase().includes(tm); let m=(d.tipoMovimiento||''); let mtp=(tp==='todos'||m.includes(tp)); let mfc=true; if(fc==='hoy')mfc=(n-d.timestamp)<=86400000; if(fc==='semana')mfc=(n-d.timestamp)<=604800000; if(fc==='mes')mfc=(n-d.timestamp)<=2592000000; return mt&&mtp&&mfc; }); let ht=''; filt.forEach(d=>{ let m=(d.tipoMovimiento||''); let iA=m.includes('Alta'); let iB=m.includes('Merma'); let cl=iA?'alta':(iB?'merma':'edicion'); let bd=iA?'badge-alta':(iB?'badge-merma':'badge-edicion'); let ic=iA?'📦 Alta':(iB?'📉 Baja':'✏️ Edición'); let bb=(usuarioLogueado.rol==='Gerente'||usuarioLogueado.rol==='Sub-Gerente'||usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('${d.coleccion}','${d.id}')">🗑️</button>`:''; ht+=`<div class="tarjeta-expediente ${cl}"><div class="exp-header"><span class="exp-title"><span class="badge-tipo ${bd}">${ic}</span> ${d.medicamento}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-content">Cantidad: ${d.cantidad||0} ${d.unidad||''} <br>Motivo: ${d.motivo||''}</div><div class="exp-footer"><span>Por: ${d.registradoPor}</span> ${bb}</div></div>`; }); document.getElementById('lista-historial-inventario').innerHTML=ht||'<p style="text-align:center">Vacio</p>'; };
+        window.cargarHistorialInventario = function() { const l=document.getElementById('lista-historial-inventario'); if(!l)return; l.innerHTML='<div style="text-align:center">⏳</div>'; window.db.collection("Historial_Inventario").orderBy("timestamp","desc").limit(200).get().then(q=>{ datosHistorialInv=[]; q.forEach(d=>{let dD=d.data();dD.id=d.id;dD.coleccion="Historial_Inventario";datosHistorialInv.push(dD);}); window.buscarHistorialInventario(); }).catch(e=>{if(l)l.innerHTML=`<p style="color:red">Error: ${e.message}</p>`;}); };
+        window.buscarHistorialInventario = function() { let bi = document.getElementById('buscador-hist-inv'); let tm=bi?bi.value.toLowerCase():''; let ft = document.getElementById('filtro-tipo-hist-inv'); let tp=ft?ft.value:'todos'; let ff = document.getElementById('filtro-fecha-hist-inv'); let fc=ff?ff.value:'todos'; let n=Date.now(); let filt=datosHistorialInv.filter(d=>{ let mt=(d.medicamento||'').toLowerCase().includes(tm); let m=(d.tipoMovimiento||''); let mtp=(tp==='todos'||m.includes(tp)); let mfc=true; if(fc==='hoy')mfc=(n-d.timestamp)<=86400000; if(fc==='semana')mfc=(n-d.timestamp)<=604800000; if(fc==='mes')mfc=(n-d.timestamp)<=2592000000; return mt&&mtp&&mfc; }); let ht=''; filt.forEach(d=>{ let m=(d.tipoMovimiento||''); let iA=m.includes('Alta'); let iB=m.includes('Merma'); let cl=iA?'alta':(iB?'merma':'edicion'); let bd=iA?'badge-alta':(iB?'badge-merma':'badge-edicion'); let ic=iA?'📦 Alta':(iB?'📉 Baja':'✏️ Edición'); let bb=(usuarioLogueado.rol==='Gerente'||usuarioLogueado.rol==='Sub-Gerente'||usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('${d.coleccion}','${d.id}')">🗑️</button>`:''; ht+=`<div class="tarjeta-expediente ${cl}"><div class="exp-header"><span class="exp-title"><span class="badge-tipo ${bd}">${ic}</span> ${d.medicamento}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-content">Cantidad: ${d.cantidad||0} ${d.unidad||''} <br>Motivo: ${d.motivo||''}</div><div class="exp-footer"><span>Por: ${d.registradoPor}</span> ${bb}</div></div>`; }); let l = document.getElementById('lista-historial-inventario'); if(l) l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; };
 
-        window.toggleServicio = function() { let t=document.getElementById('inv-tipo-prod').value; let e=(t==='Servicio Médico'); document.getElementById('caja-cantidades-inv').classList.toggle('oculto',e); document.getElementById('caja-unidad-inv').classList.toggle('oculto',e); if(e) document.getElementById('cantidad-inventario').value=9999; };
-        window.abrirInventario = function() { modoEdicion=false; window.cambiarPantalla('pantalla-menu','pantalla-inventario'); document.getElementById('titulo-pantalla-inventario').innerText="📦 Alta de productos/servicios"; document.getElementById('inv-nombre').readOnly=false; document.querySelectorAll('#pantalla-inventario input').forEach(i=>i.value=''); document.getElementById('inv-tipo-prod').value='Medicamento/Producto'; window.toggleServicio(); document.getElementById('btn-guardar-inventario').innerText="Guardar Alta"; };
-        window.editarProducto = function(nom) { let i=inventarioGlobal.find(x=>x.medicamento===nom); if(!i)return; modoEdicion=true; window.cambiarPantalla('pantalla-ver-inventario','pantalla-inventario'); document.getElementById('titulo-pantalla-inventario').innerText="✏️ Editar Producto"; document.getElementById('inv-tipo-prod').value=i.tipoArticulo||'Medicamento/Producto'; window.toggleServicio(); document.getElementById('inv-nombre').value=i.medicamento; document.getElementById('inv-nombre').readOnly=true; document.getElementById('inv-precio').value=i.precioVenta||''; document.getElementById('cantidad-inventario').value=i.cantidad||''; document.getElementById('min-inventario').value=i.minimo!==undefined?i.minimo:''; document.getElementById('max-inventario').value=i.maximo||''; document.getElementById('inv-unidad').value=i.unidad||'Piezas'; document.getElementById('inv-proveedor').value=i.proveedor||''; document.getElementById('inv-descripcion').value=i.descripcion||''; document.getElementById('inv-presentacion').value=i.presentacion||''; document.getElementById('btn-guardar-inventario').innerText="Guardar Cambios"; };
-        window.guardarEnInventario = function() { let n=document.getElementById('inv-nombre').value.trim().replace(/\//g,'-'); let p=parseFloat(document.getElementById('inv-precio').value); let c=parseFloat(document.getElementById('cantidad-inventario').value); let t=document.getElementById('inv-tipo-prod').value; let vm=document.getElementById('min-inventario').value; let min=vm===""?5:parseInt(vm); if(t==='Servicio Médico'){if(!n)return alert("⚠️ Llena nombre."); p=p||0;c=9999;}else{if(!n||isNaN(c)||isNaN(p))return alert("⚠️ Llena nombre, precio y cantidad.");} window.db.collection("Inventario").doc(n).set({tipoArticulo:t,medicamento:n,descripcion:document.getElementById('inv-descripcion').value.trim(),proveedor:document.getElementById('inv-proveedor').value.trim(),presentacion:document.getElementById('inv-presentacion').value.trim(),precioVenta:p,cantidad:c,unidad:document.getElementById('inv-unidad').value,minimo:min,maximo:parseInt(document.getElementById('max-inventario').value)||100,registradoPor:usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),fechaReal:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).then(()=>{window.db.collection("Historial_Inventario").add({tipoMovimiento:modoEdicion?"Edición":"Alta",medicamento:n,cantidad:c,unidad:document.getElementById('inv-unidad').value,precio:p,motivo:modoEdicion?"Actualización":"Ingreso",registradoPor:usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); alert("✅ Guardado."); window.cargarSugerenciasInventario(); window.cancelarVolver();}); };
+        window.toggleServicio = function() { let tp = document.getElementById('inv-tipo-prod'); let t=tp?tp.value:'Medicamento/Producto'; let e=(t==='Servicio Médico'); document.getElementById('caja-cantidades-inv')?.classList.toggle('oculto',e); document.getElementById('caja-unidad-inv')?.classList.toggle('oculto',e); let ci = document.getElementById('cantidad-inventario'); if(e && ci) ci.value=9999; };
+        window.abrirInventario = function() { modoEdicion=false; window.cambiarPantalla('pantalla-menu','pantalla-inventario'); let ti = document.getElementById('titulo-pantalla-inventario'); if(ti) ti.innerText="📦 Alta de productos/servicios"; let inN = document.getElementById('inv-nombre'); if(inN) { inN.readOnly=false; inN.value=''; } document.querySelectorAll('#pantalla-inventario input').forEach(i=>i.value=''); let itp = document.getElementById('inv-tipo-prod'); if(itp) itp.value='Medicamento/Producto'; window.toggleServicio(); let bgi = document.getElementById('btn-guardar-inventario'); if(bgi) bgi.innerText="Guardar Alta"; };
+        window.editarProducto = function(nom) { let i=inventarioGlobal.find(x=>x.medicamento===nom); if(!i)return; modoEdicion=true; window.cambiarPantalla('pantalla-ver-inventario','pantalla-inventario'); let ti = document.getElementById('titulo-pantalla-inventario'); if(ti) ti.innerText="✏️ Editar Producto"; let itp = document.getElementById('inv-tipo-prod'); if(itp) itp.value=i.tipoArticulo||'Medicamento/Producto'; window.toggleServicio(); let inN = document.getElementById('inv-nombre'); if(inN) { inN.value=i.medicamento; inN.readOnly=true; } let ip = document.getElementById('inv-precio'); if(ip) ip.value=i.precioVenta||''; let ci = document.getElementById('cantidad-inventario'); if(ci) ci.value=i.cantidad||''; let mi = document.getElementById('min-inventario'); if(mi) mi.value=i.minimo!==undefined?i.minimo:''; let ma = document.getElementById('max-inventario'); if(ma) ma.value=i.maximo||''; let iu = document.getElementById('inv-unidad'); if(iu) iu.value=i.unidad||'Piezas'; let ipr = document.getElementById('inv-proveedor'); if(ipr) ipr.value=i.proveedor||''; let ide = document.getElementById('inv-descripcion'); if(ide) ide.value=i.descripcion||''; let ipe = document.getElementById('inv-presentacion'); if(ipe) ipe.value=i.presentacion||''; let bgi = document.getElementById('btn-guardar-inventario'); if(bgi) bgi.innerText="Guardar Cambios"; };
+        window.guardarEnInventario = function() { let inN = document.getElementById('inv-nombre'); let n=inN?inN.value.trim().replace(/\//g,'-'):''; let ip = document.getElementById('inv-precio'); let p=ip?parseFloat(ip.value):0; let ci = document.getElementById('cantidad-inventario'); let c=ci?parseFloat(ci.value):0; let itp = document.getElementById('inv-tipo-prod'); let t=itp?itp.value:'Medicamento/Producto'; let mi = document.getElementById('min-inventario'); let vm=mi?mi.value:''; let min=vm===""?5:parseInt(vm); if(t==='Servicio Médico'){if(!n)return alert("⚠️ Llena nombre."); p=p||0;c=9999;}else{if(!n||isNaN(c)||isNaN(p))return alert("⚠️ Llena nombre, precio y cantidad.");} window.db.collection("Inventario").doc(n).set({tipoArticulo:t,medicamento:n,descripcion:document.getElementById('inv-descripcion')?.value.trim()||'',proveedor:document.getElementById('inv-proveedor')?.value.trim()||'',presentacion:document.getElementById('inv-presentacion')?.value.trim()||'',precioVenta:p,cantidad:c,unidad:document.getElementById('inv-unidad')?.value||'',minimo:min,maximo:parseInt(document.getElementById('max-inventario')?.value)||100,registradoPor:usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),fechaReal:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).then(()=>{window.db.collection("Historial_Inventario").add({tipoMovimiento:modoEdicion?"Edición":"Alta",medicamento:n,cantidad:c,unidad:document.getElementById('inv-unidad')?.value||'',precio:p,motivo:modoEdicion?"Actualización":"Ingreso",registradoPor:usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); alert("✅ Guardado."); window.cargarSugerenciasInventario(); window.cancelarVolver();}); };
         
-        window.abrirBajaInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-baja-inventario'); document.getElementById('qr-baja-inv').value=''; document.getElementById('cantidad-baja-inv').value=''; document.getElementById('monto-reembolso-baja').value=''; };
+        window.abrirBajaInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-baja-inventario'); let qb = document.getElementById('qr-baja-inv'); if(qb) qb.value=''; let cb = document.getElementById('cantidad-baja-inv'); if(cb) cb.value=''; let mr = document.getElementById('monto-reembolso-baja'); if(mr) mr.value=''; };
         window.guardarBajaInventario = function() { 
-            let v=document.getElementById('qr-baja-inv').value; let n=(v.includes(" - ")?v.split(" - ")[1]:v).replace(/\//g,'-'); let c=parseFloat(document.getElementById('cantidad-baja-inv').value); let m=document.getElementById('motivo-baja-inv').value||'Baja'; let rMonto=parseFloat(document.getElementById('monto-reembolso-baja').value)||0; let rMet=document.getElementById('metodo-reembolso-baja').value;
+            let qb = document.getElementById('qr-baja-inv'); let v=qb?qb.value:''; let n=(v.includes(" - ")?v.split(" - ")[1]:v).replace(/\//g,'-'); 
+            let cb = document.getElementById('cantidad-baja-inv'); let c=cb?parseFloat(cb.value):0; 
+            let mb = document.getElementById('motivo-baja-inv'); let m=mb?mb.value||'Baja':'Baja'; 
+            let mr = document.getElementById('monto-reembolso-baja'); let rMonto=mr?parseFloat(mr.value)||0:0; 
+            let met = document.getElementById('metodo-reembolso-baja'); let rMet=met?met.value:'Efectivo';
             if(!n||!c)return alert("⚠️ Llena producto y cantidad."); 
             window.db.collection("Inventario").doc(n).get().then(doc=>{ 
                 if(doc.exists){
                     if(doc.data().tipoArticulo==='Servicio Médico')return alert("❌ Es servicio."); 
-                    window.db.collection("Inventario").doc(n).update({cantidad:doc.data().cantidad+Math.abs(c)}).then(()=>{
+                    window.db.collection("Inventario").doc(n).update({cantidad:doc.data().cantidad-Math.abs(c)}).then(()=>{
                         window.db.collection("Historial_Inventario").add({tipoMovimiento:"Merma",medicamento:doc.data().medicamento,motivo:m,cantidad:Math.abs(c),unidad:doc.data().unidad,registradoPor:usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); 
-                        if(rMonto>0){ window.db.collection("Historial_Cobros").add({atendio:usuarioLogueado.nombre,paciente:"REEMBOLSO",dueno:"CLIENTE",articulos:[{nombre:"Devolución: "+doc.data().medicamento,precio:-rMonto}],subtotal:-rMonto,valorDescuento:0,totalCobrado:-rMonto,pagos:[{metodo:rMet,monto:-rMonto}],metodoPago:rMet,ventaMostrador:true,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); }
+                        if(rMonto>0){ window.db.collection("Historial_Cobros").add({atendio:usuarioLogueado.nombre,paciente:"REEMBOLSO / DEVOLUCIÓN",dueno:"CLIENTE",articulos:[{nombre:"Devolución: "+doc.data().medicamento,precio:-rMonto,cantidad:1,total:-rMonto}],subtotal:-rMonto,valorDescuento:0,totalCobrado:-rMonto,pagos:[{metodo:rMet,monto:-rMonto}],metodoPago:rMet,ventaMostrador:true,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); }
                         alert("✅ Devolución Registrada."); window.cargarSugerenciasInventario(); window.cancelarVolver();
                     });
                 }else alert("❌ Producto no existe."); 
             }); 
         };
         
-        window.abrirUsuarios = function() { window.cambiarPantalla('pantalla-menu','pantalla-usuarios'); const l=document.getElementById('lista-usuarios-firebase'); l.innerHTML='⏳'; window.db.collection("Usuarios").get().then(q=>{l.innerHTML='';q.forEach(doc=>{const u=doc.data();l.innerHTML+=`<div class="tarjeta-info" style="display:flex;justify-content:space-between;align-items:center;padding:15px"><div><strong>${u.nombre}</strong><span style="margin-left:10px;color:#0caeb9">${u.rol}</span><br><span style="font-size:0.8em;color:#666">PIN: ${doc.id}</span></div><button class="btn-cancelar" style="margin:0;padding:5px 15px" onclick="window.eliminarUsuario('${doc.id}')">Borrar</button></div>`;});}); };
-        window.crearUsuario = function() { let n=document.getElementById('nuevo-usuario-nombre').value; let p=document.getElementById('nuevo-usuario-pin').value; if(!n||!p||p.length!==4)return alert("⚠️ Nombre y PIN de 4 números."); window.db.collection("Usuarios").doc(p).set({nombre:n,rol:document.getElementById('nuevo-usuario-rol').value}).then(()=>{alert("✅ Creado."); document.getElementById('nuevo-usuario-nombre').value=""; document.getElementById('nuevo-usuario-pin').value=""; window.abrirUsuarios();}); };
+        window.abrirUsuarios = function() { window.cambiarPantalla('pantalla-menu','pantalla-usuarios'); const l=document.getElementById('lista-usuarios-firebase'); if(!l)return; l.innerHTML='⏳'; window.db.collection("Usuarios").get().then(q=>{l.innerHTML='';q.forEach(doc=>{const u=doc.data();l.innerHTML+=`<div class="tarjeta-info" style="display:flex;justify-content:space-between;align-items:center;padding:15px"><div><strong>${u.nombre}</strong><span style="margin-left:10px;color:#0caeb9">${u.rol}</span><br><span style="font-size:0.8em;color:#666">PIN: ${doc.id}</span></div><button class="btn-cancelar" style="margin:0;padding:5px 15px" onclick="window.eliminarUsuario('${doc.id}')">Borrar</button></div>`;});}); };
+        window.crearUsuario = function() { let nN = document.getElementById('nuevo-usuario-nombre'); let n=nN?nN.value:''; let nP = document.getElementById('nuevo-usuario-pin'); let p=nP?nP.value:''; let nR = document.getElementById('nuevo-usuario-rol'); let r=nR?nR.value:'Doctor'; if(!n||!p||p.length!==4)return alert("⚠️ Nombre y PIN de 4 números."); window.db.collection("Usuarios").doc(p).set({nombre:n,rol:r}).then(()=>{alert("✅ Creado."); if(nN)nN.value=""; if(nP)nP.value=""; window.abrirUsuarios();}); };
         window.eliminarUsuario = function(pin) { if(pin===usuarioLogueado.pin)return alert("❌ No a ti mismo."); if(confirm("¿Eliminar?")) window.db.collection("Usuarios").doc(pin).delete().then(()=>window.abrirUsuarios()); };
     </script>
 </body>
