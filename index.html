@@ -45,9 +45,8 @@
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
         
-        #toast-notificacion { position:fixed; top:20px; right:20px; background:#ffc107; color:#000; padding:15px 25px; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.15); z-index:100000; display:flex; align-items:center; gap:15px; transition:0.5s; opacity:0; transform:translateY(-20px); pointer-events:none; cursor:pointer;}
+        #toast-notificacion { position:fixed; top:20px; right:20px; background:#ffc107; color:#000; padding:15px 25px; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.15); z-index:100000; display:flex; align-items:center; gap:15px; transition:0.5s; opacity:0; transform:translateY(-20px); pointer-events:none; }
         #toast-notificacion.toast-active { opacity:1; transform:translateY(0); pointer-events:auto; }
-        #toast-notificacion:hover { transform:scale(1.05); }
 
         @media (max-width:600px){.hosp-listas-grid{grid-template-columns:1fr}}
         #zona-impresion{display:none}
@@ -62,25 +61,14 @@
 </head>
 <body>
 
-    <!-- BURBUJA NOTIFICACION (Clickable) -->
+    <!-- BURBUJA NOTIFICACION -->
     <div id="toast-notificacion" class="oculto">
         <span id="toast-msg" style="cursor:pointer;" onclick="window.irAInventarioBajo()">⚠️ Notificación</span>
-        <button onclick="document.getElementById('toast-notificacion').classList.remove('toast-active'); setTimeout(()=>document.getElementById('toast-notificacion').classList.add('oculto'),500);" style="background:none; border:none; font-size:20px; cursor:pointer; color:#856404; font-weight:bold; margin-left:15px;">✖</button>
+        <button onclick="window.ocultarBurbujaToast()" style="background:none; border:none; font-size:20px; cursor:pointer; color:#856404; font-weight:bold; margin-left:15px;">✖</button>
     </div>
 
     <datalist id="lista-medicamentos-general"></datalist>
     <div id="zona-impresion"></div>
-
-    <!-- MODAL OPCIONES DE GUARDADO -->
-    <div id="modal-opciones-guardar" class="modal-overlay oculto">
-        <div class="modal-content" style="height:auto; max-width: 400px; text-align:center;">
-            <div class="modal-header"><span>💾 Opciones de Guardado</span><button onclick="document.getElementById('modal-opciones-guardar').classList.add('oculto')" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">✖</button></div>
-            <div class="modal-body" style="display:flex; flex-direction:column; gap:15px; padding: 30px;">
-                <button class="btn btn-guardar-azul" style="background:#6f42c1; margin:0;" onclick="window.procesarHospitalizacion('historial')">💾 Solo Guardar en Historial</button>
-                <button class="btn btn-guardar" style="margin:0;" onclick="window.procesarHospitalizacion('hoja')">🖨️ Guardar e Imprimir Formato</button>
-            </div>
-        </div>
-    </div>
 
     <!-- MODAL LECTURA CONTRATO -->
     <div id="modal-lectura" class="modal-overlay oculto">
@@ -192,7 +180,6 @@
                 <div class="grupo-formulario"><label>Monto 1 ($):</label><input type="number" id="monto-pago-1" placeholder="0.00" oninput="window.calcularMontoFaltante(1)"></div>
             </div>
             
-            <!-- Cajas de Pago Extra -->
             <div id="caja-pago-2" class="form-row oculto">
                 <div class="grupo-formulario"><label>Pago 2:</label><select id="metodo-pago-2" onchange="window.calcularMontoFaltante(0)"><option value="">-- Seleccionar --</option><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Transferencia</option><option>Clip</option><option>American Express</option></select></div>
                 <div class="grupo-formulario"><label>Monto 2 ($):</label><input type="number" id="monto-pago-2" placeholder="0.00" oninput="window.calcularMontoFaltante(2)"></div>
@@ -236,7 +223,6 @@
         
         <div class="seccion-separador"></div>
         <div id="contenedor-campos-dinamicos">
-            <!-- CAMPOS DINÁMICOS: AUTORIZACION HOSPITALARIA -->
             <div id="campos-auth-hospital" class="campos-dinamicos oculto">
                 <div class="form-row"><div class="grupo-formulario" style="flex:2"><label>Domicilio:</label><input type="text" id="hosp-domicilio"></div><div class="grupo-formulario"><label>Correo:</label><input type="text" id="hosp-correo"></div></div>
                 <div class="form-row"><div class="grupo-formulario"><label>Color:</label><input type="text" id="hosp-color"></div><div class="grupo-formulario"><label>Nacimiento:</label><input type="date" id="hosp-nacimiento"></div></div>
@@ -245,7 +231,6 @@
                 <div class="grupo-formulario"><label>Manejo Médico:</label><input type="text" id="hosp-manejo-medico" placeholder="Ej. Cirugía..."></div>
             </div>
 
-            <!-- CAMPOS DINÁMICOS: CONTRATO DE PENSIÓN -->
             <div id="campos-pension" class="campos-dinamicos oculto">
                 <div class="form-row"><div class="grupo-formulario" style="flex:2"><label>Domicilio:</label><input type="text" id="pen-domicilio"></div><div class="grupo-formulario"><label>Tel. Emergencia:</label><input type="number" id="pen-tel-emergencia"></div></div>
                 <div class="form-row"><div class="grupo-formulario"><label>Entrada:</label><input type="date" id="pen-entrada"></div><div class="grupo-formulario"><label>Salida:</label><input type="date" id="pen-salida"></div><div class="grupo-formulario"><label>Costo por día ($):</label><input type="number" id="pen-costo"></div></div>
@@ -255,7 +240,6 @@
                 <div class="grupo-formulario"><label>Cuidados Especiales:</label><input type="text" id="pen-cuidados" placeholder="Si requiere medicamentos, especificar..."></div>
             </div>
 
-            <!-- CAMPOS DINÁMICOS: ALTA VOLUNTARIA -->
             <div id="campos-alta-voluntaria" class="campos-dinamicos oculto">
                 <div class="form-row"><div class="grupo-formulario"><label>Fecha de Ingreso:</label><input type="date" id="alta-f-ingreso"></div><div class="grupo-formulario"><label>Diagnóstico de Ingreso:</label><input type="text" id="alta-dx-ingreso"></div></div>
                 <div class="form-row"><div class="grupo-formulario"><label>Fecha de Egreso (Hoy):</label><input type="date" id="alta-f-egreso"></div><div class="grupo-formulario"><label>Diagnóstico de Egreso:</label><input type="text" id="alta-dx-egreso"></div></div>
@@ -269,7 +253,7 @@
                 <button id="btn-leer-firmar" class="btn btn-guardar-azul oculto" style="margin:15px auto 0 auto; width:auto; padding:12px 25px;" onclick="window.abrirLecturaYFirma()">Leer y Firmar Formulario</button>
             </div>
 
-            <!-- ZONA DE FIRMA SIEMPRE VISIBLE AL ABRIR UN FORMATO (Centrada) -->
+            <!-- ZONA DE FIRMA -->
             <div id="zona-firmas-oculta" class="form-row oculto" style="justify-content:center;padding:20px 0 0 0;margin-top:20px;border-top:1px dashed #0caeb9;">
                 <div class="firma-card">
                     <div class="firma-title" style="color:#0caeb9;">Firma Cliente</div>
@@ -281,7 +265,7 @@
 
         <div class="seccion-separador"></div>
         <div class="form-row" style="justify-content: center; gap: 20px;">
-            <div class="grupo-formulario" style="flex:none; width: auto;"><button class="btn btn-guardar-azul" style="margin:0; background:#6f42c1; padding:16px 30px;" onclick="window.procesarHospitalizacion(false)">💾 Solo Guardar en Historial</button></div>
+            <div class="grupo-formulario" style="flex:none; width: auto;"><button class="btn btn-guardar-azul" style="margin:0; background:#6f42c1; padding:16px 30px;" onclick="window.procesarHospitalizacion('historial')">💾 Solo Guardar en Historial</button></div>
             <div class="grupo-formulario" style="flex:none; width: auto;"><button class="btn btn-guardar" id="btn-final-hosp" style="margin:0; padding:16px 30px;" onclick="window.procesarHospitalizacion('hoja')" disabled>🖨️ Guardar e Imprimir Formato Legal</button></div>
         </div>
     </div>
@@ -374,14 +358,14 @@
 
     <!-- LÓGICA JAVASCRIPT SEGURA Y ORGANIZADA -->
     <script>
-        // DESACTIVAR SCROLL EN NUMEROS (Previene cambios accidentales)
+        // DESACTIVAR SCROLL EN NUMEROS
         document.addEventListener("wheel", function(e){ 
             if(document.activeElement.type === "number") {
                 e.preventDefault();
             }
         }, { passive: false });
 
-        // 1. INICIALIZAR FIREBASE 
+        // 1. INICIALIZAR FIREBASE (Protegido con optional chaining)
         window.db = null;
         try {
             const firebaseConfig = { apiKey: "AIzaSyABktLytyy6fBXXDOrJq9B0nErrOzc30a4", authDomain: "kioscovet-93eae.firebaseapp.com", projectId: "kioscovet-93eae", storageBucket: "kioscovet-93eae.firebasestorage.app", messagingSenderId: "571603121447", appId: "1:571603121447:web:ad4a7d439050ec82812502" };
@@ -525,12 +509,6 @@
             window.cambiarPantalla('todas','pantalla-menu'); 
         };
 
-        window.abrirOpcionesGuardado = function() {
-            let sEl = document.getElementById('select-formato-legal');
-            if(!sEl || sEl.value === "") { window.procesarHospitalizacion('historial'); } 
-            else { document.getElementById('modal-opciones-guardar')?.classList.remove('oculto'); }
-        };
-
         // 6. LOGIN Y SEGURIDAD BLINDADA
         window.agregarNumero = function(n) { 
             if(pinActual.length >= 4) return; 
@@ -554,7 +532,12 @@
             let inputPin = document.getElementById('input-pin'); 
             if(inputPin) { inputPin.type = "password"; inputPin.value=""; }
         };
-        window.cerrarSesion = function() { usuarioLogueado=null; window.limpiarPin(); window.cambiarPantalla('todas','pantalla-login'); };
+        window.cerrarSesion = function() { 
+            usuarioLogueado = null; 
+            window.limpiarPin(); 
+            window.ocultarBurbujaToast();
+            window.cambiarPantalla('todas','pantalla-login'); 
+        };
 
         window.validarPin = function() {
             if(!window.db) { alert("Error: Conexión con Firebase no establecida. Presiona Ctrl + F5"); window.limpiarPin(); return; }
@@ -595,9 +578,16 @@
         window.limpiarRegistrosViejos = async function() { const seisM = Date.now()-(180*24*60*60*1000); try { const cobros = await window.db.collection("Historial_Cobros").where("timestamp","<",seisM).get(); const hosp = await window.db.collection("Historial_Hospitalizacion").where("timestamp","<",seisM).get(); let b = window.db.batch(); cobros.docs.forEach(d=>b.delete(d.ref)); hosp.docs.forEach(d=>b.delete(d.ref)); if(!cobros.empty||!hosp.empty) await b.commit(); }catch(e){} };
 
         // 7. BUSCADOR E INVENTARIO
-        window.irAInventarioBajo = function() {
+        window.ocultarBurbujaToast = function() {
             let t = document.getElementById('toast-notificacion');
-            if(t) { t.classList.remove('toast-active'); setTimeout(() => t.classList.add('oculto'), 500); }
+            if(t) {
+                t.classList.remove('toast-active');
+                setTimeout(() => t.classList.add('oculto'), 400);
+            }
+        };
+
+        window.irAInventarioBajo = function() {
+            window.ocultarBurbujaToast();
             window.cambiarPantalla('pantalla-menu', 'pantalla-ver-inventario');
             let bs = document.getElementById('busqueda-inv-stock');
             if(bs) { bs.value = 'bajo'; window.cargarInventarioVista(); }
@@ -616,17 +606,21 @@
                         if (lim > 0 && d.cantidad <= lim) count++; 
                     }); 
                     if(count > 0) { 
-                        document.getElementById('toast-msg').innerText = `Tienes productos con bajo stock (${count}). Clic para ver.`; 
+                        let tm = document.getElementById('toast-msg');
+                        if(tm) tm.innerText = `⚠️ Tienes productos con bajo stock (${count}). Clic para ver.`; 
                         toast.classList.remove('oculto'); 
                         setTimeout(() => toast.classList.add('toast-active'), 10); 
-                    } 
+                    } else {
+                        window.ocultarBurbujaToast();
+                    }
                 }).catch(e=>{}); 
+            } else {
+                window.ocultarBurbujaToast();
             }
         };
 
         window.cargarSugerenciasInventario = function() { inventarioGlobal = []; if(!window.db) return; window.db.collection("Inventario").get().then(q => { q.forEach(doc => inventarioGlobal.push(doc.data())); inventarioGlobal.sort((a,b)=>a.medicamento.localeCompare(b.medicamento)); }); };
         window.buscarAutocomplete = function(inId, dropId, cb, fTipo=null) { const input = document.getElementById(inId); const drop = document.getElementById(dropId); if(!input || !drop) return; const val = input.value.toLowerCase().trim(); drop.innerHTML=''; if(val.length<3){drop.classList.add('oculto');return;} let filt = inventarioGlobal.filter(i => i.medicamento.toLowerCase().includes(val) && (fTipo?i.tipoArticulo===fTipo:true)); if(filt.length===0){drop.classList.add('oculto');return;} drop.classList.remove('oculto'); filt.slice(0,15).forEach(item => { let d = document.createElement('div'); d.className='sugerencia-item'; d.innerHTML=`<div><span class="sugerencia-icon">${item.tipoArticulo==='Servicio Médico'?'🩺':'💊'}</span><strong>${item.medicamento}</strong></div><span style="color:#198754;font-weight:bold">$${Number(item.precioVenta||0).toFixed(2)}</span>`; d.onclick=()=>{input.value=item.medicamento;drop.classList.add('oculto');cb(item);}; drop.appendChild(d); }); };
-        window.buscarAutocompleteHosp = function(i,d,c) { let t = document.getElementById('tipo-hosp-item'); window.buscarAutocomplete(i,d,c,t?t.value:null); };
         document.addEventListener('click', e => { if(!e.target.closest('.autocomplete-container')) document.querySelectorAll('.autocomplete-dropdown').forEach(d=>d.classList.add('oculto')); });
         window.filtrarTarjetas = function(idContenedor, texto) { let term = texto.toLowerCase(); let tarjetas = document.getElementById(idContenedor)?.children; if(!tarjetas) return; for(let t of tarjetas) { if(t.classList.contains('tarjeta-info') || t.classList.contains('tarjeta-expediente')) { t.style.display = t.innerText.toLowerCase().includes(term) ? "" : "none"; } } };
 
@@ -672,11 +666,11 @@
             else d.innerHTML=carrito.map((i,idx)=>`<div class="item-carrito"><span>${i.tipo==='Servicio Médico'?'🩺':'💊'} <strong>${i.nombre}</strong> <span style="color:#666;font-size:0.85em;">(${i.cantidad} ${i.unidad||'u'} x $${Number(i.precio||0).toFixed(2)})</span></span><span>$${Number(i.total||0).toFixed(2)} <button class="btn-eliminar-item" onclick="window.eliminarDelCarrito(${idx})">X</button></span></div>`).join(''); 
             let sub = carrito.reduce((s,i)=>s+i.total,0); let desc = parseFloat(document.getElementById('valor-descuento')?.value)||0; 
             totalCobroCalculado = Math.max(0, sub-desc); let tc = document.getElementById('total-cobrar'); if(tc) tc.innerText = totalCobroCalculado.toFixed(2); 
-            window.calcularMontoFaltante(); 
+            window.calcularMontoFaltante(0); 
         };
         
         window.calcularTotal = function() { window.actualizarCarritoUI(); };
-        window.calcularMontoFaltante = function() {
+        window.calcularMontoFaltante = function(modificadoId = 0) {
             let m1Inp = document.getElementById('monto-pago-1'); let m1 = parseFloat(m1Inp?.value) || 0;
             let m2Inp = document.getElementById('monto-pago-2'); let m2Sel = document.getElementById('metodo-pago-2');
             let m3Inp = document.getElementById('monto-pago-3'); let m3Sel = document.getElementById('metodo-pago-3');
@@ -716,7 +710,7 @@
                 let m2Sel = document.getElementById('metodo-pago-2');
                 if(m2Inp) m2Inp.value = f > 0 ? f.toFixed(2) : '';
                 if(m2Sel && m2Sel.value === "") m2Sel.value = "Tarjeta Débito";
-                window.calcularMontoFaltante(); 
+                window.calcularMontoFaltante(0); 
             } 
             else if(cp3 && cp3.classList.contains('oculto')) { 
                 cp3.classList.remove('oculto'); 
@@ -726,7 +720,7 @@
                 let m3Sel = document.getElementById('metodo-pago-3');
                 if(m3Inp) m3Inp.value = f > 0 ? f.toFixed(2) : '';
                 if(m3Sel && m3Sel.value === "") m3Sel.value = "Transferencia";
-                window.calcularMontoFaltante(); 
+                window.calcularMontoFaltante(0); 
             }
         };
         
@@ -735,7 +729,7 @@
             let mInp = document.getElementById('monto-pago-'+num); if(mInp) mInp.value='';
             let mSel = document.getElementById('metodo-pago-'+num); if(mSel) mSel.value='';
             document.getElementById('btn-add-pago')?.classList.remove('oculto');
-            window.calcularMontoFaltante();
+            window.calcularMontoFaltante(num===3?2:1);
         };
 
         window.abrirFormulario = function() { 
@@ -824,7 +818,6 @@
         window.abrirHospitalizacion = function() { 
             window.cambiarPantalla('pantalla-menu', 'pantalla-hospitalizacion'); 
             document.getElementById('zona-firmas-oculta')?.classList.add('oculto'); 
-            document.getElementById('btn-leer-firmar')?.classList.add('oculto'); 
             window.limpiarFirma('cliente'); canvasActivo=false; 
             let sfl = document.getElementById('select-formato-legal'); if(sfl) sfl.value=""; 
             window.mostrarCamposDinamicos(); window.initFirmas(); 
@@ -833,7 +826,6 @@
         window.mostrarCamposDinamicos = function() { 
             let sEl = document.getElementById('select-formato-legal'); if(!sEl) return; const s = sEl.value; 
             document.querySelectorAll('.campos-dinamicos').forEach(d=>d.classList.add('oculto')); 
-            let bl = document.getElementById('btn-leer-firmar'); 
             let zf = document.getElementById('zona-firmas-oculta'); 
 
             if(s) { 
@@ -866,7 +858,6 @@
             hD.firmaCliente=firm; hD.folio=String(Date.now()).slice(-5); hD.fechaTexto=new Date().toLocaleString('es-MX'); hD.timestamp=Date.now(); hD.fechaReal=firebase.firestore.FieldValue.serverTimestamp();
             window.db.collection("Historial_Hospitalizacion").add(hD).then(()=>{ 
                 if(imprimir==='hoja') window.generarHojasLegalesDinamicas(hD, false); else alert("✅ Guardado Historial."); 
-                document.getElementById('modal-opciones-guardar')?.classList.add('oculto');
                 window.cancelarVolver(); 
             }).catch(e=>alert("Error: "+e.message)).finally(()=>{guardandoBloqueo=false;document.body.style.cursor='default';});
         };
@@ -876,11 +867,11 @@
         window.cargarExpedienteBase = function() {
             let le = document.getElementById('lista-expediente'); if(!le) return;
             le.innerHTML = '<div style="text-align:center; padding:40px;">⏳ Cargando expedientes...</div>';
-            Promise.all([ window.db.collection("Historial_Cobros").orderBy("timestamp", "desc").limit(150).get(), window.db.collection("Historial_Hospitalizacion").orderBy("timestamp", "desc").limit(150).get() ]).then(([cobros, hosp]) => {
+            Promise.all([ window.db.collection("Historial_Cobros").get(), window.db.collection("Historial_Hospitalizacion").get() ]).then(([cobros, hosp]) => {
                 datosExpediente = [];
                 cobros.forEach(d => { let data = d.data(); data.id = d.id; data.coleccion = "Historial_Cobros"; data.tipoRegistro = 'cobro'; datosExpediente.push(data); });
                 hosp.forEach(d => { let data = d.data(); data.id = d.id; data.coleccion = "Historial_Hospitalizacion"; data.tipoRegistro = 'hospitalizacion'; datosExpediente.push(data); });
-                datosExpediente.sort((a,b) => (b.timestamp||0) - (a.timestamp||0)); window.buscarExpediente(); 
+                datosExpediente = datosExpediente.sort((a,b) => (b.timestamp||0) - (a.timestamp||0)).slice(0, 150); window.buscarExpediente(); 
             }).catch(e => { le.innerHTML = '<p style="color:red; text-align:center;">Error al cargar datos.</p>'; });
         };
         window.buscarExpediente = function() {
@@ -920,7 +911,7 @@
         };
 
         // 11. CORTES, INVENTARIO Y EXCEL
-        window.abrirCorteCaja = function(p) { window.cambiarPantalla('pantalla-menu','pantalla-corte-caja'); document.querySelectorAll('.btn-filtro').forEach(b=>b.classList.remove('activo')); let fd = document.getElementById(`filtro-${p}`); if(fd) fd.classList.add('activo'); const l=document.getElementById('lista-corte-caja'); if(l) l.innerHTML='<div style="text-align:center">⏳</div>'; let limIn=0, limOut=Date.now(); let selM = document.getElementById('filtro-mes-exacto'); if(p==='dia'){limIn=new Date().setHours(0,0,0,0);}else if(p==='ayer'){limIn=new Date().setHours(0,0,0,0)-86400000; limOut=new Date().setHours(0,0,0,0);}else if(p==='semana'){limIn=Date.now()-604800000;}else if(p==='mes'){limIn=new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime(); limOut=new Date(new Date().getFullYear(), new Date().getMonth()+1, 0, 23, 59, 59).getTime();}else if(p==='mes-exacto'&&selM&&selM.value){let [y,m]=selM.value.split('-'); limIn=new Date(y,m-1,1).getTime(); limOut=new Date(y,m,0,23,59,59).getTime();} window.db.collection("Historial_Cobros").orderBy("timestamp","desc").get().then(q=>{ let resumen={},grT=0,grD=0,grDev=0,ht=''; q.forEach(doc=>{ const d=doc.data(); if((d.timestamp||0)>=limIn && (d.timestamp||0)<=limOut){ let u=d.atendio||'Cajero Desconocido'; if(!resumen[u]) resumen[u]={metodos:{}, total:0, devoluciones:0}; let pgs=d.pagos||[{metodo:d.metodoPago||'Efectivo',monto:parseFloat(d.totalCobrado)||0}]; let totVenta = parseFloat(d.totalCobrado)||0; if(totVenta<0 || (d.paciente && d.paciente.includes("REEMBOLSO"))) { if(p==='dia'||p==='ayer'){let devAmt = Math.abs(totVenta); grDev += devAmt; resumen[u].devoluciones += devAmt; grT -= devAmt;} } else { grT += totVenta; pgs.forEach(p=>{let m=p.metodo;let a=parseFloat(p.monto)||0; if(a>=0){if(!resumen[u].metodos[m])resumen[u].metodos[m]=0; resumen[u].metodos[m]+=a; resumen[u].total+=a;} }); } grD+=(parseFloat(d.valorDescuento)||0); } }); let cgt = document.getElementById('corte-gran-total'); if(cgt) cgt.innerText=grT.toFixed(2); let cgd = document.getElementById('corte-gran-descuento'); if(cgd) cgd.innerText=grD.toFixed(2); let cgdv = document.getElementById('corte-gran-devoluciones'); if(cgdv) cgdv.innerText=grDev.toFixed(2); for(let usr in resumen){ ht+=`<div class="tarjeta-info" style="border-left:4px solid #0caeb9"><strong style="font-size:1.2em;color:#0caeb9;display:block;margin-bottom:10px">👨‍⚕️ ${usr}</strong>`; for(let met in resumen[usr].metodos){ let mM=resumen[usr].metodos[met]; ht+=`<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #eee;padding:5px 0"><span>${met}</span><strong style="color:${mM<0?'#dc3545':'#333'}">$${Number(mM||0).toFixed(2)}</strong></div>`; } if(resumen[usr].devoluciones > 0) { ht+=`<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #eee;padding:5px 0;color:#dc3545;"><span>Devoluciones</span><strong>-$${Number(resumen[usr].devoluciones||0).toFixed(2)}</strong></div>`; } let cT=resumen[usr].total - resumen[usr].devoluciones; ht+=`<div style="display:flex;justify-content:space-between;margin-top:10px;font-size:1.1em;color:${cT<0?'#dc3545':'#198754'}"><span>Total Neto Vendido:</span><strong>$${Number(cT||0).toFixed(2)}</strong></div></div>`; } if(l) l.innerHTML=ht||'<p style="text-align:center">Vacío</p>'; }).catch(e=>{if(l) l.innerHTML='<p style="color:red">Error</p>';}); };
+        window.abrirCorteCaja = function(p) { window.cambiarPantalla('pantalla-menu','pantalla-corte-caja'); document.querySelectorAll('.btn-filtro').forEach(b=>b.classList.remove('activo')); let fd = document.getElementById(`filtro-${p}`); if(fd) fd.classList.add('activo'); const l=document.getElementById('lista-corte-caja'); if(l) l.innerHTML='<div style="text-align:center">⏳</div>'; let limIn=0, limOut=Date.now(); let selM = document.getElementById('filtro-mes-exacto'); if(p==='dia'){limIn=new Date().setHours(0,0,0,0);}else if(p==='ayer'){limIn=new Date().setHours(0,0,0,0)-86400000; limOut=new Date().setHours(0,0,0,0);}else if(p==='semana'){limIn=Date.now()-604800000;}else if(p==='mes'){limIn=new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime(); limOut=new Date(new Date().getFullYear(), new Date().getMonth()+1, 0, 23, 59, 59).getTime();}else if(p==='mes-exacto'&&selM&&selM.value){let [y,m]=selM.value.split('-'); limIn=new Date(y,m-1,1).getTime(); limOut=new Date(y,m,0,23,59,59).getTime();} window.db.collection("Historial_Cobros").get().then(q=>{ let resumen={},grT=0,grD=0,grDev=0,ht=''; q.forEach(doc=>{ const d=doc.data(); if((d.timestamp||0)>=limIn && (d.timestamp||0)<=limOut){ let u=d.atendio||'Cajero Desconocido'; if(!resumen[u]) resumen[u]={metodos:{}, total:0, devoluciones:0}; let pgs=d.pagos||[{metodo:d.metodoPago||'Efectivo',monto:parseFloat(d.totalCobrado)||0}]; let totVenta = parseFloat(d.totalCobrado)||0; if(totVenta<0 || (d.paciente && d.paciente.includes("REEMBOLSO"))) { if(p==='dia'||p==='ayer'){let devAmt = Math.abs(totVenta); grDev += devAmt; resumen[u].devoluciones += devAmt; grT -= devAmt;} } else { grT += totVenta; pgs.forEach(p=>{let m=p.metodo;let a=parseFloat(p.monto)||0; if(a>=0){if(!resumen[u].metodos[m])resumen[u].metodos[m]=0; resumen[u].metodos[m]+=a; resumen[u].total+=a;} }); } grD+=(parseFloat(d.valorDescuento)||0); } }); let cgt = document.getElementById('corte-gran-total'); if(cgt) cgt.innerText=grT.toFixed(2); let cgd = document.getElementById('corte-gran-descuento'); if(cgd) cgd.innerText=grD.toFixed(2); let cgdv = document.getElementById('corte-gran-devoluciones'); if(cgdv) cgdv.innerText=grDev.toFixed(2); for(let usr in resumen){ ht+=`<div class="tarjeta-info" style="border-left:4px solid #0caeb9"><strong style="font-size:1.2em;color:#0caeb9;display:block;margin-bottom:10px">👨‍⚕️ ${usr}</strong>`; for(let met in resumen[usr].metodos){ let mM=resumen[usr].metodos[met]; ht+=`<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #eee;padding:5px 0"><span>${met}</span><strong style="color:${mM<0?'#dc3545':'#333'}">$${Number(mM||0).toFixed(2)}</strong></div>`; } if(resumen[usr].devoluciones > 0) { ht+=`<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #eee;padding:5px 0;color:#dc3545;"><span>Devoluciones</span><strong>-$${Number(resumen[usr].devoluciones||0).toFixed(2)}</strong></div>`; } let cT=resumen[usr].total - resumen[usr].devoluciones; ht+=`<div style="display:flex;justify-content:space-between;margin-top:10px;font-size:1.1em;color:${cT<0?'#dc3545':'#198754'}"><span>Total Neto Vendido:</span><strong>$${Number(cT||0).toFixed(2)}</strong></div></div>`; } if(l) l.innerHTML=ht||'<p style="text-align:center">Vacío</p>'; }).catch(e=>{if(l) l.innerHTML='<p style="color:red">Error</p>';}); };
         
         window.abrirVerInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-ver-inventario'); let bi = document.getElementById('busqueda-inv-texto'); if(bi) bi.value=''; window.cargarInventarioVista(); };
         window.cargarInventarioVista = function() { const l=document.getElementById('lista-stock-firebase'); if(!l)return; l.innerHTML='<div style="text-align:center">⏳</div>'; window.db.collection("Inventario").get().then((q)=>{ let ih=[]; q.forEach(doc=>{let dt=doc.data(); dt.idDoc=doc.id; ih.push(dt);}); ih.sort((a,b)=>a.medicamento.localeCompare(b.medicamento)); let ht=''; ih.forEach((d)=>{ if(d.tipoArticulo==='Servicio Médico')return; let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); let isB=(min>0&&d.cantidad<=min); let btn=(usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"><button class="btn-exp-action" onclick="window.editarProducto('${d.idDoc}')">✏️ Editar</button>${(usuarioLogueado.rol==='Gerente'||usuarioLogueado.rol==='Sub-Gerente'||usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('Inventario','${d.idDoc}')">🗑️ Eliminar</button>`:''}</div>`:''; ht+=`<div class="tarjeta-info ${isB?'stock-alerta':'stock-ok'}" data-unidad="${d.unidad}"><div class="th-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;"><strong style="flex:1; text-align:left;">${d.medicamento}</strong><span style="font-size:1.3em; font-weight:900; color:${isB?'#dc3545':'#198754'}; text-align:right;">${d.cantidad} <span style="font-size:0.5em;color:#666">${d.unidad||'U.'}</span></span></div><div class="th-cuerpo">$${Number(d.precioVenta||0).toFixed(2)}</div>${isB?'<div style="color:#dc3545;font-weight:bold;text-align:center;margin-top:5px">¡Bajo Stock!</div>':''}${btn}</div>`; }); l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; window.filtrarInventario(); }); };
@@ -931,10 +922,10 @@
 
         window.abrirHistorialInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-historial-inventario'); window.cargarHistorialInventario(); };
         window.cargarHistorialInventario = function() { const l=document.getElementById('lista-historial-inventario'); if(!l)return; l.innerHTML='<div style="text-align:center">⏳</div>'; window.db.collection("Historial_Inventario").get().then(q=>{ datosHistorialInv=[]; q.forEach(d=>{let dD=d.data();dD.id=d.id;dD.coleccion="Historial_Inventario";datosHistorialInv.push(dD);}); datosHistorialInv.sort((a,b) => (b.timestamp||0) - (a.timestamp||0)); window.buscarHistorialInventario(); }).catch(e=>{if(l)l.innerHTML=`<p style="color:red">Error: ${e.message}</p>`;}); };
-        window.buscarHistorialInventario = function() { let bi = document.getElementById('buscador-hist-inv'); let tm=bi?bi.value.toLowerCase():''; let ft = document.getElementById('filtro-tipo-hist-inv'); let tp=ft?ft.value:'todos'; let ff = document.getElementById('filtro-fecha-hist-inv'); let fc=ff?ff.value:'todos'; let n=Date.now(); let filt=datosHistorialInv.filter(d=>{ let mt=(d.medicamento||'').toLowerCase().includes(tm); let m=(d.tipoMovimiento||''); let mtp=(tp==='todos'||m.includes(tp)); let mfc=true; if(fc==='hoy')mfc=(n-(d.timestamp||0))<=86400000; if(fc==='semana')mfc=(n-(d.timestamp||0))<=604800000; if(fc==='mes')mfc=(n-(d.timestamp||0))<=2592000000; return mt&&mtp&&mfc; }); let ht=''; filt.forEach(d=>{ let m=(d.tipoMovimiento||''); let iA=m.includes('Alta'); let iB=m.includes('Merma')||m.includes('Devolución'); let cl=iA?'alta':(iB?'merma':'edicion'); let bd=iA?'badge-alta':(iB?'badge-merma':'badge-edicion'); let ic=iA?'📦 Alta':(iB?'📉 Baja':'✏️ Edición'); ht+=`<div class="tarjeta-expediente ${cl}"><div class="exp-header"><span class="exp-title"><span class="badge-tipo ${bd}">${ic}</span> ${d.medicamento}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-content">Cantidad: ${d.cantidad||0} ${d.unidad||''} <br>Motivo: ${d.motivo||''}</div><div class="exp-footer"><span>Por: ${d.registradoPor}</span></div></div>`; }); let l = document.getElementById('lista-historial-inventario'); if(l) l.innerHTML=ht||'<p style="text-align:center">Vacío</p>'; };
+        window.buscarHistorialInventario = function() { let bi = document.getElementById('buscador-hist-inv'); let tm=bi?bi.value.toLowerCase():''; let ft = document.getElementById('filtro-tipo-hist-inv'); let tp=ft?ft.value:'todos'; let ff = document.getElementById('filtro-fecha-hist-inv'); let fc=ff?ff.value:'todos'; let n=Date.now(); let filt=datosHistorialInv.filter(d=>{ let mt=(d.medicamento||'').toLowerCase().includes(tm); let m=(d.tipoMovimiento||''); let mtp=(tp==='todos'||m.includes(tp)); let mfc=true; if(fc==='hoy')mfc=(n-(d.timestamp||0))<=86400000; if(fc==='semana')mfc=(n-(d.timestamp||0))<=604800000; if(fc==='mes')mfc=(n-(d.timestamp||0))<=2592000000; return mt&&mtp&&mfc; }); let ht=''; filt.slice(0, 150).forEach(d=>{ let m=(d.tipoMovimiento||''); let iA=m.includes('Alta'); let iB=m.includes('Merma')||m.includes('Devolución'); let cl=iA?'alta':(iB?'merma':'edicion'); let bd=iA?'badge-alta':(iB?'badge-merma':'badge-edicion'); let ic=iA?'📦 Alta':(iB?'📉 Baja':'✏️ Edición'); ht+=`<div class="tarjeta-expediente ${cl}"><div class="exp-header"><span class="exp-title"><span class="badge-tipo ${bd}">${ic}</span> ${d.medicamento}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-content">Cantidad: ${d.cantidad||0} ${d.unidad||''} <br>Motivo: ${d.motivo||''}</div><div class="exp-footer"><span>Por: ${d.registradoPor}</span></div></div>`; }); let l = document.getElementById('lista-historial-inventario'); if(l) l.innerHTML=ht||'<p style="text-align:center">Vacío</p>'; };
 
-        window.abrirHistorialVentas = function() { window.cambiarPantalla('pantalla-menu','pantalla-historial-ventas'); document.getElementById('lista-historial-ventas').innerHTML='<div style="text-align:center;padding:40px">⏳</div>'; Promise.all([window.db.collection("Historial_Cobros").get(), window.db.collection("Historial_Hospitalizacion").get()]).then(([cobros, hosp])=>{ datosHistorialVentas=[]; cobros.forEach(d=>{let data=d.data();data.id=d.id;data.coleccion="Historial_Cobros";data.tipoRegistro='cobro';datosHistorialVentas.push(data);}); hosp.forEach(d=>{let data=d.data();data.id=d.id;data.coleccion="Historial_Hospitalizacion";data.tipoRegistro='hospitalizacion';datosHistorialVentas.push(data);}); datosHistorialVentas.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0)); window.buscarHistorialVentas(); }).catch(e=>{document.getElementById('lista-historial-ventas').innerHTML='<p style="color:red; text-align:center;">Error al cargar datos.</p>';}); };
-        window.buscarHistorialVentas = function() { let tm=document.getElementById('buscador-hist-ventas').value.toLowerCase(); let fc=document.getElementById('filtro-fecha-hist-ventas').value; let n=Date.now(); let filt=datosHistorialVentas.filter(d=>{ let tx=(d.paciente||' ')+(d.dueno||' ')+(d.atendio||d.doctor||' ')+(d.telefono||' '); let mt=tx.toLowerCase().includes(tm); let mfc=true; if(fc==='hoy')mfc=(n-(d.timestamp||0))<=86400000; if(fc==='semana')mfc=(n-(d.timestamp||0))<=604800000; if(fc==='mes')mfc=(n-(d.timestamp||0))<=2592000000; return mt&&mfc; }); let ht=''; filt.slice(0, 150).forEach(d=>{ try{ let bb=(usuarioLogueado.rol==='Gerente'||usuarioLogueado.rol==='Sub-Gerente'||usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('${d.coleccion}','${d.id}')">🗑️</button>`:''; if(d.tipoRegistro==='hospitalizacion'){ let authStr=d.formatoLegal||""; let authTxt=authStr?`<div style="font-size:0.85em;color:#0caeb9;font-weight:bold;margin-bottom:10px">✅ Formato: ${authStr}</div>`:''; let pTxt=(d.prescripcion)?String(d.prescripcion).substring(0,100)+'...':'Sin notas'; ht+=`<div class="tarjeta-expediente hospital"><div class="exp-header"><span class="exp-title"><span class="badge-tipo" style="background:#e0f7fa;color:#0caeb9">🏥 Formato</span> ${d.paciente||''}</span><span class="exp-date">${d.fechaTexto||''}</span></div><div class="exp-meta"><span>👤 ${d.dueno||''}</span></div>${authTxt}<div class="exp-footer"><span><strong>Dr. ${d.doctor||''}</strong></span> <div style="display:flex;gap:10px"><button class="btn-exp-action" onclick="window.reimprimirDesdeExpediente(${d.timestamp||0},'${d.tipoRegistro}','hoja')">🖨️ Hoja</button>${bb}</div></div></div>`; } else { let dS=(Array.isArray(d.articulos))?d.articulos.map(a=>a.nombre).join(','):'Vta Gral'; let isVenta=d.ventaMostrador; ht+=`<div class="tarjeta-expediente venta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰</span> ${isVenta?'Mostrador':(d.paciente||'')}</span><span class="exp-date">${d.fechaTexto||''}</span></div><div class="exp-meta"><span>👤 ${isVenta?'N/A':(d.dueno||'')} ${d.telefono?`(${d.telefono})`:''}</span><span>👨‍⚕️ ${d.atendio||''}</span></div><div class="exp-content" style="color:#146c43">🛒 ${dS}</div><div class="exp-footer"><span style="font-weight:bold;color:#198754">$${Number(d.totalCobrado||0).toFixed(2)}</span><div style="display:flex;gap:10px"><button class="btn-exp-action btn-venta" onclick="window.reimprimirDesdeExpediente(${d.timestamp||0},'${d.tipoRegistro}','ticket')">🖨️ Tck</button>${bb}</div></div></div>`; } }catch(ex){console.log(ex);} }); document.getElementById('lista-historial-ventas').innerHTML=ht||'<p style="text-align:center">Vacío</p>'; };
+        window.abrirHistorialVentas = function() { window.cambiarPantalla('pantalla-menu','pantalla-historial-ventas'); document.getElementById('lista-historial-ventas').innerHTML='<div style="text-align:center;padding:40px">⏳</div>'; Promise.all([window.db.collection("Historial_Cobros").get(), window.db.collection("Historial_Hospitalizacion").get()]).then(([cobros, hosp])=>{ datosHistorialVentas=[]; cobros.forEach(d=>{let data=d.data();data.id=d.id;data.coleccion="Historial_Cobros";data.tipoRegistro='cobro';datosHistorialVentas.push(data);}); hosp.forEach(d=>{let data=d.data();data.id=d.id;data.coleccion="Historial_Hospitalizacion";data.tipoRegistro='hospitalizacion';datosHistorialVentas.push(data);}); datosHistorialVentas.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0)); window.buscarHistorialVentas(); }); };
+        window.buscarHistorialVentas = function() { let tm=document.getElementById('buscador-hist-ventas').value.toLowerCase(); let fc=document.getElementById('filtro-fecha-hist-ventas').value; let n=Date.now(); let filt=datosHistorialVentas.filter(d=>{ let tx=(d.paciente||' ')+(d.dueno||' ')+(d.atendio||d.doctor||' ')+(d.telefono||' '); let mt=tx.toLowerCase().includes(tm); let mfc=true; if(fc==='hoy')mfc=(n-(d.timestamp||0))<=86400000; if(fc==='semana')mfc=(n-(d.timestamp||0))<=604800000; if(fc==='mes')mfc=(n-(d.timestamp||0))<=2592000000; return mt&&mfc; }); let ht=''; filt.slice(0, 150).forEach(d=>{ try{ let bb=(usuarioLogueado.rol==='Gerente'||usuarioLogueado.rol==='Sub-Gerente'||usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('${d.coleccion}','${d.id}')">🗑️</button>`:''; if(d.tipoRegistro==='hospitalizacion'){ let authStr=d.formatoLegal||""; let authTxt=authStr?`<div style="font-size:0.85em;color:#0caeb9;font-weight:bold;margin-bottom:10px">✅ Formato: ${authStr}</div>`:''; let pTxt=(d.prescripcion)?String(d.prescripcion).substring(0,100)+'...':'Sin notas'; ht+=`<div class="tarjeta-expediente hospital"><div class="exp-header"><span class="exp-title"><span class="badge-tipo" style="background:#e0f7fa;color:#0caeb9">🏥 Formato</span> ${d.paciente||''}</span><span class="exp-date">${d.fechaTexto||''}</span></div><div class="exp-meta"><span>👤 Dueño: ${d.dueno||''}</span></div>${authTxt}<div class="exp-content">${pTxt}</div><div class="exp-footer"><span><strong>Dr. ${d.doctor||''}</strong></span> <div style="display:flex;gap:10px"><button class="btn-exp-action" onclick="window.reimprimirDesdeExpediente(${d.timestamp||0},'${d.tipoRegistro}','hoja')">🖨️ Hoja</button>${bb}</div></div></div>`; } else { let dS=(Array.isArray(d.articulos))?d.articulos.map(a=>a.nombre).join(','):'Vta Gral'; let isVenta=d.ventaMostrador; ht+=`<div class="tarjeta-expediente venta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰</span> ${isVenta?'Mostrador':(d.paciente||'')}</span><span class="exp-date">${d.fechaTexto||''}</span></div><div class="exp-meta"><span>👤 ${isVenta?'N/A':(d.dueno||'')}</span><span>👨‍⚕️ Atendió: ${d.atendio||''}</span></div><div class="exp-content" style="color:#146c43">🛒 ${dS}</div><div class="exp-footer"><span style="font-weight:bold;color:#198754">$${Number(d.totalCobrado||0).toFixed(2)}</span><div style="display:flex;gap:10px"><button class="btn-exp-action btn-venta" onclick="window.reimprimirDesdeExpediente(${d.timestamp||0},'${d.tipoRegistro}','ticket')">🖨️ Tck</button>${bb}</div></div></div>`; } }catch(ex){console.log(ex);} }); document.getElementById('lista-historial-ventas').innerHTML=ht||'<p style="text-align:center">Vacío</p>'; };
 
         window.toggleServicio = function() { let tp = document.getElementById('inv-tipo-prod'); let t=tp?tp.value:'Medicamento/Producto'; let e=(t==='Servicio Médico'); document.getElementById('caja-cantidades-inv')?.classList.toggle('oculto',e); document.getElementById('caja-unidad-inv')?.classList.toggle('oculto',e); let ci = document.getElementById('cantidad-inventario'); if(e && ci) ci.value=9999; };
         window.abrirInventario = function() { modoEdicion=false; window.cambiarPantalla('pantalla-menu','pantalla-inventario'); let ti = document.getElementById('titulo-pantalla-inventario'); if(ti) ti.innerText="📦 Alta de productos/servicios"; let inN = document.getElementById('inv-nombre'); if(inN) { inN.readOnly=false; inN.value=''; } document.querySelectorAll('#pantalla-inventario input').forEach(i=>i.value=''); let itp = document.getElementById('inv-tipo-prod'); if(itp) itp.value='Medicamento/Producto'; window.toggleServicio(); let bgi = document.getElementById('btn-guardar-inventario'); if(bgi) bgi.innerText="Guardar Alta"; };
