@@ -2,7 +2,6 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Hospital Veterinario ERP</title>
-    <!-- Firebase y Excel -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -11,7 +10,7 @@
         body{font-family:'Segoe UI',Roboto,sans-serif;background:#eef2f6;margin:0;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;color:#2b3035;box-sizing:border-box;padding:40px 10px 100px 10px}
         .contenedor{background:#fff;padding:35px;border-radius:24px;box-shadow:0 12px 35px rgba(0,0,0,0.06);width:100%;max-width:680px;max-height:calc(100vh - 80px);overflow-y:auto;box-sizing:border-box;position:relative;margin:auto}
         .contenedor-ancho{max-width:850px} .seccion-separador{border-top:2px dashed #e9ecef;margin:25px 0;padding-top:15px}
-        .pantalla-pin{font-size:2.2em;letter-spacing:10px;margin-bottom:25px;padding:15px;width:100%;text-align:center;background:#f8f9fa;border:2px solid #e9ecef;border-radius:16px;color:#333;font-weight:bold;outline:none}
+        .pantalla-pin{font-size:2.2em;letter-spacing:10px;margin-bottom:25px;padding:15px;width:100%;text-align:center;background:#f8f9fa;border:2px solid #e9ecef;border-radius:16px;color:#333;font-weight:bold;outline:none;box-sizing:border-box}
         .cuadricula-teclas{display:grid;grid-template-columns:repeat(3,1fr);gap:15px} .tecla{padding:20px 0;font-size:1.8em;background:#fff;border:1px solid #dee2e6;border-radius:16px;box-shadow:0 4px 6px rgba(0,0,0,0.02);cursor:pointer;transition:all 0.2s;color:#333;font-weight:500}
         .tecla:active{background:#e9ecef;transform:scale(0.92)} .tecla-borrar{background:#fff0f0;color:#dc3545;border-color:#ffc9c9}
         .header-usuario{background:linear-gradient(135deg,#0caeb9,#088c96);color:#fff;padding:18px;border-radius:16px;margin-bottom:25px;font-weight:bold;font-size:1.1em;text-align:center;box-shadow:0 6px 15px rgba(12,174,185,0.25)}
@@ -29,7 +28,7 @@
         .btn-guardar-rojo{background:#dc3545;color:#fff} .btn-guardar-azul{background:#0caeb9;color:#fff} .btn-guardar-azul:hover{background:#088c96;transform:translateY(-2px)}
         .btn-amarillo{background:#ffc107;color:#000;margin-top:10px} .btn-cancelar{background:transparent;color:#dc3545;margin-top:10px;border:2px solid #ffe3e3;padding:12px;cursor:pointer} .btn-cancelar:hover{background:#fff0f0}
         .btn-filtro{flex:1;padding:10px;border:2px solid #e9ecef;background:#fff;color:#6c757d;border-radius:10px;cursor:pointer;font-weight:bold;white-space:nowrap} .btn-filtro.activo{background:#0caeb9;color:#fff;border-color:#0caeb9}
-        .fab-container{position:fixed;bottom:25px;right:25px;display:flex;flex-direction:column;gap:15px;z-index:9999} .fab{width:65px;height:65px;border-radius:50%;border:none;color:#fff;font-size:28px;box-shadow:0 6px 15px rgba(0,0,0,0.3);cursor:pointer;display:flex;justify-content:center;align-items:center} .fab:active{transform:scale(0.9)} 
+        .fab-container{position:fixed;bottom:25px;right:25px;display:flex;flex-direction:column;gap:15px;z-index:9999} .fab{width:65px;height:65px;border-radius:50%;border:none;color:#fff;font-size:28px;box-shadow:0 6px 15px rgba(0,0,0,0.3);cursor:pointer;display:flex;justify-content:center;align-items:center;transition:0.3s} .fab:active{transform:scale(0.9)} 
         .fab-preview{background:#0caeb9;display:none} .fab-cancel{background:#dc3545}
         .caja-cobro{background:#fffbf0;padding:25px;border-radius:18px;border:1px solid #ffecb5;margin-bottom:20px} .stock-alerta{border-left:6px solid #dc3545;background:#fffafb} .stock-ok{border-left:6px solid #198754} .oculto{display:none!important}
         .carrito-box{background:#fff;border:2px solid #e9ecef;border-radius:14px;padding:15px;margin-bottom:20px;max-height:200px;overflow-y:auto} .item-carrito{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed #e9ecef;font-size:0.95em} .btn-eliminar-item{background:#ffe3e3;color:#dc3545;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:bold}
@@ -41,7 +40,7 @@
         .badge-tipo{padding:5px 10px;border-radius:8px;font-size:0.8em;font-weight:bold;margin-right:10px;display:inline-block} .exp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;border-bottom:1px solid #f1f3f5;padding-bottom:10px;flex-wrap:wrap;gap:10px} .exp-title{font-weight:800;font-size:1.1em;color:#2b3035;display:flex;align-items:center} .exp-date{font-size:0.85em;color:#888;font-weight:500} .exp-content{background:#f8f9fa;padding:15px;border-radius:12px;font-size:0.95em;color:#444;white-space:pre-wrap;margin-bottom:15px;border:1px solid #f1f3f5;line-height:1.6} .exp-footer{display:flex;justify-content:space-between;align-items:center;font-size:0.9em;color:#666;flex-wrap:wrap;gap:10px}
         .btn-exp-action{background:#e0f7fa;color:#0caeb9;border:none;padding:10px 18px;border-radius:10px;cursor:pointer;font-weight:bold;font-size:0.9em;display:flex;align-items:center;gap:6px} .btn-borrar-historial{background:#fff0f0;color:#dc3545;border:1px solid #ffc9c9;padding:10px 15px;border-radius:10px;cursor:pointer;font-weight:bold;font-size:0.9em}
         
-        /* BLOQUEO DE SCROLL EN NUMEROS */
+        /* BLOQUEO DE SCROLL EN NUMEROS Y ESTETICA LOGIN */
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
 
@@ -82,8 +81,10 @@
 
     <!-- PANTALLA LOGIN -->
     <div id="pantalla-login" class="contenedor">
-        <h2 style="color:#333;margin-top:0;font-size:1.8em;text-align:center">🔐 Ingreso</h2>
-        <input type="password" id="input-pin" class="pantalla-pin" readonly placeholder="••••">
+        <h2 style="color:#333;margin-top:0;font-size:1.8em;text-align:center;display:flex;align-items:center;justify-content:center;gap:10px;">🔐 Ingreso</h2>
+        <div style="padding:0 20px; width:100%; box-sizing:border-box;">
+            <input type="password" id="input-pin" class="pantalla-pin" readonly placeholder="••••">
+        </div>
         <div class="cuadricula-teclas">
             <button class="tecla" onclick="window.agregarNumero('1')">1</button>
             <button class="tecla" onclick="window.agregarNumero('2')">2</button>
@@ -143,9 +144,9 @@
         
         <div id="campos-paciente" style="margin-bottom: 20px;">
             <div class="form-row">
-                <div class="grupo-formulario"><label>Dueño (Opcional):</label><input type="text" id="nombre-dueno" placeholder="Ej. Juan Pérez"></div>
-                <div class="grupo-formulario"><label>Paciente (Opcional):</label><input type="text" id="nombre-perro" placeholder="Ej. Firulais"></div>
-                <div class="grupo-formulario"><label>Teléfono (Opcional):</label><input type="number" id="tel-dueno" placeholder="10 dígitos"></div>
+                <div class="grupo-formulario"><label>Dueño (Opcional):</label><input type="text" id="nombre-dueno" placeholder="Auto: N/A"></div>
+                <div class="grupo-formulario"><label>Paciente (Opcional):</label><input type="text" id="nombre-perro" placeholder="Auto: N/A"></div>
+                <div class="grupo-formulario"><label>Teléfono (Opcional):</label><input type="number" id="tel-dueno" placeholder="Auto: N/A"></div>
             </div>
         </div>
         
@@ -163,17 +164,17 @@
             <div class="form-row"><div class="grupo-formulario busqueda-ancha"><label>Descuento Directo ($):</label><input type="number" id="valor-descuento" placeholder="0.00" oninput="window.calcularTotal()"></div></div>
             
             <div class="form-row">
-                <div class="grupo-formulario"><label>Pago 1:</label><select id="metodo-pago-1"><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Transferencia</option><option>Sin Cobro (Interno)</option></select></div>
+                <div class="grupo-formulario"><label>Pago 1:</label><select id="metodo-pago-1"><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Transferencia</option><option>Clip</option><option>American Express</option><option>Sin Cobro (Interno)</option></select></div>
                 <div class="grupo-formulario"><label>Monto 1 ($):</label><input type="number" id="monto-pago-1" placeholder="0.00" oninput="window.calcularMontoFaltante()"></div>
             </div>
             
             <div id="caja-pago-2" class="form-row oculto">
-                <div class="grupo-formulario"><label>Pago 2:</label><select id="metodo-pago-2" onchange="window.calcularMontoFaltante()"><option value="">-- Seleccionar --</option><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Transferencia</option></select></div>
+                <div class="grupo-formulario"><label>Pago 2:</label><select id="metodo-pago-2" onchange="window.calcularMontoFaltante()"><option value="">-- Seleccionar --</option><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Transferencia</option><option>Clip</option><option>American Express</option></select></div>
                 <div class="grupo-formulario"><label>Monto 2 ($):</label><input type="number" id="monto-pago-2" placeholder="0.00" oninput="window.calcularMontoFaltante()"></div>
                 <button class="btn-cancelar" style="width:auto; padding:12px; margin:0;" onclick="window.ocultarPago(2)">✖</button>
             </div>
             <div id="caja-pago-3" class="form-row oculto">
-                <div class="grupo-formulario"><label>Pago 3:</label><select id="metodo-pago-3" onchange="window.calcularMontoFaltante()"><option value="">-- Seleccionar --</option><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Transferencia</option></select></div>
+                <div class="grupo-formulario"><label>Pago 3:</label><select id="metodo-pago-3" onchange="window.calcularMontoFaltante()"><option value="">-- Seleccionar --</option><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Transferencia</option><option>Clip</option><option>American Express</option></select></div>
                 <div class="grupo-formulario"><label>Monto 3 ($):</label><input type="number" id="monto-pago-3" placeholder="0.00" oninput="window.calcularMontoFaltante()"></div>
                 <button class="btn-cancelar" style="width:auto; padding:12px; margin:0;" onclick="window.ocultarPago(3)">✖</button>
             </div>
@@ -239,11 +240,6 @@
             <div id="campos-alta-medica" class="campos-dinamicos oculto"><p style="text-align:center; color:#666; margin:0; font-size:0.9em;">Se usará la información general del paciente ingresada en la parte superior.</p></div>
             <div id="campos-salida-pension" class="campos-dinamicos oculto"><p style="text-align:center; color:#666; margin:0; font-size:0.9em;">Se usará la información general del paciente ingresada en la parte superior.</p></div>
             
-            <div id="caja-autoriza-hosp" class="grupo-formulario oculto" style="display:flex;align-items:center;justify-content:center;margin-top:20px;">
-                <input type="checkbox" id="check-hosp" checked style="width:24px;height:24px;padding:0;margin:0 10px 0 0;appearance:auto;-webkit-appearance:auto;flex:none;"> 
-                <label style="margin:0;text-transform:none;font-weight:bold;color:#0caeb9;font-size:0.95em;">Autoriza Hospitalización</label>
-            </div>
-
             <div style="text-align:center; width:100%;">
                 <button id="btn-leer-firmar" class="btn btn-guardar-azul oculto" style="margin:15px auto 0 auto; width:auto; padding:12px 25px;" onclick="window.abrirLecturaYFirma()">Leer y Firmar Formulario</button>
             </div>
@@ -260,7 +256,7 @@
 
         <div class="seccion-separador"></div>
         <div class="form-row" style="justify-content: center; gap: 20px;">
-            <div class="grupo-formulario" style="flex:none; width: auto;"><button class="btn btn-guardar-azul" style="margin:0; background:#6f42c1; padding:16px 30px;" onclick="window.procesarHospitalizacion('historial')">💾 Solo Guardar en Historial</button></div>
+            <div class="grupo-formulario" style="flex:none; width: auto;"><button class="btn btn-guardar-azul" style="margin:0; background:#6f42c1; padding:16px 30px;" onclick="window.procesarHospitalizacion(false)">💾 Solo Guardar en Historial</button></div>
             <div class="grupo-formulario" style="flex:none; width: auto;"><button class="btn btn-guardar" id="btn-final-hosp" style="margin:0; padding:16px 30px;" onclick="window.procesarHospitalizacion('hoja')" disabled>🖨️ Guardar e Imprimir Formato Legal</button></div>
         </div>
     </div>
@@ -330,7 +326,7 @@
         <div class="caja-cobro oculto" id="caja-reembolso-baja"><h4 style="margin:0 0 15px 0;color:#856404;border-bottom:1px solid #ffeeba;padding-bottom:8px">💰 Impacto en Caja</h4>
             <div class="form-row">
                 <div class="grupo-formulario"><label>Reembolso al Cliente ($):</label><input type="number" id="monto-reembolso-baja" placeholder="Ej. 150.00"></div>
-                <div class="grupo-formulario"><label>Método de Reembolso:</label><select id="metodo-reembolso-baja"><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Transferencia</option></select></div>
+                <div class="grupo-formulario"><label>Método de Reembolso:</label><select id="metodo-reembolso-baja"><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Transferencia</option><option>Clip</option><option>American Express</option></select></div>
             </div>
         </div>
         <button class="btn btn-guardar-rojo" onclick="window.guardarBajaInventario()">Registrar Operación</button>
@@ -349,7 +345,7 @@
         // DESACTIVAR SCROLL EN NUMEROS
         document.addEventListener("wheel", function(e){ if(document.activeElement.type === "number") document.activeElement.blur(); });
 
-        // 1. INICIALIZAR FIREBASE (Protegido)
+        // 1. INICIALIZAR FIREBASE (Protegido con optional chaining)
         window.db = null;
         try {
             const firebaseConfig = { apiKey: "AIzaSyABktLytyy6fBXXDOrJq9B0nErrOzc30a4", authDomain: "kioscovet-93eae.firebaseapp.com", projectId: "kioscovet-93eae", storageBucket: "kioscovet-93eae.firebasestorage.app", messagingSenderId: "571603121447", appId: "1:571603121447:web:ad4a7d439050ec82812502" };
@@ -369,11 +365,11 @@
         // 3. FUNCIONES DE IMPRESIÓN LEGAL
         window.imprimirTicketBoucher = function(venta) {
             let esHosp = venta.tipoRegistro === 'hospitalizacion' || venta.formatoLegal; let titulo = esHosp ? "TICKET HOSPITALIZACIÓN" : "TICKET DE VENTA";
-            let arts = ''; venta.articulos?.forEach(a => { let n = a.nombre?a.nombre.substring(0,20):'Prod'; let u = a.unidad ? `(${a.unidad})` : ''; arts+=`<tr><td>${a.cantidad||1} ${u}</td><td>${n}</td><td class="col-precio">$${Number(a.precio||0).toFixed(2)}</td></tr>`; });
+            let arts = ''; venta.articulos?.forEach(a => { let n = a.nombre?a.nombre.substring(0,20):'Prod'; let u = a.unidad ? `(${a.unidad})` : ''; arts+=`<tr><td>${a.cantidad||1} ${u}</td><td>${n}</td><td class="col-precio">$${Number(a.precio).toFixed(2)}</td></tr>`; });
             let desc = (venta.subtotal||0)-(venta.totalCobrado||0);
-            let pgs = ''; if(venta.pagos) { venta.pagos.forEach(p => { pgs += `PAGO EN ${String(p.metodo).toUpperCase()}: $${Number(p.monto||0).toFixed(2)}<br>`; }); } else { pgs = `PAGO EN ${String(venta.metodoPago||'ESTANCIA HOSP.').toUpperCase()}`; }
+            let pgs = ''; if(venta.pagos) { venta.pagos.forEach(p => { pgs += `PAGO EN ${String(p.metodo).toUpperCase()}: $${Number(p.monto).toFixed(2)}<br>`; }); } else { pgs = `PAGO EN ${String(venta.metodoPago||'ESTANCIA HOSP.').toUpperCase()}`; }
             let html = `<div class="ticket-print"><div class="info-tienda"><strong>CLÍNICA VETERINARIA VETGRU</strong><br>844-227-5808</div><h2>${titulo}</h2><div class="info-ticket">Fch: ${String(venta.fechaTexto).split(',')[0]}<br>Atendió: ${venta.atendio||venta.doctor||''}<br>Paciente/Cliente: ${venta.paciente||'Público General'}</div><table><thead><tr><th>CANT</th><th>ART</th><th class="col-precio">TOT</th></tr></thead><tbody>${arts}</tbody></table><div class="totales">SUBTOTAL: $${Number(venta.subtotal||0).toFixed(2)}<br>${desc>0?`DESC: -$${desc.toFixed(2)}<br>`:''}<strong>TOTAL: $${Number(venta.totalCobrado||0).toFixed(2)}</strong></div><div class="footer">${pgs}<br><br>Sin validez fiscal</div></div>`;
-            let z = document.getElementById('zona-impresion'); if(z) z.innerHTML = html; setTimeout(() => window.print(), 500);
+            document.getElementById('zona-impresion').innerHTML = html; setTimeout(() => window.print(), 500);
         };
 
         window.generarHojasLegalesDinamicas = function(hosp, isPreview = false) {
@@ -384,7 +380,7 @@
                 htmlFinal = `<div class="receta-print">${cabecera}<h2>AUTORIZACIÓN HOSPITALARIA</h2><p style="text-align:right;font-size:11px">FECHA DE INGRESO: ${fch}</p>
                 <table class="tabla-datos"><tr><td colspan="4" class="bg-gris">DATOS DEL PROPIETARIO</td></tr><tr><td colspan="4">${hosp.dueno||''}</td></tr><tr><td colspan="4" class="bg-gris">DOMICILIO</td></tr><tr><td colspan="4">${hosp.domicilio||'__________________________________'}</td></tr><tr><td colspan="2" class="bg-gris">TELÉFONO</td><td colspan="2" class="bg-gris">CORREO ELECTRÓNICO</td></tr><tr><td colspan="2">${hosp.telefono||'_____________'}</td><td colspan="2">${hosp.correo||'___________________'}</td></tr><tr><td colspan="4" class="bg-gris">DATOS DEL PACIENTE</td></tr><tr><td>NOMBRE: ${hosp.paciente||''}</td><td>RAZA: ${hosp.raza||''}</td><td colspan="2">SEXO: ${hosp.sexo||''}</td></tr><tr><td>FECHA NACIMIENTO: ${hosp.nacimiento||'____/____/____'}</td><td>EDAD: ${hosp.edad||''}</td><td colspan="2">COLOR: ${hosp.color||''}</td></tr></table>
                 <table class="tabla-datos"><tr><td colspan="4" class="bg-gris">VACUNACIONES VERIFICADAS</td></tr><tr><td>MÚLTIPLE/SÉXTUPLE: ${hosp.vacSextuple||'____/____/____'}</td><td>RABIA: ${hosp.vacRabia||'____/____/____'}</td><td colspan="2">DESPARASITACIÓN: ${hosp.vacDesp||'____/____/____'}</td></tr></table>
-                <div class="cuerpo-texto"><p><strong>I.- MANEJO MÉDICO:</strong> Autorizo al equipo médico de VETGRU HOSPITAL VETERINARIO realizar el manejo necesario para el bienestar de mi mascota, el cual es: <u>${hosp.manejoMedico||'_________________________________'}</u>.</p><p>Comprendo que la administración de sueros, medicamentos (anestésicos, analgésicos, antibióticos, entre otros) tiene la capacidad de producir reacciones alérgicas en mi mascota que pueden llegar a ser graves; para lo cual en caso de presentarse, autorizo plenamente al equipo médico a tomar acción para contrarrestar estos efectos indeseados. Por lo que comprendo perfectamente que existen riesgos de lesión o muerte para todo paciente sujeto a un procedimiento anestésico.</p><p><strong>II.- HOSPITALIZACIÓN:</strong> ${hosp.autorizaHosp?'☒':'☐'} Comprendo que la hospitalización de mi mascota es necesaria para que este bajo atención y cuidado médico debido a la severidad de su enfermedad... Entiendo completamente que el equipo médico de VETGRU HOSPITAL VETERINARIO hará cuanto sea posible para minimizar el tiempo de hospitalización en la recuperación de mi mascota... y en caso de presentarse una respuesta inadecuada, deslindo cualquier responsabilidad a todo el equipo médico de VETGRU HOSPITAL VETERINARIO.</p><p>Comprendo que VETGRU HOSPITAL VETERINARIO no forma parte de la tienda, por lo tanto deslindo de toda responsabilidad a la tienda Petco. He leído y entendido todo lo anterior, aceptando términos y condiciones expuestas en este documento.</p></div>
+                <div class="cuerpo-texto"><p><strong>I.- MANEJO MÉDICO:</strong> Autorizo al equipo médico de VETGRU HOSPITAL VETERINARIO realizar el manejo necesario para el bienestar de mi mascota, el cual es: <u>${hosp.manejoMedico||'_________________________________'}</u>.</p><p>Comprendo que la administración de sueros, medicamentos (anestésicos, analgésicos, antibióticos, entre otros) tiene la capacidad de producir reacciones alérgicas en mi mascota que pueden llegar a ser graves; para lo cual en caso de presentarse, autorizo plenamente al equipo médico a tomar acción para contrarrestar estos efectos indeseados. Por lo que comprendo perfectamente que existen riesgos de lesión o muerte para todo paciente sujeto a un procedimiento anestésico.</p></div>
                 <div class="firmas-area"><div class="firma-bloque">${htmlFirma}<div class="firma-linea">NOMBRE, FIRMA DEL PROPIETARIO Y FECHA</div></div></div></div>`;
             } else if(authStr === "CONTRATO DE PENSIÓN") {
                 htmlFinal = `<div class="receta-print">${cabecera}<p style="text-align:right;font-size:11px">FECHA: <u>${fch}</u></p><h2 style="text-decoration: underline;">CONTRATO DE PRESTACIÓN DE SERVICIO DE PENSIÓN CANINA Y FELINA</h2>
@@ -455,7 +451,7 @@
         
         window.limpiarFirma = function(id) { let cv = document.getElementById('canvas-'+id); if(cv) cv.getContext('2d').clearRect(0,0,cv.width,cv.height); firmaCapturada = false; };
 
-        // 5. NAVEGACIÓN Y MENÚS
+        // 5. NAVEGACIÓN Y MENÚS (Protegido con ?.)
         window.cambiarPantalla = function(idOcultar, idMostrar) { 
             try{
                 document.querySelectorAll('.contenedor').forEach(el=>el.classList.add('oculto')); 
@@ -476,17 +472,14 @@
             if(document.getElementById('carrito-lista')) window.actualizarCarritoUI(); 
             document.querySelectorAll('input, textarea').forEach(i=>i.value=''); 
             let tc = document.getElementById('total-cobrar'); if(tc) tc.innerText="0.00"; 
-            let nd = document.getElementById('nombre-dueno'); if(nd) nd.value="";
-            let np = document.getElementById('nombre-perro'); if(np) np.value="";
-            let nt = document.getElementById('tel-dueno'); if(nt) nt.value="";
-            let cb = document.getElementById('venta-mostrador'); if(cb) cb.checked=false;
-            
+            let cx1 = document.getElementById('texto-cambio'); if(cx1) cx1.classList.add('oculto');
             document.getElementById('zona-firmas-oculta')?.classList.add('oculto'); 
             document.getElementById('modal-lectura')?.classList.add('oculto'); 
             let sel = document.getElementById('select-formato-legal'); if(sel) sel.value=''; 
             document.querySelectorAll('.campos-dinamicos').forEach(d=>d.classList.add('oculto')); 
-            document.getElementById('btn-leer-firmar')?.classList.add('oculto'); 
-            document.getElementById('caja-autoriza-hosp')?.classList.add('oculto');
+            let cp2 = document.getElementById('caja-pago-2'); if(cp2) cp2.classList.add('oculto');
+            let cp3 = document.getElementById('caja-pago-3'); if(cp3) cp3.classList.add('oculto');
+            let bap = document.getElementById('btn-add-pago'); if(bap) bap.classList.remove('oculto');
             canvasActivo = false; 
             window.cambiarPantalla('todas','pantalla-menu'); 
         };
@@ -509,7 +502,11 @@
             }
         };
 
-        window.limpiarPin = function() { pinActual=""; let inputPin = document.getElementById('input-pin'); if(inputPin) { inputPin.type = "password"; inputPin.value=""; } };
+        window.limpiarPin = function() { 
+            pinActual=""; 
+            let inputPin = document.getElementById('input-pin'); 
+            if(inputPin) { inputPin.type = "password"; inputPin.value=""; }
+        };
         window.cerrarSesion = function() { usuarioLogueado=null; window.limpiarPin(); window.cambiarPantalla('todas','pantalla-login'); };
 
         window.validarPin = function() {
@@ -555,7 +552,7 @@
             const caja = document.getElementById('alerta-inventario-menu'); const lista = document.getElementById('lista-alertas-menu'); 
             if(lista) lista.innerHTML = ''; 
             if(!window.db) return;
-            window.db.collection("Inventario").get().then(q => { let items = []; q.forEach(doc => { const d = doc.data(); if(d.tipoArticulo === 'Servicio Médico') return; let lim = isNaN(parseInt(d.minimo)) ? 5 : parseInt(d.minimo); if (lim > 0 && d.cantidad <= lim) items.push(`<strong>${d.medicamento}</strong>: Quedan ${d.cantidad}`); }); if(items.length > 0) { caja?.classList.remove('oculto'); if(lista) lista.innerHTML = items.slice(0,3).map(i=>`<li>${i}</li>`).join('') + (items.length>3?`<li style="color:#0caeb9;cursor:pointer" onclick="window.abrirVerInventario()">+ ${items.length-3} más</li>`:''); } else { caja?.classList.add('oculto'); } }).catch(e=>{}); 
+            window.db.collection("Inventario").get().then(q => { let items = []; q.forEach(doc => { const d = doc.data(); if(d.tipoArticulo === 'Servicio Médico') return; let lim = isNaN(parseInt(d.minimo)) ? 5 : parseInt(d.minimo); if (lim > 0 && d.cantidad <= lim) items.push(`<strong>${d.medicamento}</strong>: Quedan ${d.cantidad}`); }); if(items.length > 0) { caja?.classList.remove('oculto'); if(lista) lista.innerHTML = items.slice(0,3).map(i=>`<li>${i}</li>`).join('') + (items.length>3?`<li style="color:#0caeb9;cursor:pointer" onclick="window.abrirVerInventario()">+ ${items.length-3} más</li>`:''); alert("⚠️ Tienes productos bajos en inventario."); } else { caja?.classList.add('oculto'); } }).catch(e=>{}); 
         };
 
         window.cargarSugerenciasInventario = function() { inventarioGlobal = []; if(!window.db) return; window.db.collection("Inventario").get().then(q => { q.forEach(doc => inventarioGlobal.push(doc.data())); inventarioGlobal.sort((a,b)=>a.medicamento.localeCompare(b.medicamento)); }); };
@@ -587,20 +584,21 @@
         
         window.calcularTotal = function() { window.actualizarCarritoUI(); };
         window.calcularMontoFaltante = function() {
-            let m1 = parseFloat(document.getElementById('monto-pago-1')?.value) || 0;
+            let m1 = parseFloat(document.getElementById('monto-pago-1')?.value) || 0; let mP1 = document.getElementById('metodo-pago-1')?.value;
             let m2Inp = document.getElementById('monto-pago-2'); let m2Sel = document.getElementById('metodo-pago-2');
             let m3Inp = document.getElementById('monto-pago-3'); let m3Sel = document.getElementById('metodo-pago-3');
             
             let f1 = totalCobroCalculado - m1;
             let tc = document.getElementById('texto-cambio');
             
-            let sumaPagos = m1 + (parseFloat(m2Inp?.value)||0) + (parseFloat(m3Inp?.value)||0);
+            let m2 = parseFloat(m2Inp?.value) || 0; let m3 = parseFloat(m3Inp?.value) || 0;
+            let sumaPagos = m1 + m2 + m3;
+            
             if(sumaPagos > totalCobroCalculado && totalCobroCalculado > 0) {
                 if(tc) { tc.classList.remove('oculto'); tc.innerText = `Cambio a entregar: $${(sumaPagos - totalCobroCalculado).toFixed(2)}`; }
             } else {
                 if(tc) tc.classList.add('oculto');
                 if(f1 > 0) { 
-                    let m2 = parseFloat(m2Inp?.value) || 0;
                     if(m2 === 0 && document.activeElement !== m2Inp && m2Inp && !document.getElementById('caja-pago-2')?.classList.contains('oculto')) { m2Inp.value = f1.toFixed(2); if(m2Sel && m2Sel.value==="") m2Sel.value = "Tarjeta Débito"; m2 = f1; }
                     let f2 = f1 - m2;
                     if(f2 > 0 && !document.getElementById('caja-pago-3')?.classList.contains('oculto')) {
@@ -626,14 +624,13 @@
 
         window.abrirFormulario = function() { 
             window.cambiarPantalla('pantalla-menu', 'pantalla-registro-baja'); 
-            let cp2 = document.getElementById('caja-pago-2'); if(cp2) cp2.classList.add('oculto'); 
-            let cp3 = document.getElementById('caja-pago-3'); if(cp3) cp3.classList.add('oculto'); 
-            let bap = document.getElementById('btn-add-pago'); if(bap) bap.classList.remove('oculto'); 
-            let tc = document.getElementById('texto-cambio'); if(tc) tc.classList.add('oculto');
+            let cp2 = document.getElementById('caja-pago-2'); if(cp2) cp2.classList.add('oculto');
+            let cp3 = document.getElementById('caja-pago-3'); if(cp3) cp3.classList.add('oculto');
+            let bap = document.getElementById('btn-add-pago'); if(bap) bap.classList.remove('oculto');
             carrito=[]; window.actualizarCarritoUI(); 
         };
 
-        window.procesarVenta = async function(imprimir) {
+        window.procesarVenta = async function() {
             if(guardandoBloqueo) return; 
             const du = document.getElementById('nombre-dueno')?.value.trim() || 'N/A'; 
             const pe = document.getElementById('nombre-perro')?.value.trim() || 'N/A'; 
@@ -661,11 +658,11 @@
             if(sumaPagos < totalCobroCalculado && totalCobroCalculado > 0) { return alert(`⚠️ Faltan fondos. Los montos de pago no suman el Total ($${sumaPagos.toFixed(2)} de $${totalCobroCalculado.toFixed(2)})`); }
 
             guardandoBloqueo = true; document.body.style.cursor='wait';
-            let vData = { atendio:usuarioLogueado.nombre, paciente:pe, dueno:du, telefono:tel, articulos:carrito, subtotal:carrito.reduce((s,i)=>s+i.total,0), valorDescuento:desc, totalCobrado:totalCobroCalculado, pagos:pagos, metodoPago: pagos.map(p=>p.metodo).join(' y '), ventaMostrador:document.getElementById('venta-mostrador')?.checked||false, fechaTexto:new Date().toLocaleString('es-MX'), timestamp:Date.now() };
+            let vData = { atendio:usuarioLogueado.nombre, paciente:pe, dueno:du, telefono:tel, articulos:carrito, subtotal:carrito.reduce((s,i)=>s+i.total,0), valorDescuento:desc, totalCobrado:totalCobroCalculado, pagos:pagos, metodoPago: pagos.map(p=>p.metodo).join(' y '), ventaMostrador:true, fechaTexto:new Date().toLocaleString('es-MX'), timestamp:Date.now() };
             
             window.db.collection("Historial_Cobros").add(vData).then(()=>{ 
                 carrito.forEach(i=>{if(i.tipo!=='Servicio Médico'){let sN=String(i.nombre).replace(/\//g,'-');window.db.collection("Inventario").doc(sN).get().then(d=>{if(d.exists)window.db.collection("Inventario").doc(sN).update({cantidad:d.data().cantidad-i.cantidad});});}}); 
-                if(imprimir) window.imprimirTicketBoucher(vData); else alert("✅ Venta OK."); window.cancelarVolver(); 
+                window.imprimirTicketBoucher(vData); window.cancelarVolver(); 
             }).catch(e=>alert("Error: "+e.message)).finally(()=>{guardandoBloqueo=false;document.body.style.cursor='default';});
         };
 
@@ -684,19 +681,19 @@
             document.querySelectorAll('.campos-dinamicos').forEach(d=>d.classList.add('oculto')); 
             let bl = document.getElementById('btn-leer-firmar'); 
             let zf = document.getElementById('zona-firmas-oculta'); 
-            let cah = document.getElementById('caja-autoriza-hosp');
+            let btnG = document.getElementById('btn-final-hosp');
 
             if(s) { 
                 let map={ "AUTORIZACIÓN HOSPITALARIA":'campos-auth-hospital', "CONTRATO DE PENSIÓN":'campos-pension', "ALTA VOLUNTARIA":'campos-alta-voluntaria' }; 
                 if(map[s]) document.getElementById(map[s])?.classList.remove('oculto'); 
                 if(bl) bl.classList.remove('oculto'); 
                 if(zf) zf.classList.remove('oculto'); 
-                if(s === "AUTORIZACIÓN HOSPITALARIA" && cah) cah.classList.remove('oculto'); else if(cah) cah.classList.add('oculto');
+                if(btnG) btnG.disabled = false;
                 setTimeout(window.resizeCanvases, 50); canvasActivo=true;
             } else {
                 if(bl) bl.classList.add('oculto'); 
                 if(zf) zf.classList.add('oculto');
-                if(cah) cah.classList.add('oculto');
+                if(btnG) btnG.disabled = true;
             }
         };
         
@@ -721,12 +718,12 @@
 
         window.procesarHospitalizacion = function(imprimir) {
             if(guardandoBloqueo) return; let hD = window.recopilarDatosHosp(); let firm = canvasActivo&&firmaCapturada ? document.getElementById('canvas-cliente').toDataURL() : "";
-            if(!hD.dueno || !hD.paciente) return alert("⚠️ Llena Dueño y Paciente arriba."); if(!hD.formatoLegal) return alert("⚠️ Selecciona Formato Legal.");
+            if(!hD.dueno || !hD.paciente) return alert("⚠️ Llena Dueño y Paciente arriba."); if(!hD.formatoLegal && imprimir!=='historial') return alert("⚠️ Selecciona un Formato Legal.");
             guardandoBloqueo=true; document.body.style.cursor='wait'; 
             
             hD.firmaCliente=firm; hD.folio=String(Date.now()).slice(-5); hD.fechaTexto=new Date().toLocaleString('es-MX'); hD.timestamp=Date.now(); hD.fechaReal=firebase.firestore.FieldValue.serverTimestamp();
             window.db.collection("Historial_Hospitalizacion").add(hD).then(()=>{ 
-                if(imprimir==='hoja') window.generarHojasLegalesDinamicas(hD, false); else alert("✅ Guardado en Historial."); 
+                if(imprimir==='hoja') window.generarHojasLegalesDinamicas(hD, false); else alert("✅ Guardado Historial."); 
                 window.cancelarVolver(); 
             }).catch(e=>alert("Error: "+e.message)).finally(()=>{guardandoBloqueo=false;document.body.style.cursor='default';});
         };
@@ -763,7 +760,7 @@
             } 
             let le = document.getElementById('lista-expediente'); if(le) le.innerHTML = html;
         };
-        window.reimprimirDesdeExpediente = function(ts, tipo, formato) { let data = datosExpediente.find(x => (x.timestamp||0) == ts && x.tipoRegistro == tipo); if(!data) data = datosHistorialVentas.find(x => (x.timestamp||0) == ts && x.tipoRegistro == tipo); if(data) { if(formato === 'hoja') window.generarHojasLegalesDinamicas(data, false); else window.imprimirTicketBoucher(data); } };
+        window.reimprimirDesdeExpediente = function(ts, tipo, formato) { let data = datosExpediente.find(x => (x.timestamp||0) == ts && x.tipoRegistro == tipo); if(data) { if(formato === 'hoja') window.generarHojasLegalesDinamicas(data, false); else window.imprimirTicketBoucher(data); } };
         window.borrarRegistro = function(c, id) { 
             try{
                 if(confirm("¿Borrar definitivamente?")) { 
@@ -791,10 +788,7 @@
 
         window.abrirHistorialInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-historial-inventario'); window.cargarHistorialInventario(); };
         window.cargarHistorialInventario = function() { const l=document.getElementById('lista-historial-inventario'); if(!l)return; l.innerHTML='<div style="text-align:center">⏳</div>'; window.db.collection("Historial_Inventario").orderBy("timestamp","desc").limit(200).get().then(q=>{ datosHistorialInv=[]; q.forEach(d=>{let dD=d.data();dD.id=d.id;dD.coleccion="Historial_Inventario";datosHistorialInv.push(dD);}); window.buscarHistorialInventario(); }).catch(e=>{if(l)l.innerHTML=`<p style="color:red">Error: ${e.message}</p>`;}); };
-        window.buscarHistorialInventario = function() { let bi = document.getElementById('buscador-hist-inv'); let tm=bi?bi.value.toLowerCase():''; let ft = document.getElementById('filtro-tipo-hist-inv'); let tp=ft?ft.value:'todos'; let ff = document.getElementById('filtro-fecha-hist-inv'); let fc=ff?ff.value:'todos'; let n=Date.now(); let filt=datosHistorialInv.filter(d=>{ let mt=(d.medicamento||'').toLowerCase().includes(tm); let m=(d.tipoMovimiento||''); let mtp=(tp==='todos'||m.includes(tp)); let mfc=true; if(fc==='hoy')mfc=(n-(d.timestamp||0))<=86400000; if(fc==='semana')mfc=(n-(d.timestamp||0))<=604800000; if(fc==='mes')mfc=(n-(d.timestamp||0))<=2592000000; return mt&&mtp&&mfc; }); let ht=''; filt.forEach(d=>{ let m=(d.tipoMovimiento||''); let iA=m.includes('Alta'); let iB=m.includes('Merma')||m.includes('Devolución'); let cl=iA?'alta':(iB?'merma':'edicion'); let bd=iA?'badge-alta':(iB?'badge-merma':'badge-edicion'); let ic=iA?'📦 Alta':(iB?'📉 Baja':'✏️ Edición'); ht+=`<div class="tarjeta-expediente ${cl}"><div class="exp-header"><span class="exp-title"><span class="badge-tipo ${bd}">${ic}</span> ${d.medicamento}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-content">Cantidad: ${d.cantidad||0} ${d.unidad||''} <br>Motivo: ${d.motivo||''}</div><div class="exp-footer"><span>Por: ${d.registradoPor}</span></div></div>`; }); let l = document.getElementById('lista-historial-inventario'); if(l) l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; };
-
-        window.abrirHistorialVentas = function() { window.cambiarPantalla('pantalla-menu','pantalla-historial-ventas'); document.getElementById('lista-historial-ventas').innerHTML='<div style="text-align:center;padding:40px">⏳</div>'; Promise.all([window.db.collection("Historial_Cobros").orderBy("timestamp","desc").limit(150).get(), window.db.collection("Historial_Hospitalizacion").orderBy("timestamp","desc").limit(150).get()]).then(([cobros, hosp])=>{ datosHistorialVentas=[]; cobros.forEach(d=>{let data=d.data();data.id=d.id;data.coleccion="Historial_Cobros";data.tipoRegistro='cobro';datosHistorialVentas.push(data);}); hosp.forEach(d=>{let data=d.data();data.id=d.id;data.coleccion="Historial_Hospitalizacion";data.tipoRegistro='hospitalizacion';datosHistorialVentas.push(data);}); datosHistorialVentas.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0)); window.buscarHistorialVentas(); }); };
-        window.buscarHistorialVentas = function() { let tm=document.getElementById('buscador-hist-ventas').value.toLowerCase(); let fc=document.getElementById('filtro-fecha-hist-ventas').value; let n=Date.now(); let filt=datosHistorialVentas.filter(d=>{ let tx=(d.paciente||' ')+(d.dueno||' ')+(d.atendio||d.doctor||' ')+(d.telefono||' '); let mt=tx.toLowerCase().includes(tm); let mfc=true; if(fc==='hoy')mfc=(n-(d.timestamp||0))<=86400000; if(fc==='semana')mfc=(n-(d.timestamp||0))<=604800000; if(fc==='mes')mfc=(n-(d.timestamp||0))<=2592000000; return mt&&mfc; }); let ht=''; filt.forEach(d=>{ try{ let bb=(usuarioLogueado.rol==='Gerente'||usuarioLogueado.rol==='Sub-Gerente'||usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('${d.coleccion}','${d.id}')">🗑️</button>`:''; if(d.tipoRegistro==='hospitalizacion'){ let authStr=d.formatoLegal||""; let authTxt=authStr?`<div style="font-size:0.85em;color:#0caeb9;font-weight:bold;margin-bottom:10px">✅ Formato: ${authStr}</div>`:''; let pTxt=(d.prescripcion)?String(d.prescripcion).substring(0,100)+'...':'Sin notas'; let dS=(Array.isArray(d.articulos))?d.articulos.map(a=>a.nombre).join(', '):''; ht+=`<div class="tarjeta-expediente hospital"><div class="exp-header"><span class="exp-title"><span class="badge-tipo" style="background:#e0f7fa;color:#0caeb9">🏥 Hosp/Notas</span> ${d.paciente||''}</span><span class="exp-date">${d.fechaTexto||''}</span></div><div class="exp-meta"><span>👤 ${d.dueno||''}</span></div>${authTxt}<div class="exp-content">${pTxt}<br><span style="color:#666;font-size:0.85em">${dS?`🩺: ${dS}`:''}</span></div><div class="exp-footer"><span><strong>Dr. ${d.doctor||''}</strong></span> <div style="display:flex;gap:10px"><button class="btn-exp-action" onclick="window.reimprimirDesdeExpediente(${d.timestamp||0},'${d.tipoRegistro}','hoja')">🖨️ Hoja</button><button class="btn-exp-action" onclick="window.reimprimirDesdeExpediente(${d.timestamp||0},'${d.tipoRegistro}','ticket')">🧾 Tck</button>${bb}</div></div></div>`; } else { let dS=(Array.isArray(d.articulos))?d.articulos.map(a=>a.nombre).join(','):'Vta Gral'; ht+=`<div class="tarjeta-expediente venta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰</span> ${d.ventaMostrador?'Mostrador':(d.paciente||'')}</span><span class="exp-date">${d.fechaTexto||''}</span></div><div class="exp-meta"><span>👤 ${d.ventaMostrador?'N/A':(d.dueno||'')} ${d.telefono?`(${d.telefono})`:''}</span><span>👨‍⚕️ ${d.atendio||''}</span></div><div class="exp-content" style="color:#146c43">🛒 ${dS}</div><div class="exp-footer"><span style="font-weight:bold;color:#198754">$${Number(d.totalCobrado||0).toFixed(2)}</span><div style="display:flex;gap:10px"><button class="btn-exp-action btn-venta" onclick="window.reimprimirDesdeExpediente(${d.timestamp||0},'${d.tipoRegistro}','ticket')">🖨️ Tck</button>${bb}</div></div></div>`; } }catch(ex){console.log(ex);} }); document.getElementById('lista-historial-ventas').innerHTML=ht||'<p style="text-align:center">Vacío</p>'; };
+        window.buscarHistorialInventario = function() { let bi = document.getElementById('buscador-hist-inv'); let tm=bi?bi.value.toLowerCase():''; let ft = document.getElementById('filtro-tipo-hist-inv'); let tp=ft?ft.value:'todos'; let ff = document.getElementById('filtro-fecha-hist-inv'); let fc=ff?ff.value:'todos'; let n=Date.now(); let filt=datosHistorialInv.filter(d=>{ let mt=(d.medicamento||'').toLowerCase().includes(tm); let m=(d.tipoMovimiento||''); let mtp=(tp==='todos'||m.includes(tp)); let mfc=true; if(fc==='hoy')mfc=(n-(d.timestamp||0))<=86400000; if(fc==='semana')mfc=(n-(d.timestamp||0))<=604800000; if(fc==='mes')mfc=(n-(d.timestamp||0))<=2592000000; return mt&&mtp&&mfc; }); let ht=''; filt.forEach(d=>{ let m=(d.tipoMovimiento||''); let iA=m.includes('Alta'); let iB=m.includes('Merma')||m.includes('Devolución'); let cl=iA?'alta':(iB?'merma':'edicion'); let bd=iA?'badge-alta':(iB?'badge-merma':'badge-edicion'); let ic=iA?'📦 Alta':(iB?'📉 Baja':'✏️ Edición'); ht+=`<div class="tarjeta-expediente ${cl}"><div class="exp-header"><span class="exp-title"><span class="badge-tipo ${bd}">${ic}</span> ${d.medicamento}</span><span class="exp-date">${d.fechaTexto}</span></div><div class="exp-content">Cantidad: ${d.cantidad||0} ${d.unidad||''} <br>Motivo: ${d.motivo||''}</div><div class="exp-footer"><span>Por: ${d.registradoPor}</span></div></div>`; }); let l = document.getElementById('lista-historial-inventario'); if(l) l.innerHTML=ht||'<p style="text-align:center">Vacío</p>'; };
 
         window.toggleServicio = function() { let tp = document.getElementById('inv-tipo-prod'); let t=tp?tp.value:'Medicamento/Producto'; let e=(t==='Servicio Médico'); document.getElementById('caja-cantidades-inv')?.classList.toggle('oculto',e); document.getElementById('caja-unidad-inv')?.classList.toggle('oculto',e); let ci = document.getElementById('cantidad-inventario'); if(e && ci) ci.value=9999; };
         window.abrirInventario = function() { modoEdicion=false; window.cambiarPantalla('pantalla-menu','pantalla-inventario'); let ti = document.getElementById('titulo-pantalla-inventario'); if(ti) ti.innerText="📦 Alta de productos/servicios"; let inN = document.getElementById('inv-nombre'); if(inN) { inN.readOnly=false; inN.value=''; } document.querySelectorAll('#pantalla-inventario input').forEach(i=>i.value=''); let itp = document.getElementById('inv-tipo-prod'); if(itp) itp.value='Medicamento/Producto'; window.toggleServicio(); let bgi = document.getElementById('btn-guardar-inventario'); if(bgi) bgi.innerText="Guardar Alta"; };
