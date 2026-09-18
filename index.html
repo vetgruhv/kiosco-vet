@@ -2,7 +2,6 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Hospital Veterinario ERP</title>
-    <!-- Firebase y Excel -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -37,7 +36,8 @@
         .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:100000;display:flex;justify-content:center;align-items:center} .modal-content{background:#fff;width:95%;max-width:800px;height:90vh;border-radius:16px;display:flex;flex-direction:column;overflow:hidden} .modal-header{background:#0caeb9;color:#fff;padding:15px 20px;font-weight:bold;display:flex;justify-content:space-between;align-items:center} .modal-body{padding:20px;overflow-y:auto;flex:1;font-family:Arial,sans-serif;font-size:13px;line-height:1.5;color:#333} .modal-footer{padding:15px;border-top:1px solid #eee;text-align:center;background:#f8f9fa}
         .firma-card{width:100%;max-width:450px;margin:0 auto;border:1px solid #e9ecef;border-radius:14px;padding:15px;background:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;box-sizing:border-box} .firma-title{font-size:0.85em;font-weight:800;margin-bottom:12px;text-transform:uppercase;color:#0caeb9} .canvas-firma{border:2px dashed #ced4da;border-radius:10px;width:100%;height:140px;background:#fafafa;touch-action:none;margin-bottom:12px;cursor:crosshair;box-sizing:border-box} .btn-borrar-firma{border:1px solid #ffc9c9;background:#fff0f0;color:#dc3545;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:0.85em;font-weight:bold}
         .panel-busqueda{background:#fff;padding:20px;border-radius:18px;margin-bottom:25px;border:1px solid #e9ecef;display:flex;flex-wrap:wrap;gap:15px;align-items:flex-end} .panel-busqueda .grupo-formulario{flex:1 1 200px;margin:0} .busqueda-ancha{flex:1 1 100%!important}
-        .lista-vertical{display:block;max-height:500px;overflow-y:auto;padding-right:10px;margin-bottom:15px} .tarjeta-expediente,.tarjeta-info{border:1px solid #e9ecef;border-radius:16px;padding:20px;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.03);text-align:left;position:relative;overflow:hidden;margin-bottom:18px;display:block;width:100%;box-sizing:border-box}
+        .lista-vertical{display:block;max-height:500px;overflow-y:auto;padding-right:10px;margin-bottom:15px} .tarjeta-expediente,.tarjeta-info{border:1px solid #e9ecef;border-radius:16px;padding:20px;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.03);text-align:left;position:relative;overflow:hidden;margin-bottom:18px;display:block;width:100%;box-sizing:border-box;transition:0.2s}
+        .tarjeta-expediente:hover, .tarjeta-info-click:hover{transform:translateY(-2px); box-shadow:0 8px 15px rgba(0,0,0,0.06); border-color:#0caeb9;}
         .badge-tipo{padding:5px 10px;border-radius:8px;font-size:0.8em;font-weight:bold;margin-right:10px;display:inline-block} .exp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;border-bottom:1px solid #f1f3f5;padding-bottom:10px;flex-wrap:wrap;gap:10px} .exp-title{font-weight:800;font-size:1.1em;color:#2b3035;display:flex;align-items:center} .exp-date{font-size:0.85em;color:#888;font-weight:500} .exp-content{background:#f8f9fa;padding:15px;border-radius:12px;font-size:0.95em;color:#444;white-space:pre-wrap;margin-bottom:15px;border:1px solid #f1f3f5;line-height:1.6} .exp-footer{display:flex;justify-content:space-between;align-items:center;font-size:0.9em;color:#666;flex-wrap:wrap;gap:10px}
         .btn-exp-action{background:#e0f7fa;color:#0caeb9;border:none;padding:10px 18px;border-radius:10px;cursor:pointer;font-weight:bold;font-size:0.9em;display:flex;align-items:center;gap:6px} .btn-borrar-historial{background:#fff0f0;color:#dc3545;border:1px solid #ffc9c9;padding:10px 15px;border-radius:10px;cursor:pointer;font-weight:bold;font-size:0.9em}
         
@@ -52,7 +52,7 @@
         @media (max-width:600px){.hosp-listas-grid{grid-template-columns:1fr}}
         #zona-impresion{display:none}
         @media print{
-            @page{margin:0} body{background:#fff;margin:0;padding:0;color:#000} .contenedor,.fab-container,#modal-lectura,#modal-opciones-guardar,#toast-notificacion{display:none!important} #zona-impresion{display:block!important;width:100%}
+            @page{margin:0} body{background:#fff;margin:0;padding:0;color:#000} .contenedor,.fab-container,#modal-lectura,#modal-opciones-guardar,#modal-ver-detalle,#toast-notificacion{display:none!important} #zona-impresion{display:block!important;width:100%}
             .ticket-print{width:78mm;font-family:'Courier New',Courier,monospace;font-size:12px;margin:0;padding:10mm 5mm;text-transform:uppercase} .ticket-print h2{font-size:16px;text-align:center;margin:0 0 5px 0;font-weight:bold} .ticket-print .info-tienda{text-align:center;font-size:11px;margin-bottom:10px;line-height:1.2} .ticket-print .info-ticket{margin-bottom:10px;font-size:11px;border-bottom:1px dashed #000;padding-bottom:5px;line-height:1.4} .ticket-print table{width:100%;border-collapse:collapse;margin-bottom:10px} .ticket-print th{border-bottom:1px dashed #000;text-align:left;font-weight:normal;font-size:11px;padding-bottom:2px} .ticket-print td{padding:4px 0;font-size:11px;vertical-align:top} .ticket-print .col-precio{text-align:right} .ticket-print .totales{text-align:right;margin-top:5px;font-size:12px;border-top:1px dashed #000;padding-top:5px;line-height:1.4} .ticket-print .footer{text-align:center;font-size:11px;margin-top:15px;border-top:1px dashed #000;padding-top:10px;line-height:1.4}
             .receta-print{width:100%;max-width:216mm;font-family:Arial,sans-serif;margin:0 auto;padding:10mm 15mm;box-sizing:border-box;color:#000} .receta-print .cabecera{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:15px;border-bottom:2px solid #0caeb9;padding-bottom:10px} .receta-print .logo-area{width:40%} .receta-print .logo-area h1{margin:0;font-size:38px;font-weight:900;letter-spacing:-1px;margin-bottom:-5px;color:#0caeb9} .receta-print .logo-area p{margin:0;font-size:10px;letter-spacing:2px;font-weight:bold;color:#0caeb9} .receta-print .datos-clinica{width:50%;font-size:10px;text-align:right;line-height:1.3;font-weight:bold} .receta-print h2{text-align:center;font-size:14px;text-transform:uppercase;margin:15px 0}
             .tabla-datos{width:100%;border-collapse:collapse;margin-bottom:15px;font-size:10px} .tabla-datos td{border:1px solid #000;padding:4px 6px} .tabla-datos .bg-gris{background-color:#f0f0f0 !important;-webkit-print-color-adjust:exact;font-weight:bold;width:25%} .cuerpo-texto{font-size:11px;text-align:justify;line-height:1.5;margin-bottom:20px} .cuerpo-texto p{margin:0 0 10px 0}
@@ -70,6 +70,17 @@
 
     <datalist id="lista-medicamentos-general"></datalist>
     <div id="zona-impresion"></div>
+
+    <!-- MODAL DETALLES (CORTE Y VENTAS) -->
+    <div id="modal-ver-detalle" class="modal-overlay oculto">
+        <div class="modal-content" style="max-height:85vh;">
+            <div class="modal-header">
+                <span id="titulo-modal-detalle">📄 Detalles</span>
+                <button onclick="document.getElementById('modal-ver-detalle').classList.add('oculto')" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">✖</button>
+            </div>
+            <div id="cuerpo-modal-detalle" class="modal-body" style="background:#f8f9fa;"></div>
+        </div>
+    </div>
 
     <!-- MODAL OPCIONES DE GUARDADO -->
     <div id="modal-opciones-guardar" class="modal-overlay oculto">
@@ -136,7 +147,7 @@
         
         <h4 id="titulo-gerencia" class="oculto" style="color:#adb5bd;margin:25px 0 15px 0;text-transform:uppercase;font-size:0.85em;letter-spacing:1px">Administración (Gerencia)</h4>
         <div class="menu-grid">
-            <button class="btn-menu oculto" id="btn-corte" onclick="window.abrirCorteCaja('dia')" style="background:#e0f7fa;border-color:#b2ebf2"><span>💰 Corte de Caja</span></button>
+            <button class="btn-menu oculto" id="btn-corte" onclick="window.abrirCorteCaja('dia')"><span>💰 Corte de Caja</span></button>
             <button class="btn-menu oculto" id="btn-ver-inventario" onclick="window.abrirVerInventario()"><span>👀 Ver Inventario</span></button>
             <button class="btn-menu oculto" id="btn-alta-inventario" onclick="window.abrirInventario()"><span>📦 Alta productos/servicios</span></button>
             <button class="btn-menu oculto" id="btn-sistemas" onclick="window.abrirModoSistemas()"><span>⚙️ Modo Sistemas (Excel)</span></button>
@@ -191,7 +202,6 @@
                 <div class="grupo-formulario"><label>Monto 1 ($):</label><input type="number" id="monto-pago-1" placeholder="0.00" oninput="window.calcularMontoFaltante(1)"></div>
             </div>
             
-            <!-- Cajas de Pago Extra -->
             <div id="caja-pago-2" class="form-row oculto">
                 <div class="grupo-formulario"><label>Pago 2:</label><select id="metodo-pago-2" onchange="window.calcularMontoFaltante(0)"><option value="">-- Seleccionar --</option><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Transferencia</option><option>Clip</option><option>American Express</option></select></div>
                 <div class="grupo-formulario"><label>Monto 2 ($):</label><input type="number" id="monto-pago-2" placeholder="0.00" oninput="window.calcularMontoFaltante(2)"></div>
@@ -280,7 +290,7 @@
 
         <div class="seccion-separador"></div>
         <div class="form-row" style="justify-content: center; gap: 20px;">
-            <div class="grupo-formulario" style="flex:none; width: auto;"><button class="btn btn-guardar-azul" style="margin:0; background:#6f42c1; padding:16px 30px;" onclick="window.procesarHospitalizacion('historial')">💾 Solo Guardar en Historial</button></div>
+            <div class="grupo-formulario" style="flex:none; width: auto;"><button class="btn btn-guardar-azul" style="margin:0; background:#6f42c1; padding:16px 30px;" onclick="window.procesarHospitalizacion(false)">💾 Solo Guardar en Historial</button></div>
             <div class="grupo-formulario" style="flex:none; width: auto;"><button class="btn btn-guardar" id="btn-final-hosp" style="margin:0; padding:16px 30px;" onclick="window.procesarHospitalizacion('hoja')" disabled>🖨️ Guardar e Imprimir Formato Legal</button></div>
         </div>
     </div>
@@ -388,7 +398,7 @@
             }
         }, { passive: false });
 
-        // 1. INICIALIZAR FIREBASE (Protegido con optional chaining)
+        // 1. INICIALIZAR FIREBASE 
         window.db = null;
         try {
             const firebaseConfig = { apiKey: "AIzaSyABktLytyy6fBXXDOrJq9B0nErrOzc30a4", authDomain: "kioscovet-93eae.firebaseapp.com", projectId: "kioscovet-93eae", storageBucket: "kioscovet-93eae.firebasestorage.app", messagingSenderId: "571603121447", appId: "1:571603121447:web:ad4a7d439050ec82812502" };
@@ -405,6 +415,7 @@
         window.precioActualBaja = 0; window.productoEnEdicionOriginal = "";
         window.esVentaMostrador = true;
         window.filtroActivoVentas = 'dia';
+        window.ultimoResumenCorte = {}; // Para el modal de corte
 
         // 3. FUNCIONES DE IMPRESIÓN LEGAL
         window.imprimirTicketBoucher = function(venta) {
@@ -505,11 +516,6 @@
                     if(idMostrar==='pantalla-menu'||idMostrar==='pantalla-login') { fab.classList.add('oculto'); } 
                     else { fab.classList.remove('oculto'); }
                 } 
-                let fp = document.getElementById('fab-preview'); 
-                if(fp) {
-                    if(idMostrar==='pantalla-hospitalizacion' && document.getElementById('select-formato-legal')?.value !== "") { fp.style.display='flex'; } 
-                    else { fp.style.display='none'; }
-                }
                 if(idMostrar==='pantalla-menu') window.revisarAlertasInventario(); 
             } catch(e) { console.log(e); }
         };
@@ -850,7 +856,7 @@
             }).catch(e=>alert("Error: "+e.message)).finally(()=>{guardandoBloqueo=false;document.body.style.cursor='default';});
         };
 
-        // 9. FORMATOS HOSPITALARIOS
+        // 9. FORMATOS HOSPITALARIOS Y MODALES DE DETALLE
         window.abrirHospitalizacion = function() { 
             window.cambiarPantalla('pantalla-menu', 'pantalla-hospitalizacion'); 
             document.getElementById('zona-firmas-oculta')?.classList.add('oculto'); 
@@ -870,6 +876,7 @@
             if(s) { 
                 let map={ "AUTORIZACIÓN HOSPITALARIA":'campos-auth-hospital', "CONTRATO DE PENSIÓN":'campos-pension', "ALTA VOLUNTARIA":'campos-alta-voluntaria' }; 
                 if(map[s]) document.getElementById(map[s])?.classList.remove('oculto'); 
+                if(bl) bl.classList.remove('oculto'); 
                 if(zf) zf.classList.remove('oculto'); 
                 if(btnG) btnG.disabled = false;
                 setTimeout(window.resizeCanvases, 50); canvasActivo=true;
@@ -905,6 +912,83 @@
             }).catch(e=>alert("Error: "+e.message)).finally(()=>{guardandoBloqueo=false;document.body.style.cursor='default';});
         };
 
+        // VENTANA MODAL PARA DETALLES DE VENTA O CORTE
+        window.abrirModalCorteUsuario = function(usr) {
+            if(!window.ultimoResumenCorte || !window.ultimoResumenCorte[usr]) return;
+            let data = window.ultimoResumenCorte[usr];
+            let html = `<h3 style="color:#0caeb9; margin-top:0;">👨‍⚕️ Cajero/Doctor: ${usr}</h3><hr style="border-top:1px dashed #ccc; margin-bottom:15px;">`;
+            
+            if(data.tickets && data.tickets.length > 0) {
+                data.tickets.forEach(t => {
+                    let isVenta = t.ventaMostrador;
+                    let desc = (Array.isArray(t.articulos)) ? t.articulos.map(a=>a.nombre).join(', ') : 'Venta Gral';
+                    let totalT = parseFloat(t.totalCobrado)||0;
+                    let isDev = totalT < 0 || (t.paciente && t.paciente.includes("REEMBOLSO"));
+                    let color = isDev ? '#dc3545' : '#198754';
+                    let pgsStr = t.pagos ? t.pagos.map(p=>p.metodo).join(', ') : (t.metodoPago || 'Efectivo');
+                    
+                    html += `<div style="background:#fff; border:1px solid #dee2e6; border-radius:10px; padding:12px; margin-bottom:10px; box-shadow:0 2px 5px rgba(0,0,0,0.05);">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                            <strong style="color:#333;">${t.fechaTexto.split(', ')[1] || t.fechaTexto}</strong>
+                            <strong style="color:${color};">$${totalT.toFixed(2)}</strong>
+                        </div>
+                        <div style="font-size:0.85em; color:#666; margin-bottom:5px;">${isDev ? '🔴 Reembolso' : (isVenta ? '👤 Mostrador' : '👤 '+(t.paciente||'General'))} | 💳 ${pgsStr}</div>
+                        <div style="font-size:0.85em; color:#444; background:#f8f9fa; padding:8px; border-radius:6px;">🛒 ${desc}</div>
+                    </div>`;
+                });
+            } else {
+                html += `<p style="text-align:center; color:#888;">No hay registros detallados.</p>`;
+            }
+            
+            document.getElementById('titulo-modal-detalle').innerText = `Desglose de Ventas`;
+            document.getElementById('cuerpo-modal-detalle').innerHTML = html;
+            document.getElementById('modal-ver-detalle').classList.remove('oculto');
+        };
+
+        window.verDetalleVenta = function(ts, tipo) {
+            let d = datosHistorialVentas.find(x => (x.timestamp||0) == ts && x.tipoRegistro == tipo);
+            if(!d) d = datosExpediente.find(x => (x.timestamp||0) == ts && x.tipoRegistro == tipo);
+            if(!d) return;
+            
+            let ht = `<div style="background:#fff; padding:15px; border-radius:12px; border:1px solid #e9ecef;">`;
+            if(d.tipoRegistro === 'hospitalizacion') {
+                ht += `<h3 style="color:#0caeb9; margin-top:0; border-bottom:1px dashed #ccc; padding-bottom:10px;">🏥 ${d.formatoLegal || 'Formato'}</h3>`;
+                ht += `<p style="margin:5px 0;"><strong>Paciente:</strong> ${d.paciente||'N/A'}</p><p style="margin:5px 0;"><strong>Dueño:</strong> ${d.dueno||'N/A'}</p><p style="margin:5px 0;"><strong>Dr:</strong> ${d.doctor||''}</p>`;
+                if(d.prescripcion) { ht += `<div style="background:#f8f9fa; padding:10px; border-radius:8px; margin-top:10px;"><strong>Notas:</strong><br>${d.prescripcion}</div>`; }
+            } else {
+                let isDev = (parseFloat(d.totalCobrado)||0) < 0 || (d.paciente && d.paciente.includes("REEMBOLSO"));
+                ht += `<h3 style="color:${isDev?'#dc3545':'#198754'}; margin-top:0; border-bottom:1px dashed #ccc; padding-bottom:10px;">${isDev?'🔴 Reembolso':'💰 Venta General'}</h3>`;
+                ht += `<p style="margin:5px 0;"><strong>Atendió:</strong> ${d.atendio||''}</p><p style="margin:5px 0;"><strong>Cliente:</strong> ${d.ventaMostrador ? 'Mostrador' : (d.dueno||'')}</p><p style="margin:5px 0;"><strong>Paciente:</strong> ${d.ventaMostrador ? 'N/A' : (d.paciente||'')}</p>`;
+                ht += `<strong style="display:block; margin-top:15px;">Artículos:</strong><ul style="padding-left:20px; margin-top:5px; margin-bottom:15px; font-size:0.9em; background:#f8f9fa; padding:10px 10px 10px 30px; border-radius:8px;">`;
+                if(Array.isArray(d.articulos)) { d.articulos.forEach(a => { ht += `<li>${a.cantidad||1} ${a.unidad||'u'} x ${a.nombre} - $${Number(a.total||0).toFixed(2)}</li>`; }); } else { ht += `<li>Venta general</li>`; }
+                ht += `</ul>`;
+                ht += `<strong>Pagos:</strong><ul style="padding-left:20px; margin-top:5px; margin-bottom:15px; font-size:0.9em;">`;
+                if(d.pagos && d.pagos.length>0) { d.pagos.forEach(p => { ht += `<li>💳 ${p.metodo}: $${Number(p.monto||0).toFixed(2)}</li>`; }); } else { ht += `<li>💳 ${d.metodoPago||'Efectivo'}: $${Number(d.totalCobrado||0).toFixed(2)}</li>`; }
+                ht += `</ul>`;
+                if((parseFloat(d.valorDescuento)||0) > 0) { ht += `<p style="text-align:right; color:#dc3545; margin:5px 0;">Descuento: -$${Number(d.valorDescuento||0).toFixed(2)}</p>`; }
+                ht += `<h2 style="text-align:right; color:${isDev?'#dc3545':'#198754'}; margin-bottom:0;">Total: $${Number(d.totalCobrado||0).toFixed(2)}</h2>`;
+            }
+            ht += `</div>`;
+            
+            let btnBorrar = '';
+            if (usuarioLogueado && (usuarioLogueado.rol === 'Gerente' || usuarioLogueado.rol === 'Sub-Gerente' || usuarioLogueado.rol === 'Sistemas')) {
+                btnBorrar = `<button class="btn-borrar-historial" style="flex:1;" onclick="document.getElementById('modal-ver-detalle').classList.add('oculto'); window.borrarRegistro('${d.coleccion}', '${d.id}');">🗑️ Eliminar</button>`;
+            }
+            
+            ht += `<div style="display:flex; gap:10px; margin-top:20px;">`;
+            if(d.tipoRegistro === 'hospitalizacion') {
+                ht += `<button class="btn-exp-action" style="flex:1; justify-content:center;" onclick="window.reimprimirDesdeExpediente(${d.timestamp||0}, '${d.tipoRegistro}', 'hoja')">🖨️ Imprimir</button>`;
+            } else {
+                ht += `<button class="btn-exp-action btn-venta" style="flex:1; justify-content:center;" onclick="window.reimprimirDesdeExpediente(${d.timestamp||0}, '${d.tipoRegistro}', 'ticket')">🖨️ Imprimir Ticket</button>`;
+            }
+            ht += btnBorrar;
+            ht += `</div>`;
+
+            document.getElementById('titulo-modal-detalle').innerText = `Registro: ${d.fechaTexto}`;
+            document.getElementById('cuerpo-modal-detalle').innerHTML = ht;
+            document.getElementById('modal-ver-detalle').classList.remove('oculto');
+        };
+
         // 10. EXPEDIENTE CLINICO (UNIFICADO)
         window.abrirExpediente = function() { window.cambiarPantalla('pantalla-menu', 'pantalla-expediente'); let be = document.getElementById('buscador-expediente'); if(be) be.value = ''; window.cargarExpedienteBase(); };
         window.cargarExpedienteBase = function() {
@@ -924,20 +1008,19 @@
             let html = ''; if(filtrados.length === 0) { html = '<div style="text-align:center; padding:30px; color:#888;">🔍 No hay resultados.</div>'; } else {
                 filtrados.forEach((d) => {
                     try{
-                        let btnBorrar = ''; if (usuarioLogueado && (usuarioLogueado.rol === 'Gerente' || usuarioLogueado.rol === 'Sub-Gerente' || usuarioLogueado.rol === 'Sistemas')) { btnBorrar = `<button class="btn-borrar-historial" onclick="window.borrarRegistro('${d.coleccion}', '${d.id}')">🗑️</button>`; }
                         if(d.tipoRegistro === 'hospitalizacion') {
-                            let authStr = d.formatoLegal || ""; let authTxt = authStr ? `<div style="font-size:0.85em; color:#0caeb9; font-weight:bold; margin-bottom:10px;">✅ Formato: ${authStr}</div>` : '';
-                            html += `<div class="tarjeta-expediente hospital"><div class="exp-header"><span class="exp-title"><span class="badge-tipo" style="background:#e0f7fa; color:#0caeb9;">🏥 Formato</span> ${d.paciente||''}</span><span class="exp-date">${d.fechaTexto||''}</span></div><div class="exp-meta"><span>👤 Dueño: ${d.dueno||''}</span></div>${authTxt}<div class="exp-footer"><span><strong style="color:#333;">Dr. ${d.doctor||''}</strong></span> <div style="display:flex; gap:10px;"><button class="btn-exp-action" onclick="window.reimprimirDesdeExpediente(${d.timestamp||0}, '${d.tipoRegistro}', 'hoja')">🖨️ Imprimir Formato</button> ${btnBorrar}</div> </div></div>`;
+                            let authStr = d.formatoLegal || "Formato"; 
+                            html += `<div class="tarjeta-expediente hospital tarjeta-info-click" style="cursor:pointer;" onclick="window.verDetalleVenta(${d.timestamp||0}, '${d.tipoRegistro}')"><div class="exp-header"><span class="exp-title"><span class="badge-tipo" style="background:#e0f7fa; color:#0caeb9;">🏥 ${authStr}</span> ${d.paciente||''}</span><span class="exp-date">${d.fechaTexto||''}</span></div><div class="exp-meta" style="margin-bottom:0;"><span>👤 Dueño: ${d.dueno||''}</span><span>👨‍⚕️ Dr. ${d.doctor||''}</span></div></div>`;
                         } else {
-                            let desc = (Array.isArray(d.articulos)) ? d.articulos.map(a=>a.nombre).join(', ') : 'Venta Gral'; let isVenta = d.ventaMostrador;
-                            html += `<div class="tarjeta-expediente venta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo" style="background:#e8f5e9; color:#198754;">💰 ${isVenta ? 'Mostrador' : 'Cobro'}</span> ${isVenta ? 'Público General' : (d.paciente||'')}</span><span class="exp-date">${d.fechaTexto||''}</span></div><div class="exp-meta"><span>👤 Dueño: ${isVenta ? 'N/A' : (d.dueno||'')}</span><span>👨‍⚕️ Atendió: ${d.atendio||''}</span><span>💳 Pago: ${d.metodoPago||''}</span></div><div class="exp-content" style="color:#146c43; font-weight:500;">🛒 ${desc}</div><div class="exp-footer"><span style="font-size:1.2em; font-weight:bold; color:#198754;">$${Number(d.totalCobrado||0).toFixed(2)}</span> <div style="display:flex; gap:10px;"><button class="btn-exp-action btn-venta" onclick="window.reimprimirDesdeExpediente(${d.timestamp||0}, 'cobro', 'ticket')">🖨️ Ver Ticket</button> ${btnBorrar}</div> </div></div>`;
+                            let isVenta = d.ventaMostrador;
+                            html += `<div class="tarjeta-expediente venta tarjeta-info-click" style="cursor:pointer;" onclick="window.verDetalleVenta(${d.timestamp||0}, '${d.tipoRegistro}')"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰</span> ${isVenta ? 'Mostrador' : (d.paciente||'')}</span><span class="exp-date">${d.fechaTexto||''}</span></div><div class="exp-meta" style="margin-bottom:10px;"><span>👤 Dueño: ${isVenta ? 'N/A' : (d.dueno||'')}</span><span>👨‍⚕️ Atendió: ${d.atendio||''}</span></div><div class="exp-footer"><span style="font-size:1.2em; font-weight:bold; color:#198754;">$${Number(d.totalCobrado||0).toFixed(2)}</span> <span style="color:#0caeb9; font-weight:bold;">Ver Detalles ➔</span> </div></div>`;
                         }
                     } catch(ex){ console.log(ex); }
                 });
             } 
             let le = document.getElementById('lista-expediente'); if(le) le.innerHTML = html;
         };
-        window.reimprimirDesdeExpediente = function(ts, tipo, formato) { let data = datosExpediente.find(x => (x.timestamp||0) == ts && x.tipoRegistro == tipo); if(!data) data = datosHistorialVentas.find(x => (x.timestamp||0) == ts && x.tipoRegistro == tipo); if(data) { if(formato === 'hoja') window.generarHojasLegalesDinamicas(data, false); else window.imprimirTicketBoucher(data); } };
+        window.reimprimirDesdeExpediente = function(ts, tipo, formato) { document.getElementById('modal-ver-detalle')?.classList.add('oculto'); let data = datosExpediente.find(x => (x.timestamp||0) == ts && x.tipoRegistro == tipo); if(!data) data = datosHistorialVentas.find(x => (x.timestamp||0) == ts && x.tipoRegistro == tipo); if(data) { if(formato === 'hoja') window.generarHojasLegalesDinamicas(data, false); else window.imprimirTicketBoucher(data); } };
         window.borrarRegistro = function(c, id) { 
             try{
                 if(confirm("¿Borrar definitivamente?")) { 
@@ -971,7 +1054,7 @@
             window.db.collection("Historial_Cobros").orderBy("timestamp","desc").get().then(q=>{ 
                 let resumen={},grT=0,grD=0,grDev=0; 
                 q.forEach(doc=>{ 
-                    const d=doc.data(); 
+                    const d=doc.data(); d.id = doc.id; d.coleccion = "Historial_Cobros"; d.tipoRegistro = 'cobro';
                     if((d.timestamp||0)>=limIn && (d.timestamp||0)<=limOut){ 
                         let u=d.atendio||'Cajero Desconocido'; 
                         if(!resumen[u]) resumen[u]={metodos:{}, total:0, devoluciones:0, tickets:[]}; 
@@ -979,7 +1062,7 @@
                         let pgs=d.pagos||[{metodo:d.metodoPago||'Efectivo',monto:parseFloat(d.totalCobrado)||0}]; 
                         let totVenta = parseFloat(d.totalCobrado)||0; 
                         
-                        resumen[u].tickets.push(d); // Guardar ticket
+                        resumen[u].tickets.push(d); 
                         
                         if(totVenta<0 || (d.paciente && d.paciente.includes("REEMBOLSO"))) { 
                             if(p==='dia'||p==='ayer'){let devAmt = Math.abs(totVenta); grDev += devAmt; resumen[u].devoluciones += devAmt; grT -= devAmt;} 
@@ -994,15 +1077,14 @@
                     } 
                 }); 
                 
+                window.ultimoResumenCorte = resumen; // Guardar para el modal
                 let cgt = document.getElementById('corte-gran-total'); if(cgt) cgt.innerText=grT.toFixed(2); 
                 let cgd = document.getElementById('corte-gran-descuento'); if(cgd) cgd.innerText=grD.toFixed(2); 
                 let cgdv = document.getElementById('corte-gran-devoluciones'); if(cgdv) cgdv.innerText=grDev.toFixed(2); 
                 
-                let ht=''; let userIndex = 0;
+                let ht=''; 
                 for(let usr in resumen){ 
-                    userIndex++;
-                    let idDetalle = `detalle-usr-${userIndex}`;
-                    ht+=`<div class="tarjeta-info" style="border-left:4px solid #0caeb9; cursor:pointer; margin-bottom:10px;" onclick="document.getElementById('${idDetalle}').classList.toggle('oculto')">
+                    ht+=`<div class="tarjeta-info tarjeta-info-click" style="border-left:4px solid #0caeb9; cursor:pointer; margin-bottom:10px;" onclick="window.abrirModalCorteUsuario('${usr}')">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                             <strong style="font-size:1.2em;color:#0caeb9;">👨‍⚕️ ${usr}</strong>
                             <span style="font-size:0.8em; background:#e0f7fa; color:#0caeb9; padding:4px 8px; border-radius:10px;">Ver ventas ▼</span>
@@ -1016,27 +1098,6 @@
                     } 
                     let cT=resumen[usr].total - resumen[usr].devoluciones; 
                     ht+=`<div style="display:flex;justify-content:space-between;margin-top:10px;font-size:1.1em;color:${cT<0?'#dc3545':'#198754'}"><span>Total Neto Vendido:</span><strong>$${Number(cT||0).toFixed(2)}</strong></div></div>`; 
-                    
-                    // Contenedor Oculto con los tickets individuales
-                    ht+=`<div id="${idDetalle}" class="oculto" style="margin: 0 0 20px 15px; border-left: 2px dashed #0caeb9; padding-left: 10px;">`;
-                    resumen[usr].tickets.forEach(t => {
-                        let desc = (Array.isArray(t.articulos)) ? t.articulos.map(a=>a.nombre).join(', ') : 'Venta Gral';
-                        let totalT = parseFloat(t.totalCobrado)||0;
-                        let isDev = totalT < 0 || (t.paciente && t.paciente.includes("REEMBOLSO"));
-                        let color = isDev ? '#dc3545' : '#198754';
-                        let isVenta = t.ventaMostrador;
-                        let pgsStr = t.pagos ? t.pagos.map(p=>p.metodo).join(' y ') : t.metodoPago;
-                        
-                        ht+= `<div style="background:#fff; border:1px solid #e9ecef; border-radius:10px; padding:12px; margin-bottom:8px; box-shadow:0 2px 4px rgba(0,0,0,0.02);">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-                                <strong style="color:#333; font-size:0.95em;">${t.fechaTexto.split(', ')[1] || t.fechaTexto}</strong>
-                                <strong style="color:${color};">$${totalT.toFixed(2)}</strong>
-                            </div>
-                            <div style="font-size:0.85em; color:#666; margin-bottom:5px;">${isDev ? '🔴 Reembolso' : (isVenta ? '👤 Mostrador' : '👤 '+t.paciente)} | 💳 ${pgsStr}</div>
-                            <div style="font-size:0.8em; color:#444; background:#f8f9fa; padding:5px; border-radius:6px;">🛒 ${desc}</div>
-                        </div>`;
-                    });
-                    ht+= `</div>`;
                 } 
                 if(l) l.innerHTML=ht||'<p style="text-align:center">Vacío</p>'; 
             }).catch(e=>{if(l) l.innerHTML='<p style="color:red">Error al cargar datos.</p>';}); 
@@ -1098,15 +1159,13 @@
             let ht=''; 
             filt.slice(0, 150).forEach(d=>{ 
                 try{ 
-                    let bb=(usuarioLogueado.rol==='Gerente'||usuarioLogueado.rol==='Sub-Gerente'||usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('${d.coleccion}','${d.id}')">🗑️</button>`:''; 
-                    if(d.tipoRegistro==='hospitalizacion'){ 
-                        let authStr=d.formatoLegal||""; let authTxt=authStr?`<div style="font-size:0.85em;color:#0caeb9;font-weight:bold;margin-bottom:10px">✅ Formato: ${authStr}</div>`:''; 
-                        ht+=`<div class="tarjeta-expediente hospital"><div class="exp-header"><span class="exp-title"><span class="badge-tipo" style="background:#e0f7fa;color:#0caeb9">🏥 Formatos</span> ${d.paciente||''}</span><span class="exp-date">${d.fechaTexto||''}</span></div><div class="exp-meta"><span>👤 ${d.dueno||''}</span></div>${authTxt}<div class="exp-footer"><span><strong>Dr. ${d.doctor||''}</strong></span> <div style="display:flex;gap:10px"><button class="btn-exp-action" onclick="window.reimprimirDesdeExpediente(${d.timestamp||0},'${d.tipoRegistro}','hoja')">🖨️ Hoja</button>${bb}</div></div></div>`; 
-                    } else { 
-                        let dS=(Array.isArray(d.articulos))?d.articulos.map(a=>a.nombre).join(','):'Vta Gral'; 
-                        let isVenta=d.ventaMostrador; 
-                        ht+=`<div class="tarjeta-expediente venta"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰</span> ${isVenta?'Mostrador':(d.paciente||'')}</span><span class="exp-date">${d.fechaTexto||''}</span></div><div class="exp-meta"><span>👤 ${isVenta?'N/A':(d.dueno||'')} ${d.telefono&&d.telefono!=='N/A'?`(${d.telefono})`:''}</span><span>👨‍⚕️ ${d.atendio||''}</span></div><div class="exp-content" style="color:#146c43">🛒 ${dS}</div><div class="exp-footer"><span style="font-weight:bold;color:#198754">$${Number(d.totalCobrado||0).toFixed(2)}</span><div style="display:flex;gap:10px"><button class="btn-exp-action btn-venta" onclick="window.reimprimirDesdeExpediente(${d.timestamp||0},'${d.tipoRegistro}','ticket')">🖨️ Tck</button>${bb}</div></div></div>`; 
-                    } 
+                    if(d.tipoRegistro === 'hospitalizacion') {
+                        let authStr = d.formatoLegal || "Formato"; 
+                        ht += `<div class="tarjeta-expediente hospital tarjeta-info-click" style="cursor:pointer;" onclick="window.verDetalleVenta(${d.timestamp||0}, '${d.tipoRegistro}')"><div class="exp-header"><span class="exp-title"><span class="badge-tipo" style="background:#e0f7fa; color:#0caeb9;">🏥 ${authStr}</span> ${d.paciente||''}</span><span class="exp-date">${d.fechaTexto||''}</span></div><div class="exp-meta" style="margin-bottom:0;"><span>👤 Dueño: ${d.dueno||''}</span><span>👨‍⚕️ Dr. ${d.doctor||''}</span></div></div>`;
+                    } else {
+                        let isVenta = d.ventaMostrador;
+                        ht += `<div class="tarjeta-expediente venta tarjeta-info-click" style="cursor:pointer;" onclick="window.verDetalleVenta(${d.timestamp||0}, '${d.tipoRegistro}')"><div class="exp-header"><span class="exp-title"><span class="badge-tipo badge-venta">💰</span> ${isVenta ? 'Mostrador' : (d.paciente||'')}</span><span class="exp-date">${d.fechaTexto||''}</span></div><div class="exp-meta" style="margin-bottom:10px;"><span>👤 Dueño: ${isVenta ? 'N/A' : (d.dueno||'')}</span><span>👨‍⚕️ Atendió: ${d.atendio||''}</span></div><div class="exp-footer"><span style="font-size:1.2em; font-weight:bold; color:#198754;">$${Number(d.totalCobrado||0).toFixed(2)}</span> <span style="color:#0caeb9; font-weight:bold;">Ver Detalles ➔</span> </div></div>`;
+                    }
                 }catch(ex){console.log(ex);} 
             }); 
             document.getElementById('lista-historial-ventas').innerHTML=ht||'<p style="text-align:center; color:#888;">No hay registros en esta fecha.</p>'; 
