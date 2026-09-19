@@ -2,7 +2,6 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Hospital Veterinario ERP</title>
-    <!-- Firebase y Excel -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -30,7 +29,6 @@
         .btn-amarillo{background:#ffc107;color:#000;margin-top:10px} .btn-cancelar{background:transparent;color:#dc3545;margin-top:10px;border:2px solid #ffe3e3;padding:12px;cursor:pointer} .btn-cancelar:hover{background:#fff0f0}
         .btn-filtro{flex:1;padding:10px;border:2px solid #e9ecef;background:#fff;color:#6c757d;border-radius:10px;cursor:pointer;font-weight:bold;white-space:nowrap; text-align:center;} .btn-filtro.activo{background:#0caeb9;color:#fff;border-color:#0caeb9}
         .fab-container{position:fixed;bottom:25px;right:25px;display:flex;flex-direction:column;gap:15px;z-index:9999} .fab{width:65px;height:65px;border-radius:50%;border:none;color:#fff;font-size:28px;box-shadow:0 6px 15px rgba(0,0,0,0.3);cursor:pointer;display:flex;justify-content:center;align-items:center;transition:0.3s} .fab:active{transform:scale(0.9)} 
-        .fab-preview{background:#0caeb9;display:none} .fab-cancel{background:#dc3545}
         .caja-cobro{background:#fffbf0;padding:25px;border-radius:18px;border:1px solid #ffecb5;margin-bottom:20px} .stock-alerta{border-left:6px solid #dc3545;background:#fffafb} .stock-ok{border-left:6px solid #198754} .oculto{display:none!important}
         .carrito-box{background:#fff;border:2px solid #e9ecef;border-radius:14px;padding:15px;margin-bottom:20px;max-height:200px;overflow-y:auto} .item-carrito{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed #e9ecef;font-size:0.95em} .btn-eliminar-item{background:#ffe3e3;color:#dc3545;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:bold}
         .caja-morada{background:#fdfaf6;padding:25px;border-radius:18px;border:1px solid #0caeb9;margin-bottom:25px} .titulo-morado{color:#0caeb9;font-weight:900;font-size:0.85em;text-transform:uppercase;margin-bottom:15px;display:block} .campos-dinamicos{background:#fff;padding:15px;border-radius:12px;border:1px dashed #0caeb9;margin-bottom:15px}
@@ -80,7 +78,7 @@
     <datalist id="lista-medicamentos-general"></datalist>
     <div id="zona-impresion"></div>
 
-    <!-- MODAL DETALLES PRINCIPAL (DESGLOSE DE TICKETS DEL CAJERO) -->
+    <!-- MODAL DETALLES PRINCIPAL (DESGLOSE) -->
     <div id="modal-ver-detalle" class="modal-overlay oculto">
         <div class="modal-content" style="max-height:85vh;">
             <div class="modal-header">
@@ -95,35 +93,10 @@
     <div id="modal-sub-detalle" class="modal-overlay oculto" style="z-index: 100005;">
         <div class="modal-content" style="max-height:80vh; max-width: 500px;">
             <div class="modal-header" style="background:#198754;">
-                <span id="titulo-modal-sub-detalle">🧾 Detalle del Ticket</span>
+                <span id="titulo-modal-sub-detalle">🧾 Detalle</span>
                 <button onclick="document.getElementById('modal-sub-detalle').classList.add('oculto')" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">✖</button>
             </div>
             <div id="cuerpo-modal-sub-detalle" class="modal-body" style="background:#fff;"></div>
-        </div>
-    </div>
-
-    <!-- MODAL OPCIONES DE GUARDADO -->
-    <div id="modal-opciones-guardar" class="modal-overlay oculto">
-        <div class="modal-content" style="height:auto; max-width: 400px; text-align:center;">
-            <div class="modal-header"><span>💾 Opciones de Guardado</span><button onclick="document.getElementById('modal-opciones-guardar').classList.add('oculto')" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">✖</button></div>
-            <div class="modal-body" style="display:flex; flex-direction:column; gap:15px; padding: 30px;">
-                <button class="btn btn-guardar-azul" style="background:#6f42c1; margin:0;" onclick="window.procesarHospitalizacion('historial')">💾 Solo Guardar en Historial</button>
-                <button class="btn btn-guardar" style="margin:0;" onclick="window.procesarHospitalizacion('hoja')">🖨️ Guardar e Imprimir Formato</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL LECTURA CONTRATO -->
-    <div id="modal-lectura" class="modal-overlay oculto">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span>📄 Vista Previa y Lectura</span>
-                <button onclick="document.getElementById('modal-lectura').classList.add('oculto')" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">✖</button>
-            </div>
-            <div id="modal-cuerpo" class="modal-body"></div>
-            <div class="modal-footer">
-                <button class="btn btn-guardar" style="width:auto;display:inline-block;padding:12px 30px" onclick="document.getElementById('modal-lectura').classList.add('oculto')">✅ He leído y acepto (Cerrar para Firmar)</button>
-            </div>
         </div>
     </div>
 
@@ -170,6 +143,7 @@
             <button class="btn-menu oculto" id="btn-corte" onclick="window.abrirVistaAgrupada('caja', 'dia')" style="background:#e0f7fa;border-color:#b2ebf2;color:#0caeb9;"><span>💰 Corte de Caja</span></button>
             <button class="btn-menu oculto" id="btn-ver-inventario" onclick="window.abrirVerInventario()"><span>👀 Ver Inventario</span></button>
             <button class="btn-menu oculto" id="btn-alta-inventario" onclick="window.abrirInventario()"><span>📦 Alta productos/servicios</span></button>
+            <button class="btn-menu oculto" id="btn-ingreso-rapido" onclick="window.abrirEntradaStock()" style="background:#f0fdf4;border-color:#c3e6cb;color:#198754;"><span>📥 Ingreso Rápido Stock</span></button>
             <button class="btn-menu oculto" id="btn-sistemas" onclick="window.abrirModoSistemas()"><span>⚙️ Modo Sistemas (Excel)</span></button>
             <button class="btn-menu oculto" id="btn-hist-inventario" onclick="window.abrirHistorialInventario()"><span>🗃️ Historial Almacén</span></button>
             <button class="btn-menu oculto" id="btn-historial" onclick="window.abrirVistaAgrupada('ventas', 'dia')"><span>📋 Historial de Ventas</span></button>
@@ -238,7 +212,6 @@
                 <div class="grupo-formulario"><label>Monto 1 ($):</label><input type="number" id="monto-pago-1" placeholder="0.00" oninput="window.calcularMontoFaltante(1)"></div>
             </div>
             
-            <!-- Cajas de Pago Extra -->
             <div id="caja-pago-2" class="form-row oculto">
                 <div class="grupo-formulario"><label>Pago 2:</label><select id="metodo-pago-2" onchange="window.calcularMontoFaltante(0)"><option value="">-- Seleccionar --</option><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Transferencia</option><option>Clip</option><option>American Express</option></select></div>
                 <div class="grupo-formulario"><label>Monto 2 ($):</label><input type="number" id="monto-pago-2" placeholder="0.00" oninput="window.calcularMontoFaltante(2)"></div>
@@ -256,6 +229,35 @@
             <h2 style="text-align:right;color:#198754; margin:0;">Total de la Venta: $<span id="total-cobrar">0.00</span></h2>
         </div>
         <button class="btn btn-guardar" onclick="window.procesarVenta(true)">🖨️ Guardar e Imprimir Ticket</button>
+    </div>
+
+    <!-- PANTALLA INGRESO RAPIDO DE STOCK -->
+    <div id="pantalla-entrada-stock" class="contenedor oculto">
+        <h2 style="color:#198754;margin-top:0;display:flex;align-items:center;gap:10px;">📥 Ingreso Múltiple de Stock</h2>
+        <p style="color:#666; font-size:0.9em; margin-bottom:20px;">Añade unidades al inventario físico de varios productos simultáneamente.</p>
+        
+        <div class="form-row" style="background:#f0fdf4;padding:15px;border-radius:14px;border:1px solid #c3e6cb; margin-bottom: 5px;">
+            <div class="grupo-formulario autocomplete-container" style="flex:3;margin:0">
+                <label style="color:#155724;">Buscar Producto (Mín 3 letras):</label>
+                <input type="text" id="buscador-entrada" class="input-buscador" style="border-color:#28a745!important; color:#155724;" placeholder="Nombre..." oninput="window.buscarAutocomplete('buscador-entrada','dropdown-entrada',window.seleccionarItemEntrada)" autocomplete="off">
+                <div id="dropdown-entrada" class="autocomplete-dropdown oculto"></div>
+            </div>
+            <div class="grupo-formulario" style="flex:1;max-width:100px;margin:0">
+                <label style="color:#155724;">Cant <span id="lbl-unidad-entrada" style="color:#28a745;"></span>:</label>
+                <input type="number" id="cantidad-entrada" value="1" step="any">
+            </div>
+            <div class="grupo-formulario" style="flex:0 0 auto;margin:0">
+                <button class="btn" style="margin:0;padding:14px 20px;border-radius:12px; background:#198754; color:#fff;" onclick="window.agregarAlCarritoEntrada()">➕ Añadir</button>
+            </div>
+        </div>
+        <div style="font-size:0.9em; font-weight:bold; color:#333; margin-bottom:15px; padding-left:5px;">Stock Actual: <strong id="stock-disp-entrada" style="color:#198754;">--</strong></div>
+        
+        <label style="font-weight:bold;font-size:0.85em;text-transform:uppercase; color:#155724;">Artículos a Sumar:</label>
+        <div id="carrito-entrada-lista" class="carrito-box" style="border-color:#c3e6cb;">
+            <p style="text-align:center;color:#adb5bd">Vacío</p>
+        </div>
+        
+        <button class="btn" style="background:#198754; color:#fff;" onclick="window.procesarEntradaStock()">✅ Confirmar y Guardar Ingreso</button>
     </div>
 
     <!-- PANTALLA FORMATOS HOSPITALARIOS -->
@@ -324,14 +326,17 @@
 
         <div class="seccion-separador"></div>
         <div class="form-row" style="justify-content: center; gap: 20px;">
-            <div class="grupo-formulario" style="flex:none; width: auto;"><button class="btn btn-guardar-azul" style="margin:0; background:#6f42c1; padding:16px 30px;" onclick="window.procesarHospitalizacion(false)">💾 Solo Guardar en Historial</button></div>
+            <div class="grupo-formulario" style="flex:none; width: auto;"><button class="btn btn-guardar-azul" style="margin:0; background:#6f42c1; padding:16px 30px;" onclick="window.procesarHospitalizacion('historial')">💾 Solo Guardar en Historial</button></div>
             <div class="grupo-formulario" style="flex:none; width: auto;"><button class="btn btn-guardar" id="btn-final-hosp" style="margin:0; padding:16px 30px;" onclick="window.procesarHospitalizacion('hoja')" disabled>🖨️ Guardar e Imprimir Formato Legal</button></div>
         </div>
     </div>
 
     <!-- PANTALLA VER INVENTARIO -->
     <div id="pantalla-ver-inventario" class="contenedor contenedor-ancho oculto">
-        <h2 style="color:#333;margin-top:0">📦 Inventario Actual</h2>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:20px;">
+            <h2 style="color:#333;margin:0">📦 Inventario Actual</h2>
+            <button class="btn btn-guardar" style="width:auto; margin:0; padding:10px 20px; font-size:0.9em; background:#198754;" onclick="window.abrirEntradaStock()">📥 Ingreso Múltiple</button>
+        </div>
         <div class="panel-busqueda"><div class="grupo-formulario busqueda-ancha"><label>Buscar:</label><input type="text" id="busqueda-inv-texto" class="input-buscador" oninput="window.filtrarInventario()"></div><div class="grupo-formulario"><label>Nivel:</label><select id="busqueda-inv-stock" onchange="window.filtrarInventario()"><option value="todos">Todos</option><option value="bajo">Bajo Stock</option></select></div></div>
         <div id="lista-stock-firebase" class="lista-vertical"></div>
     </div>
@@ -412,10 +417,12 @@
 
         // DESACTIVAR SCROLL EN NUMEROS
         document.addEventListener("wheel", function(e){ 
-            if(document.activeElement.type === "number") e.preventDefault();
+            if(document.activeElement.type === "number") {
+                e.preventDefault();
+            }
         }, { passive: false });
 
-        // 1. INICIALIZAR FIREBASE
+        // 1. INICIALIZAR FIREBASE 
         window.db = null;
         try {
             const firebaseConfig = { apiKey: "AIzaSyABktLytyy6fBXXDOrJq9B0nErrOzc30a4", authDomain: "kioscovet-93eae.firebaseapp.com", projectId: "kioscovet-93eae", storageBucket: "kioscovet-93eae.firebasestorage.app", messagingSenderId: "571603121447", appId: "1:571603121447:web:ad4a7d439050ec82812502" };
@@ -426,13 +433,14 @@
         // 2. VARIABLES GLOBALES
         let pinActual = ""; window.usuarioLogueado = null; 
         let totalCobroCalculado = 0; let inventarioGlobal = []; let carrito = []; 
+        let carritoEntrada = []; window.itemSeleccionadoEntrada = null;
         let datosHistorialInv = []; let datosExpediente = []; let datosHistorialVentas = []; let firmaCapturada = false; 
         let guardandoBloqueo = false; let modoEdicion = false;
         let ctxActivo = null; let isDrawing = false; let canvasActivo = false;
         window.precioActualBaja = 0; window.productoEnEdicionOriginal = "";
         window.esVentaMostrador = true;
         window.filtroActivoAgrupado = 'dia';
-        window.tipoVistaAgrupada = 'caja'; 
+        window.tipoVistaAgrupada = 'caja'; // 'caja', 'ventas', 'expediente'
         window.ultimoResumenAgrupado = {};
 
         // 3. FUNCIONES DE IMPRESIÓN LEGAL
@@ -539,8 +547,10 @@
         };
         
         window.cancelarVolver = function() { 
-            carrito = [];
+            carrito = []; carritoEntrada = [];
             if(document.getElementById('carrito-lista')) window.actualizarCarritoUI(); 
+            if(document.getElementById('carrito-entrada-lista')) window.actualizarCarritoEntradaUI();
+            
             document.querySelectorAll('input, textarea').forEach(i=>i.value=''); 
             let tc = document.getElementById('total-cobrar'); if(tc) tc.innerText="0.00"; 
             let cx1 = document.getElementById('texto-cambio'); if(cx1) cx1.classList.add('oculto');
@@ -558,6 +568,11 @@
             let cp = document.getElementById('campos-paciente'); if(cp) cp.classList.add('oculto');
             let btnT = document.getElementById('btn-toggle-paciente'); if(btnT) { btnT.innerHTML="➕ Agregar Cliente / Paciente"; btnT.style.background="#e0f7fa"; btnT.style.color="#0caeb9"; btnT.style.borderColor="#b2ebf2"; }
             
+            window.itemSeleccionadoEntrada = null;
+            document.getElementById('lbl-unidad-entrada').innerText = '';
+            document.getElementById('stock-disp-entrada').innerText = '--';
+            document.getElementById('cantidad-entrada').value = '1';
+
             canvasActivo = false; 
             window.cambiarPantalla('todas','pantalla-menu'); 
         };
@@ -613,8 +628,8 @@
                     
                     if(r === "Doctor") { document.getElementById('btn-ver-inventario')?.classList.remove('oculto'); } 
                     else if(r === "Sistemas" || r === "Gerente" || r === "Sub-Gerente") { 
-                        ['btn-corte','btn-ver-inventario','btn-alta-inventario','btn-sistemas','btn-hist-inventario','btn-baja-inventario','btn-historial','btn-usuarios'].forEach(id => {
-                            document.getElementById(id)?.classList.remove('oculto');
+                        ['btn-corte','btn-ver-inventario','btn-alta-inventario','btn-sistemas','btn-hist-inventario','btn-baja-inventario','btn-historial','btn-usuarios','btn-ingreso-rapido'].forEach(id => {
+                            let el = document.getElementById(id); if(el) el.classList.remove('oculto');
                         }); 
                         document.getElementById('titulo-gerencia')?.classList.remove('oculto'); 
                         if(r === "Sistemas") document.getElementById('btn-sistemas')?.classList.remove('oculto'); else document.getElementById('btn-sistemas')?.classList.add('oculto');
@@ -872,17 +887,15 @@
             window.db.collection("Historial_Cobros").add(vData).then(()=>{ 
                 carrito.forEach(i=>{if(i.tipo!=='Servicio Médico'){let sN=String(i.nombre).replace(/\//g,'-');window.db.collection("Inventario").doc(sN).get().then(d=>{if(d.exists)window.db.collection("Inventario").doc(sN).update({cantidad:d.data().cantidad-i.cantidad});});}}); 
                 if(imprimir) window.imprimirTicketBoucher(vData); else alert("✅ Venta OK."); 
-                guardandoBloqueo=false;
-                document.body.style.cursor='default';
+                guardandoBloqueo=false; document.body.style.cursor='default';
                 window.cerrarSesion(); 
             }).catch(e=>{alert("Error: "+e.message); guardandoBloqueo=false; document.body.style.cursor='default';});
         };
 
-        // 9. FORMATOS HOSPITALARIOS
+        // 9. FORMATOS HOSPITALARIOS Y LECTURA
         window.abrirHospitalizacion = function() { 
             window.cambiarPantalla('pantalla-menu', 'pantalla-hospitalizacion'); 
             document.getElementById('zona-firmas-oculta')?.classList.add('oculto'); 
-            document.getElementById('btn-leer-firmar')?.classList.add('oculto'); 
             window.limpiarFirma('cliente'); canvasActivo=false; 
             let sfl = document.getElementById('select-formato-legal'); if(sfl) sfl.value=""; 
             window.mostrarCamposDinamicos(); window.initFirmas(); 
@@ -920,7 +933,7 @@
             if(f==="ALTA VOLUNTARIA"){d.altaFechaIn=val('alta-f-ingreso');d.altaDxIn=val('alta-dx-ingreso');d.altaFechaOut=val('alta-f-egreso');d.altaDxOut=val('alta-dx-egreso');d.altaMotivo=val('alta-motivo');}
             return d;
         };
-        
+
         window.abrirLecturaYFirma = function() { 
             let dp = window.recopilarDatosHosp(); 
             dp.fechaTexto=new Date().toLocaleString('es-MX'); 
@@ -937,8 +950,7 @@
             window.db.collection("Historial_Hospitalizacion").add(hD).then(()=>{ 
                 if(imprimir==='hoja') window.generarHojasLegalesDinamicas(hD, false); else alert("✅ Guardado Historial."); 
                 document.getElementById('modal-opciones-guardar')?.classList.add('oculto');
-                guardandoBloqueo=false;
-                document.body.style.cursor='default';
+                guardandoBloqueo=false; document.body.style.cursor='default';
                 window.cerrarSesion(); 
             }).catch(e=>{alert("Error: "+e.message); guardandoBloqueo=false; document.body.style.cursor='default';});
         };
@@ -1007,8 +1019,9 @@
                 
                 let processDoc = (doc, tReg) => {
                     const d = doc.data(); d.id = doc.id; d.coleccion = tReg === 'cobro' ? "Historial_Cobros" : "Historial_Hospitalizacion"; d.tipoRegistro = tReg;
+                    let ts = d.timestamp || 0;
                     
-                    if((d.timestamp||0)>=limIn && (d.timestamp||0)<=limOut){ 
+                    if(ts >= limIn && ts <= limOut){ 
                         let u = d.atendio || d.doctor || 'Cajero Desconocido'; 
                         
                         if((tipo === 'ventas' || tipo === 'expediente') && term !== "") {
@@ -1161,26 +1174,95 @@
             } 
         };
 
-        // 12. INVENTARIO Y EXCEL
-        window.abrirVerInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-ver-inventario'); let bi = document.getElementById('busqueda-inv-texto'); if(bi) bi.value=''; window.cargarInventarioVista(); };
-        window.cargarInventarioVista = function() { 
-            const l=document.getElementById('lista-stock-firebase'); if(!l)return; 
-            l.innerHTML='<div style="text-align:center">⏳</div>'; 
-            window.db.collection("Inventario").get().then((q)=>{ 
-                let ih=[]; q.forEach(doc=>{let dt=doc.data(); dt.idDoc=doc.id; ih.push(dt);}); 
-                ih.sort((a,b)=>a.medicamento.localeCompare(b.medicamento)); 
-                let ht=''; 
-                ih.forEach((d)=>{ 
-                    if(d.tipoArticulo==='Servicio Médico')return; 
-                    let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); 
-                    let isB=(min>0&&d.cantidad<=min); 
-                    let btn=(window.usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"><button class="btn-exp-action" onclick="window.editarProducto('${d.idDoc}')">✏️ Editar</button>${(window.usuarioLogueado.rol==='Gerente'||window.usuarioLogueado.rol==='Sub-Gerente'||window.usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('Inventario','${d.idDoc}')">🗑️ Eliminar</button>`:''}</div>`:''; 
-                    ht+=`<div class="tarjeta-info ${isB?'stock-alerta':'stock-ok'}" data-unidad="${d.unidad}"><div class="th-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;"><strong style="flex:1; text-align:left;">${d.medicamento}</strong><span style="font-size:1.3em; font-weight:900; color:${isB?'#dc3545':'#198754'}; text-align:right;">${d.cantidad} <span style="font-size:0.5em;color:#666">${d.unidad||'U.'}</span></span></div><div class="th-cuerpo">$${Number(d.precioVenta||0).toFixed(2)}</div>${isB?'<div style="color:#dc3545;font-weight:bold;text-align:center;margin-top:5px">¡Bajo Stock!</div>':''}${btn}</div>`; 
-                }); 
-                l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; 
-                window.filtrarInventario(); 
-            }); 
+        // 12. INGRESO MÚLTIPLE DE STOCK
+        window.abrirEntradaStock = function() {
+            window.cambiarPantalla('pantalla-menu', 'pantalla-entrada-stock');
+            carritoEntrada = []; window.itemSeleccionadoEntrada = null;
+            document.getElementById('buscador-entrada').value = '';
+            document.getElementById('cantidad-entrada').value = '1';
+            document.getElementById('lbl-unidad-entrada').innerText = '';
+            document.getElementById('stock-disp-entrada').innerText = '--';
+            window.actualizarCarritoEntradaUI();
         };
+
+        window.seleccionarItemEntrada = function(item) {
+            if(item.tipoArticulo === 'Servicio Médico') {
+                alert("⚠️ Los servicios médicos no requieren ingreso de stock físico.");
+                document.getElementById('buscador-entrada').value = '';
+                return;
+            }
+            window.itemSeleccionadoEntrada = item;
+            document.getElementById('lbl-unidad-entrada').innerText = item.unidad ? `(${item.unidad})` : '';
+            document.getElementById('stock-disp-entrada').innerText = `${item.cantidad} ${item.unidad||''}`;
+            document.getElementById('cantidad-entrada').focus();
+        };
+
+        window.agregarAlCarritoEntrada = function() {
+            const v = document.getElementById('buscador-entrada')?.value;
+            const cInp = document.getElementById('cantidad-entrada');
+            let c = parseFloat(cInp?.value) || 0;
+
+            if(!v || !window.itemSeleccionadoEntrada || v !== window.itemSeleccionadoEntrada.medicamento) return alert("⚠️ Busca y selecciona un producto válido de la lista.");
+            if(c <= 0) return alert("⚠️ Ingresa una cantidad mayor a 0.");
+
+            let item = window.itemSeleccionadoEntrada;
+            let existente = carritoEntrada.find(x => x.nombre === item.medicamento);
+            if(existente) {
+                existente.cantidadSumar += c;
+                existente.stockFinal = existente.stockActual + existente.cantidadSumar;
+            } else {
+                carritoEntrada.push({ nombre: item.medicamento, stockActual: parseFloat(item.cantidad) || 0, cantidadSumar: c, stockFinal: (parseFloat(item.cantidad) || 0) + c, unidad: item.unidad || 'u' });
+            }
+            
+            window.actualizarCarritoEntradaUI();
+            document.getElementById('buscador-entrada').value = ''; document.getElementById('cantidad-entrada').value = '1';
+            document.getElementById('lbl-unidad-entrada').innerText = ''; document.getElementById('stock-disp-entrada').innerText = '--';
+            window.itemSeleccionadoEntrada = null;
+        };
+
+        window.actualizarCarritoEntradaUI = function() {
+            const d = document.getElementById('carrito-entrada-lista');
+            if(!d) return;
+            if(carritoEntrada.length === 0) { d.innerHTML = '<p style="text-align:center;color:#adb5bd">Vacío</p>'; return; }
+            d.innerHTML = carritoEntrada.map((i, idx) => `
+                <div class="item-carrito" style="border-bottom:1px dashed #c3e6cb;">
+                    <span>📦 <strong>${i.nombre}</strong> <br><span style="color:#666;font-size:0.85em;">Stock actual: ${i.stockActual} ➔ <strong style="color:#198754;">Quedará en: ${i.stockFinal} ${i.unidad}</strong></span></span>
+                    <span><strong style="color:#198754; font-size:1.1em;">+${i.cantidadSumar}</strong> <button class="btn-eliminar-item" style="background:#ffe3e3;color:#dc3545;" onclick="window.eliminarDelCarritoEntrada(${idx})">X</button></span>
+                </div>
+            `).join('');
+        };
+        
+        window.eliminarDelCarritoEntrada = function(idx) { carritoEntrada.splice(idx, 1); window.actualizarCarritoEntradaUI(); };
+
+        window.procesarEntradaStock = function() {
+            if(guardandoBloqueo) return;
+            if(carritoEntrada.length === 0) return alert("⚠️ No hay productos en la lista.");
+
+            guardandoBloqueo = true; document.body.style.cursor='wait';
+            
+            let batch = window.db.batch();
+            let timestamp = Date.now();
+            let fechaTexto = new Date().toLocaleString('es-MX');
+
+            carritoEntrada.forEach(item => {
+                let docRef = window.db.collection("Inventario").doc(item.nombre.replace(/\//g,'-'));
+                batch.update(docRef, { cantidad: item.stockFinal });
+                
+                let histRef = window.db.collection("Historial_Inventario").doc();
+                batch.set(histRef, { tipoMovimiento: "Alta (Ingreso Múltiple)", medicamento: item.nombre, cantidad: item.cantidadSumar, unidad: item.unidad, motivo: "Reabastecimiento", registradoPor: window.usuarioLogueado.nombre, fechaTexto: fechaTexto, timestamp: timestamp });
+            });
+
+            batch.commit().then(() => {
+                alert("✅ Ingreso de inventario guardado correctamente.");
+                window.cargarSugerenciasInventario();
+                guardandoBloqueo = false; document.body.style.cursor='default';
+                window.cerrarSesion();
+            }).catch(e => { alert("Error: " + e.message); guardandoBloqueo = false; document.body.style.cursor='default'; });
+        };
+
+        // 13. INVENTARIO RESTO Y EXCEL
+        window.abrirVerInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-ver-inventario'); let bi = document.getElementById('busqueda-inv-texto'); if(bi) bi.value=''; window.cargarInventarioVista(); };
+        window.cargarInventarioVista = function() { const l=document.getElementById('lista-stock-firebase'); if(!l)return; l.innerHTML='<div style="text-align:center">⏳</div>'; window.db.collection("Inventario").get().then((q)=>{ let ih=[]; q.forEach(doc=>{let dt=doc.data(); dt.idDoc=doc.id; ih.push(dt);}); ih.sort((a,b)=>a.medicamento.localeCompare(b.medicamento)); let ht=''; ih.forEach((d)=>{ if(d.tipoArticulo==='Servicio Médico')return; let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); let isB=(min>0&&d.cantidad<=min); let btn=(window.usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"><button class="btn-exp-action" onclick="window.editarProducto('${d.idDoc}')">✏️ Editar</button>${(window.usuarioLogueado.rol==='Gerente'||window.usuarioLogueado.rol==='Sub-Gerente'||window.usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('Inventario','${d.idDoc}')">🗑️ Eliminar</button>`:''}</div>`:''; ht+=`<div class="tarjeta-info ${isB?'stock-alerta':'stock-ok'}" data-unidad="${d.unidad}"><div class="th-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;"><strong style="flex:1; text-align:left;">${d.medicamento}</strong><span style="font-size:1.3em; font-weight:900; color:${isB?'#dc3545':'#198754'}; text-align:right;">${d.cantidad} <span style="font-size:0.5em;color:#666">${d.unidad||'U.'}</span></span></div><div class="th-cuerpo">$${Number(d.precioVenta||0).toFixed(2)}</div>${isB?'<div style="color:#dc3545;font-weight:bold;text-align:center;margin-top:5px">¡Bajo Stock!</div>':''}${btn}</div>`; }); l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; window.filtrarInventario(); }); };
         window.filtrarInventario = function() { let bi = document.getElementById('busqueda-inv-texto'); let t=bi?bi.value.toLowerCase():''; let bs = document.getElementById('busqueda-inv-stock'); let s=bs?bs.value:'todos'; document.querySelectorAll('#lista-stock-firebase .tarjeta-info').forEach(c=>{ let mT=c.innerText.toLowerCase().includes(t); let mS=(s==='todos')||(s==='bajo'&&c.classList.contains('stock-alerta')); c.style.display=(mT&&mS)?"":"none"; }); };
 
         window.abrirModoSistemas = function() { window.cambiarPantalla('pantalla-menu','pantalla-sistemas'); let ef = document.getElementById('excel-file'); if(ef) ef.value=''; let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=''; };
@@ -1275,7 +1357,7 @@
                     let nuevoStock = tipoOp === 'Devolución' ? stockActual + Math.abs(c) : stockActual - Math.abs(c);
                     window.db.collection("Inventario").doc(n).update({cantidad: nuevoStock}).then(()=>{
                         window.db.collection("Historial_Inventario").add({tipoMovimiento:tipoOp,medicamento:doc.data().medicamento,motivo:m,cantidad:Math.abs(c),unidad:doc.data().unidad,registradoPor:window.usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); 
-                        if(tipoOp==='Devolución' && rMonto>0){ window.db.collection("Historial_Cobros").add({atendio:window.usuarioLogueado.nombre,paciente:"REEMBOLSO",dueno:"CLIENTE",articulos:[{nombre:"Devolución: "+doc.data().medicamento,precio:-rMonto,cantidad:Math.abs(c),total:-rMonto}],subtotal:-rMonto,valorDescuento:0,totalCobrado:-rMonto,pagos:[{metodo:rMet,monto:-rMonto}],metodoPago:rMet,ventaMostrador:true,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); }
+                        if(tipoOp==='Devolución' && rMonto>0){ window.db.collection("Historial_Cobros").add({atendio:window.usuarioLogueado.nombre,paciente:"REEMBOLSO / DEVOLUCIÓN",dueno:"CLIENTE",articulos:[{nombre:"Devolución: "+doc.data().medicamento,precio:-rMonto,cantidad:Math.abs(c),total:-rMonto}],subtotal:-rMonto,valorDescuento:0,totalCobrado:-rMonto,pagos:[{metodo:rMet,monto:-rMonto}],metodoPago:rMet,ventaMostrador:true,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); }
                         alert(`✅ Operación Registrada.\nEl stock de ${n} ahora es: ${nuevoStock}`); window.cargarSugerenciasInventario(); window.cancelarVolver();
                     });
                 }else alert("❌ Producto no existe."); 
