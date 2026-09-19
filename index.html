@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Hospital Veterinario ERP</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ETIQUETAS ANTI-CACHÉ PARA OBLIGAR AL CELULAR A ACTUALIZARSE -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Hospital Veterinario ERP</title>
+    
     <!-- Firebase y Excel -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -238,6 +245,7 @@
                 <div class="grupo-formulario"><label>Monto 1 ($):</label><input type="number" id="monto-pago-1" placeholder="0.00" oninput="window.calcularMontoFaltante(1)"></div>
             </div>
             
+            <!-- Cajas de Pago Extra -->
             <div id="caja-pago-2" class="form-row oculto">
                 <div class="grupo-formulario"><label>Pago 2:</label><select id="metodo-pago-2" onchange="window.calcularMontoFaltante(0)"><option value="">-- Seleccionar --</option><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Transferencia</option><option>Clip</option><option>American Express</option></select></div>
                 <div class="grupo-formulario"><label>Monto 2 ($):</label><input type="number" id="monto-pago-2" placeholder="0.00" oninput="window.calcularMontoFaltante(2)"></div>
@@ -352,7 +360,7 @@
 
         <div class="seccion-separador"></div>
         <div class="form-row" style="justify-content: center; gap: 20px;">
-            <div class="grupo-formulario" style="flex:none; width: auto;"><button class="btn btn-guardar-azul" style="margin:0; background:#6f42c1; padding:16px 30px;" onclick="window.procesarHospitalizacion(false)">💾 Solo Guardar en Historial</button></div>
+            <div class="grupo-formulario" style="flex:none; width: auto;"><button class="btn btn-guardar-azul" style="margin:0; background:#6f42c1; padding:16px 30px;" onclick="window.abrirOpcionesGuardado()">💾 Solo Guardar en Historial</button></div>
             <div class="grupo-formulario" style="flex:none; width: auto;"><button class="btn btn-guardar" id="btn-final-hosp" style="margin:0; padding:16px 30px;" onclick="window.procesarHospitalizacion('hoja')" disabled>🖨️ Guardar e Imprimir Formato Legal</button></div>
         </div>
     </div>
@@ -454,7 +462,8 @@
             const firebaseConfig = { apiKey: "AIzaSyABktLytyy6fBXXDOrJq9B0nErrOzc30a4", authDomain: "kioscovet-93eae.firebaseapp.com", projectId: "kioscovet-93eae", storageBucket: "kioscovet-93eae.firebasestorage.app", messagingSenderId: "571603121447", appId: "1:571603121447:web:ad4a7d439050ec82812502" };
             firebase.initializeApp(firebaseConfig); 
             window.db = firebase.firestore(); 
-            window.db.settings({ experimentalForceLongPolling: true });
+            window.db.settings({ experimentalForceLongPolling: true, experimentalAutoDetectLongPolling: true });
+            window.db.enablePersistence({synchronizeTabs:true}).catch(e => console.log("Persistencia Desactivada"));
         } catch(e) { console.error("Firebase Init Error:", e); }
 
         // 2. VARIABLES GLOBALES
@@ -643,7 +652,15 @@
 
         window.validarPin = function() {
             if(!window.db) { alert("Error: Conexión con Firebase no establecida. Presiona Ctrl + F5"); window.limpiarPin(); return; }
+            
+            // RELOJ ANTI-CONGELAMIENTO (8 segundos)
+            let loginTimeout = setTimeout(() => {
+                alert("⚠️ La red de datos móviles está muy inestable o bloqueando la conexión.\n\nIntenta conectarte a WiFi o recarga la página completamente.");
+                window.limpiarPin();
+            }, 8000);
+
             window.db.collection("Usuarios").doc(pinActual).get().then((doc) => {
+                clearTimeout(loginTimeout); // Cancelamos la alerta si entró rápido
                 if(doc.exists) { 
                     window.usuarioLogueado = doc.data(); window.usuarioLogueado.pin = pinActual; 
                     let r = window.usuarioLogueado.rol || "Doctor"; 
@@ -669,12 +686,17 @@
                     window.cargarSugerenciasInventario(); window.limpiarPin(); window.cambiarPantalla('pantalla-login', 'pantalla-menu');
                     resetTimer();
                 } else { 
+                    clearTimeout(loginTimeout);
                     if(["1111","2222","3333","2306"].includes(pinActual)){
                         const bLocal = {"1111":{nombre:"Ana",rol:"Gerente"},"2222":{nombre:"Carlos",rol:"Sub-Gerente"},"3333":{nombre:"Luis",rol:"Doctor"},"2306":{nombre:"Sistemas",rol:"Sistemas"}};
                         window.db.collection("Usuarios").doc(pinActual).set(bLocal[pinActual]).then(()=>window.validarPin()).catch(e=>{alert("Fallo BD: "+e.message);window.limpiarPin();});
                     }else{ alert("PIN incorrecto."); window.limpiarPin(); } 
                 }
-            }).catch(e => { alert("Error conexión Firebase: " + e.message + "\n\nPresiona Ctrl+F5."); window.limpiarPin(); });
+            }).catch(e => { 
+                clearTimeout(loginTimeout);
+                alert("Error conexión Firebase: " + e.message + "\n\nPresiona Ctrl+F5."); 
+                window.limpiarPin(); 
+            });
         };
 
         window.solicitarPinSupervisor = async function() { let pinSup = prompt("⚠️ Ingrese PIN de Gerencia para Descuento:"); if(!pinSup) return false; try { let doc = await window.db.collection("Usuarios").doc(pinSup).get(); return (doc.exists && (doc.data().rol === 'Gerente' || doc.data().rol === 'Sub-Gerente')); } catch(e) { return false; } };
@@ -938,7 +960,7 @@
             let btnG = document.getElementById('btn-final-hosp');
 
             if(s) { 
-                let map={ "AUTORIZACIÓN HOSPITALARIA":'campos-auth-hospital', "CONTRATO DE PENSIÓN":'campos-pension', "ALTA VOLUNTARIA":'campos-alta-voluntaria', "ALTA MÉDICA":'campos-alta-medica', "SALIDA DE PENSIÓN":'campos-salida-pension' }; 
+                let map={ "AUTORIZACIÓN HOSPITALARIA":'campos-auth-hospital', "CONTRATO DE PENSIÓN":'campos-pension', "ALTA VOLUNTARIA":'campos-alta-voluntaria' }; 
                 if(map[s]) document.getElementById(map[s])?.classList.remove('oculto'); 
                 if(bl) bl.classList.remove('oculto'); 
                 if(zf) zf.classList.remove('oculto'); 
