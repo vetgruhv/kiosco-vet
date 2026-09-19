@@ -2,7 +2,6 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Hospital Veterinario ERP</title>
-    <!-- Firebase y Excel -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -76,7 +75,7 @@
     <div id="modal-ver-detalle" class="modal-overlay oculto">
         <div class="modal-content" style="max-height:85vh;">
             <div class="modal-header">
-                <span id="titulo-modal-detalle">📄 Desglose de Ventas</span>
+                <span id="titulo-modal-detalle">📄 Desglose</span>
                 <button onclick="document.getElementById('modal-ver-detalle').classList.add('oculto')" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">✖</button>
             </div>
             <div id="cuerpo-modal-detalle" class="modal-body" style="background:#f8f9fa;"></div>
@@ -91,6 +90,17 @@
                 <button onclick="document.getElementById('modal-sub-detalle').classList.add('oculto')" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">✖</button>
             </div>
             <div id="cuerpo-modal-sub-detalle" class="modal-body" style="background:#fff;"></div>
+        </div>
+    </div>
+
+    <!-- MODAL OPCIONES DE GUARDADO -->
+    <div id="modal-opciones-guardar" class="modal-overlay oculto">
+        <div class="modal-content" style="height:auto; max-width: 400px; text-align:center;">
+            <div class="modal-header"><span>💾 Opciones de Guardado</span><button onclick="document.getElementById('modal-opciones-guardar').classList.add('oculto')" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">✖</button></div>
+            <div class="modal-body" style="display:flex; flex-direction:column; gap:15px; padding: 30px;">
+                <button class="btn btn-guardar-azul" style="background:#6f42c1; margin:0;" onclick="window.procesarHospitalizacion('historial')">💾 Solo Guardar en Historial</button>
+                <button class="btn btn-guardar" style="margin:0;" onclick="window.procesarHospitalizacion('hoja')">🖨️ Guardar e Imprimir Formato</button>
+            </div>
         </div>
     </div>
 
@@ -143,7 +153,7 @@
         <div class="menu-grid">
             <button class="btn-menu oculto" id="btn-movimiento" onclick="window.abrirFormulario()"><span>🛒 Venta General</span></button>
             <button class="btn-menu oculto" id="btn-hospitalizacion" onclick="window.abrirHospitalizacion()"><span>🏥 Formatos Hospitalarios</span></button>
-            <button class="btn-menu oculto" id="btn-expediente" onclick="window.abrirExpediente()"><span>🗂️ Expediente Clínico</span></button>
+            <button class="btn-menu oculto" id="btn-expediente" onclick="window.abrirVistaAgrupada('expediente', 'dia')"><span>🗂️ Expediente Clínico</span></button>
         </div>
         
         <h4 id="titulo-gerencia" class="oculto" style="color:#adb5bd;margin:25px 0 15px 0;text-transform:uppercase;font-size:0.85em;letter-spacing:1px">Administración (Gerencia)</h4>
@@ -170,7 +180,7 @@
                 <button id="filtro-agrupado-ayer" class="btn-filtro" onclick="window.cambiarFiltroAgrupado('ayer')">Ayer</button>
                 <button id="filtro-agrupado-mes" class="btn-filtro" onclick="window.cambiarFiltroAgrupado('mes')">Mes Actual</button>
                 <input type="month" id="filtro-agrupado-mes-exacto" class="btn-filtro" style="padding: 8px;" onchange="window.cambiarFiltroAgrupado('mes-exacto')">
-                <input type="text" id="buscador-agrupado" class="input-buscador oculto" placeholder="Buscar Dueño/Paciente..." oninput="window.filtrarBusquedaAgrupada()" style="flex:2; margin:0; padding:8px;">
+                <input type="text" id="buscador-agrupado" class="input-buscador oculto" placeholder="Buscar Dueño/Paciente/Tel..." oninput="window.filtrarBusquedaAgrupada()" style="flex:2; margin:0; padding:8px;">
             </div>
         </div>
 
@@ -263,7 +273,6 @@
         
         <div class="seccion-separador"></div>
         <div id="contenedor-campos-dinamicos">
-            <!-- CAMPOS DINÁMICOS: AUTORIZACION HOSPITALARIA -->
             <div id="campos-auth-hospital" class="campos-dinamicos oculto">
                 <div class="form-row"><div class="grupo-formulario" style="flex:2"><label>Domicilio:</label><input type="text" id="hosp-domicilio"></div><div class="grupo-formulario"><label>Correo:</label><input type="text" id="hosp-correo"></div></div>
                 <div class="form-row"><div class="grupo-formulario"><label>Color:</label><input type="text" id="hosp-color"></div><div class="grupo-formulario"><label>Nacimiento:</label><input type="date" id="hosp-nacimiento"></div></div>
@@ -272,7 +281,6 @@
                 <div class="grupo-formulario"><label>Manejo Médico:</label><input type="text" id="hosp-manejo-medico" placeholder="Ej. Cirugía..."></div>
             </div>
 
-            <!-- CAMPOS DINÁMICOS: CONTRATO DE PENSIÓN -->
             <div id="campos-pension" class="campos-dinamicos oculto">
                 <div class="form-row"><div class="grupo-formulario" style="flex:2"><label>Domicilio:</label><input type="text" id="pen-domicilio"></div><div class="grupo-formulario"><label>Tel. Emergencia:</label><input type="number" id="pen-tel-emergencia"></div></div>
                 <div class="form-row"><div class="grupo-formulario"><label>Entrada:</label><input type="date" id="pen-entrada"></div><div class="grupo-formulario"><label>Salida:</label><input type="date" id="pen-salida"></div><div class="grupo-formulario"><label>Costo por día ($):</label><input type="number" id="pen-costo"></div></div>
@@ -282,7 +290,6 @@
                 <div class="grupo-formulario"><label>Cuidados Especiales:</label><input type="text" id="pen-cuidados" placeholder="Si requiere medicamentos, especificar..."></div>
             </div>
 
-            <!-- CAMPOS DINÁMICOS: ALTA VOLUNTARIA -->
             <div id="campos-alta-voluntaria" class="campos-dinamicos oculto">
                 <div class="form-row"><div class="grupo-formulario"><label>Fecha de Ingreso:</label><input type="date" id="alta-f-ingreso"></div><div class="grupo-formulario"><label>Diagnóstico de Ingreso:</label><input type="text" id="alta-dx-ingreso"></div></div>
                 <div class="form-row"><div class="grupo-formulario"><label>Fecha de Egreso (Hoy):</label><input type="date" id="alta-f-egreso"></div><div class="grupo-formulario"><label>Diagnóstico de Egreso:</label><input type="text" id="alta-dx-egreso"></div></div>
@@ -296,7 +303,7 @@
                 <button id="btn-leer-firmar" class="btn btn-guardar-azul oculto" style="margin:15px auto 0 auto; width:auto; padding:12px 25px;" onclick="window.abrirLecturaYFirma()">Leer y Firmar Formulario</button>
             </div>
 
-            <!-- ZONA DE FIRMA SIEMPRE VISIBLE AL ABRIR UN FORMATO (Centrada) -->
+            <!-- ZONA DE FIRMA -->
             <div id="zona-firmas-oculta" class="form-row oculto" style="justify-content:center;padding:20px 0 0 0;margin-top:20px;border-top:1px dashed #0caeb9;">
                 <div class="firma-card">
                     <div class="firma-title" style="color:#0caeb9;">Firma Cliente</div>
@@ -382,7 +389,7 @@
         let timerInactividad;
         function resetTimer() { 
             clearTimeout(timerInactividad); 
-            if(usuarioLogueado) { 
+            if(window.usuarioLogueado) { 
                 timerInactividad = setTimeout(() => { 
                     alert("⏳ Sesión cerrada por inactividad (3 minutos)."); 
                     window.cerrarSesion(); 
@@ -399,7 +406,7 @@
             if(document.activeElement.type === "number") e.preventDefault();
         }, { passive: false });
 
-        // 1. INICIALIZAR FIREBASE 
+        // 1. INICIALIZAR FIREBASE
         window.db = null;
         try {
             const firebaseConfig = { apiKey: "AIzaSyABktLytyy6fBXXDOrJq9B0nErrOzc30a4", authDomain: "kioscovet-93eae.firebaseapp.com", projectId: "kioscovet-93eae", storageBucket: "kioscovet-93eae.firebasestorage.app", messagingSenderId: "571603121447", appId: "1:571603121447:web:ad4a7d439050ec82812502" };
@@ -410,7 +417,7 @@
         // 2. VARIABLES GLOBALES
         let pinActual = ""; window.usuarioLogueado = null; 
         let totalCobroCalculado = 0; let inventarioGlobal = []; let carrito = []; 
-        let datosHistorialInv = []; let datosExpediente = []; let datosHistorialVentas = []; let firmaCapturada = false; 
+        let datosHistorialInv = []; let firmaCapturada = false; 
         let guardandoBloqueo = false; let modoEdicion = false;
         let ctxActivo = null; let isDrawing = false; let canvasActivo = false;
         window.precioActualBaja = 0; window.productoEnEdicionOriginal = "";
@@ -575,6 +582,7 @@
             let inputPin = document.getElementById('input-pin'); 
             if(inputPin) { inputPin.type = "password"; inputPin.value=""; }
         };
+        
         window.cerrarSesion = function() { 
             window.usuarioLogueado = null; 
             window.limpiarPin(); 
@@ -665,7 +673,6 @@
 
         window.cargarSugerenciasInventario = function() { inventarioGlobal = []; if(!window.db) return; window.db.collection("Inventario").get().then(q => { q.forEach(doc => inventarioGlobal.push(doc.data())); inventarioGlobal.sort((a,b)=>a.medicamento.localeCompare(b.medicamento)); }); };
         window.buscarAutocomplete = function(inId, dropId, cb, fTipo=null) { const input = document.getElementById(inId); const drop = document.getElementById(dropId); if(!input || !drop) return; const val = input.value.toLowerCase().trim(); drop.innerHTML=''; if(val.length<3){drop.classList.add('oculto');return;} let filt = inventarioGlobal.filter(i => i.medicamento.toLowerCase().includes(val) && (fTipo?i.tipoArticulo===fTipo:true)); if(filt.length===0){drop.classList.add('oculto');return;} drop.classList.remove('oculto'); filt.slice(0,15).forEach(item => { let d = document.createElement('div'); d.className='sugerencia-item'; d.innerHTML=`<div><span class="sugerencia-icon">${item.tipoArticulo==='Servicio Médico'?'🩺':'💊'}</span><strong>${item.medicamento}</strong></div><span style="color:#198754;font-weight:bold">$${Number(item.precioVenta||0).toFixed(2)}</span>`; d.onclick=()=>{input.value=item.medicamento;drop.classList.add('oculto');cb(item);}; drop.appendChild(d); }); };
-        window.buscarAutocompleteHosp = function(i,d,c) { let t = document.getElementById('tipo-hosp-item'); window.buscarAutocomplete(i,d,c,t?t.value:null); };
         document.addEventListener('click', e => { if(!e.target.closest('.autocomplete-container')) document.querySelectorAll('.autocomplete-dropdown').forEach(d=>d.classList.add('oculto')); });
         window.filtrarTarjetas = function(idContenedor, texto) { let term = texto.toLowerCase(); let tarjetas = document.getElementById(idContenedor)?.children; if(!tarjetas) return; for(let t of tarjetas) { if(t.classList.contains('tarjeta-info') || t.classList.contains('tarjeta-expediente')) { t.style.display = t.innerText.toLowerCase().includes(term) ? "" : "none"; } } };
 
@@ -862,7 +869,7 @@
             }).catch(e=>{alert("Error: "+e.message); guardandoBloqueo=false; document.body.style.cursor='default';});
         };
 
-        // 9. FORMATOS HOSPITALARIOS
+        // 9. FORMATOS HOSPITALARIOS Y MODALES DE DETALLE
         window.abrirHospitalizacion = function() { 
             window.cambiarPantalla('pantalla-menu', 'pantalla-hospitalizacion'); 
             document.getElementById('zona-firmas-oculta')?.classList.add('oculto'); 
@@ -952,9 +959,14 @@
                 txtBuscar.classList.remove('oculto');
                 panelResumen.classList.remove('oculto');
                 subtitulo.innerText = "Desglose de Movimientos por Cajero:";
+            } else if(tipo === 'expediente') {
+                titulo.innerText = "🗂️ Expediente Clínico";
+                txtBuscar.classList.remove('oculto');
+                panelResumen.classList.add('oculto'); 
+                subtitulo.innerText = "Registros Clínicos por Médico Atendente:";
             }
             
-            listaDesglose.innerHTML='<div style="text-align:center">⏳</div>'; 
+            listaDesglose.innerHTML='<div style="text-align:center; padding:40px;">⏳ Cargando datos...</div>'; 
             window.obtenerDatosAgrupados();
         };
 
@@ -986,11 +998,12 @@
                 
                 let processDoc = (doc, tReg) => {
                     const d = doc.data(); d.id = doc.id; d.coleccion = tReg === 'cobro' ? "Historial_Cobros" : "Historial_Hospitalizacion"; d.tipoRegistro = tReg;
+                    let ts = d.timestamp || 0;
                     
-                    if((d.timestamp||0)>=limIn && (d.timestamp||0)<=limOut){ 
+                    if(ts >= limIn && ts <= limOut){ 
                         let u = d.atendio || d.doctor || 'Cajero Desconocido'; 
                         
-                        if(tipo === 'ventas' && term !== "") {
+                        if((tipo === 'ventas' || tipo === 'expediente') && term !== "") {
                             let tx = (d.paciente||'') + ' ' + (d.dueno||'') + ' ' + (d.telefono||'');
                             if(!tx.toLowerCase().includes(term)) return;
                         }
@@ -1016,20 +1029,25 @@
                     }
                 };
 
-                cobros.forEach(doc => processDoc(doc, 'cobro'));
-                hosp.forEach(doc => processDoc(doc, 'hospitalizacion'));
+                if(tipo === 'caja' || tipo === 'ventas') cobros.forEach(doc => processDoc(doc, 'cobro'));
+                if(tipo === 'ventas' || tipo === 'expediente') hosp.forEach(doc => processDoc(doc, 'hospitalizacion'));
+                if(tipo === 'expediente') cobros.forEach(doc => processDoc(doc, 'cobro'));
                 
                 window.ultimoResumenAgrupado = resumen; 
                 
-                let cgt = document.getElementById('agrupado-gran-total'); if(cgt) cgt.innerText=grT.toFixed(2); 
-                let cgd = document.getElementById('agrupado-gran-descuento'); if(cgd) cgd.innerText=grD.toFixed(2); 
-                let cgdv = document.getElementById('agrupado-gran-devoluciones'); if(cgdv) cgdv.innerText=grDev.toFixed(2); 
-                
+                if(tipo === 'caja' || tipo === 'ventas') {
+                    let cgt = document.getElementById('agrupado-gran-total'); if(cgt) cgt.innerText=grT.toFixed(2); 
+                    let cgd = document.getElementById('agrupado-gran-descuento'); if(cgd) cgd.innerText=grD.toFixed(2); 
+                    let cgdv = document.getElementById('agrupado-gran-devoluciones'); if(cgdv) cgdv.innerText=grDev.toFixed(2); 
+                }
+
                 let ht=''; 
                 for(let usr in resumen){ 
+                    if(resumen[usr].tickets.length === 0) continue;
                     resumen[usr].tickets.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));
+                    
                     ht+=`<div class="tarjeta-info tarjeta-info-click" style="border-left:4px solid #0caeb9; cursor:pointer; margin-bottom:10px;" onclick="window.abrirModalDesgloseUsuario('${usr}')">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:${tipo==='expediente'?'0':'10px'};">
                             <strong style="font-size:1.2em;color:#0caeb9;">👨‍⚕️ ${usr}</strong>
                             <span style="font-size:0.8em; background:#e0f7fa; color:#0caeb9; padding:4px 8px; border-radius:10px;">Ver detalle ▼</span>
                         </div>`; 
@@ -1043,12 +1061,13 @@
                             ht+=`<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #eee;padding:5px 0;color:#dc3545;"><span>Devoluciones</span><strong>-$${Number(resumen[usr].devoluciones||0).toFixed(2)}</strong></div>`; 
                         } 
                         let cT = resumen[usr].total - resumen[usr].devoluciones; 
-                        ht+=`<div style="display:flex;justify-content:space-between;margin-top:10px;font-size:1.1em;color:${cT<0?'#dc3545':'#198754'}"><span>Total Neto Vendido:</span><strong>$${Number(cT||0).toFixed(2)}</strong></div></div>`; 
-                    } else {
-                        ht += `</div>`;
+                        ht+=`<div style="display:flex;justify-content:space-between;margin-top:10px;font-size:1.1em;color:${cT<0?'#dc3545':'#198754'}"><span>Total Neto Vendido:</span><strong>$${Number(cT||0).toFixed(2)}</strong></div>`; 
+                    } else if(tipo === 'expediente') {
+                        ht += `<div style="font-size:0.9em; color:#666; margin-top:5px;">${resumen[usr].tickets.length} registros clínicos / ventas</div>`;
                     }
+                    ht += `</div>`;
                 } 
-                document.getElementById('lista-agrupada').innerHTML=ht||'<p style="text-align:center; color:#888;">No hay registros en esta fecha.</p>'; 
+                document.getElementById('lista-agrupada').innerHTML=ht||'<p style="text-align:center; color:#888;">No hay registros en este periodo.</p>'; 
             }).catch(e=>{document.getElementById('lista-agrupada').innerHTML='<p style="color:red; text-align:center;">Error al cargar datos.</p>';}); 
         };
 
@@ -1087,6 +1106,7 @@
                 html += `<p style="text-align:center; color:#888;">No hay tickets registrados.</p>`;
             }
             
+            document.getElementById('titulo-modal-detalle').innerText = `Desglose de Registros`;
             document.getElementById('cuerpo-modal-detalle').innerHTML = html;
             document.getElementById('modal-ver-detalle').classList.remove('oculto');
         };
@@ -1140,7 +1160,7 @@
         window.filtrarInventario = function() { let bi = document.getElementById('busqueda-inv-texto'); let t=bi?bi.value.toLowerCase():''; let bs = document.getElementById('busqueda-inv-stock'); let s=bs?bs.value:'todos'; document.querySelectorAll('#lista-stock-firebase .tarjeta-info').forEach(c=>{ let mT=c.innerText.toLowerCase().includes(t); let mS=(s==='todos')||(s==='bajo'&&c.classList.contains('stock-alerta')); c.style.display=(mT&&mS)?"":"none"; }); };
 
         window.abrirModoSistemas = function() { window.cambiarPantalla('pantalla-menu','pantalla-sistemas'); let ef = document.getElementById('excel-file'); if(ef) ef.value=''; let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=''; };
-        window.procesarExcel = async function() { const fi=document.getElementById('excel-file'); if(!fi || !fi.files.length)return alert("⚠️ Selecciona un Excel."); const r=new FileReader(); r.onload=async function(e){ try{ const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'}); const ws=wb.Sheets[wb.SheetNames[0]]; const rows=XLSX.utils.sheet_to_json(ws); if(rows.length===0)throw new Error("Vacío"); let ex=0,err=0,op=0; let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=`⏳ Subiendo ${rows.length}...`; let b=window.db.batch(); let p=[]; rows.forEach((r,i)=>{ let nR=r['Nombre']||r['Medicamento']||r['Producto']; if(!nR){err++;return;} let nom=String(nR).trim().replace(/\//g,'-'); let pre=parseFloat(r['Precio'])||0; let can=parseFloat(r['Cantidad'])||0; let t=r['Tipo']||'Medicamento/Producto'; let minR=parseInt(r['Mínimo']); let mIn=isNaN(minR)?5:minR; let rI=window.db.collection("Inventario").doc(nom); b.set(rI,{tipoArticulo:t,medicamento:nom,precioVenta:pre,cantidad:can,unidad:r['Unidad']||'Pza(s)',minimo:mIn,maximo:parseInt(r['Máximo'])||50,proveedor:r['Proveedor']||'',descripcion:r['Descripción']||'',presentacion:r['Presentación']||'',registradoPor:usuarioLogueado.nombre+" (Excel)",fechaTexto:new Date().toLocaleString('es-MX'),fechaReal:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); let rHist=window.db.collection("Historial_Inventario").doc(); b.set(rHist,{tipoMovimiento:"Alta (Excel)",medicamento:nom,cantidad:can,unidad:r['Unidad']||'Pza(s)',precio:pre,motivo:"Masiva",registradoPor:usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); op+=2; ex++; if(op>=490){p.push(b.commit());b=window.db.batch();op=0;} }); if(op>0)p.push(b.commit()); await Promise.all(p); if(er) er.innerHTML=`✅ Completado. Exitosos: ${ex}, Errores: ${err}`; window.cargarSugerenciasInventario(); }catch(err){ let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=`❌ Error: ${err.message}`;} }; r.readAsArrayBuffer(fi.files[0]); };
+        window.procesarExcel = async function() { const fi=document.getElementById('excel-file'); if(!fi || !fi.files.length)return alert("⚠️ Selecciona un Excel."); const r=new FileReader(); r.onload=async function(e){ try{ const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'}); const ws=wb.Sheets[wb.SheetNames[0]]; const rows=XLSX.utils.sheet_to_json(ws); if(rows.length===0)throw new Error("Vacío"); let ex=0,err=0,op=0; let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=`⏳ Subiendo ${rows.length}...`; let b=window.db.batch(); let p=[]; rows.forEach((r,i)=>{ let nR=r['Nombre']||r['Medicamento']||r['Producto']; if(!nR){err++;return;} let nom=String(nR).trim().replace(/\//g,'-'); let pre=parseFloat(r['Precio'])||0; let can=parseFloat(r['Cantidad'])||0; let t=r['Tipo']||'Medicamento/Producto'; let minR=parseInt(r['Mínimo']); let mIn=isNaN(minR)?5:minR; let rI=window.db.collection("Inventario").doc(nom); b.set(rI,{tipoArticulo:t,medicamento:nom,precioVenta:pre,cantidad:can,unidad:r['Unidad']||'Pza(s)',minimo:mIn,maximo:parseInt(r['Máximo'])||50,proveedor:r['Proveedor']||'',descripcion:r['Descripción']||'',presentacion:r['Presentación']||'',registradoPor:window.usuarioLogueado.nombre+" (Excel)",fechaTexto:new Date().toLocaleString('es-MX'),fechaReal:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); let rHist=window.db.collection("Historial_Inventario").doc(); b.set(rHist,{tipoMovimiento:"Alta (Excel)",medicamento:nom,cantidad:can,unidad:r['Unidad']||'Pza(s)',precio:pre,motivo:"Masiva",registradoPor:window.usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); op+=2; ex++; if(op>=490){p.push(b.commit());b=window.db.batch();op=0;} }); if(op>0)p.push(b.commit()); await Promise.all(p); if(er) er.innerHTML=`✅ Completado. Exitosos: ${ex}, Errores: ${err}`; window.cargarSugerenciasInventario(); }catch(err){ let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=`❌ Error: ${err.message}`;} }; r.readAsArrayBuffer(fi.files[0]); };
 
         window.abrirHistorialInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-historial-inventario'); window.cargarHistorialInventario(); };
         window.cargarHistorialInventario = function() { const l=document.getElementById('lista-historial-inventario'); if(!l)return; l.innerHTML='<div style="text-align:center">⏳</div>'; window.db.collection("Historial_Inventario").get().then(q=>{ datosHistorialInv=[]; q.forEach(d=>{let dD=d.data();dD.id=d.id;dD.coleccion="Historial_Inventario";datosHistorialInv.push(dD);}); datosHistorialInv.sort((a,b) => (b.timestamp||0) - (a.timestamp||0)); window.buscarHistorialInventario(); }).catch(e=>{if(l)l.innerHTML=`<p style="color:red">Error: ${e.message}</p>`;}); };
@@ -1192,8 +1212,8 @@
                     let stockActual = parseFloat(doc.data().cantidad) || 0; 
                     let nuevoStock = tipoOp === 'Devolución' ? stockActual + Math.abs(c) : stockActual - Math.abs(c);
                     window.db.collection("Inventario").doc(n).update({cantidad: nuevoStock}).then(()=>{
-                        window.db.collection("Historial_Inventario").add({tipoMovimiento:tipoOp,medicamento:doc.data().medicamento,motivo:m,cantidad:Math.abs(c),unidad:doc.data().unidad,registradoPor:usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); 
-                        if(tipoOp==='Devolución' && rMonto>0){ window.db.collection("Historial_Cobros").add({atendio:usuarioLogueado.nombre,paciente:"REEMBOLSO / DEVOLUCIÓN",dueno:"CLIENTE",articulos:[{nombre:"Devolución: "+doc.data().medicamento,precio:-rMonto,cantidad:Math.abs(c),total:-rMonto}],subtotal:-rMonto,valorDescuento:0,totalCobrado:-rMonto,pagos:[{metodo:rMet,monto:-rMonto}],metodoPago:rMet,ventaMostrador:true,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); }
+                        window.db.collection("Historial_Inventario").add({tipoMovimiento:tipoOp,medicamento:doc.data().medicamento,motivo:m,cantidad:Math.abs(c),unidad:doc.data().unidad,registradoPor:window.usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); 
+                        if(tipoOp==='Devolución' && rMonto>0){ window.db.collection("Historial_Cobros").add({atendio:window.usuarioLogueado.nombre,paciente:"REEMBOLSO / DEVOLUCIÓN",dueno:"CLIENTE",articulos:[{nombre:"Devolución: "+doc.data().medicamento,precio:-rMonto,cantidad:Math.abs(c),total:-rMonto}],subtotal:-rMonto,valorDescuento:0,totalCobrado:-rMonto,pagos:[{metodo:rMet,monto:-rMonto}],metodoPago:rMet,ventaMostrador:true,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); }
                         alert(`✅ Operación Registrada.\nEl stock de ${n} ahora es: ${nuevoStock}`); window.cargarSugerenciasInventario(); window.cancelarVolver();
                     });
                 }else alert("❌ Producto no existe."); 
