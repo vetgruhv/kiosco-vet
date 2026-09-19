@@ -70,7 +70,7 @@
 </head>
 <body>
 
-    <!-- BURBUJA NOTIFICACION -->
+    <!-- BURBUJA NOTIFICACION (Clickable) -->
     <div id="toast-notificacion" class="oculto">
         <span id="toast-msg" style="cursor:pointer;" onclick="window.irAInventarioBajo()">⚠️ Notificación</span>
         <button onclick="window.ocultarBurbujaToast()" style="background:none; border:none; font-size:20px; cursor:pointer; color:#856404; font-weight:bold; margin-left:15px;">✖</button>
@@ -79,7 +79,7 @@
     <datalist id="lista-medicamentos-general"></datalist>
     <div id="zona-impresion"></div>
 
-    <!-- MODAL DETALLES PRINCIPAL -->
+    <!-- MODAL DETALLES PRINCIPAL (DESGLOSE) -->
     <div id="modal-ver-detalle" class="modal-overlay oculto">
         <div class="modal-content" style="max-height:85vh;">
             <div class="modal-header">
@@ -90,7 +90,7 @@
         </div>
     </div>
     
-    <!-- MODAL SUB-DETALLES -->
+    <!-- MODAL SUB-DETALLES (VISTA DEL TICKET INDIVIDUAL) -->
     <div id="modal-sub-detalle" class="modal-overlay oculto" style="z-index: 100005;">
         <div class="modal-content" style="max-height:80vh; max-width: 500px;">
             <div class="modal-header" style="background:#198754;">
@@ -311,7 +311,6 @@
         
         <div class="seccion-separador"></div>
         <div id="contenedor-campos-dinamicos">
-            <!-- CAMPOS DINÁMICOS -->
             <div id="campos-auth-hospital" class="campos-dinamicos oculto">
                 <div class="form-row"><div class="grupo-formulario" style="flex:2"><label>Domicilio:</label><input type="text" id="hosp-domicilio"></div><div class="grupo-formulario"><label>Correo:</label><input type="text" id="hosp-correo"></div></div>
                 <div class="form-row"><div class="grupo-formulario"><label>Color:</label><input type="text" id="hosp-color"></div><div class="grupo-formulario"><label>Nacimiento:</label><input type="date" id="hosp-nacimiento"></div></div>
@@ -342,6 +341,7 @@
                 <button id="btn-leer-firmar" class="btn btn-guardar-azul oculto" style="margin:15px auto 0 auto; width:auto; padding:12px 25px;" onclick="window.abrirLecturaYFirma()">Leer y Firmar Formulario</button>
             </div>
 
+            <!-- ZONA DE FIRMA -->
             <div id="zona-firmas-oculta" class="form-row oculto" style="justify-content:center;padding:20px 0 0 0;margin-top:20px;border-top:1px dashed #0caeb9;">
                 <div class="firma-card">
                     <div class="firma-title" style="color:#0caeb9;">Firma Cliente</div>
@@ -455,6 +455,7 @@
             const firebaseConfig = { apiKey: "AIzaSyABktLytyy6fBXXDOrJq9B0nErrOzc30a4", authDomain: "kioscovet-93eae.firebaseapp.com", projectId: "kioscovet-93eae", storageBucket: "kioscovet-93eae.firebasestorage.app", messagingSenderId: "571603121447", appId: "1:571603121447:web:ad4a7d439050ec82812502" };
             firebase.initializeApp(firebaseConfig); 
             window.db = firebase.firestore(); 
+            window.db.settings({ experimentalForceLongPolling: true });
         } catch(e) { console.error("Firebase Init Error:", e); }
 
         // 2. VARIABLES GLOBALES
@@ -494,7 +495,7 @@
                 htmlFinal = `<div class="receta-print">${cabecera}<p style="text-align:right;font-size:11px">FECHA: <u>${fch}</u></p><h2 style="text-decoration: underline;">CONTRATO DE PRESTACIÓN DE SERVICIO DE PENSIÓN CANINA Y FELINA</h2>
                 <div class="cuerpo-texto"><p>Por medio de la presente yo el Sr. o Sra. <u>${hosp.dueno||'_________________'}</u> con domicilio en <u>${hosp.domicilioPension||'_________________'}</u> y teléfono/ celular <u>${hosp.telefono||'_________________'}</u> autorizo para que mi mascota de nombre <u>${hosp.paciente||'_________________'}</u>, raza <u>${hosp.raza||'_________________'}</u>, edad <u>${hosp.edad||'____'}</u>, sexo <u>${hosp.sexo||'____'}</u>, ingrese al servicio de pensión de "VETGRU HOSPITAL VETERINARIO".</p>
                 <p>Hago constatar lo siguiente:</p>
-                <p>1.- He presentado mis verdaderos datos en la reseña de arriba como propietario o responsable de la mascota, los cuales podrán ser usados para beneficio o notificación de this.</p>
+                <p>1.- He presentado mis verdaderos datos en la reseña de arriba como propietario o responsable de la mascota, los cuales podrán ser usados para beneficio o notificación de esta.</p>
                 <p>2.- Mi mascota ha sido vacunada periódicamente y oportunamente teniendo las vacunas contra las siguientes enfermedades: Distemper canino, Parvovirus, Hepatitis canina, Adenovirus tipo 2, Coronavirus, Leptospira, Parainfluenza, Giardia, Bordetella, Rabia; así como la debida desparasitación interna y la aplicación de un tratamiento efectivo contra pulgas y garrapatas.</p>
                 <p>- En caso de que se detecten con pulgas y/o garrapatas en la mascota, autorizo a VETGRU de dar tratamiento ya sea baño, pipeta, collar o pastilla para eliminar a los parásitos, y estoy consciente de que conlleva un cargo extra.</p>
                 <p>- Estoy consciente de que existe la posibilidad de que mi mascota se enferme, aun estando vacunada. Esto no se debe a ninguna circunstancia o condición de VETGRU y estoy de acuerdo en que VETGRU no es responsable por ninguna enfermedad que mi mascota sufra durante o después de su estancia.</p>
@@ -1311,7 +1312,6 @@
             }).catch(e => { alert("Error: " + e.message); guardandoBloqueo = false; document.body.style.cursor='default'; });
         };
 
-        // 13. INVENTARIO RESTO Y EXCEL
         window.abrirVerInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-ver-inventario'); let bi = document.getElementById('busqueda-inv-texto'); if(bi) bi.value=''; window.cargarInventarioVista(); };
         window.cargarInventarioVista = function() { const l=document.getElementById('lista-stock-firebase'); if(!l)return; l.innerHTML='<div style="text-align:center">⏳</div>'; window.db.collection("Inventario").get().then((q)=>{ let ih=[]; q.forEach(doc=>{let dt=doc.data(); dt.idDoc=doc.id; ih.push(dt);}); ih.sort((a,b)=>a.medicamento.localeCompare(b.medicamento)); let ht=''; ih.forEach((d)=>{ if(d.tipoArticulo==='Servicio Médico')return; let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); let isB=(min>0&&d.cantidad<=min); let btn=(window.usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"><button class="btn-exp-action" onclick="window.editarProducto('${d.idDoc}')">✏️ Editar</button></div>`:''; ht+=`<div class="tarjeta-info ${isB?'stock-alerta':'stock-ok'}" data-unidad="${d.unidad}"><div class="th-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;"><strong style="flex:1; text-align:left;">${d.medicamento}</strong><span style="font-size:1.3em; font-weight:900; color:${isB?'#dc3545':'#198754'}; text-align:right;">${d.cantidad} <span style="font-size:0.5em;color:#666">${d.unidad||'U.'}</span></span></div><div class="th-cuerpo">$${Number(d.precioVenta||0).toFixed(2)}</div>${isB?'<div style="color:#dc3545;font-weight:bold;text-align:center;margin-top:5px">¡Bajo Stock!</div>':''}${btn}</div>`; }); l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; window.filtrarInventario(); }); };
         window.filtrarInventario = function() { let bi = document.getElementById('busqueda-inv-texto'); let t=bi?bi.value.toLowerCase():''; let bs = document.getElementById('busqueda-inv-stock'); let s=bs?bs.value:'todos'; document.querySelectorAll('#lista-stock-firebase .tarjeta-info').forEach(c=>{ let mT=c.innerText.toLowerCase().includes(t); let mS=(s==='todos')||(s==='bajo'&&c.classList.contains('stock-alerta')); c.style.display=(mT&&mS)?"":"none"; }); };
@@ -1353,18 +1353,6 @@
         window.abrirInventario = function() { modoEdicion=false; window.cambiarPantalla('pantalla-menu','pantalla-inventario'); let ti = document.getElementById('titulo-pantalla-inventario'); if(ti) ti.innerText="📦 Alta de productos/servicios"; let inN = document.getElementById('inv-nombre'); if(inN) { inN.readOnly=false; inN.value=''; } document.querySelectorAll('#pantalla-inventario input').forEach(i=>i.value=''); let itp = document.getElementById('inv-tipo-prod'); if(itp) itp.value='Medicamento/Producto'; window.toggleServicio(); let bgi = document.getElementById('btn-guardar-inventario'); if(bgi) bgi.innerText="Guardar Alta"; };
         window.editarProducto = function(idDoc) { window.db.collection("Inventario").doc(String(idDoc)).get().then(doc=>{ if(!doc.exists)return; let i=doc.data(); modoEdicion=true; window.productoEnEdicionOriginal=idDoc; window.cambiarPantalla('pantalla-ver-inventario','pantalla-inventario'); let ti = document.getElementById('titulo-pantalla-inventario'); if(ti) ti.innerText="✏️ Editar Producto"; let itp = document.getElementById('inv-tipo-prod'); if(itp) itp.value=i.tipoArticulo||'Medicamento/Producto'; window.toggleServicio(); let inN = document.getElementById('inv-nombre'); if(inN) { inN.value=i.medicamento; inN.readOnly=false; } let ip = document.getElementById('inv-precio'); if(ip) ip.value=i.precioVenta||''; let ci = document.getElementById('cantidad-inventario'); if(ci) ci.value=i.cantidad||''; let mi = document.getElementById('min-inventario'); if(mi) mi.value=i.minimo!==undefined?i.minimo:''; let ma = document.getElementById('max-inventario'); if(ma) ma.value=i.maximo||''; let iu = document.getElementById('inv-unidad'); if(iu) iu.value=i.unidad||'Piezas'; let ipr = document.getElementById('inv-proveedor'); if(ipr) ipr.value=i.proveedor||''; let ide = document.getElementById('inv-descripcion'); if(ide) ide.value=i.descripcion||''; let ipe = document.getElementById('inv-presentacion'); if(ipe) ipe.value=i.presentacion||''; let bgi = document.getElementById('btn-guardar-inventario'); if(bgi) bgi.innerText="Guardar Cambios"; }); };
         window.guardarEnInventario = function() { let inN = document.getElementById('inv-nombre'); let n=inN?inN.value.trim().replace(/\//g,'-'):''; let ip = document.getElementById('inv-precio'); let p=ip?parseFloat(ip.value):0; let ci = document.getElementById('cantidad-inventario'); let c=ci?parseFloat(ci.value):0; let itp = document.getElementById('inv-tipo-prod'); let t=itp?itp.value:'Medicamento/Producto'; let mi = document.getElementById('min-inventario'); let vm=mi?mi.value:''; let min=vm===""?5:parseInt(vm); if(t==='Servicio Médico'){if(!n)return alert("⚠️ Llena nombre."); p=p||0;c=9999;}else{if(!n||isNaN(c)||isNaN(p))return alert("⚠️ Llena nombre, precio y cantidad.");} window.db.collection("Inventario").doc(n).set({tipoArticulo:t,medicamento:n,descripcion:document.getElementById('inv-descripcion')?.value.trim()||'',proveedor:document.getElementById('inv-proveedor')?.value.trim()||'',presentacion:document.getElementById('inv-presentacion')?.value.trim()||'',precioVenta:p,cantidad:c,unidad:document.getElementById('inv-unidad')?.value||'',minimo:min,maximo:parseInt(document.getElementById('max-inventario')?.value)||100,registradoPor:window.usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),fechaReal:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).then(()=>{ if(modoEdicion && window.productoEnEdicionOriginal && window.productoEnEdicionOriginal!==n){ window.db.collection("Inventario").doc(window.productoEnEdicionOriginal).delete(); } window.db.collection("Historial_Inventario").add({tipoMovimiento:modoEdicion?"Edición":"Alta",medicamento:n,cantidad:c,unidad:document.getElementById('inv-unidad')?.value||'',precio:p,motivo:modoEdicion?"Actualización":"Ingreso",registradoPor:window.usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); alert("✅ Guardado."); window.cargarSugerenciasInventario(); window.cancelarVolver();}); };
-        
-        window.borrarRegistro = function(c, id) { 
-            try{
-                if(confirm("¿Borrar definitivamente?")) { 
-                    window.db.collection(c).doc(String(id)).delete().then(() => { 
-                        alert("✅ Borrado"); 
-                        let act = document.querySelector('.contenedor:not(.oculto)')?.id;
-                        if(act === 'pantalla-ver-inventario') window.cargarInventarioVista(); 
-                    }).catch(e => alert("Error: "+e.message)); 
-                } 
-            }catch(e){console.log(e);}
-        };
         
         window.calcularReembolsoBaja = function() { 
             let c = parseFloat(document.getElementById('cantidad-baja-inv')?.value) || 0; 
@@ -1408,7 +1396,7 @@
                     let nuevoStock = tipoOp === 'Devolución' ? stockActual + Math.abs(c) : stockActual - Math.abs(c);
                     window.db.collection("Inventario").doc(n).update({cantidad: nuevoStock}).then(()=>{
                         window.db.collection("Historial_Inventario").add({tipoMovimiento:tipoOp,medicamento:doc.data().medicamento,motivo:m,cantidad:Math.abs(c),unidad:doc.data().unidad,registradoPor:window.usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); 
-                        if(tipoOp==='Devolución' && rMonto>0){ window.db.collection("Historial_Cobros").add({atendio:window.usuarioLogueado.nombre,paciente:"REEMBOLSO",dueno:"CLIENTE",articulos:[{nombre:"Devolución: "+doc.data().medicamento,precio:-rMonto,cantidad:Math.abs(c),total:-rMonto}],subtotal:-rMonto,valorDescuento:0,totalCobrado:-rMonto,pagos:[{metodo:rMet,monto:-rMonto}],metodoPago:rMet,ventaMostrador:true,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); }
+                        if(tipoOp==='Devolución' && rMonto>0){ window.db.collection("Historial_Cobros").add({atendio:window.usuarioLogueado.nombre,paciente:"REEMBOLSO / DEVOLUCIÓN",dueno:"CLIENTE",articulos:[{nombre:"Devolución: "+doc.data().medicamento,precio:-rMonto,cantidad:Math.abs(c),total:-rMonto}],subtotal:-rMonto,valorDescuento:0,totalCobrado:-rMonto,pagos:[{metodo:rMet,monto:-rMonto}],metodoPago:rMet,ventaMostrador:true,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); }
                         alert(`✅ Operación Registrada.\nEl stock de ${n} ahora es: ${nuevoStock}`); window.cargarSugerenciasInventario(); window.cancelarVolver();
                     });
                 }else alert("❌ Producto no existe."); 
