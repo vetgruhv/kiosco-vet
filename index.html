@@ -41,7 +41,10 @@
         .badge-tipo{padding:5px 10px;border-radius:8px;font-size:0.8em;font-weight:bold;margin-right:10px;display:inline-block} .exp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;border-bottom:1px solid #f1f3f5;padding-bottom:10px;flex-wrap:wrap;gap:10px} .exp-title{font-weight:800;font-size:1.1em;color:#2b3035;display:flex;align-items:center} .exp-date{font-size:0.85em;color:#888;font-weight:500} .exp-content{background:#f8f9fa;padding:15px;border-radius:12px;font-size:0.95em;color:#444;white-space:pre-wrap;margin-bottom:15px;border:1px solid #f1f3f5;line-height:1.6} .exp-footer{display:flex;justify-content:space-between;align-items:center;font-size:0.9em;color:#666;flex-wrap:wrap;gap:10px}
         .btn-exp-action{background:#e0f7fa;color:#0caeb9;border:none;padding:10px 18px;border-radius:10px;cursor:pointer;font-weight:bold;font-size:0.9em;display:flex;align-items:center;gap:6px; flex:1; justify-content:center;} 
         
-        /* NOTIFICACION FLOTANTE */
+        /* BLOQUEO DE SCROLL EN NUMEROS Y NOTIFICACION FLOTANTE */
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+        
         #toast-notificacion { position:fixed; top:20px; right:20px; background:#ffc107; color:#000; padding:15px 25px; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.15); z-index:100000; display:flex; align-items:center; gap:15px; transition:0.5s; opacity:0; transform:translateY(-20px); pointer-events:none; cursor:pointer;}
         #toast-notificacion.toast-active { opacity:1; transform:translateY(0); pointer-events:auto; }
         #toast-notificacion:hover { transform:scale(1.05); }
@@ -67,7 +70,7 @@
 </head>
 <body>
 
-    <!-- BURBUJA NOTIFICACION (Clickable) -->
+    <!-- BURBUJA NOTIFICACION -->
     <div id="toast-notificacion" class="oculto">
         <span id="toast-msg" style="cursor:pointer;" onclick="window.irAInventarioBajo()">⚠️ Notificación</span>
         <button onclick="window.ocultarBurbujaToast()" style="background:none; border:none; font-size:20px; cursor:pointer; color:#856404; font-weight:bold; margin-left:15px;">✖</button>
@@ -76,7 +79,7 @@
     <datalist id="lista-medicamentos-general"></datalist>
     <div id="zona-impresion"></div>
 
-    <!-- MODAL DETALLES PRINCIPAL (DESGLOSE DE TICKETS DEL CAJERO) -->
+    <!-- MODAL DETALLES PRINCIPAL -->
     <div id="modal-ver-detalle" class="modal-overlay oculto">
         <div class="modal-content" style="max-height:85vh;">
             <div class="modal-header">
@@ -87,7 +90,7 @@
         </div>
     </div>
     
-    <!-- MODAL SUB-DETALLES (VISTA DEL TICKET INDIVIDUAL) -->
+    <!-- MODAL SUB-DETALLES -->
     <div id="modal-sub-detalle" class="modal-overlay oculto" style="z-index: 100005;">
         <div class="modal-content" style="max-height:80vh; max-width: 500px;">
             <div class="modal-header" style="background:#198754;">
@@ -308,6 +311,7 @@
         
         <div class="seccion-separador"></div>
         <div id="contenedor-campos-dinamicos">
+            <!-- CAMPOS DINÁMICOS -->
             <div id="campos-auth-hospital" class="campos-dinamicos oculto">
                 <div class="form-row"><div class="grupo-formulario" style="flex:2"><label>Domicilio:</label><input type="text" id="hosp-domicilio"></div><div class="grupo-formulario"><label>Correo:</label><input type="text" id="hosp-correo"></div></div>
                 <div class="form-row"><div class="grupo-formulario"><label>Color:</label><input type="text" id="hosp-color"></div><div class="grupo-formulario"><label>Nacimiento:</label><input type="date" id="hosp-nacimiento"></div></div>
@@ -334,12 +338,10 @@
             <div id="campos-alta-medica" class="campos-dinamicos oculto"><p style="text-align:center; color:#666; margin:0; font-size:0.9em;">Se usará la información general del paciente ingresada en la parte superior.</p></div>
             <div id="campos-salida-pension" class="campos-dinamicos oculto"><p style="text-align:center; color:#666; margin:0; font-size:0.9em;">Se usará la información general del paciente ingresada en la parte superior.</p></div>
             
-            <!-- EL BOTÓN PARA LEER ESTÁ AQUÍ MISMO -->
             <div style="text-align:center; width:100%;">
                 <button id="btn-leer-firmar" class="btn btn-guardar-azul oculto" style="margin:15px auto 0 auto; width:auto; padding:12px 25px;" onclick="window.abrirLecturaYFirma()">Leer y Firmar Formulario</button>
             </div>
 
-            <!-- ZONA DE FIRMA -->
             <div id="zona-firmas-oculta" class="form-row oculto" style="justify-content:center;padding:20px 0 0 0;margin-top:20px;border-top:1px dashed #0caeb9;">
                 <div class="firma-card">
                     <div class="firma-title" style="color:#0caeb9;">Firma Cliente</div>
@@ -430,7 +432,7 @@
             clearTimeout(timerInactividad); 
             if(window.usuarioLogueado) { 
                 let rol = window.usuarioLogueado.rol || "Doctor";
-                let ms = (rol === 'Gerente' || rol === 'Sub-Gerente') ? 300000 : 180000; // 5 minutos o 3 minutos
+                let ms = (rol === 'Gerente' || rol === 'Sub-Gerente') ? 300000 : 180000; 
                 timerInactividad = setTimeout(() => { 
                     alert("⏳ Sesión cerrada por inactividad."); 
                     window.cerrarSesion(); 
@@ -465,7 +467,7 @@
         window.precioActualBaja = 0; window.productoEnEdicionOriginal = "";
         window.esVentaMostrador = true;
         window.filtroActivoAgrupado = 'dia';
-        window.tipoVistaAgrupada = 'caja'; // 'caja', 'ventas', 'expediente'
+        window.tipoVistaAgrupada = 'caja'; 
         window.ultimoResumenAgrupado = {};
 
         // 3. FUNCIONES DE IMPRESIÓN LEGAL
@@ -492,7 +494,7 @@
                 htmlFinal = `<div class="receta-print">${cabecera}<p style="text-align:right;font-size:11px">FECHA: <u>${fch}</u></p><h2 style="text-decoration: underline;">CONTRATO DE PRESTACIÓN DE SERVICIO DE PENSIÓN CANINA Y FELINA</h2>
                 <div class="cuerpo-texto"><p>Por medio de la presente yo el Sr. o Sra. <u>${hosp.dueno||'_________________'}</u> con domicilio en <u>${hosp.domicilioPension||'_________________'}</u> y teléfono/ celular <u>${hosp.telefono||'_________________'}</u> autorizo para que mi mascota de nombre <u>${hosp.paciente||'_________________'}</u>, raza <u>${hosp.raza||'_________________'}</u>, edad <u>${hosp.edad||'____'}</u>, sexo <u>${hosp.sexo||'____'}</u>, ingrese al servicio de pensión de "VETGRU HOSPITAL VETERINARIO".</p>
                 <p>Hago constatar lo siguiente:</p>
-                <p>1.- He presentado mis verdaderos datos en la reseña de arriba como propietario o responsable de la mascota, los cuales podrán ser usados para beneficio o notificación de esta.</p>
+                <p>1.- He presentado mis verdaderos datos en la reseña de arriba como propietario o responsable de la mascota, los cuales podrán ser usados para beneficio o notificación de this.</p>
                 <p>2.- Mi mascota ha sido vacunada periódicamente y oportunamente teniendo las vacunas contra las siguientes enfermedades: Distemper canino, Parvovirus, Hepatitis canina, Adenovirus tipo 2, Coronavirus, Leptospira, Parainfluenza, Giardia, Bordetella, Rabia; así como la debida desparasitación interna y la aplicación de un tratamiento efectivo contra pulgas y garrapatas.</p>
                 <p>- En caso de que se detecten con pulgas y/o garrapatas en la mascota, autorizo a VETGRU de dar tratamiento ya sea baño, pipeta, collar o pastilla para eliminar a los parásitos, y estoy consciente de que conlleva un cargo extra.</p>
                 <p>- Estoy consciente de que existe la posibilidad de que mi mascota se enferme, aun estando vacunada. Esto no se debe a ninguna circunstancia o condición de VETGRU y estoy de acuerdo en que VETGRU no es responsable por ninguna enfermedad que mi mascota sufra durante o después de su estancia.</p>
@@ -600,6 +602,12 @@
 
             canvasActivo = false; 
             window.cambiarPantalla('todas','pantalla-menu'); 
+        };
+
+        window.abrirOpcionesGuardado = function() {
+            let sEl = document.getElementById('select-formato-legal');
+            if(!sEl || sEl.value === "") { window.procesarHospitalizacion('historial'); } 
+            else { document.getElementById('modal-opciones-guardar')?.classList.remove('oculto'); }
         };
 
         // 6. LOGIN Y SEGURIDAD BLINDADA
@@ -716,6 +724,7 @@
 
         window.cargarSugerenciasInventario = function() { inventarioGlobal = []; if(!window.db) return; window.db.collection("Inventario").get().then(q => { q.forEach(doc => inventarioGlobal.push(doc.data())); inventarioGlobal.sort((a,b)=>a.medicamento.localeCompare(b.medicamento)); }); };
         window.buscarAutocomplete = function(inId, dropId, cb, fTipo=null) { const input = document.getElementById(inId); const drop = document.getElementById(dropId); if(!input || !drop) return; const val = input.value.toLowerCase().trim(); drop.innerHTML=''; if(val.length<3){drop.classList.add('oculto');return;} let filt = inventarioGlobal.filter(i => i.medicamento.toLowerCase().includes(val) && (fTipo?i.tipoArticulo===fTipo:true)); if(filt.length===0){drop.classList.add('oculto');return;} drop.classList.remove('oculto'); filt.slice(0,15).forEach(item => { let d = document.createElement('div'); d.className='sugerencia-item'; d.innerHTML=`<div><span class="sugerencia-icon">${item.tipoArticulo==='Servicio Médico'?'🩺':'💊'}</span><strong>${item.medicamento}</strong></div><span style="color:#198754;font-weight:bold">$${Number(item.precioVenta||0).toFixed(2)}</span>`; d.onclick=()=>{input.value=item.medicamento;drop.classList.add('oculto');cb(item);}; drop.appendChild(d); }); };
+        window.buscarAutocompleteHosp = function(i,d,c) { let t = document.getElementById('tipo-hosp-item'); window.buscarAutocomplete(i,d,c,t?t.value:null); };
         document.addEventListener('click', e => { if(!e.target.closest('.autocomplete-container')) document.querySelectorAll('.autocomplete-dropdown').forEach(d=>d.classList.add('oculto')); });
         window.filtrarTarjetas = function(idContenedor, texto) { let term = texto.toLowerCase(); let tarjetas = document.getElementById(idContenedor)?.children; if(!tarjetas) return; for(let t of tarjetas) { if(t.classList.contains('tarjeta-info') || t.classList.contains('tarjeta-expediente')) { t.style.display = t.innerText.toLowerCase().includes(term) ? "" : "none"; } } };
 
@@ -941,6 +950,22 @@
                 if(btnG) btnG.disabled = true;
             }
         };
+
+        window.validarCamposHosp = function(d) {
+            if(!d.dueno || !d.paciente || !d.telefono) { alert("⚠️ Llena Dueño, Paciente y Teléfono en la sección superior."); return false; }
+            if(d.formatoLegal === "AUTORIZACIÓN HOSPITALARIA") {
+                if(!d.domicilio || !d.manejoMedico) { alert("⚠️ Falta llenar campos: Domicilio y/o Manejo Médico."); return false; }
+            } else if(d.formatoLegal === "CONTRATO DE PENSIÓN") {
+                if(!d.domicilioPension || !d.penTelEmergencia || !d.penEntrada || !d.penSalida || !d.penCosto || !d.penMarca || !d.penHorario || !d.penCantidad) {
+                    alert("⚠️ Faltan datos en Pensión: Revisa Domicilio, Tel. Emergencia, Fechas, Costo y Alimentación completa."); return false;
+                }
+            } else if(d.formatoLegal === "ALTA VOLUNTARIA") {
+                if(!d.altaFechaIn || !d.altaDxIn || !d.altaFechaOut || !d.altaDxOut || !d.altaMotivo) {
+                    alert("⚠️ Faltan datos: Llena todas las fechas, diagnósticos y el motivo del alta."); return false;
+                }
+            }
+            return true;
+        };
         
         window.recopilarDatosHosp = function() {
             let fEl = document.getElementById('select-formato-legal'); const f = fEl ? fEl.value : "";
@@ -956,22 +981,27 @@
 
         window.abrirLecturaYFirma = function() { 
             let dp = window.recopilarDatosHosp(); 
+            if(!window.validarCamposHosp(dp)) return;
             dp.fechaTexto=new Date().toLocaleString('es-MX'); 
             window.generarHojasLegalesDinamicas(dp, true); 
             document.getElementById('modal-lectura')?.classList.remove('oculto'); 
         };
 
         window.procesarHospitalizacion = function(imprimir) {
-            if(guardandoBloqueo) return; let hD = window.recopilarDatosHosp(); let firm = canvasActivo&&firmaCapturada ? document.getElementById('canvas-cliente').toDataURL() : "";
-            if(!hD.dueno || !hD.paciente) return alert("⚠️ Llena Dueño y Paciente arriba."); if(!hD.formatoLegal && imprimir!=='historial') return alert("⚠️ Selecciona un Formato Legal.");
-            guardandoBloqueo=true; document.body.style.cursor='wait'; 
+            if(guardandoBloqueo) return; 
+            let hD = window.recopilarDatosHosp(); 
+            let firm = canvasActivo&&firmaCapturada ? document.getElementById('canvas-cliente').toDataURL() : "";
             
+            if(!hD.formatoLegal && imprimir!=='historial') return alert("⚠️ Selecciona un Formato Legal.");
+            if(hD.formatoLegal && !window.validarCamposHosp(hD)) return;
+            
+            guardandoBloqueo=true; document.body.style.cursor='wait'; 
             hD.firmaCliente=firm; hD.folio=String(Date.now()).slice(-5); hD.fechaTexto=new Date().toLocaleString('es-MX'); hD.timestamp=Date.now(); hD.fechaReal=firebase.firestore.FieldValue.serverTimestamp();
             window.db.collection("Historial_Hospitalizacion").add(hD).then(()=>{ 
                 if(imprimir==='hoja') window.generarHojasLegalesDinamicas(hD, false); else alert("✅ Guardado Historial."); 
                 document.getElementById('modal-opciones-guardar')?.classList.add('oculto');
                 guardandoBloqueo=false; document.body.style.cursor='default';
-                window.cancelarVolver(); 
+                window.cerrarSesion(); 
             }).catch(e=>{alert("Error: "+e.message); guardandoBloqueo=false; document.body.style.cursor='default';});
         };
 
@@ -1147,6 +1177,7 @@
                 html += `<p style="text-align:center; color:#888;">No hay tickets registrados.</p>`;
             }
             
+            document.getElementById('titulo-modal-detalle').innerText = `Desglose de Registros`;
             document.getElementById('cuerpo-modal-detalle').innerHTML = html;
             document.getElementById('modal-ver-detalle').classList.remove('oculto');
         };
@@ -1194,7 +1225,7 @@
             } 
         };
 
-        // 12. INVENTARIO Y EXCEL
+        // 12. INGRESO MÚLTIPLE DE STOCK
         window.abrirEntradaStock = function() {
             window.cambiarPantalla('pantalla-menu', 'pantalla-entrada-stock');
             carritoEntrada = []; window.itemSeleccionadoEntrada = null;
@@ -1280,6 +1311,7 @@
             }).catch(e => { alert("Error: " + e.message); guardandoBloqueo = false; document.body.style.cursor='default'; });
         };
 
+        // 13. INVENTARIO RESTO Y EXCEL
         window.abrirVerInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-ver-inventario'); let bi = document.getElementById('busqueda-inv-texto'); if(bi) bi.value=''; window.cargarInventarioVista(); };
         window.cargarInventarioVista = function() { const l=document.getElementById('lista-stock-firebase'); if(!l)return; l.innerHTML='<div style="text-align:center">⏳</div>'; window.db.collection("Inventario").get().then((q)=>{ let ih=[]; q.forEach(doc=>{let dt=doc.data(); dt.idDoc=doc.id; ih.push(dt);}); ih.sort((a,b)=>a.medicamento.localeCompare(b.medicamento)); let ht=''; ih.forEach((d)=>{ if(d.tipoArticulo==='Servicio Médico')return; let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); let isB=(min>0&&d.cantidad<=min); let btn=(window.usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"><button class="btn-exp-action" onclick="window.editarProducto('${d.idDoc}')">✏️ Editar</button></div>`:''; ht+=`<div class="tarjeta-info ${isB?'stock-alerta':'stock-ok'}" data-unidad="${d.unidad}"><div class="th-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;"><strong style="flex:1; text-align:left;">${d.medicamento}</strong><span style="font-size:1.3em; font-weight:900; color:${isB?'#dc3545':'#198754'}; text-align:right;">${d.cantidad} <span style="font-size:0.5em;color:#666">${d.unidad||'U.'}</span></span></div><div class="th-cuerpo">$${Number(d.precioVenta||0).toFixed(2)}</div>${isB?'<div style="color:#dc3545;font-weight:bold;text-align:center;margin-top:5px">¡Bajo Stock!</div>':''}${btn}</div>`; }); l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; window.filtrarInventario(); }); };
         window.filtrarInventario = function() { let bi = document.getElementById('busqueda-inv-texto'); let t=bi?bi.value.toLowerCase():''; let bs = document.getElementById('busqueda-inv-stock'); let s=bs?bs.value:'todos'; document.querySelectorAll('#lista-stock-firebase .tarjeta-info').forEach(c=>{ let mT=c.innerText.toLowerCase().includes(t); let mS=(s==='todos')||(s==='bajo'&&c.classList.contains('stock-alerta')); c.style.display=(mT&&mS)?"":"none"; }); };
@@ -1321,6 +1353,18 @@
         window.abrirInventario = function() { modoEdicion=false; window.cambiarPantalla('pantalla-menu','pantalla-inventario'); let ti = document.getElementById('titulo-pantalla-inventario'); if(ti) ti.innerText="📦 Alta de productos/servicios"; let inN = document.getElementById('inv-nombre'); if(inN) { inN.readOnly=false; inN.value=''; } document.querySelectorAll('#pantalla-inventario input').forEach(i=>i.value=''); let itp = document.getElementById('inv-tipo-prod'); if(itp) itp.value='Medicamento/Producto'; window.toggleServicio(); let bgi = document.getElementById('btn-guardar-inventario'); if(bgi) bgi.innerText="Guardar Alta"; };
         window.editarProducto = function(idDoc) { window.db.collection("Inventario").doc(String(idDoc)).get().then(doc=>{ if(!doc.exists)return; let i=doc.data(); modoEdicion=true; window.productoEnEdicionOriginal=idDoc; window.cambiarPantalla('pantalla-ver-inventario','pantalla-inventario'); let ti = document.getElementById('titulo-pantalla-inventario'); if(ti) ti.innerText="✏️ Editar Producto"; let itp = document.getElementById('inv-tipo-prod'); if(itp) itp.value=i.tipoArticulo||'Medicamento/Producto'; window.toggleServicio(); let inN = document.getElementById('inv-nombre'); if(inN) { inN.value=i.medicamento; inN.readOnly=false; } let ip = document.getElementById('inv-precio'); if(ip) ip.value=i.precioVenta||''; let ci = document.getElementById('cantidad-inventario'); if(ci) ci.value=i.cantidad||''; let mi = document.getElementById('min-inventario'); if(mi) mi.value=i.minimo!==undefined?i.minimo:''; let ma = document.getElementById('max-inventario'); if(ma) ma.value=i.maximo||''; let iu = document.getElementById('inv-unidad'); if(iu) iu.value=i.unidad||'Piezas'; let ipr = document.getElementById('inv-proveedor'); if(ipr) ipr.value=i.proveedor||''; let ide = document.getElementById('inv-descripcion'); if(ide) ide.value=i.descripcion||''; let ipe = document.getElementById('inv-presentacion'); if(ipe) ipe.value=i.presentacion||''; let bgi = document.getElementById('btn-guardar-inventario'); if(bgi) bgi.innerText="Guardar Cambios"; }); };
         window.guardarEnInventario = function() { let inN = document.getElementById('inv-nombre'); let n=inN?inN.value.trim().replace(/\//g,'-'):''; let ip = document.getElementById('inv-precio'); let p=ip?parseFloat(ip.value):0; let ci = document.getElementById('cantidad-inventario'); let c=ci?parseFloat(ci.value):0; let itp = document.getElementById('inv-tipo-prod'); let t=itp?itp.value:'Medicamento/Producto'; let mi = document.getElementById('min-inventario'); let vm=mi?mi.value:''; let min=vm===""?5:parseInt(vm); if(t==='Servicio Médico'){if(!n)return alert("⚠️ Llena nombre."); p=p||0;c=9999;}else{if(!n||isNaN(c)||isNaN(p))return alert("⚠️ Llena nombre, precio y cantidad.");} window.db.collection("Inventario").doc(n).set({tipoArticulo:t,medicamento:n,descripcion:document.getElementById('inv-descripcion')?.value.trim()||'',proveedor:document.getElementById('inv-proveedor')?.value.trim()||'',presentacion:document.getElementById('inv-presentacion')?.value.trim()||'',precioVenta:p,cantidad:c,unidad:document.getElementById('inv-unidad')?.value||'',minimo:min,maximo:parseInt(document.getElementById('max-inventario')?.value)||100,registradoPor:window.usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),fechaReal:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).then(()=>{ if(modoEdicion && window.productoEnEdicionOriginal && window.productoEnEdicionOriginal!==n){ window.db.collection("Inventario").doc(window.productoEnEdicionOriginal).delete(); } window.db.collection("Historial_Inventario").add({tipoMovimiento:modoEdicion?"Edición":"Alta",medicamento:n,cantidad:c,unidad:document.getElementById('inv-unidad')?.value||'',precio:p,motivo:modoEdicion?"Actualización":"Ingreso",registradoPor:window.usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); alert("✅ Guardado."); window.cargarSugerenciasInventario(); window.cancelarVolver();}); };
+        
+        window.borrarRegistro = function(c, id) { 
+            try{
+                if(confirm("¿Borrar definitivamente?")) { 
+                    window.db.collection(c).doc(String(id)).delete().then(() => { 
+                        alert("✅ Borrado"); 
+                        let act = document.querySelector('.contenedor:not(.oculto)')?.id;
+                        if(act === 'pantalla-ver-inventario') window.cargarInventarioVista(); 
+                    }).catch(e => alert("Error: "+e.message)); 
+                } 
+            }catch(e){console.log(e);}
+        };
         
         window.calcularReembolsoBaja = function() { 
             let c = parseFloat(document.getElementById('cantidad-baja-inv')?.value) || 0; 
