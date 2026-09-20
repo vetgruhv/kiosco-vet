@@ -212,6 +212,10 @@
                 <div style="background:rgba(255,255,255,0.2);padding:6px 15px;border-radius:20px;font-size:0.9em;">Desc. Otorgados: $<span id="agrupado-gran-descuento">0.00</span></div>
                 <div style="background:rgba(220,53,69,0.9);padding:6px 15px;border-radius:20px;font-size:0.9em;font-weight:bold;">Devoluciones: -$<span id="agrupado-gran-devoluciones">0.00</span></div>
             </div>
+            
+            <!-- NUEVO: Desglose de Descuentos por Usuario -->
+            <div id="caja-desglose-descuentos-usuarios" style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap; margin-top:10px; font-size:0.85em; color:#ffc107;">
+            </div>
         </div>
 
         <h4 id="subtitulo-lista-agrupada" style="text-transform:uppercase;font-size:0.85em;color:#666">Desglose por Cajero / Médico:</h4>
@@ -236,6 +240,8 @@
                 <label>Buscar Producto (Mín 3 letras):</label>
                 <input type="text" id="buscador-pos" class="input-buscador" placeholder="Nombre..." oninput="window.buscarAutocomplete('buscador-pos','dropdown-pos',window.seleccionarItemPos)" autocomplete="off">
                 <div id="dropdown-pos" class="autocomplete-dropdown oculto"></div>
+                <!-- BOTON EXTRA SUTIL AQUI ABAJO -->
+                <button class="btn btn-filtro" style="width:auto; margin-top:8px; padding:6px 12px; font-size:0.8em; background:#f8f9fa; border-color:#e9ecef; color:#6c757d;" onclick="window.prepararExtraManual()">➕ Cargo Extra Manual</button>
             </div>
             <div class="grupo-formulario" style="flex:1;max-width:90px;margin:0">
                 <label>Precio ($):</label>
@@ -246,29 +252,15 @@
                 <input type="number" id="cantidad-pos" value="1" step="any">
             </div>
             <div class="grupo-formulario" style="flex:0 0 auto;margin:0; display:flex; gap:5px;">
-                <button class="btn btn-guardar-azul" style="margin:0;padding:14px 20px;border-radius:12px" onclick="window.agregarAlCarrito()">➕ Añadir</button>
+                <button class="btn btn-guardar-azul" style="margin:0;padding:12px 15px;border-radius:10px;font-size:0.95em;" onclick="window.agregarAlCarrito()">➕ Añadir</button>
             </div>
         </div>
+
         <div style="font-size:1em; font-weight:bold; color:#333; margin-bottom:15px; padding-left:5px;">Stock Disponible: <strong id="stock-disp-venta" style="color:#0caeb9;">--</strong></div>
         
         <label style="font-weight:bold;font-size:0.85em;text-transform:uppercase">Artículos en la cuenta:</label>
         <div id="carrito-lista" class="carrito-box"><p style="text-align:center;color:#adb5bd">Vacío</p></div>
         
-        <!-- SECCIÓN DE CARGO EXTRA MANUAL -->
-        <div class="form-row" style="background:#fdfaf6;padding:15px;border-radius:14px;border:1px dashed #ffc107; margin-bottom: 15px; align-items:flex-end;">
-            <div class="grupo-formulario" style="flex:2;margin:0">
-                <label style="color:#856404;">Concepto Extra (Opcional):</label>
-                <input type="text" id="concepto-extra" placeholder="Ej. Transporte, Limpieza...">
-            </div>
-            <div class="grupo-formulario" style="flex:1;max-width:120px;margin:0">
-                <label style="color:#856404;">Monto ($):</label>
-                <input type="number" id="monto-extra" placeholder="0">
-            </div>
-            <div class="grupo-formulario" style="flex:0 0 auto;margin:0">
-                <button class="btn btn-amarillo" style="margin:0;padding:14px 20px;border-radius:12px;font-size:0.95em;color:#000;" onclick="window.agregarExtra()">➕ Agregar Extra</button>
-            </div>
-        </div>
-
         <div class="caja-cobro">
             <h4 style="margin:0 0 15px 0;color:#856404;border-bottom:1px solid #ffeeba;padding-bottom:8px">💳 Cobro</h4>
             <div class="form-row"><div class="grupo-formulario busqueda-ancha"><label>Descuento Directo ($):</label><input type="number" id="valor-descuento" placeholder="0.00" oninput="window.calcularTotal()"></div></div>
@@ -565,7 +557,7 @@
                 <p>11.- Si por alguna razón consideramos que su mascota puede causar daño, será separado de inmediato. Comprendiendo que mi mascota será llevado a un área polivalente en caso de no tener un comportamiento socialmente aceptable.</p>
                 </div></div>
                 <div class="receta-print" style="page-break-before: always;"><div class="cuerpo-texto">
-                <p>Esto no significa que su mascota haya sido castigada, simplemente hay veces que algunos perros tienen más energía que otros, pero por motivos de seguridad debemos de mantener un ambiente tranquilo.</p>
+                <p>Esto no significa que su mascota haya sido castigada, simply hay veces que algunos perros tienen más energía que otros, pero por motivos de seguridad debemos de mantener un ambiente tranquilo.</p>
                 <p>12.- Si mi mascota es hembra y presenta el celo durante su estancia estoy consciente de los riesgos y no hare responsable a VETGRU ante cualquier suceso (quede gestante). VETGRU buscará formar un grupo de puras hembras para que pueda salir a socializar, pero en caso de no ser posible formar tal grupo, la perrita saldrá a un área por si sola.</p>
                 <p>13.- Estoy dispuesto a pagar los gastos generados durante su estancia y liquidar la cuenta al irse a casa (en caso de no liquidar la cuenta en un lapso de una semana, doy autorización a VETGRU a dar en adopción a mi mascota para que tenga una mejor familia). Dejare un depósito o la cantidad total al entregar mi mascota a VETGRU para su estancia.</p>
                 <p><strong>ALIMENTACION:</strong></p><p>Marca: <u>${hosp.penMarca||'______________'}</u> Horario: <u>${hosp.penHorario||'______________'}</u> Cantidad: <u>${hosp.penCantidad||'______________'}</u></p>
@@ -828,19 +820,68 @@
             let lu = document.getElementById('lbl-unidad-venta'); if(lu) lu.innerText = ''; let sd = document.getElementById('stock-disp-venta'); if(sd) { sd.innerText = '--'; sd.style.color="#0caeb9"; }
         };
 
-        window.agregarExtra = function() {
-            let cInp = document.getElementById('concepto-extra');
-            let mInp = document.getElementById('monto-extra');
-            let c = cInp?.value.trim() || "Cargo Extra Manual";
-            let m = parseFloat(mInp?.value) || 0;
+        window.agregarExtraManual = function() {
+            let pInp = document.getElementById('precio-pos');
+            let p = parseFloat(pInp?.value) || 0;
+            if(p <= 0) return alert("⚠️ Escribe el precio en la casilla y luego presiona '➕ Cargo Extra Manual'.");
 
-            if(m <= 0) return alert("⚠️ Ingresa un monto mayor a $0 para el cargo extra.");
-
-            carrito.push({nombre: c, precio: m, cantidad: 1, total: m, tipo: 'Servicio Médico', unidad: 'u'});
+            carrito.push({nombre: "Cargo Extra Manual", precio: p, cantidad: 1, total: p, tipo: 'Servicio Médico', unidad: 'u'});
             window.actualizarCarritoUI();
+            
+            if(pInp) pInp.value = '';
+            let bp = document.getElementById('buscador-pos'); if(bp) { bp.value = ''; bp.readOnly = false; bp.style.background = "#fff"; }
+            let cInp = document.getElementById('cantidad-pos'); if(cInp) cInp.value = '1';
+        };
 
-            if(cInp) cInp.value = '';
-            if(mInp) mInp.value = '';
+        window.prepararExtraManual = function() {
+            let bp = document.getElementById('buscador-pos'); 
+            let pInp = document.getElementById('precio-pos');
+            let cInp = document.getElementById('cantidad-pos');
+            let lu = document.getElementById('lbl-unidad-venta');
+            let sd = document.getElementById('stock-disp-venta');
+
+            if(bp) {
+                bp.value = "Cargo Extra Manual";
+                bp.readOnly = true;
+                bp.style.background = "#e9ecef";
+            }
+            if(pInp) {
+                pInp.value = '';
+                pInp.readOnly = false;
+                pInp.style.background = "#fff";
+                pInp.focus();
+            }
+            if(cInp) cInp.value = '1';
+            if(lu) lu.innerText = '';
+            if(sd) { sd.innerText = 'Ilimitado'; sd.style.color = '#198754'; }
+            
+            window.itemSeleccionadoPosTemporal = true; 
+        };
+
+        let originalAgregarAlCarrito = window.agregarAlCarrito;
+        window.agregarAlCarrito = function() {
+            let bp = document.getElementById('buscador-pos');
+            if(bp && bp.value === "Cargo Extra Manual") {
+                let pInp = document.getElementById('precio-pos');
+                let p = parseFloat(pInp?.value) || 0;
+                let cInp = document.getElementById('cantidad-pos');
+                let c = parseFloat(cInp?.value) || 1;
+                
+                if(p <= 0) return alert("⚠️ Escribe el precio del cargo extra en la casilla 'Precio'.");
+
+                carrito.push({nombre: "Cargo Extra Manual", precio: p, cantidad: c, total: p*c, tipo: 'Servicio Médico', unidad: 'u'});
+                window.actualizarCarritoUI();
+                
+                bp.value = '';
+                bp.readOnly = false;
+                bp.style.background = "#fff";
+                if(pInp) pInp.value = '';
+                if(cInp) cInp.value = '1';
+                let sd = document.getElementById('stock-disp-venta'); if(sd) { sd.innerText = '--'; sd.style.color="#0caeb9"; }
+                window.itemSeleccionadoPosTemporal = false;
+            } else {
+                originalAgregarAlCarrito();
+            }
         };
 
         window.eliminarDelCarrito = function(idx) { carrito.splice(idx,1); window.actualizarCarritoUI(); };
@@ -953,6 +994,9 @@
             window.esVentaMostrador = true;
             let cp = document.getElementById('campos-paciente'); if(cp) cp.classList.add('oculto');
             let btnT = document.getElementById('btn-toggle-paciente'); if(btnT) { btnT.innerHTML="➕ Agregar Cliente / Paciente"; btnT.style.background="#e0f7fa"; btnT.style.color="#0caeb9"; btnT.style.borderColor="#b2ebf2"; }
+            
+            let bp = document.getElementById('buscador-pos'); if(bp) { bp.value = ''; bp.readOnly = false; bp.style.background = "#fff"; }
+            let pInp = document.getElementById('precio-pos'); if(pInp) { pInp.value = ''; pInp.readOnly = false; pInp.style.background = "#fff"; }
         };
         
         window.toggleMostrador = function() { 
@@ -1233,6 +1277,15 @@
                     }
                     let contGlobal = document.getElementById('caja-desglose-metodos-global');
                     if(contGlobal) contGlobal.innerHTML = htmlGlobalMetodos;
+
+                    let htmlDescUsuarios = '';
+                    for(let usr in resumen) {
+                        if(resumen[usr].descuentos > 0) {
+                            htmlDescUsuarios += `<div><span style="opacity:0.8;">${usr}:</span> <strong>$${resumen[usr].descuentos.toFixed(2)}</strong></div>`;
+                        }
+                    }
+                    let contDescUsuarios = document.getElementById('caja-desglose-descuentos-usuarios');
+                    if(contDescUsuarios) contDescUsuarios.innerHTML = htmlDescUsuarios;
                 }
 
                 let ht=''; 
