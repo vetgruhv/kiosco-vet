@@ -86,7 +86,7 @@
     <datalist id="lista-medicamentos-general"></datalist>
     <div id="zona-impresion"></div>
 
-    <!-- MODAL DETALLES PRINCIPAL (DESGLOSE) -->
+    <!-- MODAL DETALLES PRINCIPAL (DESGLOSE DE TICKETS DEL CAJERO) -->
     <div id="modal-ver-detalle" class="modal-overlay oculto">
         <div class="modal-content" style="max-height:85vh;">
             <div class="modal-header">
@@ -204,7 +204,6 @@
             <h3 id="titulo-total-agrupado" style="margin:0;font-weight:normal;opacity:0.9">Ingreso Total Neto</h3>
             <h1 style="margin:10px 0;font-size:3.5em">$<span id="agrupado-gran-total">0.00</span></h1>
             
-            <!-- Global Payment Breakdown -->
             <div id="caja-desglose-metodos-global" style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-top:10px; font-size:0.95em;">
             </div>
 
@@ -235,32 +234,31 @@
             </div>
         </div>
         
-        <div class="form-row" style="background:#fff;padding:15px 15px 5px 15px;border-radius:14px;border:1px solid #ced4da; margin-bottom: 5px; align-items:center;">
-            <div class="grupo-formulario autocomplete-container" style="flex:3;margin:0">
-                <label>Buscar Producto (Mín 3 letras):</label>
-                <input type="text" id="buscador-pos" class="input-buscador" placeholder="Nombre..." oninput="window.buscarAutocomplete('buscador-pos','dropdown-pos',window.seleccionarItemPos)" autocomplete="off">
-                <div id="dropdown-pos" class="autocomplete-dropdown oculto"></div>
-                <!-- BOTON EXTRA SUTIL AQUI ABAJO -->
-                <button class="btn btn-filtro" style="width:auto; margin-top:8px; padding:6px 12px; font-size:0.8em; background:#f8f9fa; border-color:#e9ecef; color:#6c757d;" onclick="window.prepararExtraManual()">➕ Cargo Extra Manual</button>
+        <div style="background:#fff;padding:20px;border-radius:14px;border:1px solid #ced4da; margin-bottom: 15px;">
+            <div class="form-row" style="margin-bottom: 10px;">
+                <div class="grupo-formulario autocomplete-container" style="flex:3;margin:0">
+                    <label>Buscar Producto (Mín 3 letras):</label>
+                    <input type="text" id="buscador-pos" class="input-buscador" placeholder="Nombre..." oninput="window.buscarAutocomplete('buscador-pos','dropdown-pos',window.seleccionarItemPos)" autocomplete="off">
+                    <div id="dropdown-pos" class="autocomplete-dropdown oculto"></div>
+                    <button class="btn btn-cancelar" style="width:auto; padding:6px 12px; margin-top:8px; font-size:0.8em; border:1px solid #ced4da; color:#6c757d; border-radius:8px;" onclick="window.prepararExtraManual()">➕ Cargo Extra Manual</button>
+                </div>
+                <div class="grupo-formulario" style="flex:1;max-width:90px;margin:0">
+                    <label>Precio ($):</label>
+                    <input type="number" id="precio-pos" placeholder="0">
+                </div>
+                <div class="grupo-formulario" style="flex:1;max-width:90px;margin:0">
+                    <label>Cant <span id="lbl-unidad-venta" style="color:#0caeb9;"></span>:</label>
+                    <input type="number" id="cantidad-pos" value="1" step="any">
+                </div>
             </div>
-            <div class="grupo-formulario" style="flex:1;max-width:90px;margin:0">
-                <label>Precio ($):</label>
-                <input type="number" id="precio-pos" placeholder="0">
-            </div>
-            <div class="grupo-formulario" style="flex:1;max-width:90px;margin:0">
-                <label>Cant <span id="lbl-unidad-venta" style="color:#0caeb9;"></span>:</label>
-                <input type="number" id="cantidad-pos" value="1" step="any">
-            </div>
-            <div class="grupo-formulario" style="flex:0 0 auto;margin:0; display:flex; gap:5px;">
-                <button class="btn btn-guardar-azul" style="margin:0;padding:12px 15px;border-radius:10px;font-size:0.95em;" onclick="window.agregarAlCarrito()">➕ Añadir</button>
-            </div>
+            <button class="btn btn-guardar-azul" style="margin:0;padding:14px 20px;border-radius:12px" onclick="window.agregarAlCarrito()">➕ Añadir</button>
         </div>
 
         <div style="font-size:1em; font-weight:bold; color:#333; margin-bottom:15px; padding-left:5px;">Stock Disponible: <strong id="stock-disp-venta" style="color:#0caeb9;">--</strong></div>
         
         <label style="font-weight:bold;font-size:0.85em;text-transform:uppercase">Artículos en la cuenta:</label>
         <div id="carrito-lista" class="carrito-box"><p style="text-align:center;color:#adb5bd">Vacío</p></div>
-        
+
         <div class="caja-cobro">
             <h4 style="margin:0 0 15px 0;color:#856404;border-bottom:1px solid #ffeeba;padding-bottom:8px">💳 Cobro</h4>
             <div class="form-row"><div class="grupo-formulario busqueda-ancha"><label>Descuento Directo ($):</label><input type="number" id="valor-descuento" placeholder="0.00" oninput="window.calcularTotal()"></div></div>
@@ -557,7 +555,7 @@
                 <p>11.- Si por alguna razón consideramos que su mascota puede causar daño, será separado de inmediato. Comprendiendo que mi mascota será llevado a un área polivalente en caso de no tener un comportamiento socialmente aceptable.</p>
                 </div></div>
                 <div class="receta-print" style="page-break-before: always;"><div class="cuerpo-texto">
-                <p>Esto no significa que su mascota haya sido castigada, simply hay veces que algunos perros tienen más energía que otros, pero por motivos de seguridad debemos de mantener un ambiente tranquilo.</p>
+                <p>Esto no significa que su mascota haya sido castigada, simplemente hay veces que algunos perros tienen más energía que otros, pero por motivos de seguridad debemos de mantener un ambiente tranquilo.</p>
                 <p>12.- Si mi mascota es hembra y presenta el celo durante su estancia estoy consciente de los riesgos y no hare responsable a VETGRU ante cualquier suceso (quede gestante). VETGRU buscará formar un grupo de puras hembras para que pueda salir a socializar, pero en caso de no ser posible formar tal grupo, la perrita saldrá a un área por si sola.</p>
                 <p>13.- Estoy dispuesto a pagar los gastos generados durante su estancia y liquidar la cuenta al irse a casa (en caso de no liquidar la cuenta en un lapso de una semana, doy autorización a VETGRU a dar en adopción a mi mascota para que tenga una mejor familia). Dejare un depósito o la cantidad total al entregar mi mascota a VETGRU para su estancia.</p>
                 <p><strong>ALIMENTACION:</strong></p><p>Marca: <u>${hosp.penMarca||'______________'}</u> Horario: <u>${hosp.penHorario||'______________'}</u> Cantidad: <u>${hosp.penCantidad||'______________'}</u></p>
@@ -798,39 +796,43 @@
             } 
         };
         
-        window.agregarAlCarrito = function() { 
-            const v = document.getElementById('buscador-pos')?.value; const inp = document.getElementById('precio-pos'); const cInp = document.getElementById('cantidad-pos');
-            let p = parseFloat(inp?.value)||0; let c = parseFloat(cInp?.value)||1; 
-            if(!v) return alert("⚠️ Escribe un producto."); 
-            const item = inventarioGlobal.find(i=>i.medicamento.toLowerCase()===v.toLowerCase()); 
+        window.agregarAlCarrito = function() {
+            let bp = document.getElementById('buscador-pos');
+            let pInp = document.getElementById('precio-pos');
+            let cInp = document.getElementById('cantidad-pos');
             
-            if(item && item.tipoArticulo!=='Servicio Médico') {
-                p = parseFloat(item.precioVenta)||0; 
-                let cantEnCarrito = carrito.filter(x => x.nombre.toLowerCase() === item.medicamento.toLowerCase()).reduce((s, x) => s + x.cantidad, 0);
-                if (cantEnCarrito + c > item.cantidad) {
-                    alert(`⚠️ ¡Stock Insuficiente!\nSolo quedan ${item.cantidad} ${item.unidad||''} de este producto en el inventario.`);
-                    return;
+            let v = bp?.value.trim();
+            let p = parseFloat(pInp?.value) || 0;
+            let c = parseFloat(cInp?.value) || 1;
+
+            if(!v) return alert("⚠️ Escribe un producto o concepto."); 
+
+            const item = inventarioGlobal.find(i => i.medicamento.toLowerCase() === v.toLowerCase());
+
+            if (item) {
+                if(item.tipoArticulo !== 'Servicio Médico') {
+                    p = parseFloat(item.precioVenta) || 0;
+                    let cantEnCarrito = carrito.filter(x => x.nombre.toLowerCase() === item.medicamento.toLowerCase()).reduce((s, x) => s + x.cantidad, 0);
+                    if (cantEnCarrito + c > item.cantidad) {
+                        alert(`⚠️ ¡Stock Insuficiente!\nSolo quedan ${item.cantidad} ${item.unidad||''} de este producto en el inventario.`);
+                        return;
+                    }
+                } else {
+                    if (p <= 0) return alert("⚠️ Ingresa un precio válido."); 
                 }
-            } else if((!item||item.tipoArticulo==='Servicio Médico')&&p<=0) {
-                return alert("⚠️ Ingresa un precio válido."); 
+                carrito.push({nombre: item.medicamento, precio: p, cantidad: c, total: p*c, tipo: item.tipoArticulo, unidad: item.unidad || ''});
+            } else {
+                if (p <= 0) return alert("⚠️ Ingresa el precio para este concepto manual.");
+                carrito.push({nombre: v, precio: p, cantidad: c, total: p*c, tipo: 'Servicio Médico', unidad: 'u'});
             }
             
-            carrito.push({nombre:item?item.medicamento:v, precio:p, cantidad:c, total:p*c, tipo:item?item.tipoArticulo:'Servicio Médico', unidad:item?item.unidad:''}); 
-            window.actualizarCarritoUI(); let bp = document.getElementById('buscador-pos'); if(bp) bp.value=''; if(inp)inp.value=''; if(cInp)cInp.value='1'; 
-            let lu = document.getElementById('lbl-unidad-venta'); if(lu) lu.innerText = ''; let sd = document.getElementById('stock-disp-venta'); if(sd) { sd.innerText = '--'; sd.style.color="#0caeb9"; }
-        };
-
-        window.agregarExtraManual = function() {
-            let pInp = document.getElementById('precio-pos');
-            let p = parseFloat(pInp?.value) || 0;
-            if(p <= 0) return alert("⚠️ Escribe el precio en la casilla y luego presiona '➕ Cargo Extra Manual'.");
-
-            carrito.push({nombre: "Cargo Extra Manual", precio: p, cantidad: 1, total: p, tipo: 'Servicio Médico', unidad: 'u'});
-            window.actualizarCarritoUI();
+            window.actualizarCarritoUI(); 
             
-            if(pInp) pInp.value = '';
-            let bp = document.getElementById('buscador-pos'); if(bp) { bp.value = ''; bp.readOnly = false; bp.style.background = "#fff"; }
-            let cInp = document.getElementById('cantidad-pos'); if(cInp) cInp.value = '1';
+            if(bp) { bp.value = ''; bp.readOnly = false; bp.style.background = "#fff"; }
+            if(pInp) { pInp.value = ''; pInp.readOnly = false; pInp.style.background = "#fff"; }
+            if(cInp) cInp.value = '1';
+            let lu = document.getElementById('lbl-unidad-venta'); if(lu) lu.innerText = ''; 
+            let sd = document.getElementById('stock-disp-venta'); if(sd) { sd.innerText = '--'; sd.style.color="#0caeb9"; }
         };
 
         window.prepararExtraManual = function() {
@@ -842,46 +844,19 @@
 
             if(bp) {
                 bp.value = "Cargo Extra Manual";
-                bp.readOnly = true;
-                bp.style.background = "#e9ecef";
+                bp.readOnly = false;
+                bp.style.background = "#fff";
+                bp.focus();
+                bp.select(); 
             }
             if(pInp) {
                 pInp.value = '';
                 pInp.readOnly = false;
                 pInp.style.background = "#fff";
-                pInp.focus();
             }
             if(cInp) cInp.value = '1';
             if(lu) lu.innerText = '';
             if(sd) { sd.innerText = 'Ilimitado'; sd.style.color = '#198754'; }
-            
-            window.itemSeleccionadoPosTemporal = true; 
-        };
-
-        let originalAgregarAlCarrito = window.agregarAlCarrito;
-        window.agregarAlCarrito = function() {
-            let bp = document.getElementById('buscador-pos');
-            if(bp && bp.value === "Cargo Extra Manual") {
-                let pInp = document.getElementById('precio-pos');
-                let p = parseFloat(pInp?.value) || 0;
-                let cInp = document.getElementById('cantidad-pos');
-                let c = parseFloat(cInp?.value) || 1;
-                
-                if(p <= 0) return alert("⚠️ Escribe el precio del cargo extra en la casilla 'Precio'.");
-
-                carrito.push({nombre: "Cargo Extra Manual", precio: p, cantidad: c, total: p*c, tipo: 'Servicio Médico', unidad: 'u'});
-                window.actualizarCarritoUI();
-                
-                bp.value = '';
-                bp.readOnly = false;
-                bp.style.background = "#fff";
-                if(pInp) pInp.value = '';
-                if(cInp) cInp.value = '1';
-                let sd = document.getElementById('stock-disp-venta'); if(sd) { sd.innerText = '--'; sd.style.color="#0caeb9"; }
-                window.itemSeleccionadoPosTemporal = false;
-            } else {
-                originalAgregarAlCarrito();
-            }
         };
 
         window.eliminarDelCarrito = function(idx) { carrito.splice(idx,1); window.actualizarCarritoUI(); };
@@ -1586,7 +1561,7 @@
                     let nuevoStock = tipoOp === 'Devolución' ? stockActual + Math.abs(c) : stockActual - Math.abs(c);
                     window.db.collection("Inventario").doc(n).update({cantidad: nuevoStock}).then(()=>{
                         window.db.collection("Historial_Inventario").add({tipoMovimiento:tipoOp,medicamento:doc.data().medicamento,motivo:m,cantidad:Math.abs(c),unidad:doc.data().unidad,registradoPor:window.usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); 
-                        if(tipoOp==='Devolución' && rMonto>0){ window.db.collection("Historial_Cobros").add({atendio:window.usuarioLogueado.nombre,paciente:"REEMBOLSO / DEVOLUCIÓN",dueno:"CLIENTE",articulos:[{nombre:"Devolución: "+doc.data().medicamento,precio:-rMonto,cantidad:Math.abs(c),total:-rMonto}],subtotal:-rMonto,valorDescuento:0,totalCobrado:-rMonto,pagos:[{metodo:rMet,monto:-rMonto}],metodoPago:rMet,ventaMostrador:true,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); }
+                        if(tipoOp==='Devolución' && rMonto>0){ window.db.collection("Historial_Cobros").add({atendio:window.usuarioLogueado.nombre,paciente:"REEMBOLSO",dueno:"CLIENTE",articulos:[{nombre:"Devolución: "+doc.data().medicamento,precio:-rMonto,cantidad:Math.abs(c),total:-rMonto}],subtotal:-rMonto,valorDescuento:0,totalCobrado:-rMonto,pagos:[{metodo:rMet,monto:-rMonto}],metodoPago:rMet,ventaMostrador:true,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); }
                         alert(`✅ Operación Registrada.\nEl stock de ${n} ahora es: ${nuevoStock}`); window.cargarSugerenciasInventario(); window.cancelarVolver();
                     });
                 }else alert("❌ Producto no existe."); 
