@@ -34,7 +34,7 @@
         .btn{width:100%;padding:16px;font-size:1.1em;border:none;border-radius:14px;cursor:pointer;font-weight:bold;display:block;text-align:center;box-sizing:border-box;transition:all 0.2s}
         .btn-guardar{background:#198754;color:#fff;margin-top:10px} .btn-guardar:hover{background:#157347;transform:translateY(-2px)}
         .btn-guardar-rojo{background:#dc3545;color:#fff} .btn-guardar-azul{background:#0caeb9;color:#fff} .btn-guardar-azul:hover{background:#088c96;transform:translateY(-2px)}
-        .btn-amarillo{background:#ffc107;color:#000;margin-top:10px} .btn-cancelar{background:transparent;color:#dc3545;margin-top:10px;border:2px solid #ffe3e3;padding:12px;cursor:pointer} .btn-cancelar:hover{background:#fff0f0}
+        .btn-amarillo{background:#ffc107;color:#000;} .btn-cancelar{background:transparent;color:#dc3545;margin-top:10px;border:2px solid #ffe3e3;padding:12px;cursor:pointer} .btn-cancelar:hover{background:#fff0f0}
         .btn-filtro{flex:1;padding:10px;border:2px solid #e9ecef;background:#fff;color:#6c757d;border-radius:10px;cursor:pointer;font-weight:bold;white-space:nowrap; text-align:center;} .btn-filtro.activo{background:#0caeb9;color:#fff;border-color:#0caeb9}
         .fab-container{position:fixed;bottom:25px;right:25px;display:flex;flex-direction:column;gap:15px;z-index:9999} .fab{width:65px;height:65px;border-radius:50%;border:none;color:#fff;font-size:28px;box-shadow:0 6px 15px rgba(0,0,0,0.3);cursor:pointer;display:flex;justify-content:center;align-items:center;transition:0.3s} .fab:active{transform:scale(0.9)} 
         .caja-cobro{background:#fffbf0;padding:25px;border-radius:18px;border:1px solid #ffecb5;margin-bottom:20px} .stock-alerta{border-left:6px solid #dc3545;background:#fffafb} .stock-ok{border-left:6px solid #198754} .oculto{display:none!important}
@@ -86,7 +86,7 @@
     <datalist id="lista-medicamentos-general"></datalist>
     <div id="zona-impresion"></div>
 
-    <!-- MODAL DETALLES PRINCIPAL (DESGLOSE DE TICKETS DEL CAJERO) -->
+    <!-- MODAL DETALLES PRINCIPAL (DESGLOSE) -->
     <div id="modal-ver-detalle" class="modal-overlay oculto">
         <div class="modal-content" style="max-height:85vh;">
             <div class="modal-header">
@@ -203,7 +203,12 @@
         <div id="resumen-agrupado" style="background:linear-gradient(135deg,#198754,#146c43);border-radius:18px;padding:30px;margin-bottom:25px;text-align:center;color:#fff">
             <h3 id="titulo-total-agrupado" style="margin:0;font-weight:normal;opacity:0.9">Ingreso Total Neto</h3>
             <h1 style="margin:10px 0;font-size:3.5em">$<span id="agrupado-gran-total">0.00</span></h1>
-            <div id="caja-detalles-descuentos" style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:15px;">
+            
+            <!-- Global Payment Breakdown -->
+            <div id="caja-desglose-metodos-global" style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-top:10px; font-size:0.95em;">
+            </div>
+
+            <div id="caja-detalles-descuentos" style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:15px; padding-top:15px; border-top:1px dashed rgba(255,255,255,0.3);">
                 <div style="background:rgba(255,255,255,0.2);padding:6px 15px;border-radius:20px;font-size:0.9em;">Desc. Otorgados: $<span id="agrupado-gran-descuento">0.00</span></div>
                 <div style="background:rgba(220,53,69,0.9);padding:6px 15px;border-radius:20px;font-size:0.9em;font-weight:bold;">Devoluciones: -$<span id="agrupado-gran-devoluciones">0.00</span></div>
             </div>
@@ -226,11 +231,24 @@
             </div>
         </div>
         
-        <div class="form-row" style="background:#fff;padding:15px 15px 5px 15px;border-radius:14px;border:1px solid #ced4da; margin-bottom: 5px;">
-            <div class="grupo-formulario autocomplete-container" style="flex:3;margin:0"><label>Buscar Producto (Mín 3 letras):</label><input type="text" id="buscador-pos" class="input-buscador" placeholder="Nombre..." oninput="window.buscarAutocomplete('buscador-pos','dropdown-pos',window.seleccionarItemPos)" autocomplete="off"><div id="dropdown-pos" class="autocomplete-dropdown oculto"></div></div>
-            <div class="grupo-formulario" style="flex:1;max-width:100px;margin:0"><label>Precio ($):</label><input type="number" id="precio-pos" placeholder="0"></div>
-            <div class="grupo-formulario" style="flex:1;max-width:100px;margin:0"><label>Cant <span id="lbl-unidad-venta" style="color:#0caeb9;"></span>:</label><input type="number" id="cantidad-pos" value="1" step="any"></div>
-            <div class="grupo-formulario" style="flex:0 0 auto;margin:0"><button class="btn btn-guardar-azul" style="margin:0;padding:14px 20px;border-radius:12px" onclick="window.agregarAlCarrito()">➕ Añadir</button></div>
+        <div class="form-row" style="background:#fff;padding:15px 15px 5px 15px;border-radius:14px;border:1px solid #ced4da; margin-bottom: 5px; align-items:center;">
+            <div class="grupo-formulario autocomplete-container" style="flex:3;margin:0">
+                <label>Buscar Producto (Mín 3 letras):</label>
+                <input type="text" id="buscador-pos" class="input-buscador" placeholder="Nombre..." oninput="window.buscarAutocomplete('buscador-pos','dropdown-pos',window.seleccionarItemPos)" autocomplete="off">
+                <div id="dropdown-pos" class="autocomplete-dropdown oculto"></div>
+            </div>
+            <div class="grupo-formulario" style="flex:1;max-width:90px;margin:0">
+                <label>Precio ($):</label>
+                <input type="number" id="precio-pos" placeholder="0">
+            </div>
+            <div class="grupo-formulario" style="flex:1;max-width:90px;margin:0">
+                <label>Cant <span id="lbl-unidad-venta" style="color:#0caeb9;"></span>:</label>
+                <input type="number" id="cantidad-pos" value="1" step="any">
+            </div>
+            <div class="grupo-formulario" style="flex:0 0 auto;margin:0; display:flex; gap:5px;">
+                <button class="btn btn-guardar-azul" style="margin:0;padding:12px 15px;border-radius:10px;font-size:0.95em;" onclick="window.agregarAlCarrito()">➕ Añadir</button>
+                <button class="btn btn-amarillo" style="margin:0;padding:12px 15px;border-radius:10px;font-size:0.95em;" onclick="window.agregarExtraManual()">⭐ Extra</button>
+            </div>
         </div>
         <div style="font-size:1em; font-weight:bold; color:#333; margin-bottom:15px; padding-left:5px;">Stock Disponible: <strong id="stock-disp-venta" style="color:#0caeb9;">--</strong></div>
         
@@ -245,7 +263,6 @@
                 <div class="grupo-formulario"><label>Monto 1 ($):</label><input type="number" id="monto-pago-1" placeholder="0.00" oninput="window.calcularMontoFaltante(1)"></div>
             </div>
             
-            <!-- Cajas de Pago Extra -->
             <div id="caja-pago-2" class="form-row oculto">
                 <div class="grupo-formulario"><label>Pago 2:</label><select id="metodo-pago-2" onchange="window.calcularMontoFaltante(0)"><option value="">-- Seleccionar --</option><option>Efectivo</option><option>Tarjeta Débito</option><option>Tarjeta Crédito</option><option>Transferencia</option><option>Clip</option><option>American Express</option></select></div>
                 <div class="grupo-formulario"><label>Monto 2 ($):</label><input type="number" id="monto-pago-2" placeholder="0.00" oninput="window.calcularMontoFaltante(2)"></div>
@@ -520,7 +537,7 @@
                 </div></div>
                 <div class="receta-print" style="page-break-before: always;"><div class="cuerpo-texto">
                 <p>6.- VETGRU se compromete a cuidar a su mascota, mantenerlo en excelentes condiciones, así como el mantenimiento higiénico-sanitario de las instalaciones para poder brindar un mejor servicio. Se entrega a la mascota en óptimas condiciones.</p>
-                <p>- Como propietario entiendo que en el transcurso de la estancia de mi mascota en la pensión de VETGRU, pueden llegar a suceder accidentes (llámese peleas con otra mascota, golpes o lesiones al momento del juego, que la mascota ingiera algún alimento u objeto fue del alcance de VETGRU, inclusive la muerte de la mascota, entre otros), ya que son seres vivos independientes, así como la posibilidad de presentar pérdida de peso debido al distrés por la separación temporal; de ser así, deslindo de toda responsabilidad a VETGRU durante la estancia de mi mascota y después de ser entregada.</p>
+                <p>- Como propietario entiendo que en el transcurso de la estancia de mi mascota en la pensión de VETGRU, pueden llegar a suceder accidentes (llámese peleas con otra mascota, golpes o lesiones al momento del juego, que la mascota ingiera algún alimento u objeto fue del alcance de VETGRU, inclusive la muerte de la mascota, entre, otros), ya que son seres vivos independientes, así como la posibilidad de presentar pérdida de peso debido al distrés por la separación temporal; de ser así, deslindo de toda responsabilidad a VETGRU durante la estancia de mi mascota y después de ser entregada.</p>
                 <p>-En caso de que mi mascota requiera algún cuidado especial o se encuentre en tratamiento, lo notificare en el apartado de “indicaciones durante sus estancia”, de no ser así, no podré hacer responsable a VETGRU.</p>
                 <p>7.- VETGRU se compromete a avisar al propietario de cualquier incidencia con la mayor brevedad posible, contactando para ello a través del teléfono de aviso que presente en este documento.</p>
                 <p>- En caso de alguna enfermedad, lesión o muerte de la mascota durante su estancia, VETGRU tratará de contactarlo por todos los medios posibles. Le pedimos que nos proporcione varios números telefónicos incluyendo un teléfono de emergencia: <u>${hosp.penTelEmergencia||'__________________'}</u>.</p>
@@ -658,14 +675,13 @@
         window.validarPin = function() {
             if(!window.db) { alert("Error: Conexión con Firebase no establecida. Presiona Ctrl + F5"); window.limpiarPin(); return; }
             
-            // RELOJ ANTI-CONGELAMIENTO (8 segundos)
             let loginTimeout = setTimeout(() => {
                 alert("⚠️ La red de datos móviles está muy inestable o bloqueando la conexión.\n\nIntenta conectarte a WiFi o recarga la página completamente.");
                 window.limpiarPin();
             }, 8000);
 
             window.db.collection("Usuarios").doc(pinActual).get().then((doc) => {
-                clearTimeout(loginTimeout); // Cancelamos la alerta si entró rápido
+                clearTimeout(loginTimeout); 
                 if(doc.exists) { 
                     window.usuarioLogueado = doc.data(); window.usuarioLogueado.pin = pinActual; 
                     let r = window.usuarioLogueado.rol || "Doctor"; 
@@ -773,6 +789,7 @@
                 } 
             } 
         };
+        
         window.agregarAlCarrito = function() { 
             const v = document.getElementById('buscador-pos')?.value; const inp = document.getElementById('precio-pos'); const cInp = document.getElementById('cantidad-pos');
             let p = parseFloat(inp?.value)||0; let c = parseFloat(cInp?.value)||1; 
@@ -794,37 +811,78 @@
             window.actualizarCarritoUI(); let bp = document.getElementById('buscador-pos'); if(bp) bp.value=''; if(inp)inp.value=''; if(cInp)cInp.value='1'; 
             let lu = document.getElementById('lbl-unidad-venta'); if(lu) lu.innerText = ''; let sd = document.getElementById('stock-disp-venta'); if(sd) { sd.innerText = '--'; sd.style.color="#0caeb9"; }
         };
+
+        window.agregarExtraManual = function() {
+            let pInp = document.getElementById('precio-pos');
+            let p = parseFloat(pInp?.value) || 0;
+            if(p <= 0) return alert("⚠️ Escribe el precio en la casilla y luego presiona '⭐ Extra'.");
+
+            carrito.push({nombre: "Cargo Extra Manual", precio: p, cantidad: 1, total: p, tipo: 'Servicio Médico', unidad: 'u'});
+            window.actualizarCarritoUI();
+            
+            if(pInp) pInp.value = '';
+            let bp = document.getElementById('buscador-pos'); if(bp) bp.value = '';
+            let cInp = document.getElementById('cantidad-pos'); if(cInp) cInp.value = '1';
+        };
+
         window.eliminarDelCarrito = function(idx) { carrito.splice(idx,1); window.actualizarCarritoUI(); };
+        
         window.actualizarCarritoUI = function() { 
             const d = document.getElementById('carrito-lista'); if(!d) return;
             if(carrito.length===0) d.innerHTML='<p style="text-align:center;color:#adb5bd">Vacío</p>'; 
             else d.innerHTML=carrito.map((i,idx)=>`<div class="item-carrito"><span>${i.tipo==='Servicio Médico'?'🩺':'💊'} <strong>${i.nombre}</strong> <span style="color:#666;font-size:0.85em;">(${i.cantidad} ${i.unidad||'u'} x $${Number(i.precio||0).toFixed(2)})</span></span><span>$${Number(i.total||0).toFixed(2)} <button class="btn-eliminar-item" onclick="window.eliminarDelCarrito(${idx})">X</button></span></div>`).join(''); 
+            
             let sub = carrito.reduce((s,i)=>s+i.total,0); let desc = parseFloat(document.getElementById('valor-descuento')?.value)||0; 
-            totalCobroCalculado = Math.max(0, sub-desc); let tc = document.getElementById('total-cobrar'); if(tc) tc.innerText = totalCobroCalculado.toFixed(2); 
+            totalCobroCalculado = Math.max(0, sub-desc); 
+            let tc = document.getElementById('total-cobrar'); if(tc) tc.innerText = totalCobroCalculado.toFixed(2); 
             window.calcularMontoFaltante(0); 
         };
         
         window.calcularTotal = function() { window.actualizarCarritoUI(); };
+        
         window.calcularMontoFaltante = function(modificadoId = 0) {
             let m1Inp = document.getElementById('monto-pago-1'); let m1 = parseFloat(m1Inp?.value) || 0;
             let m2Inp = document.getElementById('monto-pago-2'); let m2Sel = document.getElementById('metodo-pago-2');
             let m3Inp = document.getElementById('monto-pago-3'); let m3Sel = document.getElementById('metodo-pago-3');
             
             let tc = document.getElementById('texto-cambio');
-            let f1 = totalCobroCalculado - m1;
-            
-            let m2 = parseFloat(m2Inp?.value) || 0; let m3 = parseFloat(m3Inp?.value) || 0;
-            
-            if(modificadoId === 1) {
-                if(m3Inp && !document.getElementById('caja-pago-3').classList.contains('oculto')) { let f = totalCobroCalculado - m1 - m2; m3Inp.value = f > 0 ? f.toFixed(2) : ''; } 
-                else if(m2Inp && !document.getElementById('caja-pago-2').classList.contains('oculto')) { m2Inp.value = f1 > 0 ? f1.toFixed(2) : ''; }
-            } else if(modificadoId === 2) {
-                if(m3Inp && !document.getElementById('caja-pago-3').classList.contains('oculto')) { let f = totalCobroCalculado - m1 - m2; m3Inp.value = f > 0 ? f.toFixed(2) : ''; }
+            let cp2Activo = document.getElementById('caja-pago-2') && !document.getElementById('caja-pago-2').classList.contains('oculto');
+            let cp3Activo = document.getElementById('caja-pago-3') && !document.getElementById('caja-pago-3').classList.contains('oculto');
+
+            if(modificadoId === 0) {
+                if(cp3Activo) {
+                    let f = totalCobroCalculado - m1 - (parseFloat(m2Inp?.value) || 0);
+                    if(m3Inp) m3Inp.value = f > 0 ? f.toFixed(2) : '';
+                } else if(cp2Activo) {
+                    let f = totalCobroCalculado - m1;
+                    if(m2Inp) m2Inp.value = f > 0 ? f.toFixed(2) : '';
+                } else {
+                    if(m1Inp) m1Inp.value = totalCobroCalculado > 0 ? totalCobroCalculado.toFixed(2) : '';
+                }
+            } 
+            else if(modificadoId === 1) {
+                if(cp2Activo && !cp3Activo) {
+                    let f = totalCobroCalculado - m1;
+                    if(m2Inp) m2Inp.value = f > 0 ? f.toFixed(2) : '';
+                } else if(cp2Activo && cp3Activo) {
+                    let m2 = parseFloat(m2Inp?.value) || 0;
+                    let f = totalCobroCalculado - m1 - m2;
+                    if(m3Inp) m3Inp.value = f > 0 ? f.toFixed(2) : '';
+                }
+            } 
+            else if(modificadoId === 2) {
+                if(cp3Activo) {
+                    let m2 = parseFloat(m2Inp?.value) || 0;
+                    let f = totalCobroCalculado - m1 - m2;
+                    if(m3Inp) m3Inp.value = f > 0 ? f.toFixed(2) : '';
+                }
             }
 
-            m1 = parseFloat(m1Inp?.value) || 0; m2 = parseFloat(m2Inp?.value) || 0; m3 = parseFloat(m3Inp?.value) || 0;
+            m1 = parseFloat(m1Inp?.value) || 0;
+            let m2 = parseFloat(m2Inp?.value) || 0;
+            let m3 = parseFloat(m3Inp?.value) || 0;
             let sumaPagos = m1 + m2 + m3;
-            
+
             if(sumaPagos > totalCobroCalculado && totalCobroCalculado > 0) {
                 if(tc) { tc.classList.remove('oculto'); tc.innerText = `Cambio a devolver: $${(sumaPagos - totalCobroCalculado).toFixed(2)}`; }
             } else {
@@ -969,7 +1027,7 @@
             let btnG = document.getElementById('btn-final-hosp');
 
             if(s) { 
-                let map={ "AUTORIZACIÓN HOSPITALARIA":'campos-auth-hospital', "CONTRATO DE PENSIÓN":'campos-pension', "ALTA VOLUNTARIA":'campos-alta-voluntaria' }; 
+                let map={ "AUTORIZACIÓN HOSPITALARIA":'campos-auth-hospital', "CONTRATO DE PENSIÓN":'campos-pension', "ALTA VOLUNTARIA":'campos-alta-voluntaria', "ALTA MÉDICA":'campos-alta-medica', "SALIDA DE PENSIÓN":'campos-salida-pension' }; 
                 if(map[s]) document.getElementById(map[s])?.classList.remove('oculto'); 
                 if(bl) bl.classList.remove('oculto'); 
                 if(zf) zf.classList.remove('oculto'); 
@@ -1097,6 +1155,7 @@
 
             Promise.all([window.db.collection("Historial_Cobros").get(), window.db.collection("Historial_Hospitalizacion").get()]).then(([cobros, hosp])=>{ 
                 let resumen={}, grT=0, grD=0, grDev=0; 
+                let globalMetodos = {};
                 
                 let processDoc = (doc, tReg) => {
                     const d = doc.data(); d.id = doc.id; d.coleccion = tReg === 'cobro' ? "Historial_Cobros" : "Historial_Hospitalizacion"; d.tipoRegistro = tReg;
@@ -1123,7 +1182,14 @@
                                 grT += totVenta; 
                                 pgs.forEach(p=>{
                                     let m=p.metodo;let a=parseFloat(p.monto)||0; 
-                                    if(a>=0){if(!resumen[u].metodos[m])resumen[u].metodos[m]=0; resumen[u].metodos[m]+=a; resumen[u].total+=a;} 
+                                    if(a>=0){
+                                        if(!resumen[u].metodos[m])resumen[u].metodos[m]=0; 
+                                        resumen[u].metodos[m]+=a; 
+                                        resumen[u].total+=a;
+                                        
+                                        if(!globalMetodos[m]) globalMetodos[m] = 0;
+                                        globalMetodos[m] += a;
+                                    } 
                                 }); 
                             } 
                             grD+=(parseFloat(d.valorDescuento)||0);
@@ -1141,6 +1207,13 @@
                     let cgt = document.getElementById('agrupado-gran-total'); if(cgt) cgt.innerText=grT.toFixed(2); 
                     let cgd = document.getElementById('agrupado-gran-descuento'); if(cgd) cgd.innerText=grD.toFixed(2); 
                     let cgdv = document.getElementById('agrupado-gran-devoluciones'); if(cgdv) cgdv.innerText=grDev.toFixed(2); 
+                    
+                    let htmlGlobalMetodos = '';
+                    for(let gm in globalMetodos) {
+                        htmlGlobalMetodos += `<div style="background:rgba(255,255,255,0.15);padding:4px 12px;border-radius:15px; font-weight:bold;">${gm}: $${globalMetodos[gm].toFixed(2)}</div>`;
+                    }
+                    let contGlobal = document.getElementById('caja-desglose-metodos-global');
+                    if(contGlobal) contGlobal.innerHTML = htmlGlobalMetodos;
                 }
 
                 let ht=''; 
@@ -1343,51 +1416,8 @@
         };
 
         window.abrirVerInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-ver-inventario'); let bi = document.getElementById('busqueda-inv-texto'); if(bi) bi.value=''; window.cargarInventarioVista(); };
-        window.cargarInventarioVista = function() { 
-            const l=document.getElementById('lista-stock-firebase'); if(!l)return; 
-            l.innerHTML='<div style="text-align:center">⏳</div>'; 
-            
-            let orden = document.getElementById('busqueda-inv-orden')?.value || 'alfabetico';
-
-            window.db.collection("Inventario").get().then((q)=>{ 
-                let ih=[]; q.forEach(doc=>{let dt=doc.data(); dt.idDoc=doc.id; ih.push(dt);}); 
-                
-                if(orden === 'mayor') {
-                    ih.sort((a,b) => (parseFloat(b.cantidad)||0) - (parseFloat(a.cantidad)||0));
-                } else if (orden === 'menor') {
-                    ih.sort((a,b) => (parseFloat(a.cantidad)||0) - (parseFloat(b.cantidad)||0));
-                } else {
-                    ih.sort((a,b)=>(a.medicamento||'').localeCompare(b.medicamento||''));
-                }
-
-                let ht=''; 
-                ih.forEach((d)=>{ 
-                    let esServicio = (d.tipoArticulo === 'Servicio Médico');
-                    let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); 
-                    let isB=(!esServicio && min>0 && d.cantidad<=min); 
-                    let btn=(window.usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"><button class="btn-exp-action" onclick="window.editarProducto('${d.idDoc}')">✏️ Editar</button>${(window.usuarioLogueado.rol==='Gerente'||window.usuarioLogueado.rol==='Sub-Gerente'||window.usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('Inventario','${d.idDoc}')">🗑️ Eliminar</button>`:''}</div>`:''; 
-                    
-                    let cantText = esServicio ? 'Ilimitado' : `${d.cantidad} <span style="font-size:0.5em;color:#666">${d.unidad||'U.'}</span>`;
-                    let icon = esServicio ? '🩺' : '📦';
-
-                    ht+=`<div class="tarjeta-info ${isB?'stock-alerta':'stock-ok'}" data-tipo="${esServicio?'servicio':'producto'}"><div class="th-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;"><strong style="flex:1; text-align:left;">${icon} ${d.medicamento}</strong><span style="font-size:1.3em; font-weight:900; color:${isB?'#dc3545':'#198754'}; text-align:right;">${cantText}</span></div><div class="th-cuerpo">$${Number(d.precioVenta||0).toFixed(2)}</div>${isB?'<div style="color:#dc3545;font-weight:bold;text-align:center;margin-top:5px">¡Bajo Stock!</div>':''}${btn}</div>`; 
-                }); 
-                l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; 
-                window.filtrarInventario(); 
-            }); 
-        };
-        window.filtrarInventario = function() { 
-            let bi = document.getElementById('busqueda-inv-texto'); let t=bi?bi.value.toLowerCase():''; 
-            let bs = document.getElementById('busqueda-inv-stock'); let s=bs?bs.value:'todos'; 
-            let bt = document.getElementById('busqueda-inv-tipo'); let tipo=bt?bt.value:'todos'; 
-
-            document.querySelectorAll('#lista-stock-firebase .tarjeta-info').forEach(c=>{ 
-                let mT=c.innerText.toLowerCase().includes(t); 
-                let mS=(s==='todos')||(s==='bajo'&&c.classList.contains('stock-alerta')); 
-                let mTipo = (tipo === 'todos') || (c.getAttribute('data-tipo') === tipo);
-                c.style.display=(mT&&mS&&mTipo)?"":"none"; 
-            }); 
-        };
+        window.cargarInventarioVista = function() { const l=document.getElementById('lista-stock-firebase'); if(!l)return; l.innerHTML='<div style="text-align:center">⏳</div>'; window.db.collection("Inventario").get().then((q)=>{ let ih=[]; q.forEach(doc=>{let dt=doc.data(); dt.idDoc=doc.id; ih.push(dt);}); ih.sort((a,b)=>a.medicamento.localeCompare(b.medicamento)); let ht=''; ih.forEach((d)=>{ if(d.tipoArticulo==='Servicio Médico')return; let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); let isB=(min>0&&d.cantidad<=min); let btn=(window.usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"><button class="btn-exp-action" onclick="window.editarProducto('${d.idDoc}')">✏️ Editar</button></div>`:''; ht+=`<div class="tarjeta-info ${isB?'stock-alerta':'stock-ok'}" data-unidad="${d.unidad}"><div class="th-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;"><strong style="flex:1; text-align:left;">${d.medicamento}</strong><span style="font-size:1.3em; font-weight:900; color:${isB?'#dc3545':'#198754'}; text-align:right;">${d.cantidad} <span style="font-size:0.5em;color:#666">${d.unidad||'U.'}</span></span></div><div class="th-cuerpo">$${Number(d.precioVenta||0).toFixed(2)}</div>${isB?'<div style="color:#dc3545;font-weight:bold;text-align:center;margin-top:5px">¡Bajo Stock!</div>':''}${btn}</div>`; }); l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; window.filtrarInventario(); }); };
+        window.filtrarInventario = function() { let bi = document.getElementById('busqueda-inv-texto'); let t=bi?bi.value.toLowerCase():''; let bs = document.getElementById('busqueda-inv-stock'); let s=bs?bs.value:'todos'; document.querySelectorAll('#lista-stock-firebase .tarjeta-info').forEach(c=>{ let mT=c.innerText.toLowerCase().includes(t); let mS=(s==='todos')||(s==='bajo'&&c.classList.contains('stock-alerta')); c.style.display=(mT&&mS)?"":"none"; }); };
 
         window.abrirModoSistemas = function() { window.cambiarPantalla('pantalla-menu','pantalla-sistemas'); let ef = document.getElementById('excel-file'); if(ef) ef.value=''; let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=''; };
         window.procesarExcel = async function() { const fi=document.getElementById('excel-file'); if(!fi || !fi.files.length)return alert("⚠️ Selecciona un Excel."); const r=new FileReader(); r.onload=async function(e){ try{ const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'}); const ws=wb.Sheets[wb.SheetNames[0]]; const rows=XLSX.utils.sheet_to_json(ws); if(rows.length===0)throw new Error("Vacío"); let ex=0,err=0,op=0; let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=`⏳ Subiendo ${rows.length}...`; let b=window.db.batch(); let p=[]; rows.forEach((r,i)=>{ let nR=r['Nombre']||r['Medicamento']||r['Producto']; if(!nR){err++;return;} let nom=String(nR).trim().replace(/\//g,'-'); let pre=parseFloat(r['Precio'])||0; let can=parseFloat(r['Cantidad'])||0; let t=r['Tipo']||'Medicamento/Producto'; let minR=parseInt(r['Mínimo']); let mIn=isNaN(minR)?5:minR; let rI=window.db.collection("Inventario").doc(nom); b.set(rI,{tipoArticulo:t,medicamento:nom,precioVenta:pre,cantidad:can,unidad:r['Unidad']||'Pza(s)',minimo:mIn,maximo:parseInt(r['Máximo'])||50,proveedor:r['Proveedor']||'',descripcion:r['Descripción']||'',presentacion:r['Presentación']||'',registradoPor:window.usuarioLogueado.nombre+" (Excel)",fechaTexto:new Date().toLocaleString('es-MX'),fechaReal:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); let rHist=window.db.collection("Historial_Inventario").doc(); b.set(rHist,{tipoMovimiento:"Alta (Excel)",medicamento:nom,cantidad:can,unidad:r['Unidad']||'Pza(s)',precio:pre,motivo:"Masiva",registradoPor:window.usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); op+=2; ex++; if(op>=490){p.push(b.commit());b=window.db.batch();op=0;} }); if(op>0)p.push(b.commit()); await Promise.all(p); if(er) er.innerHTML=`✅ Completado. Exitosos: ${ex}, Errores: ${err}`; window.cargarSugerenciasInventario(); }catch(err){ let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=`❌ Error: ${err.message}`;} }; r.readAsArrayBuffer(fi.files[0]); };
@@ -1481,7 +1511,7 @@
                     let nuevoStock = tipoOp === 'Devolución' ? stockActual + Math.abs(c) : stockActual - Math.abs(c);
                     window.db.collection("Inventario").doc(n).update({cantidad: nuevoStock}).then(()=>{
                         window.db.collection("Historial_Inventario").add({tipoMovimiento:tipoOp,medicamento:doc.data().medicamento,motivo:m,cantidad:Math.abs(c),unidad:doc.data().unidad,registradoPor:window.usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); 
-                        if(tipoOp==='Devolución' && rMonto>0){ window.db.collection("Historial_Cobros").add({atendio:window.usuarioLogueado.nombre,paciente:"REEMBOLSO / DEVOLUCIÓN",dueno:"CLIENTE",articulos:[{nombre:"Devolución: "+doc.data().medicamento,precio:-rMonto,cantidad:Math.abs(c),total:-rMonto}],subtotal:-rMonto,valorDescuento:0,totalCobrado:-rMonto,pagos:[{metodo:rMet,monto:-rMonto}],metodoPago:rMet,ventaMostrador:true,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); }
+                        if(tipoOp==='Devolución' && rMonto>0){ window.db.collection("Historial_Cobros").add({atendio:window.usuarioLogueado.nombre,paciente:"REEMBOLSO",dueno:"CLIENTE",articulos:[{nombre:"Devolución: "+doc.data().medicamento,precio:-rMonto,cantidad:Math.abs(c),total:-rMonto}],subtotal:-rMonto,valorDescuento:0,totalCobrado:-rMonto,pagos:[{metodo:rMet,monto:-rMonto}],metodoPago:rMet,ventaMostrador:true,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); }
                         alert(`✅ Operación Registrada.\nEl stock de ${n} ahora es: ${nuevoStock}`); window.cargarSugerenciasInventario(); window.cancelarVolver();
                     });
                 }else alert("❌ Producto no existe."); 
