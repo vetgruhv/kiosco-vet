@@ -360,7 +360,7 @@
 
         <div class="seccion-separador"></div>
         <div class="form-row" style="justify-content: center; gap: 20px;">
-            <div class="grupo-formulario" style="flex:none; width: auto;"><button class="btn btn-guardar-azul" style="margin:0; background:#6f42c1; padding:16px 30px;" onclick="window.abrirOpcionesGuardado()">💾 Solo Guardar en Historial</button></div>
+            <div class="grupo-formulario" style="flex:none; width: auto;"><button class="btn btn-guardar-azul" style="margin:0; background:#6f42c1; padding:16px 30px;" onclick="window.procesarHospitalizacion(false)">💾 Solo Guardar en Historial</button></div>
             <div class="grupo-formulario" style="flex:none; width: auto;"><button class="btn btn-guardar" id="btn-final-hosp" style="margin:0; padding:16px 30px;" onclick="window.procesarHospitalizacion('hoja')" disabled>🖨️ Guardar e Imprimir Formato Legal</button></div>
         </div>
     </div>
@@ -371,7 +371,12 @@
             <h2 style="color:#333;margin:0">📦 Inventario Actual</h2>
             <button class="btn btn-guardar" style="width:auto; margin:0; padding:10px 20px; font-size:0.9em; background:#198754;" onclick="window.abrirEntradaStock()">📥 Ingreso Múltiple</button>
         </div>
-        <div class="panel-busqueda"><div class="grupo-formulario busqueda-ancha"><label>Buscar:</label><input type="text" id="busqueda-inv-texto" class="input-buscador" oninput="window.filtrarInventario()"></div><div class="grupo-formulario"><label>Nivel:</label><select id="busqueda-inv-stock" onchange="window.filtrarInventario()"><option value="todos">Todos</option><option value="bajo">Bajo Stock</option></select></div></div>
+        <div class="panel-busqueda">
+            <div class="grupo-formulario busqueda-ancha"><label>Buscar:</label><input type="text" id="busqueda-inv-texto" class="input-buscador" oninput="window.filtrarInventario()"></div>
+            <div class="grupo-formulario"><label>Nivel:</label><select id="busqueda-inv-stock" onchange="window.filtrarInventario()"><option value="todos">Todos</option><option value="bajo">Bajo Stock</option></select></div>
+            <div class="grupo-formulario"><label>Categoría:</label><select id="busqueda-inv-tipo" onchange="window.filtrarInventario()"><option value="todos">Todos</option><option value="producto">📦 Físicos</option><option value="servicio">🩺 Servicios</option></select></div>
+            <div id="caja-orden-sistemas" class="grupo-formulario oculto"><label>Orden (Sistemas):</label><select id="busqueda-inv-orden" onchange="window.cargarInventarioVista()"><option value="alfabetico">A-Z</option><option value="mayor">Mayor Stock</option><option value="menor">Menor Stock</option></select></div>
+        </div>
         <div id="lista-stock-firebase" class="lista-vertical"></div>
     </div>
 
@@ -677,6 +682,10 @@
                         }); 
                         document.getElementById('titulo-gerencia')?.classList.remove('oculto'); 
                         if(r === "Sistemas") document.getElementById('btn-sistemas')?.classList.remove('oculto'); else document.getElementById('btn-sistemas')?.classList.add('oculto');
+                        
+                        let cOrdenS = document.getElementById('caja-orden-sistemas');
+                        if(r === "Sistemas" && cOrdenS) { cOrdenS.classList.remove('oculto'); } else if(cOrdenS) { cOrdenS.classList.add('oculto'); }
+                        
                         if(r === "Gerente" || r === "Sistemas") document.getElementById('btn-usuarios')?.classList.remove('oculto');
                         window.limpiarRegistrosViejos();
                     }
@@ -1023,7 +1032,7 @@
                 if(imprimir==='hoja') window.generarHojasLegalesDinamicas(hD, false); else alert("✅ Guardado Historial."); 
                 document.getElementById('modal-opciones-guardar')?.classList.add('oculto');
                 guardandoBloqueo=false; document.body.style.cursor='default';
-                window.cerrarSesion(); 
+                window.cancelarVolver(); 
             }).catch(e=>{alert("Error: "+e.message); guardandoBloqueo=false; document.body.style.cursor='default';});
         };
 
@@ -1334,8 +1343,51 @@
         };
 
         window.abrirVerInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-ver-inventario'); let bi = document.getElementById('busqueda-inv-texto'); if(bi) bi.value=''; window.cargarInventarioVista(); };
-        window.cargarInventarioVista = function() { const l=document.getElementById('lista-stock-firebase'); if(!l)return; l.innerHTML='<div style="text-align:center">⏳</div>'; window.db.collection("Inventario").get().then((q)=>{ let ih=[]; q.forEach(doc=>{let dt=doc.data(); dt.idDoc=doc.id; ih.push(dt);}); ih.sort((a,b)=>a.medicamento.localeCompare(b.medicamento)); let ht=''; ih.forEach((d)=>{ if(d.tipoArticulo==='Servicio Médico')return; let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); let isB=(min>0&&d.cantidad<=min); let btn=(window.usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"><button class="btn-exp-action" onclick="window.editarProducto('${d.idDoc}')">✏️ Editar</button></div>`:''; ht+=`<div class="tarjeta-info ${isB?'stock-alerta':'stock-ok'}" data-unidad="${d.unidad}"><div class="th-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;"><strong style="flex:1; text-align:left;">${d.medicamento}</strong><span style="font-size:1.3em; font-weight:900; color:${isB?'#dc3545':'#198754'}; text-align:right;">${d.cantidad} <span style="font-size:0.5em;color:#666">${d.unidad||'U.'}</span></span></div><div class="th-cuerpo">$${Number(d.precioVenta||0).toFixed(2)}</div>${isB?'<div style="color:#dc3545;font-weight:bold;text-align:center;margin-top:5px">¡Bajo Stock!</div>':''}${btn}</div>`; }); l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; window.filtrarInventario(); }); };
-        window.filtrarInventario = function() { let bi = document.getElementById('busqueda-inv-texto'); let t=bi?bi.value.toLowerCase():''; let bs = document.getElementById('busqueda-inv-stock'); let s=bs?bs.value:'todos'; document.querySelectorAll('#lista-stock-firebase .tarjeta-info').forEach(c=>{ let mT=c.innerText.toLowerCase().includes(t); let mS=(s==='todos')||(s==='bajo'&&c.classList.contains('stock-alerta')); c.style.display=(mT&&mS)?"":"none"; }); };
+        window.cargarInventarioVista = function() { 
+            const l=document.getElementById('lista-stock-firebase'); if(!l)return; 
+            l.innerHTML='<div style="text-align:center">⏳</div>'; 
+            
+            let orden = document.getElementById('busqueda-inv-orden')?.value || 'alfabetico';
+
+            window.db.collection("Inventario").get().then((q)=>{ 
+                let ih=[]; q.forEach(doc=>{let dt=doc.data(); dt.idDoc=doc.id; ih.push(dt);}); 
+                
+                if(orden === 'mayor') {
+                    ih.sort((a,b) => (parseFloat(b.cantidad)||0) - (parseFloat(a.cantidad)||0));
+                } else if (orden === 'menor') {
+                    ih.sort((a,b) => (parseFloat(a.cantidad)||0) - (parseFloat(b.cantidad)||0));
+                } else {
+                    ih.sort((a,b)=>(a.medicamento||'').localeCompare(b.medicamento||''));
+                }
+
+                let ht=''; 
+                ih.forEach((d)=>{ 
+                    let esServicio = (d.tipoArticulo === 'Servicio Médico');
+                    let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); 
+                    let isB=(!esServicio && min>0 && d.cantidad<=min); 
+                    let btn=(window.usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"><button class="btn-exp-action" onclick="window.editarProducto('${d.idDoc}')">✏️ Editar</button>${(window.usuarioLogueado.rol==='Gerente'||window.usuarioLogueado.rol==='Sub-Gerente'||window.usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('Inventario','${d.idDoc}')">🗑️ Eliminar</button>`:''}</div>`:''; 
+                    
+                    let cantText = esServicio ? 'Ilimitado' : `${d.cantidad} <span style="font-size:0.5em;color:#666">${d.unidad||'U.'}</span>`;
+                    let icon = esServicio ? '🩺' : '📦';
+
+                    ht+=`<div class="tarjeta-info ${isB?'stock-alerta':'stock-ok'}" data-tipo="${esServicio?'servicio':'producto'}"><div class="th-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;"><strong style="flex:1; text-align:left;">${icon} ${d.medicamento}</strong><span style="font-size:1.3em; font-weight:900; color:${isB?'#dc3545':'#198754'}; text-align:right;">${cantText}</span></div><div class="th-cuerpo">$${Number(d.precioVenta||0).toFixed(2)}</div>${isB?'<div style="color:#dc3545;font-weight:bold;text-align:center;margin-top:5px">¡Bajo Stock!</div>':''}${btn}</div>`; 
+                }); 
+                l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; 
+                window.filtrarInventario(); 
+            }); 
+        };
+        window.filtrarInventario = function() { 
+            let bi = document.getElementById('busqueda-inv-texto'); let t=bi?bi.value.toLowerCase():''; 
+            let bs = document.getElementById('busqueda-inv-stock'); let s=bs?bs.value:'todos'; 
+            let bt = document.getElementById('busqueda-inv-tipo'); let tipo=bt?bt.value:'todos'; 
+
+            document.querySelectorAll('#lista-stock-firebase .tarjeta-info').forEach(c=>{ 
+                let mT=c.innerText.toLowerCase().includes(t); 
+                let mS=(s==='todos')||(s==='bajo'&&c.classList.contains('stock-alerta')); 
+                let mTipo = (tipo === 'todos') || (c.getAttribute('data-tipo') === tipo);
+                c.style.display=(mT&&mS&&mTipo)?"":"none"; 
+            }); 
+        };
 
         window.abrirModoSistemas = function() { window.cambiarPantalla('pantalla-menu','pantalla-sistemas'); let ef = document.getElementById('excel-file'); if(ef) ef.value=''; let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=''; };
         window.procesarExcel = async function() { const fi=document.getElementById('excel-file'); if(!fi || !fi.files.length)return alert("⚠️ Selecciona un Excel."); const r=new FileReader(); r.onload=async function(e){ try{ const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'}); const ws=wb.Sheets[wb.SheetNames[0]]; const rows=XLSX.utils.sheet_to_json(ws); if(rows.length===0)throw new Error("Vacío"); let ex=0,err=0,op=0; let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=`⏳ Subiendo ${rows.length}...`; let b=window.db.batch(); let p=[]; rows.forEach((r,i)=>{ let nR=r['Nombre']||r['Medicamento']||r['Producto']; if(!nR){err++;return;} let nom=String(nR).trim().replace(/\//g,'-'); let pre=parseFloat(r['Precio'])||0; let can=parseFloat(r['Cantidad'])||0; let t=r['Tipo']||'Medicamento/Producto'; let minR=parseInt(r['Mínimo']); let mIn=isNaN(minR)?5:minR; let rI=window.db.collection("Inventario").doc(nom); b.set(rI,{tipoArticulo:t,medicamento:nom,precioVenta:pre,cantidad:can,unidad:r['Unidad']||'Pza(s)',minimo:mIn,maximo:parseInt(r['Máximo'])||50,proveedor:r['Proveedor']||'',descripcion:r['Descripción']||'',presentacion:r['Presentación']||'',registradoPor:window.usuarioLogueado.nombre+" (Excel)",fechaTexto:new Date().toLocaleString('es-MX'),fechaReal:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); let rHist=window.db.collection("Historial_Inventario").doc(); b.set(rHist,{tipoMovimiento:"Alta (Excel)",medicamento:nom,cantidad:can,unidad:r['Unidad']||'Pza(s)',precio:pre,motivo:"Masiva",registradoPor:window.usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); op+=2; ex++; if(op>=490){p.push(b.commit());b=window.db.batch();op=0;} }); if(op>0)p.push(b.commit()); await Promise.all(p); if(er) er.innerHTML=`✅ Completado. Exitosos: ${ex}, Errores: ${err}`; window.cargarSugerenciasInventario(); }catch(err){ let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=`❌ Error: ${err.message}`;} }; r.readAsArrayBuffer(fi.files[0]); };
@@ -1429,7 +1481,7 @@
                     let nuevoStock = tipoOp === 'Devolución' ? stockActual + Math.abs(c) : stockActual - Math.abs(c);
                     window.db.collection("Inventario").doc(n).update({cantidad: nuevoStock}).then(()=>{
                         window.db.collection("Historial_Inventario").add({tipoMovimiento:tipoOp,medicamento:doc.data().medicamento,motivo:m,cantidad:Math.abs(c),unidad:doc.data().unidad,registradoPor:window.usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); 
-                        if(tipoOp==='Devolución' && rMonto>0){ window.db.collection("Historial_Cobros").add({atendio:window.usuarioLogueado.nombre,paciente:"REEMBOLSO",dueno:"CLIENTE",articulos:[{nombre:"Devolución: "+doc.data().medicamento,precio:-rMonto,cantidad:Math.abs(c),total:-rMonto}],subtotal:-rMonto,valorDescuento:0,totalCobrado:-rMonto,pagos:[{metodo:rMet,monto:-rMonto}],metodoPago:rMet,ventaMostrador:true,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); }
+                        if(tipoOp==='Devolución' && rMonto>0){ window.db.collection("Historial_Cobros").add({atendio:window.usuarioLogueado.nombre,paciente:"REEMBOLSO / DEVOLUCIÓN",dueno:"CLIENTE",articulos:[{nombre:"Devolución: "+doc.data().medicamento,precio:-rMonto,cantidad:Math.abs(c),total:-rMonto}],subtotal:-rMonto,valorDescuento:0,totalCobrado:-rMonto,pagos:[{metodo:rMet,monto:-rMonto}],metodoPago:rMet,ventaMostrador:true,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); }
                         alert(`✅ Operación Registrada.\nEl stock de ${n} ahora es: ${nuevoStock}`); window.cargarSugerenciasInventario(); window.cancelarVolver();
                     });
                 }else alert("❌ Producto no existe."); 
