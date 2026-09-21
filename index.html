@@ -34,7 +34,7 @@
         .btn{width:100%;padding:16px;font-size:1.1em;border:none;border-radius:14px;cursor:pointer;font-weight:bold;display:block;text-align:center;box-sizing:border-box;transition:all 0.2s}
         .btn-guardar{background:#198754;color:#fff;margin-top:10px} .btn-guardar:hover{background:#157347;transform:translateY(-2px)}
         .btn-guardar-rojo{background:#dc3545;color:#fff} .btn-guardar-azul{background:#0caeb9;color:#fff} .btn-guardar-azul:hover{background:#088c96;transform:translateY(-2px)}
-        .btn-amarillo{background:#ffc107;color:#000;} .btn-amarillo:hover{background:#e0a800;} .btn-cancelar{background:transparent;color:#dc3545;margin-top:10px;border:2px solid #ffe3e3;padding:12px;cursor:pointer} .btn-cancelar:hover{background:#fff0f0}
+        .btn-cancelar{background:transparent;color:#dc3545;margin-top:10px;border:2px solid #ffe3e3;padding:12px;cursor:pointer} .btn-cancelar:hover{background:#fff0f0}
         .btn-filtro{flex:1;padding:10px;border:2px solid #e9ecef;background:#fff;color:#6c757d;border-radius:10px;cursor:pointer;font-weight:bold;white-space:nowrap; text-align:center;} .btn-filtro.activo{background:#0caeb9;color:#fff;border-color:#0caeb9}
         .fab-container{position:fixed;bottom:25px;right:25px;display:flex;flex-direction:column;gap:15px;z-index:9999} .fab{width:65px;height:65px;border-radius:50%;border:none;color:#fff;font-size:28px;box-shadow:0 6px 15px rgba(0,0,0,0.3);cursor:pointer;display:flex;justify-content:center;align-items:center;transition:0.3s} .fab:active{transform:scale(0.9)} 
         .caja-cobro{background:#fffbf0;padding:25px;border-radius:18px;border:1px solid #ffecb5;margin-bottom:20px} .stock-alerta{border-left:6px solid #dc3545;background:#fffafb} .stock-ok{border-left:6px solid #198754} .oculto{display:none!important}
@@ -212,8 +212,8 @@
                 <div style="background:rgba(220,53,69,0.9);padding:6px 15px;border-radius:20px;font-size:0.9em;font-weight:bold;">Devoluciones: -$<span id="agrupado-gran-devoluciones">0.00</span></div>
             </div>
             
-            <!-- NUEVO: Desglose de Descuentos por Usuario -->
-            <div id="caja-desglose-descuentos-usuarios" style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap; margin-top:10px; font-size:0.85em; color:#ffc107;">
+            <!-- NUEVO DISEÑO PREMIUM: Desglose de Descuentos por Usuario -->
+            <div id="caja-desglose-descuentos-usuarios" style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:15px;">
             </div>
         </div>
 
@@ -240,7 +240,6 @@
                     <label>Buscar Producto (Mín 3 letras):</label>
                     <input type="text" id="buscador-pos" class="input-buscador" placeholder="Nombre..." oninput="window.buscarAutocomplete('buscador-pos','dropdown-pos',window.seleccionarItemPos)" autocomplete="off">
                     <div id="dropdown-pos" class="autocomplete-dropdown oculto"></div>
-                    <button class="btn btn-cancelar" style="width:auto; padding:6px 12px; margin-top:8px; font-size:0.8em; border:1px solid #ced4da; color:#6c757d; border-radius:8px;" onclick="window.prepararExtraManual()">➕ Cargo Extra Manual</button>
                 </div>
                 <div class="grupo-formulario" style="flex:1;max-width:90px;margin:0">
                     <label>Precio ($):</label>
@@ -258,6 +257,21 @@
         
         <label style="font-weight:bold;font-size:0.85em;text-transform:uppercase">Artículos en la cuenta:</label>
         <div id="carrito-lista" class="carrito-box"><p style="text-align:center;color:#adb5bd">Vacío</p></div>
+        
+        <!-- SECCIÓN DE CARGO EXTRA MANUAL -->
+        <div class="form-row" style="background:#fffbe6;padding:15px;border-radius:14px;border:1px dashed #ffc107; margin-bottom: 20px; align-items:flex-end;">
+            <div class="grupo-formulario" style="flex:2;margin:0">
+                <label style="color:#856404;">Motivo del Extra (Opcional):</label>
+                <input type="text" id="concepto-extra" placeholder="Ej. Transporte, Limpieza..." style="background:#fff; border-color:#ffdf7e;">
+            </div>
+            <div class="grupo-formulario" style="flex:1;max-width:120px;margin:0">
+                <label style="color:#856404;">Monto ($):</label>
+                <input type="number" id="monto-extra" placeholder="0" style="background:#fff; border-color:#ffdf7e;">
+            </div>
+            <div class="grupo-formulario" style="flex:0 0 auto;margin:0">
+                <button class="btn btn-amarillo" style="margin:0;padding:14px 20px;border-radius:12px;font-size:0.95em;color:#856404;background:#ffeeba;border:1px solid #ffdf7e;font-weight:bold;" onclick="window.agregarExtra()">➕ Agregar Extra</button>
+            </div>
+        </div>
 
         <div class="caja-cobro">
             <h4 style="margin:0 0 15px 0;color:#856404;border-bottom:1px solid #ffeeba;padding-bottom:8px">💳 Cobro</h4>
@@ -796,67 +810,41 @@
             } 
         };
         
-        window.agregarAlCarrito = function() {
-            let bp = document.getElementById('buscador-pos');
-            let pInp = document.getElementById('precio-pos');
-            let cInp = document.getElementById('cantidad-pos');
+        window.agregarAlCarrito = function() { 
+            const v = document.getElementById('buscador-pos')?.value; const inp = document.getElementById('precio-pos'); const cInp = document.getElementById('cantidad-pos');
+            let p = parseFloat(inp?.value)||0; let c = parseFloat(cInp?.value)||1; 
+            if(!v) return alert("⚠️ Escribe un producto."); 
+            const item = inventarioGlobal.find(i=>i.medicamento.toLowerCase()===v.toLowerCase()); 
             
-            let v = bp?.value.trim();
-            let p = parseFloat(pInp?.value) || 0;
-            let c = parseFloat(cInp?.value) || 1;
-
-            if(!v) return alert("⚠️ Escribe un producto o concepto."); 
-
-            const item = inventarioGlobal.find(i => i.medicamento.toLowerCase() === v.toLowerCase());
-
-            if (item) {
-                if(item.tipoArticulo !== 'Servicio Médico') {
-                    p = parseFloat(item.precioVenta) || 0;
-                    let cantEnCarrito = carrito.filter(x => x.nombre.toLowerCase() === item.medicamento.toLowerCase()).reduce((s, x) => s + x.cantidad, 0);
-                    if (cantEnCarrito + c > item.cantidad) {
-                        alert(`⚠️ ¡Stock Insuficiente!\nSolo quedan ${item.cantidad} ${item.unidad||''} de este producto en el inventario.`);
-                        return;
-                    }
-                } else {
-                    if (p <= 0) return alert("⚠️ Ingresa un precio válido."); 
+            if(item && item.tipoArticulo!=='Servicio Médico') {
+                p = parseFloat(item.precioVenta)||0; 
+                let cantEnCarrito = carrito.filter(x => x.nombre.toLowerCase() === item.medicamento.toLowerCase()).reduce((s, x) => s + x.cantidad, 0);
+                if (cantEnCarrito + c > item.cantidad) {
+                    alert(`⚠️ ¡Stock Insuficiente!\nSolo quedan ${item.cantidad} ${item.unidad||''} de este producto en el inventario.`);
+                    return;
                 }
-                carrito.push({nombre: item.medicamento, precio: p, cantidad: c, total: p*c, tipo: item.tipoArticulo, unidad: item.unidad || ''});
-            } else {
-                if (p <= 0) return alert("⚠️ Ingresa el precio para este concepto manual.");
-                carrito.push({nombre: v, precio: p, cantidad: c, total: p*c, tipo: 'Servicio Médico', unidad: 'u'});
+            } else if((!item||item.tipoArticulo==='Servicio Médico')&&p<=0) {
+                return alert("⚠️ Ingresa un precio válido."); 
             }
             
-            window.actualizarCarritoUI(); 
-            
-            if(bp) { bp.value = ''; bp.readOnly = false; bp.style.background = "#fff"; }
-            if(pInp) { pInp.value = ''; pInp.readOnly = false; pInp.style.background = "#fff"; }
-            if(cInp) cInp.value = '1';
-            let lu = document.getElementById('lbl-unidad-venta'); if(lu) lu.innerText = ''; 
-            let sd = document.getElementById('stock-disp-venta'); if(sd) { sd.innerText = '--'; sd.style.color="#0caeb9"; }
+            carrito.push({nombre:item?item.medicamento:v, precio:p, cantidad:c, total:p*c, tipo:item?item.tipoArticulo:'Servicio Médico', unidad:item?item.unidad:''}); 
+            window.actualizarCarritoUI(); let bp = document.getElementById('buscador-pos'); if(bp) bp.value=''; if(inp)inp.value=''; if(cInp)cInp.value='1'; 
+            let lu = document.getElementById('lbl-unidad-venta'); if(lu) lu.innerText = ''; let sd = document.getElementById('stock-disp-venta'); if(sd) { sd.innerText = '--'; sd.style.color="#0caeb9"; }
         };
 
-        window.prepararExtraManual = function() {
-            let bp = document.getElementById('buscador-pos'); 
-            let pInp = document.getElementById('precio-pos');
-            let cInp = document.getElementById('cantidad-pos');
-            let lu = document.getElementById('lbl-unidad-venta');
-            let sd = document.getElementById('stock-disp-venta');
+        window.agregarExtra = function() {
+            let cInp = document.getElementById('concepto-extra');
+            let mInp = document.getElementById('monto-extra');
+            let c = cInp?.value.trim() || "Cargo Extra Manual";
+            let m = parseFloat(mInp?.value) || 0;
 
-            if(bp) {
-                bp.value = "Cargo Extra Manual";
-                bp.readOnly = false;
-                bp.style.background = "#fff";
-                bp.focus();
-                bp.select(); 
-            }
-            if(pInp) {
-                pInp.value = '';
-                pInp.readOnly = false;
-                pInp.style.background = "#fff";
-            }
-            if(cInp) cInp.value = '1';
-            if(lu) lu.innerText = '';
-            if(sd) { sd.innerText = 'Ilimitado'; sd.style.color = '#198754'; }
+            if(m <= 0) return alert("⚠️ Ingresa un monto mayor a $0 para el cargo extra.");
+
+            carrito.push({nombre: c, precio: m, cantidad: 1, total: m, tipo: 'Servicio Médico', unidad: 'u'});
+            window.actualizarCarritoUI();
+
+            if(cInp) cInp.value = '';
+            if(mInp) mInp.value = '';
         };
 
         window.eliminarDelCarrito = function(idx) { carrito.splice(idx,1); window.actualizarCarritoUI(); };
@@ -970,8 +958,8 @@
             let cp = document.getElementById('campos-paciente'); if(cp) cp.classList.add('oculto');
             let btnT = document.getElementById('btn-toggle-paciente'); if(btnT) { btnT.innerHTML="➕ Agregar Cliente / Paciente"; btnT.style.background="#e0f7fa"; btnT.style.color="#0caeb9"; btnT.style.borderColor="#b2ebf2"; }
             
-            let bp = document.getElementById('buscador-pos'); if(bp) { bp.value = ''; bp.readOnly = false; bp.style.background = "#fff"; }
-            let pInp = document.getElementById('precio-pos'); if(pInp) { pInp.value = ''; pInp.readOnly = false; pInp.style.background = "#fff"; }
+            let ce = document.getElementById('concepto-extra'); if(ce) ce.value = '';
+            let me = document.getElementById('monto-extra'); if(me) me.value = '';
         };
         
         window.toggleMostrador = function() { 
@@ -1256,7 +1244,7 @@
                     let htmlDescUsuarios = '';
                     for(let usr in resumen) {
                         if(resumen[usr].descuentos > 0) {
-                            htmlDescUsuarios += `<div><span style="opacity:0.8;">${usr}:</span> <strong>$${resumen[usr].descuentos.toFixed(2)}</strong></div>`;
+                            htmlDescUsuarios += `<div style="background:#fff3cd; color:#856404; padding:5px 15px; border-radius:20px; font-size:0.95em; font-weight:bold; box-shadow:0 2px 4px rgba(0,0,0,0.1);">👤 ${usr}: -$${resumen[usr].descuentos.toFixed(2)}</div>`;
                         }
                     }
                     let contDescUsuarios = document.getElementById('caja-desglose-descuentos-usuarios');
@@ -1561,7 +1549,7 @@
                     let nuevoStock = tipoOp === 'Devolución' ? stockActual + Math.abs(c) : stockActual - Math.abs(c);
                     window.db.collection("Inventario").doc(n).update({cantidad: nuevoStock}).then(()=>{
                         window.db.collection("Historial_Inventario").add({tipoMovimiento:tipoOp,medicamento:doc.data().medicamento,motivo:m,cantidad:Math.abs(c),unidad:doc.data().unidad,registradoPor:window.usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); 
-                        if(tipoOp==='Devolución' && rMonto>0){ window.db.collection("Historial_Cobros").add({atendio:window.usuarioLogueado.nombre,paciente:"REEMBOLSO",dueno:"CLIENTE",articulos:[{nombre:"Devolución: "+doc.data().medicamento,precio:-rMonto,cantidad:Math.abs(c),total:-rMonto}],subtotal:-rMonto,valorDescuento:0,totalCobrado:-rMonto,pagos:[{metodo:rMet,monto:-rMonto}],metodoPago:rMet,ventaMostrador:true,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); }
+                        if(tipoOp==='Devolución' && rMonto>0){ window.db.collection("Historial_Cobros").add({atendio:window.usuarioLogueado.nombre,paciente:"REEMBOLSO / DEVOLUCIÓN",dueno:"CLIENTE",articulos:[{nombre:"Devolución: "+doc.data().medicamento,precio:-rMonto,cantidad:Math.abs(c),total:-rMonto}],subtotal:-rMonto,valorDescuento:0,totalCobrado:-rMonto,pagos:[{metodo:rMet,monto:-rMonto}],metodoPago:rMet,ventaMostrador:true,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); }
                         alert(`✅ Operación Registrada.\nEl stock de ${n} ahora es: ${nuevoStock}`); window.cargarSugerenciasInventario(); window.cancelarVolver();
                     });
                 }else alert("❌ Producto no existe."); 
