@@ -2,8 +2,13 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- ETIQUETAS ANTI-CACHÉ PARA OBLIGAR AL CELULAR A ACTUALIZARSE -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- ETIQUETAS WEB APP (Fuerzan el modo aplicación en celulares) -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0caeb9">
+    
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
@@ -70,7 +75,7 @@
         @media print{
             @page{margin:0; size: 58mm auto;} 
             body{background:#fff;margin:0;padding:0;color:#000} 
-            .contenedor,.fab-container,#modal-lectura,#modal-opciones-guardar,#modal-ver-detalle,#modal-sub-detalle,#toast-notificacion{display:none!important} 
+            .contenedor,.fab-container,#modal-lectura,#modal-opciones-guardar,#modal-ver-detalle,#modal-sub-detalle,#toast-notificacion, #btn-fullscreen{display:none!important} 
             #zona-impresion{display:block!important;width:100%}
             
             /* TICKET 58MM - CORRECCIÓN DE RECORTE (BLINDADO) */
@@ -100,6 +105,9 @@
     </style>
 </head>
 <body>
+
+    <!-- BOTÓN PANTALLA COMPLETA FLOTANTE -->
+    <button id="btn-fullscreen" onclick="window.toggleFullScreen()" style="position:fixed; top:15px; left:15px; z-index:99999; background:#fff; color:#0caeb9; border:2px solid #0caeb9; border-radius:10px; padding:8px 12px; font-weight:bold; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.1);">🔲 Ampliar</button>
 
     <!-- BURBUJA NOTIFICACION (Clickable) -->
     <div id="toast-notificacion" class="oculto">
@@ -497,6 +505,21 @@
 
     <!-- LÓGICA JAVASCRIPT SEGURA Y ORGANIZADA -->
     <script>
+        // LÓGICA DE PANTALLA COMPLETA (FULLSCREEN API)
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error: ${err.message}`);
+                });
+                document.getElementById('btn-fullscreen').innerText = "🔳 Reducir";
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    document.getElementById('btn-fullscreen').innerText = "🔲 Ampliar";
+                }
+            }
+        };
+
         // TEMPORIZADOR DE INACTIVIDAD (Dinámico por Rol)
         let timerInactividad;
         function resetTimer() { 
