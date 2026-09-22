@@ -66,26 +66,33 @@
 
         @media (max-width:600px){.hosp-listas-grid{grid-template-columns:1fr}}
         #zona-impresion{display:none}
+        
         @media print{
-            @page{margin:0; size: 58mm auto;} /* Forzar ancho nativo de impresora de tickets de 58mm */
+            @page{margin:0; size: 58mm auto;} 
             body{background:#fff;margin:0;padding:0;color:#000} 
             .contenedor,.fab-container,#modal-lectura,#modal-opciones-guardar,#modal-ver-detalle,#modal-sub-detalle,#toast-notificacion{display:none!important} 
             #zona-impresion{display:block!important;width:100%}
             
-            /* DISEÑO DE TICKET 58MM MEJORADO */
-            .ticket-print{width:48mm; margin:0 auto; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:14px; color:#000; padding:4mm 0; text-transform:uppercase; line-height:1.2;} 
-            .ticket-print h2{font-size:16px; text-align:center; margin:0 0 5px 0; font-weight:900;} 
-            .ticket-print .info-tienda{text-align:center; font-size:12px; margin-bottom:10px; line-height:1.3;} 
-            .ticket-print .info-ticket{margin-bottom:10px; font-size:13px; font-weight:bold; border-bottom:2px dashed #000; padding-bottom:5px; line-height:1.4;} 
-            .ticket-print table{width:100%; border-collapse:collapse; margin-bottom:10px;} 
-            .ticket-print th{border-bottom:2px dashed #000; text-align:left; font-weight:900; font-size:13px; padding-bottom:3px;} 
-            .ticket-print td{padding:5px 0; font-size:13px; vertical-align:top; border-bottom:1px dotted #ccc;} 
-            .ticket-print .col-precio{text-align:right;} 
-            .ticket-print .totales{text-align:right; margin-top:5px; font-size:14px; border-top:2px dashed #000; padding-top:5px; line-height:1.4;} 
-            .ticket-print .totales strong{font-size:16px; font-weight:900;}
-            .ticket-print .footer{text-align:center; font-size:12px; font-weight:bold; margin-top:15px; border-top:2px dashed #000; padding-top:10px; line-height:1.4;}
+            /* TICKET 58MM - CORRECCIÓN DE RECORTE (BLINDADO) */
+            .ticket-print{width:100%; max-width:50mm; margin:0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:11px; color:#000; padding:2mm 4mm 2mm 0; text-transform:uppercase; line-height:1.2; box-sizing:border-box;} 
+            .ticket-print h2{font-size:14px; text-align:center; margin:0 0 5px 0; font-weight:900;} 
+            .ticket-print .info-tienda{text-align:center; font-size:10px; margin-bottom:10px; line-height:1.3;} 
+            .ticket-print .info-ticket{margin-bottom:5px; font-size:10px; font-weight:bold; border-bottom:2px dashed #000; padding-bottom:5px; line-height:1.3;} 
             
-            /* RECETAS HOSPITAL (Mantienen su tamaño A4) */
+            /* FORZADO DE TABLA PARA EVITAR DESBORDAMIENTO */
+            .ticket-print table{width:100%; border-collapse:collapse; margin-bottom:10px; table-layout:fixed;} 
+            .ticket-print th:nth-child(1), .ticket-print td:nth-child(1) { width: 22%; } /* Columna CANT */
+            .ticket-print th:nth-child(2), .ticket-print td:nth-child(2) { width: 53%; word-wrap: break-word; padding-right:2px;} /* Columna ART (Salta de línea) */
+            .ticket-print th:nth-child(3), .ticket-print td:nth-child(3) { width: 25%; text-align:right; } /* Columna TOT */
+            
+            .ticket-print th{border-bottom:2px dashed #000; text-align:left; font-weight:900; font-size:10px; padding-bottom:3px;} 
+            .ticket-print td{padding:4px 0; font-size:10px; vertical-align:top; border-bottom:1px dotted #ccc;} 
+            
+            .ticket-print .totales{text-align:right; margin-top:5px; font-size:11px; border-top:2px dashed #000; padding-top:5px; line-height:1.4;} 
+            .ticket-print .totales strong{font-size:13px; font-weight:900;}
+            .ticket-print .footer{text-align:center; font-size:10px; font-weight:bold; margin-top:10px; border-top:2px dashed #000; padding-top:8px; line-height:1.4;}
+            
+            /* RECETAS HOSPITAL (Mantienen su tamaño A4 natural) */
             .receta-print{width:100%;max-width:216mm;font-family:Arial,sans-serif;margin:0 auto;padding:10mm 15mm;box-sizing:border-box;color:#000} .receta-print .cabecera{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:15px;border-bottom:2px solid #0caeb9;padding-bottom:10px} .receta-print .logo-area{width:40%} .receta-print .logo-area h1{margin:0;font-size:38px;font-weight:900;letter-spacing:-1px;margin-bottom:-5px;color:#0caeb9} .receta-print .logo-area p{margin:0;font-size:10px;letter-spacing:2px;font-weight:bold;color:#0caeb9} .receta-print .datos-clinica{width:50%;font-size:10px;text-align:right;line-height:1.3;font-weight:bold} .receta-print h2{text-align:center;font-size:14px;text-transform:uppercase;margin:15px 0}
             .tabla-datos{width:100%;border-collapse:collapse;margin-bottom:15px;font-size:10px} .tabla-datos td{border:1px solid #000;padding:4px 6px} .tabla-datos .bg-gris{background-color:#f0f0f0 !important;-webkit-print-color-adjust:exact;font-weight:bold;width:25%} .cuerpo-texto{font-size:11px;text-align:justify;line-height:1.5;margin-bottom:20px} .cuerpo-texto p{margin:0 0 10px 0}
             .firmas-area{display:flex;justify-content:center;margin-top:40px;margin-bottom:10px} .firma-bloque{width:60%;text-align:center;font-size:11px;font-weight:bold} .firma-bloque img{max-height:60px;display:block;margin:0 auto 5px auto} .firma-linea{border-top:1px solid #000;padding-top:4px;display:inline-block;width:100%}
@@ -256,7 +263,6 @@
                     <label>Buscar Producto (Mín 3 letras):</label>
                     <input type="text" id="buscador-pos" class="input-buscador" placeholder="Nombre..." oninput="window.buscarAutocomplete('buscador-pos','dropdown-pos',window.seleccionarItemPos)" autocomplete="off">
                     <div id="dropdown-pos" class="autocomplete-dropdown oculto"></div>
-                    <button class="btn btn-cancelar" style="width:auto; padding:6px 12px; margin-top:8px; font-size:0.8em; border:1px solid #ced4da; color:#6c757d; border-radius:8px;" onclick="window.prepararExtraManual()">➕ Cargo Extra Manual</button>
                 </div>
                 <div class="grupo-formulario" style="flex:1;max-width:90px;margin:0">
                     <label>Precio ($):</label>
@@ -537,13 +543,13 @@
         window.tipoVistaAgrupada = 'caja'; 
         window.ultimoResumenAgrupado = {};
 
-        // 3. FUNCIONES DE IMPRESIÓN LEGAL
+        // 3. FUNCIONES DE IMPRESIÓN LEGAL (AJUSTADA 58MM)
         window.imprimirTicketBoucher = function(venta) {
             let esHosp = venta.tipoRegistro === 'hospitalizacion' || venta.formatoLegal; let titulo = esHosp ? "TICKET HOSPITALIZACIÓN" : "TICKET DE VENTA";
-            let arts = ''; venta.articulos?.forEach(a => { let n = a.nombre?a.nombre.substring(0,20):'Prod'; let u = a.unidad ? `(${a.unidad})` : ''; arts+=`<tr><td>${a.cantidad||1} ${u}</td><td>${n}</td><td class="col-precio">$${Number(a.precio||0).toFixed(2)}</td></tr>`; });
+            let arts = ''; venta.articulos?.forEach(a => { let n = a.nombre?a.nombre.substring(0,35):'Prod'; let u = a.unidad ? `<br><span style="font-size:8px;">(${a.unidad})</span>` : ''; arts+=`<tr><td>${a.cantidad||1}${u}</td><td>${n}</td><td class="col-precio">$${Number(a.precio||0).toFixed(2)}</td></tr>`; });
             let desc = (venta.subtotal||0)-(venta.totalCobrado||0);
             let pgs = ''; if(venta.pagos) { venta.pagos.forEach(p => { pgs += `PAGO EN ${String(p.metodo).toUpperCase()}: $${Number(p.monto||0).toFixed(2)}<br>`; }); } else { pgs = `PAGO EN ${String(venta.metodoPago||'ESTANCIA HOSP.').toUpperCase()}`; }
-            let html = `<div class="ticket-print"><div class="info-tienda"><strong>CLÍNICA VETERINARIA VETGRU</strong><br>844-227-5808</div><h2>${titulo}</h2><div class="info-ticket">Fch: ${String(venta.fechaTexto).split(',')[0]}<br>Atendió: ${venta.atendio||venta.doctor||''}<br>Paciente/Cliente: ${venta.paciente||'Público General'}</div><table><thead><tr><th>CANT</th><th>ART</th><th class="col-precio">TOT</th></tr></thead><tbody>${arts}</tbody></table><div class="totales">SUBTOTAL: $${Number(venta.subtotal||0).toFixed(2)}<br>${desc>0?`DESC: -$${desc.toFixed(2)}<br>`:''}<strong>TOTAL: $${Number(venta.totalCobrado||0).toFixed(2)}</strong></div><div class="footer">${pgs}<br><br>Sin validez fiscal</div></div>`;
+            let html = `<div class="ticket-print"><div class="info-tienda"><strong>CLÍNICA VETERINARIA VETGRU</strong><br>844-227-5808</div><h2>${titulo}</h2><div class="info-ticket">Fch: ${String(venta.fechaTexto).split(',')[0]}<br>Atendió: ${venta.atendio||venta.doctor||''}<br>P: ${venta.paciente||'Público General'}</div><table><thead><tr><th>C.</th><th>ART</th><th class="col-precio">TOT</th></tr></thead><tbody>${arts}</tbody></table><div class="totales">SUBTOTAL: $${Number(venta.subtotal||0).toFixed(2)}<br>${desc>0?`DESC: -$${desc.toFixed(2)}<br>`:''}<strong>TOTAL: $${Number(venta.totalCobrado||0).toFixed(2)}</strong></div><div class="footer">${pgs}<br><br>Sin validez fiscal</div></div>`;
             let z = document.getElementById('zona-impresion'); if(z) z.innerHTML = html; setTimeout(() => window.print(), 500);
         };
 
@@ -865,28 +871,19 @@
             let sd = document.getElementById('stock-disp-venta'); if(sd) { sd.innerText = '--'; sd.style.color="#0caeb9"; }
         };
 
-        window.prepararExtraManual = function() {
-            let bp = document.getElementById('buscador-pos'); 
-            let pInp = document.getElementById('precio-pos');
-            let cInp = document.getElementById('cantidad-pos');
-            let lu = document.getElementById('lbl-unidad-venta');
-            let sd = document.getElementById('stock-disp-venta');
+        window.agregarExtra = function() {
+            let cInp = document.getElementById('concepto-extra');
+            let mInp = document.getElementById('monto-extra');
+            let c = cInp?.value.trim() || "Cargo Extra Manual";
+            let m = parseFloat(mInp?.value) || 0;
 
-            if(bp) {
-                bp.value = "Cargo Extra Manual";
-                bp.readOnly = false;
-                bp.style.background = "#fff";
-                bp.focus();
-                bp.select(); 
-            }
-            if(pInp) {
-                pInp.value = '';
-                pInp.readOnly = false;
-                pInp.style.background = "#fff";
-            }
-            if(cInp) cInp.value = '1';
-            if(lu) lu.innerText = '';
-            if(sd) { sd.innerText = 'Ilimitado'; sd.style.color = '#198754'; }
+            if(m <= 0) return alert("⚠️ Ingresa un monto mayor a $0 para el cargo extra.");
+
+            carrito.push({nombre: c, precio: m, cantidad: 1, total: m, tipo: 'Servicio Médico', unidad: 'u'});
+            window.actualizarCarritoUI();
+
+            if(cInp) cInp.value = '';
+            if(mInp) mInp.value = '';
         };
 
         window.eliminarDelCarrito = function(idx) { carrito.splice(idx,1); window.actualizarCarritoUI(); };
@@ -1000,8 +997,8 @@
             let cp = document.getElementById('campos-paciente'); if(cp) cp.classList.add('oculto');
             let btnT = document.getElementById('btn-toggle-paciente'); if(btnT) { btnT.innerHTML="➕ Agregar Cliente / Paciente"; btnT.style.background="#e0f7fa"; btnT.style.color="#0caeb9"; btnT.style.borderColor="#b2ebf2"; }
             
-            let bp = document.getElementById('buscador-pos'); if(bp) { bp.value = ''; bp.readOnly = false; bp.style.background = "#fff"; }
-            let pInp = document.getElementById('precio-pos'); if(pInp) { pInp.value = ''; pInp.readOnly = false; pInp.style.background = "#fff"; }
+            let ce = document.getElementById('concepto-extra'); if(ce) ce.value = '';
+            let me = document.getElementById('monto-extra'); if(me) me.value = '';
         };
         
         window.toggleMostrador = function() { 
@@ -1496,51 +1493,8 @@
         };
 
         window.abrirVerInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-ver-inventario'); let bi = document.getElementById('busqueda-inv-texto'); if(bi) bi.value=''; window.cargarInventarioVista(); };
-        window.cargarInventarioVista = function() { 
-            const l=document.getElementById('lista-stock-firebase'); if(!l)return; 
-            l.innerHTML='<div style="text-align:center">⏳</div>'; 
-            
-            let orden = document.getElementById('busqueda-inv-orden')?.value || 'alfabetico';
-
-            window.db.collection("Inventario").get().then((q)=>{ 
-                let ih=[]; q.forEach(doc=>{let dt=doc.data(); dt.idDoc=doc.id; ih.push(dt);}); 
-                
-                if(orden === 'mayor') {
-                    ih.sort((a,b) => (parseFloat(b.cantidad)||0) - (parseFloat(a.cantidad)||0));
-                } else if (orden === 'menor') {
-                    ih.sort((a,b) => (parseFloat(a.cantidad)||0) - (parseFloat(b.cantidad)||0));
-                } else {
-                    ih.sort((a,b)=>(a.medicamento||'').localeCompare(b.medicamento||''));
-                }
-
-                let ht=''; 
-                ih.forEach((d)=>{ 
-                    let esServicio = (d.tipoArticulo === 'Servicio Médico');
-                    let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); 
-                    let isB=(!esServicio && min>0 && d.cantidad<=min); 
-                    let btn=(window.usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"><button class="btn-exp-action" onclick="window.editarProducto('${d.idDoc}')">✏️ Editar</button>${(window.usuarioLogueado.rol==='Gerente'||window.usuarioLogueado.rol==='Sub-Gerente'||window.usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('Inventario','${d.idDoc}')">🗑️ Eliminar</button>`:''}</div>`:''; 
-                    
-                    let cantText = esServicio ? 'Ilimitado' : `${d.cantidad} <span style="font-size:0.5em;color:#666">${d.unidad||'U.'}</span>`;
-                    let icon = esServicio ? '🩺' : '📦';
-
-                    ht+=`<div class="tarjeta-info ${isB?'stock-alerta':'stock-ok'}" data-tipo="${esServicio?'servicio':'producto'}"><div class="th-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;"><strong style="flex:1; text-align:left;">${icon} ${d.medicamento}</strong><span style="font-size:1.3em; font-weight:900; color:${isB?'#dc3545':'#198754'}; text-align:right;">${cantText}</span></div><div class="th-cuerpo">$${Number(d.precioVenta||0).toFixed(2)}</div>${isB?'<div style="color:#dc3545;font-weight:bold;text-align:center;margin-top:5px">¡Bajo Stock!</div>':''}${btn}</div>`; 
-                }); 
-                l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; 
-                window.filtrarInventario(); 
-            }); 
-        };
-        window.filtrarInventario = function() { 
-            let bi = document.getElementById('busqueda-inv-texto'); let t=bi?bi.value.toLowerCase():''; 
-            let bs = document.getElementById('busqueda-inv-stock'); let s=bs?bs.value:'todos'; 
-            let bt = document.getElementById('busqueda-inv-tipo'); let tipo=bt?bt.value:'todos'; 
-
-            document.querySelectorAll('#lista-stock-firebase .tarjeta-info').forEach(c=>{ 
-                let mT=c.innerText.toLowerCase().includes(t); 
-                let mS=(s==='todos')||(s==='bajo'&&c.classList.contains('stock-alerta')); 
-                let mTipo = (tipo === 'todos') || (c.getAttribute('data-tipo') === tipo);
-                c.style.display=(mT&&mS&&mTipo)?"":"none"; 
-            }); 
-        };
+        window.cargarInventarioVista = function() { const l=document.getElementById('lista-stock-firebase'); if(!l)return; l.innerHTML='<div style="text-align:center">⏳</div>'; window.db.collection("Inventario").get().then((q)=>{ let ih=[]; q.forEach(doc=>{let dt=doc.data(); dt.idDoc=doc.id; ih.push(dt);}); ih.sort((a,b)=>a.medicamento.localeCompare(b.medicamento)); let ht=''; ih.forEach((d)=>{ if(d.tipoArticulo==='Servicio Médico')return; let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); let isB=(min>0&&d.cantidad<=min); let btn=(window.usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"><button class="btn-exp-action" onclick="window.editarProducto('${d.idDoc}')">✏️ Editar</button></div>`:''; ht+=`<div class="tarjeta-info ${isB?'stock-alerta':'stock-ok'}" data-unidad="${d.unidad}"><div class="th-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;"><strong style="flex:1; text-align:left;">${d.medicamento}</strong><span style="font-size:1.3em; font-weight:900; color:${isB?'#dc3545':'#198754'}; text-align:right;">${d.cantidad} <span style="font-size:0.5em;color:#666">${d.unidad||'U.'}</span></span></div><div class="th-cuerpo">$${Number(d.precioVenta||0).toFixed(2)}</div>${isB?'<div style="color:#dc3545;font-weight:bold;text-align:center;margin-top:5px">¡Bajo Stock!</div>':''}${btn}</div>`; }); l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; window.filtrarInventario(); }); };
+        window.filtrarInventario = function() { let bi = document.getElementById('busqueda-inv-texto'); let t=bi?bi.value.toLowerCase():''; let bs = document.getElementById('busqueda-inv-stock'); let s=bs?bs.value:'todos'; document.querySelectorAll('#lista-stock-firebase .tarjeta-info').forEach(c=>{ let mT=c.innerText.toLowerCase().includes(t); let mS=(s==='todos')||(s==='bajo'&&c.classList.contains('stock-alerta')); c.style.display=(mT&&mS)?"":"none"; }); };
 
         window.abrirModoSistemas = function() { window.cambiarPantalla('pantalla-menu','pantalla-sistemas'); let ef = document.getElementById('excel-file'); if(ef) ef.value=''; let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=''; };
         window.procesarExcel = async function() { const fi=document.getElementById('excel-file'); if(!fi || !fi.files.length)return alert("⚠️ Selecciona un Excel."); const r=new FileReader(); r.onload=async function(e){ try{ const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'}); const ws=wb.Sheets[wb.SheetNames[0]]; const rows=XLSX.utils.sheet_to_json(ws); if(rows.length===0)throw new Error("Vacío"); let ex=0,err=0,op=0; let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=`⏳ Subiendo ${rows.length}...`; let b=window.db.batch(); let p=[]; rows.forEach((r,i)=>{ let nR=r['Nombre']||r['Medicamento']||r['Producto']; if(!nR){err++;return;} let nom=String(nR).trim().replace(/\//g,'-'); let pre=parseFloat(r['Precio'])||0; let can=parseFloat(r['Cantidad'])||0; let t=r['Tipo']||'Medicamento/Producto'; let minR=parseInt(r['Mínimo']); let mIn=isNaN(minR)?5:minR; let rI=window.db.collection("Inventario").doc(nom); b.set(rI,{tipoArticulo:t,medicamento:nom,precioVenta:pre,cantidad:can,unidad:r['Unidad']||'Pza(s)',minimo:mIn,maximo:parseInt(r['Máximo'])||50,proveedor:r['Proveedor']||'',descripcion:r['Descripción']||'',presentacion:r['Presentación']||'',registradoPor:window.usuarioLogueado.nombre+" (Excel)",fechaTexto:new Date().toLocaleString('es-MX'),fechaReal:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); let rHist=window.db.collection("Historial_Inventario").doc(); b.set(rHist,{tipoMovimiento:"Alta (Excel)",medicamento:nom,cantidad:can,unidad:r['Unidad']||'Pza(s)',precio:pre,motivo:"Masiva",registradoPor:window.usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); op+=2; ex++; if(op>=490){p.push(b.commit());b=window.db.batch();op=0;} }); if(op>0)p.push(b.commit()); await Promise.all(p); if(er) er.innerHTML=`✅ Completado. Exitosos: ${ex}, Errores: ${err}`; window.cargarSugerenciasInventario(); }catch(err){ let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=`❌ Error: ${err.message}`;} }; r.readAsArrayBuffer(fi.files[0]); };
