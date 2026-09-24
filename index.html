@@ -41,7 +41,7 @@
         .btn-guardar-rojo{background:#dc3545;color:#fff} .btn-guardar-azul{background:#0caeb9;color:#fff} .btn-guardar-azul:hover{background:#088c96;transform:translateY(-2px)}
         .btn-amarillo{background:#ffc107;color:#000;} .btn-amarillo:hover{background:#e0a800;} .btn-cancelar{background:transparent;color:#dc3545;margin-top:10px;border:2px solid #ffe3e3;padding:12px;cursor:pointer} .btn-cancelar:hover{background:#fff0f0}
         .btn-filtro{flex:1;padding:10px;border:2px solid #e9ecef;background:#fff;color:#6c757d;border-radius:10px;cursor:pointer;font-weight:bold;white-space:nowrap; text-align:center;} .btn-filtro.activo{background:#0caeb9;color:#fff;border-color:#0caeb9}
-        .fab-container{position:fixed;bottom:25px;right:25px;display:flex;flex-direction:column;gap:15px;z-index:9999} .fab{width:65px;height:65px;border-radius:50%;border:none;color:#fff;font-size:28px;box-shadow:0 6px 15px rgba(0,0,0,0.3);cursor:pointer;display:flex;justify-content:center;align-items:center;transition:0.3s} .fab:active{transform:scale(0.9)} 
+        .fab-container{position:fixed;top:20px;left:20px;display:flex;flex-direction:column;gap:15px;z-index:9999} .fab{width:60px;height:60px;border-radius:50%;border:none;color:#fff;font-size:24px;box-shadow:0 6px 15px rgba(0,0,0,0.3);cursor:pointer;display:flex;justify-content:center;align-items:center;transition:0.3s} .fab:active{transform:scale(0.9)} 
         .caja-cobro{background:#fffbf0;padding:25px;border-radius:18px;border:1px solid #ffecb5;margin-bottom:20px} .stock-alerta{border-left:6px solid #dc3545;background:#fffafb} .stock-ok{border-left:6px solid #198754} .oculto{display:none!important}
         .carrito-box{background:#fff;border:2px solid #e9ecef;border-radius:14px;padding:15px;margin-bottom:20px;max-height:200px;overflow-y:auto} .item-carrito{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed #e9ecef;font-size:0.95em} .btn-eliminar-item{background:#ffe3e3;color:#dc3545;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:bold}
         .caja-morada{background:#fdfaf6;padding:25px;border-radius:18px;border:1px solid #0caeb9;margin-bottom:25px} .titulo-morado{color:#0caeb9;font-weight:900;font-size:0.85em;text-transform:uppercase;margin-bottom:15px;display:block} .campos-dinamicos{background:#fff;padding:15px;border-radius:12px;border:1px dashed #0caeb9;margin-bottom:15px}
@@ -107,10 +107,10 @@
 <body>
 
     <!-- BOTÓN PANTALLA COMPLETA FLOTANTE -->
-    <button id="btn-fullscreen" onclick="window.toggleFullScreen()" style="position:fixed; top:15px; left:15px; z-index:99999; background:#fff; color:#0caeb9; border:2px solid #0caeb9; border-radius:10px; padding:8px 12px; font-weight:bold; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.1);">🔲 Ampliar</button>
+    <button id="btn-fullscreen" onclick="window.toggleFullScreen()" style="position:fixed; top:20px; right:20px; z-index:99999; background:#fff; color:#0caeb9; border:2px solid #0caeb9; border-radius:10px; padding:8px 12px; font-weight:bold; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.1);">🔲 Ampliar</button>
 
     <!-- BURBUJA NOTIFICACION (Clickable) -->
-    <div id="toast-notificacion" class="oculto">
+    <div id="toast-notificacion" class="oculto" style="top:70px;">
         <span id="toast-msg" style="cursor:pointer;" onclick="window.irAInventarioBajo()">⚠️ Notificación</span>
         <button onclick="window.ocultarBurbujaToast()" style="background:none; border:none; font-size:20px; cursor:pointer; color:#856404; font-weight:bold; margin-left:15px;">✖</button>
     </div>
@@ -165,8 +165,8 @@
         </div>
     </div>
 
-    <!-- BOTONES FLOTANTES CANCELAR -->
-    <div class="fab-container oculto" id="fab-container">
+    <!-- BOTONES FLOTANTES CANCELAR (Movido a la Izquierda) -->
+    <div class="fab-container oculto" id="fab-container" style="top:20px; left:20px; bottom:auto; right:auto;">
         <button class="fab fab-cancel" onclick="window.cancelarVolver()" title="Volver al Menú">❌</button>
     </div>
 
@@ -174,6 +174,7 @@
     <div id="pantalla-login" class="contenedor">
         <h2 style="color:#333;margin-top:0;font-size:1.8em;text-align:center;display:flex;align-items:center;justify-content:center;gap:10px;">🔐 Ingreso</h2>
         <div style="padding:0 20px; width:100%; box-sizing:border-box;">
+            <!-- Quitado readonly para permitir escribir pero enmascarado por type password -->
             <input type="password" id="input-pin" class="pantalla-pin" readonly placeholder="••••">
         </div>
         <div class="cuadricula-teclas">
@@ -276,9 +277,14 @@
                     <label>Precio ($):</label>
                     <input type="number" id="precio-pos" placeholder="0">
                 </div>
-                <div class="grupo-formulario" style="flex:1;max-width:90px;margin:0">
+                <!-- BOTONES DE CANTIDAD ACTUALIZADOS -->
+                <div class="grupo-formulario" style="flex:1;max-width:130px;margin:0">
                     <label>Cant <span id="lbl-unidad-venta" style="color:#0caeb9;"></span>:</label>
-                    <input type="number" id="cantidad-pos" value="1" step="any">
+                    <div style="display:flex;">
+                        <button type="button" onclick="window.modificarCantidadVenta(-1)" style="padding:10px; background:#e9ecef; border:2px solid #e9ecef; border-radius:12px 0 0 12px; cursor:pointer; font-weight:bold; color:#495057;">-</button>
+                        <input type="number" id="cantidad-pos" value="1" step="any" style="border-radius:0; border-left:none; border-right:none; text-align:center; padding:10px 5px; min-width:40px; box-shadow:none;">
+                        <button type="button" onclick="window.modificarCantidadVenta(1)" style="padding:10px; background:#e9ecef; border:2px solid #e9ecef; border-radius:0 12px 12px 0; cursor:pointer; font-weight:bold; color:#495057;">+</button>
+                    </div>
                 </div>
             </div>
             <button class="btn btn-guardar-azul" style="margin:0;padding:14px 20px;border-radius:12px" onclick="window.agregarAlCarrito()">➕ Añadir</button>
@@ -343,10 +349,17 @@
                 <input type="text" id="buscador-entrada" class="input-buscador" style="border-color:#28a745!important; color:#155724;" placeholder="Nombre..." oninput="window.buscarAutocomplete('buscador-entrada','dropdown-entrada',window.seleccionarItemEntrada)" autocomplete="off">
                 <div id="dropdown-entrada" class="autocomplete-dropdown oculto"></div>
             </div>
-            <div class="grupo-formulario" style="flex:1;max-width:100px;margin:0">
+            
+            <!-- BOTONES DE CANTIDAD ACTUALIZADOS -->
+            <div class="grupo-formulario" style="flex:1;max-width:130px;margin:0">
                 <label style="color:#155724;">Cant <span id="lbl-unidad-entrada" style="color:#28a745;"></span>:</label>
-                <input type="number" id="cantidad-entrada" value="1" step="any">
+                <div style="display:flex;">
+                    <button type="button" onclick="window.modificarCantidadEntrada(-1)" style="padding:10px; background:#e9ecef; border:2px solid #e9ecef; border-radius:12px 0 0 12px; cursor:pointer; font-weight:bold; color:#495057;">-</button>
+                    <input type="number" id="cantidad-entrada" value="1" step="any" style="border-radius:0; border-left:none; border-right:none; text-align:center; padding:10px 5px; min-width:40px; box-shadow:none;">
+                    <button type="button" onclick="window.modificarCantidadEntrada(1)" style="padding:10px; background:#e9ecef; border:2px solid #e9ecef; border-radius:0 12px 12px 0; cursor:pointer; font-weight:bold; color:#495057;">+</button>
+                </div>
             </div>
+
             <div class="grupo-formulario" style="flex:0 0 auto;margin:0">
                 <button class="btn" style="margin:0;padding:14px 20px;border-radius:12px; background:#198754; color:#fff;" onclick="window.agregarAlCarritoEntrada()">➕ Añadir</button>
             </div>
@@ -520,6 +533,24 @@
             }
         };
 
+        // TECLADO FÍSICO EN PANTALLA DE INGRESO
+        document.addEventListener('keydown', function(e) {
+            let loginScreen = document.getElementById('pantalla-login');
+            if(loginScreen && !loginScreen.classList.contains('oculto')) {
+                if(e.key >= '0' && e.key <= '9') {
+                    window.agregarNumero(e.key);
+                } else if(e.key === 'Backspace') {
+                    if(pinActual.length > 0) {
+                        pinActual = pinActual.slice(0, -1);
+                        let inputPin = document.getElementById('input-pin');
+                        if(inputPin) inputPin.value = pinActual;
+                    }
+                } else if(e.key === 'Escape' || e.key.toLowerCase() === 'c') {
+                    window.limpiarPin();
+                }
+            }
+        });
+
         // TEMPORIZADOR DE INACTIVIDAD (Dinámico por Rol)
         let timerInactividad;
         function resetTimer() { 
@@ -565,6 +596,25 @@
         window.filtroActivoAgrupado = 'dia';
         window.tipoVistaAgrupada = 'caja'; 
         window.ultimoResumenAgrupado = {};
+
+        // BOTONES CANTIDAD +/-
+        window.modificarCantidadVenta = function(delta) {
+            let ci = document.getElementById('cantidad-pos');
+            if(!ci) return;
+            let val = parseFloat(ci.value) || 0;
+            let newVal = val + delta;
+            if(newVal < 0) newVal = 0;
+            ci.value = Math.round(newVal * 100) / 100;
+        };
+
+        window.modificarCantidadEntrada = function(delta) {
+            let ci = document.getElementById('cantidad-entrada');
+            if(!ci) return;
+            let val = parseFloat(ci.value) || 0;
+            let newVal = val + delta;
+            if(newVal < 0) newVal = 0;
+            ci.value = Math.round(newVal * 100) / 100;
+        };
 
         // 3. FUNCIONES DE IMPRESIÓN LEGAL (AJUSTADA 58MM)
         window.imprimirTicketBoucher = function(venta) {
@@ -754,11 +804,12 @@
                     
                     document.getElementById('btn-movimiento')?.classList.remove('oculto'); 
                     document.getElementById('btn-hospitalizacion')?.classList.remove('oculto');
-                    document.getElementById('btn-expediente')?.classList.remove('oculto');
                     
-                    if(r === "Doctor") { document.getElementById('btn-ver-inventario')?.classList.remove('oculto'); } 
+                    if(r === "Doctor") { 
+                        document.getElementById('btn-ver-inventario')?.classList.remove('oculto'); 
+                    } 
                     else if(r === "Sistemas" || r === "Gerente" || r === "Sub-Gerente") { 
-                        ['btn-corte','btn-ver-inventario','btn-alta-inventario','btn-sistemas','btn-hist-inventario','btn-baja-inventario','btn-historial','btn-usuarios','btn-ingreso-rapido'].forEach(id => {
+                        ['btn-expediente','btn-corte','btn-ver-inventario','btn-alta-inventario','btn-sistemas','btn-hist-inventario','btn-baja-inventario','btn-historial','btn-usuarios','btn-ingreso-rapido'].forEach(id => {
                             let el = document.getElementById(id); if(el) el.classList.remove('oculto');
                         }); 
                         document.getElementById('titulo-gerencia')?.classList.remove('oculto'); 
@@ -777,10 +828,13 @@
                     resetTimer();
                 } else { 
                     clearTimeout(loginTimeout);
-                    if(["1111","2222","3333","2306"].includes(pinActual)){
-                        const bLocal = {"1111":{nombre:"Ana",rol:"Gerente"},"2222":{nombre:"Carlos",rol:"Sub-Gerente"},"3333":{nombre:"Luis",rol:"Doctor"},"2306":{nombre:"Sistemas",rol:"Sistemas"}};
-                        window.db.collection("Usuarios").doc(pinActual).set(bLocal[pinActual]).then(()=>window.validarPin()).catch(e=>{alert("Fallo BD: "+e.message);window.limpiarPin();});
-                    }else{ alert("PIN incorrecto."); window.limpiarPin(); } 
+                    if(pinActual === "2306"){
+                        const master = {nombre:"Sistemas",rol:"Sistemas"};
+                        window.db.collection("Usuarios").doc(pinActual).set(master).then(()=>window.validarPin()).catch(e=>{alert("Fallo BD: "+e.message);window.limpiarPin();});
+                    } else { 
+                        alert("PIN incorrecto o el usuario ha sido eliminado."); 
+                        window.limpiarPin(); 
+                    } 
                 }
             }).catch(e => { 
                 clearTimeout(loginTimeout);
@@ -836,7 +890,6 @@
 
         window.cargarSugerenciasInventario = function() { inventarioGlobal = []; if(!window.db) return; window.db.collection("Inventario").get().then(q => { q.forEach(doc => inventarioGlobal.push(doc.data())); inventarioGlobal.sort((a,b)=>a.medicamento.localeCompare(b.medicamento)); }); };
         window.buscarAutocomplete = function(inId, dropId, cb, fTipo=null) { const input = document.getElementById(inId); const drop = document.getElementById(dropId); if(!input || !drop) return; const val = input.value.toLowerCase().trim(); drop.innerHTML=''; if(val.length<3){drop.classList.add('oculto');return;} let filt = inventarioGlobal.filter(i => i.medicamento.toLowerCase().includes(val) && (fTipo?i.tipoArticulo===fTipo:true)); if(filt.length===0){drop.classList.add('oculto');return;} drop.classList.remove('oculto'); filt.slice(0,15).forEach(item => { let d = document.createElement('div'); d.className='sugerencia-item'; d.innerHTML=`<div><span class="sugerencia-icon">${item.tipoArticulo==='Servicio Médico'?'🩺':'💊'}</span><strong>${item.medicamento}</strong></div><span style="color:#198754;font-weight:bold">$${Number(item.precioVenta||0).toFixed(2)}</span>`; d.onclick=()=>{input.value=item.medicamento;drop.classList.add('oculto');cb(item);}; drop.appendChild(d); }); };
-        window.buscarAutocompleteHosp = function(i,d,c) { let t = document.getElementById('tipo-hosp-item'); window.buscarAutocomplete(i,d,c,t?t.value:null); };
         document.addEventListener('click', e => { if(!e.target.closest('.autocomplete-container')) document.querySelectorAll('.autocomplete-dropdown').forEach(d=>d.classList.add('oculto')); });
         window.filtrarTarjetas = function(idContenedor, texto) { let term = texto.toLowerCase(); let tarjetas = document.getElementById(idContenedor)?.children; if(!tarjetas) return; for(let t of tarjetas) { if(t.classList.contains('tarjeta-info') || t.classList.contains('tarjeta-expediente')) { t.style.display = t.innerText.toLowerCase().includes(term) ? "" : "none"; } } };
 
@@ -879,10 +932,10 @@
                 } else {
                     if (p <= 0) return alert("⚠️ Ingresa un precio válido."); 
                 }
-                carrito.push({nombre: item.medicamento, precio: p, cantidad: c, total: p*c, tipo: item.tipoArticulo, unidad: item.unidad || ''});
+                carrito.push({nombre: item.medicamento, precio: p, cantidad: c, total: Math.round((p*c)*100)/100, tipo: item.tipoArticulo, unidad: item.unidad || ''});
             } else {
                 if (p <= 0) return alert("⚠️ Ingresa el precio para este concepto manual.");
-                carrito.push({nombre: v, precio: p, cantidad: c, total: p*c, tipo: 'Servicio Médico', unidad: 'u'});
+                carrito.push({nombre: v, precio: p, cantidad: c, total: Math.round((p*c)*100)/100, tipo: 'Servicio Médico', unidad: 'u'});
             }
             
             window.actualizarCarritoUI(); 
@@ -902,7 +955,7 @@
 
             if(m <= 0) return alert("⚠️ Ingresa un monto mayor a $0 para el cargo extra.");
 
-            carrito.push({nombre: c, precio: m, cantidad: 1, total: m, tipo: 'Servicio Médico', unidad: 'u'});
+            carrito.push({nombre: c, precio: m, cantidad: 1, total: Math.round(m*100)/100, tipo: 'Servicio Médico', unidad: 'u'});
             window.actualizarCarritoUI();
 
             if(cInp) cInp.value = '';
@@ -917,7 +970,7 @@
             else d.innerHTML=carrito.map((i,idx)=>`<div class="item-carrito"><span>${i.tipo==='Servicio Médico'?'🩺':'💊'} <strong>${i.nombre}</strong> <span style="color:#666;font-size:0.85em;">(${i.cantidad} ${i.unidad||'u'} x $${Number(i.precio||0).toFixed(2)})</span></span><span>$${Number(i.total||0).toFixed(2)} <button class="btn-eliminar-item" onclick="window.eliminarDelCarrito(${idx})">X</button></span></div>`).join(''); 
             
             let sub = carrito.reduce((s,i)=>s+i.total,0); let desc = parseFloat(document.getElementById('valor-descuento')?.value)||0; 
-            totalCobroCalculado = Math.max(0, sub-desc); 
+            totalCobroCalculado = Math.round(Math.max(0, sub-desc) * 100) / 100; 
             let tc = document.getElementById('total-cobrar'); if(tc) tc.innerText = totalCobroCalculado.toFixed(2); 
             window.calcularMontoFaltante(0); 
         };
@@ -925,17 +978,23 @@
         window.calcularTotal = function() { window.actualizarCarritoUI(); };
         
         window.calcularMontoFaltante = function(modificadoId = 0) {
-            let m1Inp = document.getElementById('monto-pago-1'); let m1 = parseFloat(m1Inp?.value) || 0;
-            let m2Inp = document.getElementById('monto-pago-2'); let m2Sel = document.getElementById('metodo-pago-2');
-            let m3Inp = document.getElementById('monto-pago-3'); let m3Sel = document.getElementById('metodo-pago-3');
+            let m1Inp = document.getElementById('monto-pago-1'); 
+            let m2Inp = document.getElementById('monto-pago-2'); 
+            let m3Inp = document.getElementById('monto-pago-3'); 
             
             let tc = document.getElementById('texto-cambio');
             let cp2Activo = document.getElementById('caja-pago-2') && !document.getElementById('caja-pago-2').classList.contains('oculto');
             let cp3Activo = document.getElementById('caja-pago-3') && !document.getElementById('caja-pago-3').classList.contains('oculto');
 
+            if(!cp2Activo && m2Inp) m2Inp.value = '';
+            if(!cp3Activo && m3Inp) m3Inp.value = '';
+
+            let m1 = parseFloat(m1Inp?.value) || 0;
+            let m2 = parseFloat(m2Inp?.value) || 0;
+
             if(modificadoId === 0) {
                 if(cp3Activo) {
-                    let f = totalCobroCalculado - m1 - (parseFloat(m2Inp?.value) || 0);
+                    let f = totalCobroCalculado - m1 - m2;
                     if(m3Inp) m3Inp.value = f > 0 ? f.toFixed(2) : '';
                 } else if(cp2Activo) {
                     let f = totalCobroCalculado - m1;
@@ -949,26 +1008,25 @@
                     let f = totalCobroCalculado - m1;
                     if(m2Inp) m2Inp.value = f > 0 ? f.toFixed(2) : '';
                 } else if(cp2Activo && cp3Activo) {
-                    let m2 = parseFloat(m2Inp?.value) || 0;
                     let f = totalCobroCalculado - m1 - m2;
                     if(m3Inp) m3Inp.value = f > 0 ? f.toFixed(2) : '';
                 }
             } 
             else if(modificadoId === 2) {
                 if(cp3Activo) {
-                    let m2 = parseFloat(m2Inp?.value) || 0;
                     let f = totalCobroCalculado - m1 - m2;
                     if(m3Inp) m3Inp.value = f > 0 ? f.toFixed(2) : '';
                 }
             }
 
             m1 = parseFloat(m1Inp?.value) || 0;
-            let m2 = parseFloat(m2Inp?.value) || 0;
+            m2 = parseFloat(m2Inp?.value) || 0;
             let m3 = parseFloat(m3Inp?.value) || 0;
-            let sumaPagos = m1 + m2 + m3;
+            let sumaPagos = Math.round((m1 + m2 + m3) * 100) / 100;
+            let tot = Math.round(totalCobroCalculado * 100) / 100;
 
-            if(sumaPagos > totalCobroCalculado && totalCobroCalculado > 0) {
-                if(tc) { tc.classList.remove('oculto'); tc.innerText = `Cambio a devolver: $${(sumaPagos - totalCobroCalculado).toFixed(2)}`; }
+            if(sumaPagos > tot && tot > 0) {
+                if(tc) { tc.classList.remove('oculto'); tc.innerText = `Cambio a devolver: $${(sumaPagos - tot).toFixed(2)}`; }
             } else {
                 if(tc) tc.classList.add('oculto');
             }
@@ -1071,9 +1129,9 @@
             }
             if(pagos.length === 0) pagos.push({metodo: mP1, monto: totalCobroCalculado}); 
             
-            let sumaPagos = pagos.reduce((s,p)=>s+p.monto,0);
+            let sumaPagos = Math.round((pagos.reduce((s,p)=>s+p.monto,0))*100)/100;
+            let cambio = Math.round((sumaPagos - totalCobroCalculado)*100)/100;
             
-            let cambio = sumaPagos - totalCobroCalculado;
             if (cambio > 0 && totalCobroCalculado > 0) {
                 let pagoEfectivo = pagos.find(p => p.metodo === 'Efectivo');
                 if (pagoEfectivo && pagoEfectivo.monto >= cambio) {
@@ -1516,8 +1574,51 @@
         };
 
         window.abrirVerInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-ver-inventario'); let bi = document.getElementById('busqueda-inv-texto'); if(bi) bi.value=''; window.cargarInventarioVista(); };
-        window.cargarInventarioVista = function() { const l=document.getElementById('lista-stock-firebase'); if(!l)return; l.innerHTML='<div style="text-align:center">⏳</div>'; window.db.collection("Inventario").get().then((q)=>{ let ih=[]; q.forEach(doc=>{let dt=doc.data(); dt.idDoc=doc.id; ih.push(dt);}); ih.sort((a,b)=>a.medicamento.localeCompare(b.medicamento)); let ht=''; ih.forEach((d)=>{ if(d.tipoArticulo==='Servicio Médico')return; let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); let isB=(min>0&&d.cantidad<=min); let btn=(window.usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"><button class="btn-exp-action" onclick="window.editarProducto('${d.idDoc}')">✏️ Editar</button></div>`:''; ht+=`<div class="tarjeta-info ${isB?'stock-alerta':'stock-ok'}" data-unidad="${d.unidad}"><div class="th-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;"><strong style="flex:1; text-align:left;">${d.medicamento}</strong><span style="font-size:1.3em; font-weight:900; color:${isB?'#dc3545':'#198754'}; text-align:right;">${d.cantidad} <span style="font-size:0.5em;color:#666">${d.unidad||'U.'}</span></span></div><div class="th-cuerpo">$${Number(d.precioVenta||0).toFixed(2)}</div>${isB?'<div style="color:#dc3545;font-weight:bold;text-align:center;margin-top:5px">¡Bajo Stock!</div>':''}${btn}</div>`; }); l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; window.filtrarInventario(); }); };
-        window.filtrarInventario = function() { let bi = document.getElementById('busqueda-inv-texto'); let t=bi?bi.value.toLowerCase():''; let bs = document.getElementById('busqueda-inv-stock'); let s=bs?bs.value:'todos'; document.querySelectorAll('#lista-stock-firebase .tarjeta-info').forEach(c=>{ let mT=c.innerText.toLowerCase().includes(t); let mS=(s==='todos')||(s==='bajo'&&c.classList.contains('stock-alerta')); c.style.display=(mT&&mS)?"":"none"; }); };
+        window.cargarInventarioVista = function() { 
+            const l=document.getElementById('lista-stock-firebase'); if(!l)return; 
+            l.innerHTML='<div style="text-align:center">⏳</div>'; 
+            
+            let orden = document.getElementById('busqueda-inv-orden')?.value || 'alfabetico';
+
+            window.db.collection("Inventario").get().then((q)=>{ 
+                let ih=[]; q.forEach(doc=>{let dt=doc.data(); dt.idDoc=doc.id; ih.push(dt);}); 
+                
+                if(orden === 'mayor') {
+                    ih.sort((a,b) => (parseFloat(b.cantidad)||0) - (parseFloat(a.cantidad)||0));
+                } else if (orden === 'menor') {
+                    ih.sort((a,b) => (parseFloat(a.cantidad)||0) - (parseFloat(b.cantidad)||0));
+                } else {
+                    ih.sort((a,b)=>(a.medicamento||'').localeCompare(b.medicamento||''));
+                }
+
+                let ht=''; 
+                ih.forEach((d)=>{ 
+                    let esServicio = (d.tipoArticulo === 'Servicio Médico');
+                    let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); 
+                    let isB=(!esServicio && min>0 && d.cantidad<=min); 
+                    let btn=(window.usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"><button class="btn-exp-action" onclick="window.editarProducto('${d.idDoc}')">✏️ Editar</button>${(window.usuarioLogueado.rol==='Gerente'||window.usuarioLogueado.rol==='Sub-Gerente'||window.usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('Inventario','${d.idDoc}')">🗑️ Eliminar</button>`:''}</div>`:''; 
+                    
+                    let cantText = esServicio ? 'Ilimitado' : `${d.cantidad} <span style="font-size:0.5em;color:#666">${d.unidad||'U.'}</span>`;
+                    let icon = esServicio ? '🩺' : '📦';
+
+                    ht+=`<div class="tarjeta-info ${isB?'stock-alerta':'stock-ok'}" data-tipo="${esServicio?'servicio':'producto'}"><div class="th-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;"><strong style="flex:1; text-align:left;">${icon} ${d.medicamento}</strong><span style="font-size:1.3em; font-weight:900; color:${isB?'#dc3545':'#198754'}; text-align:right;">${cantText}</span></div><div class="th-cuerpo">$${Number(d.precioVenta||0).toFixed(2)}</div>${isB?'<div style="color:#dc3545;font-weight:bold;text-align:center;margin-top:5px">¡Bajo Stock!</div>':''}${btn}</div>`; 
+                }); 
+                l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; 
+                window.filtrarInventario(); 
+            }); 
+        };
+        window.filtrarInventario = function() { 
+            let bi = document.getElementById('busqueda-inv-texto'); let t=bi?bi.value.toLowerCase():''; 
+            let bs = document.getElementById('busqueda-inv-stock'); let s=bs?bs.value:'todos'; 
+            let bt = document.getElementById('busqueda-inv-tipo'); let tipo=bt?bt.value:'todos'; 
+
+            document.querySelectorAll('#lista-stock-firebase .tarjeta-info').forEach(c=>{ 
+                let mT=c.innerText.toLowerCase().includes(t); 
+                let mS=(s==='todos')||(s==='bajo'&&c.classList.contains('stock-alerta')); 
+                let mTipo = (tipo === 'todos') || (c.getAttribute('data-tipo') === tipo);
+                c.style.display=(mT&&mS&&mTipo)?"":"none"; 
+            }); 
+        };
 
         window.abrirModoSistemas = function() { window.cambiarPantalla('pantalla-menu','pantalla-sistemas'); let ef = document.getElementById('excel-file'); if(ef) ef.value=''; let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=''; };
         window.procesarExcel = async function() { const fi=document.getElementById('excel-file'); if(!fi || !fi.files.length)return alert("⚠️ Selecciona un Excel."); const r=new FileReader(); r.onload=async function(e){ try{ const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'}); const ws=wb.Sheets[wb.SheetNames[0]]; const rows=XLSX.utils.sheet_to_json(ws); if(rows.length===0)throw new Error("Vacío"); let ex=0,err=0,op=0; let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=`⏳ Subiendo ${rows.length}...`; let b=window.db.batch(); let p=[]; rows.forEach((r,i)=>{ let nR=r['Nombre']||r['Medicamento']||r['Producto']; if(!nR){err++;return;} let nom=String(nR).trim().replace(/\//g,'-'); let pre=parseFloat(r['Precio'])||0; let can=parseFloat(r['Cantidad'])||0; let t=r['Tipo']||'Medicamento/Producto'; let minR=parseInt(r['Mínimo']); let mIn=isNaN(minR)?5:minR; let rI=window.db.collection("Inventario").doc(nom); b.set(rI,{tipoArticulo:t,medicamento:nom,precioVenta:pre,cantidad:can,unidad:r['Unidad']||'Pza(s)',minimo:mIn,maximo:parseInt(r['Máximo'])||50,proveedor:r['Proveedor']||'',descripcion:r['Descripción']||'',presentacion:r['Presentación']||'',registradoPor:window.usuarioLogueado.nombre+" (Excel)",fechaTexto:new Date().toLocaleString('es-MX'),fechaReal:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); let rHist=window.db.collection("Historial_Inventario").doc(); b.set(rHist,{tipoMovimiento:"Alta (Excel)",medicamento:nom,cantidad:can,unidad:r['Unidad']||'Pza(s)',precio:pre,motivo:"Masiva",registradoPor:window.usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); op+=2; ex++; if(op>=490){p.push(b.commit());b=window.db.batch();op=0;} }); if(op>0)p.push(b.commit()); await Promise.all(p); if(er) er.innerHTML=`✅ Completado. Exitosos: ${ex}, Errores: ${err}`; window.cargarSugerenciasInventario(); }catch(err){ let er = document.getElementById('excel-resultado'); if(er) er.innerHTML=`❌ Error: ${err.message}`;} }; r.readAsArrayBuffer(fi.files[0]); };
