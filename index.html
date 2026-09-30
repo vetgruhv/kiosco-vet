@@ -947,7 +947,7 @@
                         return;
                     }
                 } else {
-                    if (p <= 0) return alert("⚠️ Ingresa un precio válido."); 
+                    if (p <= 0) return alert("⚠️️ Ingresa un precio válido."); 
                 }
                 carrito.push({nombre: item.medicamento, precio: p, cantidad: c, total: Math.round((p*c)*100)/100, tipo: item.tipoArticulo, unidad: item.unidad || ''});
             } else {
@@ -970,7 +970,7 @@
             let c = cInp?.value.trim() || "Cargo Extra Manual";
             let m = parseFloat(mInp?.value) || 0;
 
-            if(m <= 0) return alert("⚠️ Ingresa un monto mayor a $0 para el cargo extra.");
+            if(m <= 0) return alert("⚠️️ Ingresa un monto mayor a $0 para el cargo extra.");
 
             carrito.push({nombre: c, precio: m, cantidad: 1, total: Math.round(m*100)/100, tipo: 'Servicio Médico', unidad: 'u'});
             window.actualizarCarritoUI();
@@ -1097,6 +1097,15 @@
             
             let ce = document.getElementById('concepto-extra'); if(ce) ce.value = '';
             let me = document.getElementById('monto-extra'); if(me) me.value = '';
+
+            let vd = document.getElementById('valor-descuento'); if(vd) vd.value = '';
+            let mp1 = document.getElementById('monto-pago-1'); if(mp1) mp1.value = '';
+            let mp2 = document.getElementById('monto-pago-2'); if(mp2) mp2.value = '';
+            let mp3 = document.getElementById('monto-pago-3'); if(mp3) mp3.value = '';
+            let met1 = document.getElementById('metodo-pago-1'); if(met1) met1.selectedIndex = 0;
+            let met2 = document.getElementById('metodo-pago-2'); if(met2) met2.selectedIndex = 0;
+            let met3 = document.getElementById('metodo-pago-3'); if(met3) met3.selectedIndex = 0;
+            let tc = document.getElementById('texto-cambio'); if(tc) tc.classList.add('oculto');
         };
         
         window.toggleMostrador = function() { 
@@ -1161,14 +1170,36 @@
             }
 
             guardandoBloqueo = true; document.body.style.cursor='wait';
+            let btnImprimir = document.querySelector('#pantalla-registro-baja .btn-guardar');
+            let btnTextOriginal = "";
+            if(btnImprimir) {
+                btnTextOriginal = btnImprimir.innerHTML;
+                btnImprimir.innerHTML = "⏳ Guardando... (No recargar)";
+                btnImprimir.style.background = "#6c757d";
+            }
+
             let vData = { atendio:window.usuarioLogueado.nombre, paciente:pe, dueno:du, telefono:"N/A", articulos:carrito, subtotal:carrito.reduce((s,i)=>s+i.total,0), valorDescuento:desc, totalCobrado:totalCobroCalculado, pagos:pagos, metodoPago: pagos.map(p=>p.metodo).join(' y '), ventaMostrador:window.esVentaMostrador, fechaTexto:new Date().toLocaleString('es-MX'), timestamp:Date.now() };
             
             window.db.collection("Historial_Cobros").add(vData).then(()=>{ 
                 carrito.forEach(i=>{if(i.tipo!=='Servicio Médico'){let sN=String(i.nombre).replace(/\//g,'-');window.db.collection("Inventario").doc(sN).get().then(d=>{if(d.exists)window.db.collection("Inventario").doc(sN).update({cantidad:d.data().cantidad-i.cantidad});});}}); 
                 if(imprimir) window.imprimirTicketBoucher(vData); else alert("✅ Venta OK."); 
+                
+                window.cancelarVolver();
+                
+                if(btnImprimir) {
+                    btnImprimir.innerHTML = btnTextOriginal;
+                    btnImprimir.style.background = "";
+                }
                 guardandoBloqueo=false; document.body.style.cursor='default';
                 window.cerrarSesion(); 
-            }).catch(e=>{alert("Error: "+e.message); guardandoBloqueo=false; document.body.style.cursor='default';});
+            }).catch(e=>{
+                alert("Error: "+e.message); 
+                if(btnImprimir) {
+                    btnImprimir.innerHTML = btnTextOriginal;
+                    btnImprimir.style.background = "";
+                }
+                guardandoBloqueo=false; document.body.style.cursor='default';
+            });
         };
 
         // 9. FORMATOS HOSPITALARIOS Y LECTURA
@@ -1245,7 +1276,7 @@
         window.procesarHospitalizacion = function(imprimir) {
             if(guardandoBloqueo) return; 
             let f = document.getElementById('select-formato-legal')?.value;
-            if(!f && imprimir!=='historial') return alert("⚠️ Selecciona un Formato Legal.");
+            if(!f && imprimir!=='historial') return alert("⚠️️ Selecciona un Formato Legal.");
             if(f && !window.validarCamposHosp()) return;
             
             let hD = window.recopilarDatosHosp(); 
@@ -1538,7 +1569,7 @@
             let c = parseFloat(cInp?.value) || 0;
 
             if(!v || !window.itemSeleccionadoEntrada || v !== window.itemSeleccionadoEntrada.medicamento) return alert("⚠️ Busca y selecciona un producto válido de la lista.");
-            if(c <= 0) return alert("⚠️ Ingresa una cantidad mayor a 0.");
+            if(c <= 0) return alert("⚠️️ Ingresa una cantidad mayor a 0.");
 
             let item = window.itemSeleccionadoEntrada;
             let existente = carritoEntrada.find(x => x.nombre === item.medicamento);
@@ -1618,7 +1649,7 @@
                     let esServicio = (d.tipoArticulo === 'Servicio Médico');
                     let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); 
                     let isB=(!esServicio && min>0 && d.cantidad<=min); 
-                    let btn=(window.usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"><button class="btn-exp-action" onclick="window.editarProducto('${d.idDoc}')">✏️ Editar</button>${(window.usuarioLogueado.rol==='Gerente'||window.usuarioLogueado.rol==='Sub-Gerente'||window.usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('Inventario','${d.idDoc}')">🗑️ Eliminar</button>`:''}</div>`:''; 
+                    let btn=(window.usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"><button class="btn-exp-action" onclick="window.editarProducto('${d.idDoc}')">✏️️ Editar</button>${(window.usuarioLogueado.rol==='Gerente'||window.usuarioLogueado.rol==='Sub-Gerente'||window.usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('Inventario','${d.idDoc}')">🗑️ Eliminar</button>`:''}</div>`:''; 
                     
                     let cantText = esServicio ? 'Ilimitado' : `${d.cantidad} <span style="font-size:0.5em;color:#666">${d.unidad||'U.'}</span>`;
                     let icon = esServicio ? '🩺' : '📦';
