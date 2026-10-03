@@ -4,7 +4,6 @@
     <!-- ================== 1.- CONFIGURACION Y ESTILOS CSS ================== -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- ETIQUETAS WEB APP -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -34,6 +33,11 @@
         .grupo-formulario{margin-bottom:20px;text-align:left;width:100%;box-sizing:border-box} .grupo-formulario label{display:block;font-weight:700;margin-bottom:8px;color:#495057;font-size:0.8em;text-transform:uppercase}
         .grupo-formulario input,.grupo-formulario select,.grupo-formulario textarea{width:100%;padding:14px;font-size:1em;border:2px solid #e9ecef;border-radius:12px;box-sizing:border-box;font-family:inherit;background:#f8f9fa;color:#333;outline:none}
         .grupo-formulario input:focus,.grupo-formulario select:focus,.grupo-formulario textarea:focus{border-color:#0caeb9;background:#fff;box-shadow:0 0 0 4px rgba(12,174,185,0.1)}
+        
+        /* CAMPOS OBLIGATORIOS (PINTADOS DE AMARILLO) */
+        .req-field { border: 2px solid #ffc107 !important; background: #fffdf5 !important; }
+        .req-field:focus { border-color: #e0a800 !important; box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.2) !important; }
+
         .input-buscador{font-size:1.05em!important;border:2px solid #0caeb9!important;background:#fff!important}
         .autocomplete-container{position:relative;width:100%} .autocomplete-dropdown{position:absolute;top:calc(100% + 5px);left:0;right:0;background:#fff;border:2px solid #0caeb9;border-radius:12px;max-height:250px;overflow-y:auto;z-index:10000;box-shadow:0 8px 25px rgba(0,0,0,0.15)}
         .sugerencia-item{padding:12px 15px;border-bottom:1px solid #e9ecef;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:0.95em;color:#333} .sugerencia-item:hover{background:#f0f7ff}
@@ -41,7 +45,14 @@
         .btn-guardar{background:#198754;color:#fff;margin-top:10px} .btn-guardar:hover{background:#157347;transform:translateY(-2px)}
         .btn-guardar-rojo{background:#dc3545;color:#fff} .btn-guardar-azul{background:#0caeb9;color:#fff} .btn-guardar-azul:hover{background:#088c96;transform:translateY(-2px)}
         .btn-amarillo{background:#ffc107;color:#000;} .btn-amarillo:hover{background:#e0a800;} .btn-cancelar{background:transparent;color:#dc3545;margin-top:10px;border:2px solid #ffe3e3;padding:12px;cursor:pointer} .btn-cancelar:hover{background:#fff0f0}
-        .btn-filtro{flex:1;padding:10px;border:2px solid #e9ecef;background:#fff;color:#6c757d;border-radius:10px;cursor:pointer;font-weight:bold;white-space:nowrap; text-align:center;} .btn-filtro.activo{background:#0caeb9;color:#fff;border-color:#0caeb9}
+        .btn-filtro{flex:1; padding:10px; border:2px solid #e9ecef; background:#fff; color:#6c757d; border-radius:10px; cursor:pointer; font-weight:bold; text-align:center;} .btn-filtro.activo{background:#0caeb9;color:#fff;border-color:#0caeb9}
+        
+        /* CINTA DESLIZABLE PARA FILTROS EN MOVILES */
+        .filtros-scroll { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 5px; -webkit-overflow-scrolling: touch; width: 100%; }
+        .filtros-scroll::-webkit-scrollbar { height: 6px; }
+        .filtros-scroll::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+        .filtros-scroll .btn-filtro { flex: 0 0 auto; white-space: nowrap; }
+
         .fab-container{position:fixed;top:20px;right:20px;display:flex;flex-direction:column;gap:15px;z-index:9999} .fab{width:60px;height:60px;border-radius:50%;border:none;color:#fff;font-size:24px;box-shadow:0 6px 15px rgba(0,0,0,0.3);cursor:pointer;display:flex;justify-content:center;align-items:center;transition:0.3s} .fab:active{transform:scale(0.9)} 
         .caja-cobro{background:#fffbf0;padding:25px;border-radius:18px;border:1px solid #ffecb5;margin-bottom:20px} .stock-alerta{border-left:6px solid #dc3545;background:#fffafb} .stock-ok{border-left:6px solid #198754} .oculto{display:none!important}
         .carrito-box{background:#fff;border:2px solid #e9ecef;border-radius:14px;padding:15px;margin-bottom:20px;max-height:200px;overflow-y:auto} .item-carrito{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed #e9ecef;font-size:0.95em} .btn-eliminar-item{background:#ffe3e3;color:#dc3545;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:bold}
@@ -54,7 +65,6 @@
         .badge-tipo{padding:5px 10px;border-radius:8px;font-size:0.8em;font-weight:bold;margin-right:10px;display:inline-block} .exp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;border-bottom:1px solid #f1f3f5;padding-bottom:10px;flex-wrap:wrap;gap:10px} .exp-title{font-weight:800;font-size:1.1em;color:#2b3035;display:flex;align-items:center} .exp-date{font-size:0.85em;color:#888;font-weight:500} .exp-content{background:#f8f9fa;padding:15px;border-radius:12px;font-size:0.95em;color:#444;white-space:pre-wrap;margin-bottom:15px;border:1px solid #f1f3f5;line-height:1.6} .exp-footer{display:flex;justify-content:space-between;align-items:center;font-size:0.9em;color:#666;flex-wrap:wrap;gap:10px}
         .btn-exp-action{background:#e0f7fa;color:#0caeb9;border:none;padding:10px 18px;border-radius:10px;cursor:pointer;font-weight:bold;font-size:0.9em;display:flex;align-items:center;gap:6px; flex:1; justify-content:center;} 
         
-        /* BLOQUEO DE SCROLL EN NUMEROS Y NOTIFICACION FLOTANTE ABAJO */
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
         
@@ -62,7 +72,6 @@
         #toast-notificacion.toast-active { opacity:1; transform:translateY(0); pointer-events:auto; }
         #toast-notificacion:hover { transform:scale(1.05); }
 
-        /* COLORES HISTORIAL INVENTARIO */
         .tarjeta-expediente.alta { border-left: 5px solid #198754; }
         .tarjeta-expediente.merma { border-left: 5px solid #dc3545; }
         .tarjeta-expediente.edicion { border-left: 5px solid #ffc107; }
@@ -79,17 +88,15 @@
             .contenedor,.fab-container,#modal-lectura,#modal-opciones-guardar,#modal-ver-detalle,#modal-sub-detalle,#toast-notificacion, #btn-fullscreen{display:none!important} 
             #zona-impresion{display:block!important;width:100%}
             
-            /* TICKET 58MM - CORRECCIÓN DE RECORTE (BLINDADO) */
             .ticket-print{width:100%; max-width:50mm; margin:0; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:11px; color:#000; padding:2mm 4mm 2mm 0; text-transform:uppercase; line-height:1.2; box-sizing:border-box;} 
             .ticket-print h2{font-size:14px; text-align:center; margin:0 0 5px 0; font-weight:900;} 
             .ticket-print .info-tienda{text-align:center; font-size:10px; margin-bottom:10px; line-height:1.3;} 
             .ticket-print .info-ticket{margin-bottom:5px; font-size:10px; font-weight:bold; border-bottom:2px dashed #000; padding-bottom:5px; line-height:1.3;} 
             
-            /* FORZADO DE TABLA PARA EVITAR DESBORDAMIENTO */
             .ticket-print table{width:100%; border-collapse:collapse; margin-bottom:10px; table-layout:fixed;} 
-            .ticket-print th:nth-child(1), .ticket-print td:nth-child(1) { width: 22%; } /* Columna CANT */
-            .ticket-print th:nth-child(2), .ticket-print td:nth-child(2) { width: 53%; word-wrap: break-word; padding-right:2px;} /* Columna ART (Salta de línea) */
-            .ticket-print th:nth-child(3), .ticket-print td:nth-child(3) { width: 25%; text-align:right; } /* Columna TOT */
+            .ticket-print th:nth-child(1), .ticket-print td:nth-child(1) { width: 22%; } 
+            .ticket-print th:nth-child(2), .ticket-print td:nth-child(2) { width: 53%; word-wrap: break-word; padding-right:2px;} 
+            .ticket-print th:nth-child(3), .ticket-print td:nth-child(3) { width: 25%; text-align:right; } 
             
             .ticket-print th{border-bottom:2px dashed #000; text-align:left; font-weight:900; font-size:10px; padding-bottom:3px;} 
             .ticket-print td{padding:4px 0; font-size:10px; vertical-align:top; border-bottom:1px dotted #ccc;} 
@@ -98,7 +105,6 @@
             .ticket-print .totales strong{font-size:13px; font-weight:900;}
             .ticket-print .footer{text-align:center; font-size:10px; font-weight:bold; margin-top:10px; border-top:2px dashed #000; padding-top:8px; line-height:1.4;}
             
-            /* RECETAS HOSPITAL (Mantienen su tamaño A4 natural) */
             .receta-print{width:100%;max-width:216mm;font-family:Arial,sans-serif;margin:0 auto;padding:10mm 15mm;box-sizing:border-box;color:#000} .receta-print .cabecera{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:15px;border-bottom:2px solid #0caeb9;padding-bottom:10px} .receta-print .logo-area{width:40%} .receta-print .logo-area h1{margin:0;font-size:38px;font-weight:900;letter-spacing:-1px;margin-bottom:-5px;color:#0caeb9} .receta-print .logo-area p{margin:0;font-size:10px;letter-spacing:2px;font-weight:bold;color:#0caeb9} .receta-print .datos-clinica{width:50%;font-size:10px;text-align:right;line-height:1.3;font-weight:bold} .receta-print h2{text-align:center;font-size:14px;text-transform:uppercase;margin:15px 0}
             .tabla-datos{width:100%;border-collapse:collapse;margin-bottom:15px;font-size:10px} .tabla-datos td{border:1px solid #000;padding:4px 6px} .tabla-datos .bg-gris{background-color:#f0f0f0 !important;-webkit-print-color-adjust:exact;font-weight:bold;width:25%} .cuerpo-texto{font-size:11px;text-align:justify;line-height:1.5;margin-bottom:20px} .cuerpo-texto p{margin:0 0 10px 0}
             .firmas-area{display:flex;justify-content:center;margin-top:40px;margin-bottom:10px} .firma-bloque{width:60%;text-align:center;font-size:11px;font-weight:bold} .firma-bloque img{max-height:60px;display:block;margin:0 auto 5px auto} .firma-linea{border-top:1px solid #000;padding-top:4px;display:inline-block;width:100%}
@@ -108,10 +114,8 @@
 <body>
 
     <!-- ================== 2.- MODALES Y UI GLOBAL ================== -->
-    <!-- BOTÓN PANTALLA COMPLETA FLOTANTE -->
     <button id="btn-fullscreen" onclick="window.toggleFullScreen()" style="position:fixed; top:20px; left:20px; z-index:99999; background:#fff; color:#0caeb9; border:2px solid #0caeb9; border-radius:10px; padding:8px 12px; font-weight:bold; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.1);">🔲 Ampliar</button>
 
-    <!-- BURBUJA NOTIFICACION ABAJO (Clickable) -->
     <div id="toast-notificacion" class="oculto">
         <span id="toast-msg" style="cursor:pointer;" onclick="window.irAInventarioBajo()">⚠️ Notificación</span>
         <button onclick="window.ocultarBurbujaToast()" style="background:none; border:none; font-size:20px; cursor:pointer; color:#856404; font-weight:bold; margin-left:15px;">✖</button>
@@ -120,7 +124,6 @@
     <datalist id="lista-medicamentos-general"></datalist>
     <div id="zona-impresion"></div>
 
-    <!-- MODAL DETALLES PRINCIPAL (DESGLOSE) -->
     <div id="modal-ver-detalle" class="modal-overlay oculto">
         <div class="modal-content" style="max-height:85vh;">
             <div class="modal-header">
@@ -131,7 +134,6 @@
         </div>
     </div>
     
-    <!-- MODAL SUB-DETALLES (VISTA DEL TICKET INDIVIDUAL) -->
     <div id="modal-sub-detalle" class="modal-overlay oculto" style="z-index: 100005;">
         <div class="modal-content" style="max-height:80vh; max-width: 500px;">
             <div class="modal-header" style="background:#198754;">
@@ -142,7 +144,6 @@
         </div>
     </div>
 
-    <!-- MODAL OPCIONES DE GUARDADO -->
     <div id="modal-opciones-guardar" class="modal-overlay oculto">
         <div class="modal-content" style="height:auto; max-width: 400px; text-align:center;">
             <div class="modal-header"><span>💾 Opciones de Guardado</span><button onclick="document.getElementById('modal-opciones-guardar').classList.add('oculto')" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">✖</button></div>
@@ -153,7 +154,6 @@
         </div>
     </div>
 
-    <!-- MODAL LECTURA CONTRATO -->
     <div id="modal-lectura" class="modal-overlay oculto">
         <div class="modal-content">
             <div class="modal-header">
@@ -167,7 +167,6 @@
         </div>
     </div>
 
-    <!-- BOTONES FLOTANTES CANCELAR -->
     <div class="fab-container oculto" id="fab-container">
         <button class="fab fab-cancel" onclick="window.cancelarVolver()" title="Volver al Menú">❌</button>
     </div>
@@ -203,7 +202,7 @@
             <button class="btn-menu oculto" id="btn-movimiento" onclick="window.abrirFormulario()"><span>🛒 Venta General</span></button>
             <button class="btn-menu oculto" id="btn-hospitalizacion" onclick="window.abrirHospitalizacion()"><span>🏥 Formatos Hospitalarios</span></button>
             <button class="btn-menu oculto" id="btn-ver-formatos-hoy" onclick="window.abrirFormatosHoy()" style="background:#fff3cd; border-color:#ffeeba; color:#856404;"><span>📄 Ver Formatos de Hoy</span></button>
-            <button class="btn-menu oculto" id="btn-expediente" onclick="window.abrirVistaAgrupada('expediente', 'dia')"><span>🗂️ Expediente Clínico</span></button>
+            <button class="btn-menu oculto" id="btn-expediente" onclick="window.abrirVistaAgrupada('expediente', 'dia')"><span>🗂️️ Expediente Clínico</span></button>
         </div>
         
         <h4 id="titulo-gerencia" class="oculto" style="color:#adb5bd;margin:25px 0 15px 0;text-transform:uppercase;font-size:0.85em;letter-spacing:1px">Administración (Gerencia)</h4>
@@ -225,13 +224,15 @@
     <div id="pantalla-vista-agrupada" class="contenedor contenedor-ancho oculto">
         <h2 id="titulo-vista-agrupada" style="color:#333;margin-top:0">💰 Corte de Caja General</h2>
         
-        <div class="panel-busqueda" style="margin-bottom:20px">
-            <div class="grupo-formulario busqueda-ancha" style="display:flex;gap:10px;background:#f8f9fa;padding:8px;border-radius:12px;margin:0;align-items:center;">
+        <div class="panel-busqueda" style="margin-bottom:20px; padding:15px;">
+            <div class="filtros-scroll">
                 <button id="filtro-agrupado-dia" class="btn-filtro activo" onclick="window.cambiarFiltroAgrupado('dia')">Hoy</button>
                 <button id="filtro-agrupado-ayer" class="btn-filtro" onclick="window.cambiarFiltroAgrupado('ayer')">Ayer</button>
                 <button id="filtro-agrupado-mes" class="btn-filtro" onclick="window.cambiarFiltroAgrupado('mes')">Mes Actual</button>
                 <input type="month" id="filtro-agrupado-mes-exacto" class="btn-filtro" style="padding: 8px;" onchange="window.cambiarFiltroAgrupado('mes-exacto')">
-                <input type="text" id="buscador-agrupado" class="input-buscador oculto" placeholder="Buscar Dueño/Paciente/Tel..." oninput="window.filtrarBusquedaAgrupada()" style="flex:2; margin:0; padding:8px;">
+            </div>
+            <div class="grupo-formulario busqueda-ancha" style="margin-top:10px;">
+                <input type="text" id="buscador-agrupado" class="input-buscador oculto" placeholder="Buscar Dueño/Paciente/Tel..." oninput="window.filtrarBusquedaAgrupada()">
             </div>
         </div>
 
@@ -387,46 +388,87 @@
                     <option value="ALTA VOLUNTARIA">Alta Voluntaria</option>
                     <option value="ALTA MÉDICA">Alta Médica (Salida Clínica)</option>
                     <option value="SALIDA DE PENSIÓN">Salida de Pensión</option>
+                    <option value="AUTORIZACIÓN DE PROCEDIMIENTO ANESTÉSICO Y QUIRÚRGICO">Autorización de Procedimiento Anestésico y Quirúrgico</option>
                 </select>
             </div>
         </div>
 
-        <div class="form-row"><div class="grupo-formulario"><label>Dueño (Nombre completo):</label><input type="text" id="hosp-dueno"></div><div class="grupo-formulario"><label>Teléfono:</label><input type="number" id="hosp-tel"></div></div>
-        <div class="form-row"><div class="grupo-formulario"><label>Paciente:</label><input type="text" id="hosp-paciente"></div><div class="grupo-formulario"><label>Raza:</label><input type="text" id="hosp-raza"></div></div>
-        <div class="form-row"><div class="grupo-formulario"><label>Sexo:</label><select id="hosp-sexo"><option value="">Sel.</option><option value="Macho">Macho</option><option value="Hembra">Hembra</option></select></div><div class="grupo-formulario"><label>Edad:</label><input type="text" id="hosp-edad"></div><div class="grupo-formulario"><label>Peso (Kg):</label><input type="number" step="0.1" id="hosp-peso"></div></div>
+        <div class="form-row"><div class="grupo-formulario"><label>Dueño (Obligatorio):</label><input type="text" id="hosp-dueno" class="req-field"></div><div class="grupo-formulario"><label>Teléfono (Obligatorio):</label><input type="number" id="hosp-tel" class="req-field"></div></div>
+        <div class="form-row"><div class="grupo-formulario"><label>Paciente (Obligatorio):</label><input type="text" id="hosp-paciente" class="req-field"></div><div class="grupo-formulario"><label>Raza (Obligatorio):</label><input type="text" id="hosp-raza" class="req-field"></div></div>
+        <div class="form-row"><div class="grupo-formulario"><label>Sexo:</label><select id="hosp-sexo"><option value="">Sel.</option><option value="Macho">Macho</option><option value="Hembra">Hembra</option></select></div><div class="grupo-formulario"><label>Edad (Obligatorio):</label><input type="text" id="hosp-edad" class="req-field"></div><div class="grupo-formulario"><label>Peso (Kg):</label><input type="number" step="0.1" id="hosp-peso"></div></div>
         
         <div class="seccion-separador"></div>
         <div id="contenedor-campos-dinamicos">
             <div id="campos-auth-hospital" class="campos-dinamicos oculto">
-                <div class="form-row"><div class="grupo-formulario" style="flex:2"><label>Domicilio:</label><input type="text" id="hosp-domicilio"></div><div class="grupo-formulario"><label>Correo:</label><input type="text" id="hosp-correo"></div></div>
+                <div class="form-row"><div class="grupo-formulario" style="flex:2"><label>Domicilio (Obligatorio):</label><input type="text" id="hosp-domicilio" class="req-field"></div><div class="grupo-formulario"><label>Correo (Obligatorio):</label><input type="text" id="hosp-correo" class="req-field"></div></div>
                 <div class="form-row"><div class="grupo-formulario busqueda-ancha"><label>Nacimiento:</label><input type="date" id="hosp-nacimiento"></div></div>
                 <label style="font-weight:bold;color:#0caeb9">Vacunas:</label>
                 <div class="form-row"><div class="grupo-formulario"><label>Séxtuple:</label><input type="date" id="hosp-vac-sextuple"></div><div class="grupo-formulario"><label>Rabia:</label><input type="date" id="hosp-vac-rabia"></div><div class="grupo-formulario"><label>Desparasitación:</label><input type="date" id="hosp-vac-desp"></div></div>
-                <div class="grupo-formulario"><label>Manejo Médico:</label><input type="text" id="hosp-manejo-medico" placeholder="Ej. Cirugía..."></div>
+                <div class="grupo-formulario"><label>Manejo Médico (Obligatorio):</label><input type="text" id="hosp-manejo-medico" class="req-field" placeholder="Ej. Cirugía..."></div>
             </div>
 
             <div id="campos-pension" class="campos-dinamicos oculto">
-                <div class="form-row"><div class="grupo-formulario" style="flex:2"><label>Domicilio:</label><input type="text" id="pen-domicilio"></div><div class="grupo-formulario"><label>Tel. Emergencia:</label><input type="number" id="pen-tel-emergencia"></div></div>
+                <div class="form-row"><div class="grupo-formulario" style="flex:2"><label>Domicilio (Obligatorio):</label><input type="text" id="pen-domicilio" class="req-field"></div><div class="grupo-formulario"><label>Tel. Emergencia:</label><input type="number" id="pen-tel-emergencia"></div></div>
                 <div class="form-row">
-                    <div class="grupo-formulario"><label>Entrada:</label><input type="date" id="pen-entrada"></div>
-                    <div class="grupo-formulario"><label>Salida:</label><input type="date" id="pen-salida"></div>
-                    <div class="grupo-formulario"><label>Hora de Recepción:</label><input type="time" id="pen-hora-recepcion"></div>
-                    <div class="grupo-formulario"><label>Costo por día ($):</label><input type="number" id="pen-costo"></div>
+                    <div class="grupo-formulario"><label>Entrada (Obligatorio):</label><input type="date" id="pen-entrada" class="req-field"></div>
+                    <div class="grupo-formulario"><label>Salida (Obligatorio):</label><input type="date" id="pen-salida" class="req-field"></div>
+                    <div class="grupo-formulario"><label>Hora de Recepción (Obligatorio):</label><input type="time" id="pen-hora-recepcion" class="req-field"></div>
+                    <div class="grupo-formulario"><label>Costo por día ($) (Obligatorio):</label><input type="number" id="pen-costo" class="req-field"></div>
                 </div>
-                <div class="form-row"><div class="grupo-formulario"><label>Alergias Conocidas:</label><input type="text" id="pen-alergias" placeholder="Si no tiene, pon Ninguna"></div><div class="grupo-formulario"><label>Si se queda sin comida, ¿qué prefiere?:</label><input type="text" id="pen-sin-comida" placeholder="Ej. Comprar su marca y cobrar"></div></div>
+                <div class="form-row"><div class="grupo-formulario"><label>Alergias Conocidas (Obligatorio):</label><input type="text" id="pen-alergias" class="req-field" placeholder="Si no tiene, pon Ninguna"></div><div class="grupo-formulario"><label>Si se queda sin comida, ¿qué prefiere?:</label><input type="text" id="pen-sin-comida" class="req-field" placeholder="Ej. Comprar su marca y cobrar"></div></div>
                 <label style="font-weight:bold;color:#0caeb9">Alimentación y Cuidados:</label>
-                <div class="form-row"><div class="grupo-formulario"><label>Marca Alimento:</label><input type="text" id="pen-marca"></div><div class="grupo-formulario"><label>Horario(s):</label><input type="text" id="pen-horario" placeholder="Ej. 8am y 6pm"></div><div class="grupo-formulario"><label>Ración:</label><input type="text" id="pen-cantidad" placeholder="Ej. 1 taza"></div></div>
+                <div class="form-row"><div class="grupo-formulario"><label>Marca Alimento (Obligatorio):</label><input type="text" id="pen-marca" class="req-field"></div><div class="grupo-formulario"><label>Horario(s):</label><input type="text" id="pen-horario" placeholder="Ej. 8am y 6pm"></div><div class="grupo-formulario"><label>Ración:</label><input type="text" id="pen-cantidad" placeholder="Ej. 1 taza"></div></div>
                 <div class="grupo-formulario"><label>Cuidados Especiales:</label><input type="text" id="pen-cuidados" placeholder="Si requiere medicamentos, especificar..."></div>
             </div>
 
             <div id="campos-alta-voluntaria" class="campos-dinamicos oculto">
-                <div class="form-row"><div class="grupo-formulario"><label>Fecha de Ingreso:</label><input type="date" id="alta-f-ingreso"></div><div class="grupo-formulario"><label>Diagnóstico de Ingreso:</label><input type="text" id="alta-dx-ingreso"></div></div>
+                <div class="form-row"><div class="grupo-formulario"><label>Fecha de Ingreso (Obligatorio):</label><input type="date" id="alta-f-ingreso" class="req-field"></div><div class="grupo-formulario"><label>Diagnóstico de Ingreso:</label><input type="text" id="alta-dx-ingreso"></div></div>
                 <div class="form-row"><div class="grupo-formulario"><label>Fecha de Egreso (Hoy):</label><input type="date" id="alta-f-egreso"></div><div class="grupo-formulario"><label>Diagnóstico de Egreso:</label><input type="text" id="alta-dx-egreso"></div></div>
-                <div class="grupo-formulario"><label>Motivo del Egreso (Por qué se lo lleva):</label><input type="text" id="alta-motivo"></div>
+                <div class="grupo-formulario"><label>Motivo del Egreso (Obligatorio):</label><input type="text" id="alta-motivo" class="req-field"></div>
             </div>
 
-            <div id="campos-alta-medica" class="campos-dinamicos oculto"><p style="text-align:center; color:#666; margin:0; font-size:0.9em;">Se usará la información general del paciente ingresada en la parte superior.</p></div>
+            <div id="campos-alta-medica" class="campos-dinamicos oculto">
+                <p style="text-align:center; color:#666; margin:0 0 15px 0; font-size:0.9em;">Se usará la información general del paciente ingresada en la parte superior.</p>
+                <div class="form-row"><div class="grupo-formulario"><label>Fecha de Egreso (Obligatorio):</label><input type="date" id="alta-med-fecha" class="req-field"></div></div>
+            </div>
+            
             <div id="campos-salida-pension" class="campos-dinamicos oculto"><p style="text-align:center; color:#666; margin:0; font-size:0.9em;">Se usará la información general del paciente ingresada en la parte superior.</p></div>
+            
+            <div id="campos-anestesia" class="campos-dinamicos oculto">
+                <p style="color:#856404; font-size:0.85em; text-align:center; background:#fff3cd; padding:10px; border-radius:8px;">⚠️ Los datos base (Dueño, Paciente, Raza, Teléfono, Edad) se toman de arriba. Llena los siguientes campos obligatorios:</p>
+                <div class="form-row">
+                    <div class="grupo-formulario"><label style="color:#856404;">Calle (Obligatorio):</label><input type="text" id="anes-calle" class="req-field"></div>
+                    <div class="grupo-formulario"><label style="color:#856404;">Número (Obligatorio):</label><input type="text" id="anes-numero" class="req-field"></div>
+                    <div class="grupo-formulario"><label style="color:#856404;">Colonia (Obligatorio):</label><input type="text" id="anes-colonia" class="req-field"></div>
+                </div>
+                <div class="form-row">
+                    <div class="grupo-formulario"><label>Tel. Casa:</label><input type="number" id="anes-casa" placeholder="Opcional"></div>
+                    <div class="grupo-formulario"><label>Correo Electrónico:</label><input type="text" id="anes-correo" placeholder="Opcional"></div>
+                    <div class="grupo-formulario"><label>Color del paciente:</label><input type="text" id="anes-color" placeholder="Opcional"></div>
+                </div>
+                <label style="font-weight:bold;color:#0caeb9">Procedimientos Autorizados (Selecciona mínimo uno):</label>
+                <div class="form-row" style="background:#fffbe6; padding:10px 20px; border-radius:10px; border:1px dashed #ffc107; justify-content:flex-start; gap:30px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <input type="checkbox" id="anes-proc-anestesico" style="width:25px; height:25px; margin:0; outline: 2px solid #ffc107;">
+                        <label style="margin:0; font-size:1em; color:#856404; font-weight:bold; text-transform:none;">Procedimiento Anestésico</label>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <input type="checkbox" id="anes-proc-quirurgico" style="width:25px; height:25px; margin:0; outline: 2px solid #ffc107;">
+                        <label style="margin:0; font-size:1em; color:#856404; font-weight:bold; text-transform:none;">Procedimiento Quirúrgico</label>
+                    </div>
+                </div>
+                <label style="font-weight:bold;color:#0caeb9; margin-top:15px; display:block;">Vacunaciones (Opcional - Ingresa Fecha de Aplicación):</label>
+                <div class="form-row">
+                    <div class="grupo-formulario"><label>Séxtuple:</label><input type="date" id="anes-vac-sextuple"></div>
+                    <div class="grupo-formulario"><label>Rabia:</label><input type="date" id="anes-vac-rabia"></div>
+                    <div class="grupo-formulario"><label>Bordetella:</label><input type="date" id="anes-vac-bordetella"></div>
+                </div>
+                <div class="form-row">
+                    <div class="grupo-formulario"><label>Giardia:</label><input type="date" id="anes-vac-giardia"></div>
+                    <div class="grupo-formulario"><label>Desp. Interna:</label><input type="date" id="anes-vac-desp-int"></div>
+                    <div class="grupo-formulario"><label>Desp. Externa:</label><input type="date" id="anes-vac-desp-ext"></div>
+                </div>
+            </div>
             
             <div style="text-align:center; width:100%;">
                 <button id="btn-leer-firmar" class="btn btn-guardar-azul oculto" style="margin:15px auto 0 auto; width:auto; padding:12px 25px;" onclick="window.abrirLecturaYFirma()">Leer y Firmar Formulario</button>
@@ -719,7 +761,10 @@
             if(document.getElementById('carrito-lista')) window.actualizarCarritoUI(); 
             if(document.getElementById('carrito-entrada-lista')) window.actualizarCarritoEntradaUI();
             
-            document.querySelectorAll('input, textarea').forEach(i=>i.value=''); 
+            document.querySelectorAll('input, textarea').forEach(i=>{
+                i.value=''; 
+                if(i.type==='checkbox') i.checked=false;
+            }); 
             let tc = document.getElementById('total-cobrar'); if(tc) tc.innerText="0.00"; 
             let cx1 = document.getElementById('texto-cambio'); if(cx1) cx1.classList.add('oculto');
             
@@ -1072,7 +1117,10 @@
             document.getElementById('btn-leer-firmar')?.classList.add('oculto'); 
             window.limpiarFirma('cliente'); canvasActivo=false; 
             
-            document.querySelectorAll('#pantalla-hospitalizacion input, #pantalla-hospitalizacion textarea').forEach(i => i.value = '');
+            document.querySelectorAll('#pantalla-hospitalizacion input, #pantalla-hospitalizacion textarea').forEach(i => {
+                i.value = '';
+                if(i.type==='checkbox') i.checked=false;
+            });
             document.querySelectorAll('#pantalla-hospitalizacion select').forEach(s => s.value = '');
 
             let sfl = document.getElementById('select-formato-legal'); if(sfl) sfl.value=""; 
@@ -1087,7 +1135,7 @@
             let btnG = document.getElementById('btn-final-hosp');
 
             if(s) { 
-                let map={ "AUTORIZACIÓN HOSPITALARIA":'campos-auth-hospital', "CONTRATO DE PENSIÓN":'campos-pension', "ALTA VOLUNTARIA":'campos-alta-voluntaria', "ALTA MÉDICA":'campos-alta-medica', "SALIDA DE PENSIÓN":'campos-salida-pension' }; 
+                let map={ "AUTORIZACIÓN HOSPITALARIA":'campos-auth-hospital', "CONTRATO DE PENSIÓN":'campos-pension', "ALTA VOLUNTARIA":'campos-alta-voluntaria', "ALTA MÉDICA":'campos-alta-medica', "SALIDA DE PENSIÓN":'campos-salida-pension', "AUTORIZACIÓN DE PROCEDIMIENTO ANESTÉSICO Y QUIRÚRGICO":'campos-anestesia' }; 
                 if(map[s]) document.getElementById(map[s])?.classList.remove('oculto'); 
                 if(bl) bl.classList.remove('oculto'); 
                 if(zf) zf.classList.remove('oculto'); 
@@ -1104,17 +1152,35 @@
             let f = document.getElementById('select-formato-legal')?.value;
             const v = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
             
-            if(!v('hosp-dueno') || !v('hosp-paciente') || !v('hosp-tel') || !v('hosp-raza')) { alert("⚠️ Llena Dueño, Paciente, Teléfono y Raza en la sección superior."); return false; }
+            if(!v('hosp-dueno') || !v('hosp-paciente') || !v('hosp-tel') || !v('hosp-raza') || !v('hosp-edad')) { 
+                alert("⚠️ Llena Dueño, Paciente, Teléfono, Raza y Edad en la sección superior."); 
+                return false; 
+            }
             
             if(f === "AUTORIZACIÓN HOSPITALARIA") {
-                if(!v('hosp-domicilio') || !v('hosp-manejo-medico')) { alert("⚠️ Faltan campos: Domicilio y/o Manejo Médico."); return false; }
+                if(!v('hosp-domicilio') || !v('hosp-correo') || !v('hosp-manejo-medico')) { 
+                    alert("⚠️ Faltan campos obligatorios: Domicilio, Correo y/o Manejo Médico."); return false; 
+                }
             } else if(f === "CONTRATO DE PENSIÓN") {
-                if(!v('pen-domicilio') || !v('pen-tel-emergencia') || !v('pen-entrada') || !v('pen-salida') || !v('pen-hora-recepcion') || !v('pen-costo') || !v('pen-alergias') || !v('pen-sin-comida') || !v('pen-marca') || !v('pen-horario') || !v('pen-cantidad') || !v('pen-cuidados')) {
-                    alert("⚠️ Faltan datos en Pensión. Llena todos los campos de fechas, costo, hora de recepción y alimentación completa."); return false;
+                if(!v('pen-domicilio') || !v('pen-entrada') || !v('pen-salida') || !v('pen-hora-recepcion') || !v('pen-costo') || !v('pen-alergias') || !v('pen-sin-comida') || !v('pen-marca')) {
+                    alert("⚠️ Faltan datos en Pensión. Llena todos los campos marcados en amarillo (Fechas, Costo, Hora, Alergias, Comida)."); return false;
                 }
             } else if(f === "ALTA VOLUNTARIA") {
                 if(!v('alta-f-ingreso') || !v('alta-motivo')) {
                     alert("⚠️ Fecha de Ingreso y Motivo de Egreso son obligatorios."); return false;
+                }
+            } else if(f === "AUTORIZACIÓN DE PROCEDIMIENTO ANESTÉSICO Y QUIRÚRGICO") {
+                if(!v('anes-calle') || !v('anes-numero') || !v('anes-colonia')) {
+                    alert("⚠️ Faltan campos obligatorios de Domicilio (Calle, Número, Colonia)."); return false;
+                }
+                let chkA = document.getElementById('anes-proc-anestesico')?.checked;
+                let chkQ = document.getElementById('anes-proc-quirurgico')?.checked;
+                if(!chkA && !chkQ) {
+                    alert("⚠️ Selecciona al menos un procedimiento (Anestésico o Quirúrgico)."); return false;
+                }
+            } else if(f === "ALTA MÉDICA") {
+                if(!v('alta-med-fecha')) {
+                    alert("⚠️ Selecciona la Fecha de Egreso."); return false;
                 }
             }
             return true;
@@ -1129,6 +1195,8 @@
             if(f==="AUTORIZACIÓN HOSPITALARIA"){d.domicilio=val('hosp-domicilio');d.correo=val('hosp-correo');d.nacimiento=val('hosp-nacimiento');d.vacSextuple=val('hosp-vac-sextuple');d.vacRabia=val('hosp-vac-rabia');d.vacDesp=val('hosp-vac-desp');d.manejoMedico=val('hosp-manejo-medico');}
             if(f==="CONTRATO DE PENSIÓN"){d.domicilioPension=val('pen-domicilio');d.penTelEmergencia=val('pen-tel-emergencia');d.penEntrada=val('pen-entrada');d.penSalida=val('pen-salida');d.penHoraRecepcion=val('pen-hora-recepcion');d.penCosto=val('pen-costo');d.penAlergias=val('pen-alergias');d.penSinComida=val('pen-sin-comida');d.penMarca=val('pen-marca');d.penHorario=val('pen-horario');d.penCantidad=val('pen-cantidad');d.penCuidados=val('pen-cuidados');}
             if(f==="ALTA VOLUNTARIA"){d.altaFechaIn=val('alta-f-ingreso');d.altaDxIn=val('alta-dx-ingreso');d.altaFechaOut=val('alta-f-egreso');d.altaDxOut=val('alta-dx-egreso');d.altaMotivo=val('alta-motivo');}
+            if(f==="ALTA MÉDICA"){d.altaMedFecha=val('alta-med-fecha');}
+            if(f==="AUTORIZACIÓN DE PROCEDIMIENTO ANESTÉSICO Y QUIRÚRGICO"){d.anesCalle=val('anes-calle'); d.anesNumero=val('anes-numero'); d.anesColonia=val('anes-colonia'); d.anesCasa=val('anes-casa'); d.anesCorreo=val('anes-correo'); d.anesColor=val('anes-color'); d.anesProcA=document.getElementById('anes-proc-anestesico')?.checked?'X':' '; d.anesProcQ=document.getElementById('anes-proc-quirurgico')?.checked?'X':' '; d.anesVacS=val('anes-vac-sextuple'); d.anesVacR=val('anes-vac-rabia'); d.anesVacB=val('anes-vac-bordetella'); d.anesVacG=val('anes-vac-giardia'); d.anesVacDI=val('anes-vac-desp-int'); d.anesVacDE=val('anes-vac-desp-ext');}
             return d;
         };
 
@@ -1165,19 +1233,19 @@
             
             if(authStr === "AUTORIZACIÓN HOSPITALARIA") {
                 htmlFinal = `<div class="receta-print">${cabecera}<h2>AUTORIZACIÓN HOSPITALARIA</h2><p style="text-align:right;font-size:11px">FECHA DE INGRESO: ${fch}</p>
-                <table class="tabla-datos"><tr><td colspan="4" class="bg-gris">DATOS DEL PROPIETARIO</td></tr><tr><td colspan="4">${hosp.dueno||''}</td></tr><tr><td colspan="4" class="bg-gris">DOMICILIO</td></tr><tr><td colspan="4">${hosp.domicilio||'__________________________________'}</td></tr><tr><td colspan="2" class="bg-gris">TELÉFONO</td><td colspan="2" class="bg-gris">CORREO ELECTRÓNICO</td></tr><tr><td colspan="2">${hosp.telefono||'_____________'}</td><td colspan="2">${hosp.correo||'___________________'}</td></tr><tr><td colspan="4" class="bg-gris">DATOS DEL PACIENTE</td></tr><tr><td>NOMBRE: ${hosp.paciente||''}</td><td>RAZA: ${hosp.raza||''}</td><td colspan="2">SEXO: ${hosp.sexo||''}</td></tr><tr><td>FECHA NACIMIENTO: ${hosp.nacimiento||'____/____/____'}</td><td>EDAD: ${hosp.edad||''}</td><td colspan="2">COLOR: ${hosp.color||''}</td></tr></table>
-                <table class="tabla-datos"><tr><td colspan="4" class="bg-gris">VACUNACIONES VERIFICADAS</td></tr><tr><td>MÚLTIPLE/SÉXTUPLE: ${hosp.vacSextuple||'____/____/____'}</td><td>RABIA: ${hosp.vacRabia||'____/____/____'}</td><td colspan="2">DESPARASITACIÓN: ${hosp.vacDesp||'____/____/____'}</td></tr></table>
-                <div class="cuerpo-texto"><p><strong>I.- MANEJO MÉDICO:</strong> Autorizo al equipo médico de VETGRU HOSPITAL VETERINARIO realizar el manejo necesario para el bienestar de mi mascota, el cual es: <u>${hosp.manejoMedico||'_________________________________'}</u>.</p><p>Comprendo que la administración de sueros, medicamentos (anestésicos, analgésicos, antibióticos, entre otros) tiene la capacidad de producir reacciones alérgicas en mi mascota que pueden llegar a ser graves; para lo cual en caso de presentarse, autorizo plenamente al equipo médico a tomar acción para contrarrestar estos efectos indeseados. Por lo que comprendo perfectamente que existen riesgos de lesión o muerte para todo paciente sujeto a un procedimiento anestésico.</p></div>
+                <table class="tabla-datos"><tr><td colspan="4" class="bg-gris">DATOS DEL PROPIETARIO</td></tr><tr><td colspan="4">${hosp.dueno||'*'}</td></tr><tr><td colspan="4" class="bg-gris">DOMICILIO</td></tr><tr><td colspan="4">${hosp.domicilio||'*'}</td></tr><tr><td colspan="2" class="bg-gris">TELÉFONO</td><td colspan="2" class="bg-gris">CORREO ELECTRÓNICO</td></tr><tr><td colspan="2">${hosp.telefono||'*'}</td><td colspan="2">${hosp.correo||'*'}</td></tr><tr><td colspan="4" class="bg-gris">DATOS DEL PACIENTE</td></tr><tr><td>NOMBRE: ${hosp.paciente||'*'}</td><td>RAZA: ${hosp.raza||'*'}</td><td colspan="2">SEXO: ${hosp.sexo||'*'}</td></tr><tr><td>FECHA NACIMIENTO: ${hosp.nacimiento||'*'}</td><td>EDAD: ${hosp.edad||'*'}</td><td colspan="2">COLOR: ${hosp.color||'*'}</td></tr></table>
+                <table class="tabla-datos"><tr><td colspan="4" class="bg-gris">VACUNACIONES VERIFICADAS</td></tr><tr><td>MÚLTIPLE/SÉXTUPLE: ${hosp.vacSextuple||'*'}</td><td>RABIA: ${hosp.vacRabia||'*'}</td><td colspan="2">DESPARASITACIÓN: ${hosp.vacDesp||'*'}</td></tr></table>
+                <div class="cuerpo-texto"><p><strong>I.- MANEJO MÉDICO:</strong> Autorizo al equipo médico de VETGRU HOSPITAL VETERINARIO realizar el manejo necesario para el bienestar de mi mascota, el cual es: <u>${hosp.manejoMedico||'*'}</u>.</p><p>Comprendo que la administración de sueros, medicamentos (anestésicos, analgésicos, antibióticos, entre otros) tiene la capacidad de producir reacciones alérgicas en mi mascota que pueden llegar a ser graves; para lo cual en caso de presentarse, autorizo plenamente al equipo médico a tomar acción para contrarrestar estos efectos indeseados. Por lo que comprendo perfectamente que existen riesgos de lesión o muerte para todo paciente sujeto a un procedimiento anestésico.</p></div>
                 <div class="firmas-area"><div class="firma-bloque">${htmlFirma}<div class="firma-linea">NOMBRE, FIRMA DEL PROPIETARIO Y FECHA</div></div></div></div>`;
             } else if(authStr === "CONTRATO DE PENSIÓN") {
                 htmlFinal = `<div class="receta-print">${cabecera}<p style="text-align:right;font-size:11px">FECHA: <u>${fch}</u></p><h2 style="text-decoration: underline;">CONTRATO DE PRESTACIÓN DE SERVICIO DE PENSIÓN CANINA Y FELINA</h2>
-                <div class="cuerpo-texto"><p>Por medio de la presente yo el Sr. o Sra. <u>${hosp.dueno||'_________________'}</u> con domicilio en <u>${hosp.domicilioPension||'_________________'}</u> y teléfono/ celular <u>${hosp.telefono||'_________________'}</u> autorizo para que mi mascota de nombre <u>${hosp.paciente||'_________________'}</u>, raza <u>${hosp.raza||'_________________'}</u>, edad <u>${hosp.edad||'____'}</u>, sexo <u>${hosp.sexo||'____'}</u>, ingrese al servicio de pensión de "VETGRU HOSPITAL VETERINARIO".</p>
+                <div class="cuerpo-texto"><p>Por medio de la presente yo el Sr. o Sra. <u>${hosp.dueno||'*'}</u> con domicilio en <u>${hosp.domicilioPension||'*'}</u> y teléfono/ celular <u>${hosp.telefono||'*'}</u> autorizo para que mi mascota de nombre <u>${hosp.paciente||'*'}</u>, raza <u>${hosp.raza||'*'}</u>, edad <u>${hosp.edad||'*'}</u>, sexo <u>${hosp.sexo||'*'}</u>, ingrese al servicio de pensión de "VETGRU HOSPITAL VETERINARIO".</p>
                 <p>Hago constatar lo siguiente:</p>
                 <p>1.- He presentado mis verdaderos datos en la reseña de arriba como propietario o responsable de la mascota, los cuales podrán ser usados para beneficio o notificación de esta.</p>
                 <p>2.- Mi mascota ha sido vacunada periódicamente y oportunamente teniendo las vacunas contra las siguientes enfermedades: Distemper canino, Parvovirus, Hepatitis canina, Adenovirus tipo 2, Coronavirus, Leptospira, Parainfluenza, Giardia, Bordetella, Rabia; así como la debida desparasitación interna y la aplicación de un tratamiento efectivo contra pulgas y garrapatas.</p>
                 <p>- En caso de que se detecten con pulgas y/o garrapatas en la mascota, autorizo a VETGRU de dar tratamiento ya sea baño, pipeta, collar o pastilla para eliminar a los parásitos, y estoy consciente de que conlleva un cargo extra.</p>
                 <p>- Estoy consciente de que existe la posibilidad de que mi mascota se enferme, aun estando vacunada. Esto no se debe a ninguna circunstancia o condición de VETGRU y estoy de acuerdo en que VETGRU no es responsable por ninguna enfermedad que mi mascota sufra durante o después de su estancia.</p>
-                <p>3.- La duración de la estancia será desde el día <u>${hosp.penEntrada||'________'}</u> al día <u>${hosp.penSalida||'________'}</u>. <u><strong>Teniendo un costo por día de $${hosp.penCosto||'*'}</strong>; siendo la recepcion a las : <u>${hosp.penHoraRecepcion||'*'}</u> entendiendo que cada 24 horas cuenta como un dia en caso de necesitar entregarlo antes o después de esa hora tendría un costo extra (costo por día), Me comprometo a liquidar todos los gastos generados durante la estancia de mi mascota en VETGRU.</u></p>
+                <p>3.- La duración de la estancia será desde el día <u>${hosp.penEntrada||'*'}</u> al día <u>${hosp.penSalida||'*'}</u>. <u><strong>Teniendo un costo por día de $${hosp.penCosto||'*'}</strong>; siendo la recepcion a las : <u>${hosp.penHoraRecepcion||'*'}</u> entendiendo que cada 24 horas cuenta como un dia en caso de necesitar entregarlo antes o después de esa hora tendría un costo extra (costo por día), Me comprometo a liquidar todos los gastos generados durante la estancia de mi mascota en VETGRU.</u></p>
                 <p>4.- VETGRU ofrece dos tipos de estancia/ pensión, siendo decisión del mía (propietario) cuál de ellas será, y doy autorización para ello. Mientras la mascota permanezca con nosotros, él o ella podrían estar en contacto con otras Mascotas.</p>
                 <p>- Reconozco y estoy de acuerdo en que, en el caso poco probable de que mi mascota sea lesionada por otra, no haré responsables a VETGRU por los daños.</p>
                 <p>- Si mi mascota lastima a otra, seré el único responsable de cualquier lesión de una o de ambas Mascotas.</p>
@@ -1188,32 +1256,90 @@
                 <p>- Como propietario entiendo que en el transcurso de la estancia de mi mascota en la pensión de VETGRU, pueden llegar a suceder accidentes (llámese peleas con otra mascota, golpes o lesiones al momento del juego, que la mascota ingiera algún alimento u objeto fue del alcance de VETGRU, inclusive la muerte de la mascota, entre otros), ya que son seres vivos independientes, así como la posibilidad de presentar pérdida de peso debido al distrés por la separación temporal; de ser así, deslindo de toda responsabilidad a VETGRU durante la estancia de mi mascota y después de ser entregada.</p>
                 <p>-En caso de que mi mascota requiera algún cuidado especial o se encuentre en tratamiento, lo notificare en el apartado de “indicaciones durante sus estancia”, de no ser así, no podré hacer responsable a VETGRU.</p>
                 <p>7.- VETGRU se compromete a avisar al propietario de cualquier incidencia con la mayor brevedad posible, contactando para ello a través del teléfono de aviso que presente en este documento.</p>
-                <p>- En caso de alguna enfermedad, lesión o muerte de la mascota durante su estancia, VETGRU tratará de contactarlo por todos los medios posibles. Le pedimos que nos proporcione varios números telefónicos incluyendo un teléfono de emergencia: <u>${hosp.penTelEmergencia||'__________________'}</u>.</p>
+                <p>- En caso de alguna enfermedad, lesión o muerte de la mascota durante su estancia, VETGRU tratará de contactarlo por todos los medios posibles. Le pedimos que nos proporcione varios números telefónicos incluyendo un teléfono de emergencia: <u>${hosp.penTelEmergencia||'*'}</u>.</p>
                 <p>- Si por cualquier circunstancia la mascota falleciese durante su estancia, VETGRU se encargara de realizar una necropsia ante una institución reconocida nacionalmente para poder determinar con exactitud las causas de la muerte, dando mi autorización como propietario con la firma de este contrato. Todos los gastos derivados de estas actuaciones así como los de recogida e incineración del cuerpo por los servicios correspondientes correrán a cargo del propietario, sin perjuicio de las posibles reclamaciones por parte del propietario a la VETGRU.</p>
                 <p>-Estoy consciente de que si mi mascota sí se llegara a enferma, presenta una lesión o incluso la muerte de la mascota durante o después de la estancia en VETGRU, deslindo de toda responsabilidad a VETGRU ya que he entendido los apartados anteriores.</p>
                 <p>8.- Estoy consciente que pasado 10 días después de la fecha pactada de salida, si el propietario no recoge a su mascota, VETGRU podrá entregarlo a los servicios municipales correspondientes, con la consiguiente denuncia por abandono ante las autoridades competentes, sin por ello renunciar a la reclamación de cantidades adeudadas hasta la fecha.</p>
                 <p>9.- VETGRU no se hace responsable de la pérdida o daño de ningún artículo personal o juguete que haya dejado con su Mascota. Para seguridad de todos, las Mascotas deben de ser traídas a las instalaciones con correa.</p>
-                <p>10.- Deberá traer la comida para su mascota. Sugerimos traer alimento de más. Recomendamos traer el alimento separado en bolsas por ración y/o marcar en el bulto del alimento, la ración diaria que debamos suministrar. Favor de informar a VETGRU en caso de que su perro tenga algún tipo de alergias (<u>${hosp.penAlergias||'_________________'}</u>), en caso de no informar, el propietario está consciente de que VETGRU no se puede hacer responsable por ello. En caso de que su mascota se quede sin comida, favor de confirmar cuál opción prefiere: <u>${hosp.penSinComida||'_________________'}</u></p>
+                <p>10.- Deberá traer la comida para su mascota. Sugerimos traer alimento de más. Recomendamos traer el alimento separado en bolsas por ración y/o marcar en el bulto del alimento, la ración diaria que debamos suministrar. Favor de informar a VETGRU en caso de que su perro tenga algún tipo de alergias (<u>${hosp.penAlergias||'*'}</u>), en caso de no informar, el propietario está consciente de que VETGRU no se puede hacer responsable por ello. En caso de que su mascota se quede sin comida, favor de confirmar cuál opción prefiere: <u>${hosp.penSinComida||'*'}</u></p>
                 <p>11.- Si por alguna razón consideramos que su mascota puede causar daño, será separado de inmediato. Comprendiendo que mi mascota será llevado a un área polivalente en caso de no tener un comportamiento socialmente aceptable.</p>
                 </div></div>
                 <div class="receta-print" style="page-break-before: always;"><div class="cuerpo-texto">
                 <p>Esto no significa que su mascota haya sido castigada, simplemente hay veces que algunos perros tienen más energía que otros, pero por motivos de seguridad debemos de mantener un ambiente tranquilo.</p>
                 <p>12.- Si mi mascota es hembra y presenta el celo durante su estancia estoy consciente de los riesgos y no hare responsable a VETGRU ante cualquier suceso (quede gestante). VETGRU buscará formar un grupo de puras hembras para que pueda salir a socializar, pero en caso de no ser posible formar tal grupo, la perrita saldrá a un área por si sola.</p>
                 <p>13.- Estoy dispuesto a pagar los gastos generados durante su estancia y liquidar la cuenta al irse a casa (en caso de no liquidar la cuenta en un lapso de una semana, doy autorización a VETGRU a dar en adopción a mi mascota para que tenga una mejor familia). Dejare un depósito o la cantidad total al entregar mi mascota a VETGRU para su estancia.</p>
-                <p><strong>ALIMENTACION:</strong></p><p>Marca: <u>${hosp.penMarca||'______________'}</u> Horario: <u>${hosp.penHorario||'______________'}</u> Cantidad: <u>${hosp.penCantidad||'______________'}</u></p>
+                <p><strong>ALIMENTACION:</strong></p><p>Marca: <u>${hosp.penMarca||'*'}</u> Horario: <u>${hosp.penHorario||'*'}</u> Cantidad: <u>${hosp.penCantidad||'*'}</u></p>
                 <p><strong>CUIDADOS ESPECIALES:</strong></p><p><u>${hosp.penCuidados||'________________________________________________________'}</u></p><br>
                 <p>Comprendo que VETGRU HOSPITAL VETERINARIO no forma parte de la tienda, por lo tanto deslindo de toda responsabilidad a la tienda Petco.</p>
                 <p>He leído y entendido todo lo anterior, aceptando términos y condiciones expuestas en este documento.</p>
                 </div><div class="firmas-area" style="margin-top: 50px;"><div class="firma-bloque">${htmlFirma}<div class="firma-linea">NOMBRE Y FIRMA DE AUTORIZACION DE PROPIETARIO</div></div></div>
                 <div style="text-align:center; font-size:10px; margin-top:30px; font-weight:bold;">"VETGRU HOSPITAL VETERINARIO" le agradece su confianza y le recuerda que su mascota estará cuidada según sus recomendaciones y además con el AMOR de nuestro personal, garantizando una bella y confortable estancia mientras usted se encuentra lejos de su mascota.</div></div>`;
             } else if(authStr === "ALTA VOLUNTARIA") {
-                htmlFinal = `<div class="receta-print">${cabecera}<h2>ALTA VOLUNTARIA</h2><table class="tabla-datos"><tr><td class="bg-gris">PACIENTE:</td><td>${hosp.paciente||''}</td></tr><tr><td class="bg-gris">RAZA:</td><td>${hosp.raza||''}</td></tr><tr><td class="bg-gris">SEXO:</td><td>${hosp.sexo||''}</td></tr><tr><td class="bg-gris">EDAD:</td><td>${hosp.edad||''}</td></tr><tr><td class="bg-gris">PROPIETARIO:</td><td>${hosp.dueno||''}</td></tr><tr><td class="bg-gris">FECHA DE INGRESO:</td><td>${hosp.altaFechaIn||''}</td></tr><tr><td class="bg-gris">DIAGNÓSTICO DE INGRESO:</td><td>${hosp.altaDxIn||''}</td></tr><tr><td class="bg-gris">FECHA DE EGRESO:</td><td>${hosp.altaFechaOut||''}</td></tr><tr><td class="bg-gris">DIAGNÓSTICO DE EGRESO:</td><td>${hosp.altaDxOut||''}</td></tr><tr><td class="bg-gris">MOTIVO DEL EGRESO:</td><td>${hosp.altaMotivo||''}</td></tr></table>
+                htmlFinal = `<div class="receta-print">${cabecera}<h2>ALTA VOLUNTARIA</h2><table class="tabla-datos"><tr><td class="bg-gris">PACIENTE:</td><td>${hosp.paciente||'*'}</td></tr><tr><td class="bg-gris">RAZA:</td><td>${hosp.raza||'*'}</td></tr><tr><td class="bg-gris">SEXO:</td><td>${hosp.sexo||'*'}</td></tr><tr><td class="bg-gris">EDAD:</td><td>${hosp.edad||'*'}</td></tr><tr><td class="bg-gris">PROPIETARIO:</td><td>${hosp.dueno||'*'}</td></tr><tr><td class="bg-gris">FECHA DE INGRESO:</td><td>${hosp.altaFechaIn||'*'}</td></tr><tr><td class="bg-gris">DIAGNÓSTICO DE INGRESO:</td><td>${hosp.altaDxIn||'*'}</td></tr><tr><td class="bg-gris">FECHA DE EGRESO:</td><td>${hosp.altaFechaOut||'*'}</td></tr><tr><td class="bg-gris">DIAGNÓSTICO DE EGRESO:</td><td>${hosp.altaDxOut||'*'}</td></tr><tr><td class="bg-gris">MOTIVO DEL EGRESO:</td><td>${hosp.altaMotivo||'*'}</td></tr></table>
                 <div class="cuerpo-texto"><p>POR VOLUNTAD PROPIA Y NO OBSTANTE A LA OPINION DEL PERSONAL MEDICO DE VETGRU HOSPITAL VETERINARIO, HE DECIDIDO SOLICITAR MI “ALTA VOLUNTARIA”, POR LO CUAL EXIMO COMPLETAMENTE DE TODA RESPONSABILIDAD AL ÁREA MEDICA Y A VETGRU HOSPITAL VETERINARIO POR LAS CONSECUENCIAS QUE PUDIERAN SOBREVENIR POR MI DECISIÓN.</p><p>Comprendo que VETGRU HOSPITAL VETERINARIO no forma parte de la tienda, por lo tanto deslindo de toda responsabilidad a la tienda Petco. He leído y entendido todo lo anterior, aceptando términos y condiciones expuestas en este documento.</p></div>
                 <div class="firmas-area"><div class="firma-bloque">${htmlFirma}<div class="firma-linea">NOMBRE, FIRMA DEL PROPIETARIO Y FECHA</div></div></div></div>`;
             } else if(authStr === "ALTA MÉDICA") {
-                htmlFinal = `<div class="receta-print">${cabecera}<p style="text-align:center;font-weight:bold;font-size:11px">FECHA EGRESO: ${fch}</p><h2>ALTA HOSPITALARIA</h2><div class="cuerpo-texto"><p>Entendiendo que mi mascota <strong>${hosp.paciente}</strong> ha sido dada de alta, por lo tanto, me es entregada en óptimas condiciones y estable para continuar el tratamiento en casa. Estoy conforme con el cuidado y manejo médico, así como el diagnostico dado a mi mascota dentro y fuera de VETGRU HOSPITAL VETERINARIO.</p><p>Me comprometo a seguir las instrucciones que el médico me ha dado, así como la administración de sus medicamentos prescritos, no modificar los horarios de administración, ni dosis, ni presentaciones de dichos productos. También debo mantener informado al equipo médico de cualquier cambio diferente que presente mi mascota, y asistir a sus revisiones periódicas. Entiendo que de no notificar al equipo médico dentro del tiempo estimado por el hospital o no seguir con las instrucciones, VETGRU HOSPITAL VETERINARIO y su equipo médico se deslinda de toda responsabilidad o consecuencia que conlleve esto.</p><p>Comprendo que VETGRU HOSPITAL VETERINARIO no forma parte de la tienda, por lo tanto deslindo de toda responsabilidad a la tienda Petco. He leído y entendido todo lo anterior, aceptando términos y condiciones expuestas en este documento.</p></div><div class="firmas-area"><div class="firma-bloque" style="margin-top:60px;">${htmlFirma}<div class="firma-linea">FIRMA DE CONFORMIDAD</div></div></div></div>`;
+                let fEgreso = hosp.altaMedFecha && hosp.altaMedFecha !== '*' ? hosp.altaMedFecha : fch;
+                htmlFinal = `<div class="receta-print">${cabecera}<p style="text-align:center;font-weight:bold;font-size:11px">FECHA EGRESO: ${fEgreso}</p><h2>ALTA HOSPITALARIA</h2><div class="cuerpo-texto"><p>Entendiendo que mi mascota <strong>${hosp.paciente||'*'}</strong> ha sido dada de alta, por lo tanto, me es entregada en óptimas condiciones y estable para continuar el tratamiento en casa. Estoy conforme con el cuidado y manejo médico, así como el diagnostico dado a mi mascota dentro y fuera de VETGRU HOSPITAL VETERINARIO.</p><p>Me comprometo a seguir las instrucciones que el médico me ha dado, así como la administración de sus medicamentos prescritos, no modificar los horarios de administración, ni dosis, ni presentaciones de dichos productos. También debo mantener informado al equipo médico de cualquier cambio diferente que presente mi mascota, y asistir a sus revisiones periódicas. Entiendo que de no notificar al equipo médico dentro del tiempo estimado por el hospital o no seguir con las instrucciones, VETGRU HOSPITAL VETERINARIO y su equipo médico se deslinda de toda responsabilidad o consecuencia que conlleve esto.</p><p>Comprendo que VETGRU HOSPITAL VETERINARIO no forma parte de la tienda, por lo tanto deslindo de toda responsabilidad a la tienda Petco. He leído y entendido todo lo anterior, aceptando términos y condiciones expuestas en este documento.</p></div><div class="firmas-area"><div class="firma-bloque" style="margin-top:60px;">${htmlFirma}<div class="firma-linea">FIRMA DE CONFORMIDAD</div></div></div></div>`;
             } else if(authStr === "SALIDA DE PENSIÓN") {
-                htmlFinal = `<div class="receta-print">${cabecera}<br><p style="text-align:right;font-size:12px;font-weight:bold;">Fecha: <u>${fch}</u></p><div class="cuerpo-texto" style="font-size: 13px; line-height: 1.8; margin-top: 30px;"><p>Agradecemos plenamente su confianza y habernos permitido cuidar de <strong>${hosp.paciente}</strong>.</p><p>Yo Sr. O Sra. <strong>${hosp.dueno}</strong> he recibido a mi mascota en óptimas condiciones, entregándome todos mis artículos personales.</p><p>Para ofrecerle un mejor servicio le pedimos que cualquier anormalidad que note en su mascota, nos sea notificada previo a las 24 horas de haberse entregado a la mascota, ya que de otra manera VETGRU HOSPITAL VETERINARIO no podrá hacerse responsable de los actos sucedidos después de la entrega.</p></div><div class="firmas-area" style="margin-top:80px;"><div class="firma-bloque">${htmlFirma}<div class="firma-linea">NOMBRE Y FIRMA DE AUTORIZACION DE PROPIETARIO</div></div></div></div>`;
+                htmlFinal = `<div class="receta-print">${cabecera}<br><p style="text-align:right;font-size:12px;font-weight:bold;">Fecha: <u>${fch}</u></p><div class="cuerpo-texto" style="font-size: 13px; line-height: 1.8; margin-top: 30px;"><p>Agradecemos plenamente su confianza y habernos permitido cuidar de <strong>${hosp.paciente||'*'}</strong>.</p><p>Yo Sr. O Sra. <strong>${hosp.dueno||'*'}</strong> he recibido a mi mascota en óptimas condiciones, entregándome todos mis artículos personales.</p><p>Para ofrecerle un mejor servicio le pedimos que cualquier anormalidad que note en su mascota, nos sea notificada previo a las 24 horas de haberse entregado a la mascota, ya que de otra manera VETGRU HOSPITAL VETERINARIO no podrá hacerse responsable de los actos sucedidos después de la entrega.</p></div><div class="firmas-area" style="margin-top:80px;"><div class="firma-bloque">${htmlFirma}<div class="firma-linea">NOMBRE Y FIRMA DE AUTORIZACION DE PROPIETARIO</div></div></div></div>`;
+            } else if(authStr === "AUTORIZACIÓN DE PROCEDIMIENTO ANESTÉSICO Y QUIRÚRGICO") {
+                htmlFinal = `<div class="receta-print">${cabecera}
+                <h2>AUTORIZACIÓN DE PROCEDIMIENTO ANESTÉSICO Y QUIRÚRGICO</h2>
+                <p style="text-align:right;font-size:11px;font-weight:bold;">FECHA DE INGRESO: <u>${fch}</u></p>
+                
+                <table class="tabla-datos">
+                    <tr><td colspan="4" class="bg-gris">DATOS DEL PROPIETARIO</td></tr>
+                    <tr><td colspan="4">NOMBRE(S) Y APELLIDOS: ${hosp.dueno||'*'}</td></tr>
+                    <tr><td colspan="4" class="bg-gris">DOMICILIO</td></tr>
+                    <tr><td colspan="2">CALLE: ${hosp.anesCalle||'*'}</td><td>NUMERO: ${hosp.anesNumero||'*'}</td><td>COLONIA: ${hosp.anesColonia||'*'}</td></tr>
+                    <tr><td colspan="4" class="bg-gris">TELEFONO</td></tr>
+                    <tr><td>CASA: ${hosp.anesCasa||'*'}</td><td colspan="2">CELULAR: ${hosp.telefono||'*'}</td><td>CORREO ELECTRONICO: ${hosp.anesCorreo||'*'}</td></tr>
+                    <tr><td colspan="4" class="bg-gris">DATOS DEL PACIENTE</td></tr>
+                    <tr><td colspan="2">NOMBRE: ${hosp.paciente||'*'}</td><td>RAZA: ${hosp.raza||'*'}</td><td>SEXO: ${hosp.sexo||'*'}</td></tr>
+                    <tr><td colspan="2">EDAD: ${hosp.edad||'*'}</td><td colspan="2">COLOR: ${hosp.anesColor||'*'}</td></tr>
+                </table>
+                
+                <table class="tabla-datos">
+                    <tr><td colspan="4" class="bg-gris">VACUNACIONES</td></tr>
+                    <tr><td style="font-weight:bold; width:30%;">VACUNA</td><td style="font-weight:bold;">FECHA DE APLICACION</td><td style="font-weight:bold;">FECHA DE REVACUNACION</td><td style="font-weight:bold;">LOTE VACUNACION</td></tr>
+                    <tr><td>SEXTUPLE</td><td>${hosp.anesVacS||'*'}</td><td>*</td><td>*</td></tr>
+                    <tr><td>RABIA</td><td>${hosp.anesVacR||'*'}</td><td>*</td><td>*</td></tr>
+                    <tr><td>BORDETELLA</td><td>${hosp.anesVacB||'*'}</td><td>*</td><td>*</td></tr>
+                    <tr><td>GIARDIA</td><td>${hosp.anesVacG||'*'}</td><td>*</td><td>*</td></tr>
+                    <tr><td>DESPARASITACION INTERNA</td><td>${hosp.anesVacDI||'*'}</td><td>*</td><td>*</td></tr>
+                    <tr><td>DESPARASITACION EXTERNA</td><td>${hosp.anesVacDE||'*'}</td><td>*</td><td>*</td></tr>
+                </table>
+                
+                <div class="cuerpo-texto">
+                    <p>El paciente se someterá al siguiente procedimiento:</p>
+                    <p style="margin-left: 20px;">- Procedimiento Anestésico [ <strong>${hosp.anesProcA}</strong> ]</p>
+                    <p style="margin-left: 20px;">- Procedimiento Quirúrgico [ <strong>${hosp.anesProcQ}</strong> ]</p>
+                    
+                    <p><strong>I. ANTES DE LA ANESTESIA Y CIRUGIA</strong></p>
+                    <p>Entiendo que para llevar a cabo el procedimiento de cirugía y/o de diagnóstico mi mascota será sujeta a un proceso anestésico; por lo que comprendo perfectamente que existen riesgos de lesión o muerte para todo paciente sujeto a anestesia, cirugía y procedimientos de diagnóstico.</p>
+                    <p>Comprendo que la administración de sueros, medicamentos anestésicos, analgésicos, antibióticos y cualquier otro medicamento involucrado en los procedimientos anestésicos, quirúrgico y diagnóstico tiene la capacidad de producir reacciones alérgicas en mi mascota que pueden llegar a ser graves; para lo cual en caso de presentarse, autorizo plenamente al equipo médico a tomar acción para contrarrestar estos efectos indeseados y me comprometo a cubrir los gastos que de ahí se generen.</p>
+                    <p>Comprendo que por la seguridad de los procedimientos tanto anestésicos como quirúrgicos es necesario que se le realicen a mi mascota las pruebas prequirúrgicas necesarias, las cuales ayudaran a encontrar condiciones que puedan complicar los procedimientos anestésicos, diagnósticos y quirúrgicos; estas pruebas serán indicadas por el médico a cargo y deberá cubrirse su costo total.</p>
+                </div></div>
+                <div class="receta-print" style="page-break-before: always;"><div class="cuerpo-texto">
+                    <p>Comprendo que para la administración de la anestesia a mi mascota será necesario depilar o rasurar diversas partes de su cuerpo, con el fin de lograr un procedimiento aséptico.</p>
+                    <p>Comprendo según me lo ha mencionado el médico encargado de mi mascota, que existen diferentes tipos de anestesias, para lo cual se diseñará un plan anestésico personalizado con las características que requiera mi mascota, el tipo de procedimiento y la enfermedad que padece actualmente, siendo más seguro para ella.</p>
+                    
+                    <br><p><strong>II. DURANTE EL PROCEDIMIENTO ANESTÉSICO, DIAGNOSTICO Y/O QUIRÚRGICO</strong></p>
+                    <p>Comprendo que durante el procedimiento mi mascota será manejada por el equipo médico y bajo ninguna circunstancia se me permitirá el acceso a las áreas de trabajo sin previa autorización.</p>
+                    <p>Comprendo que si durante los procedimientos se presentara algún inconveniente con la salud de mi mascota, en caso de ser factible los médicos a cargo se comunicarán conmigo para dar notificación de la situación.</p>
+                    <p>Entiendo que se requiere de la programación de cualquier procedimiento asignado por el médico y podrán ser sujetos a cambio sin previo aviso, debido a circunstancias propias de los pacientes.</p>
+                    
+                    <br><p><strong>III. POSTERIOR A LA ANESTESIA Y CIRUGÍA</strong></p>
+                    <p>Entiendo según me lo ha explicado el médico que después de cualquier anestesia ya sea general, regional o local pueden aparecer diferentes signos tales como depresión respiratoria y/o dificultad respiratoria, tos, hipotermia, temblores, hipertensión, hipotensión, taquicardia, agitación, estados de conciencia alterados, vómito, náuseas, dificultad para caminar, falta de sensibilidad cutánea en diversas regiones, seromas, hematomas, decoloración en la piel, entre otras, consecuencia de la respuesta individual de mi mascota y su tolerancia a los anestésicos.</p>
+                    <p>Entiendo que el alta hospitalaria de mi mascota deberá ser autorizada por el médico que lleva su caso, y esta dependerá de la recuperación de sus procedimientos tanto anestésicos como quirúrgicos así como de su condición de salud y respuesta a procedimientos médicos. En caso de querer llevarme a mi mascota antes de la indicación del médico será bajo mi absoluta responsabilidad y cualquier problema o complicación que mi mascota presente será de igual manera responsabilidad mía.</p>
+                    <p>Acepto de antemano que pagaré la totalidad de la cuenta generada durante la estancia de mi mascota en <strong>VETGRU</strong> HOSPITAL VETERINARIO por todo procedimiento realizado en este, antes de llevármelo a casa ya sea por indicación del médico o por decisión propia (en caso de no liquidar la cuenta en un lapso de una semana, doy autorización a <strong>VETGRU</strong> a dar en adopción a mi mascota para que tenga una mejor familia).</p>
+                    <p>⭐ Comprendo que <strong>VETGRU</strong> HOSPITAL VETERINARIO no forma parte de la tienda, por lo tanto deslindo de toda responsabilidad a la tienda Petco.</p>
+                    <p>⭐ He leído y entendido todo lo anterior, aceptando términos y condiciones expuestas en este documento.</p>
+                </div>
+                <div class="firmas-area" style="margin-top: 50px;">
+                    <div class="firma-bloque">${htmlFirma}<div class="firma-linea">NOMBRE, FIRMA DEL PROPIETARIO</div></div>
+                </div></div>`;
             } else { htmlFinal = `<div class="receta-print">${cabecera}<h2>REGISTRO INTERNO</h2><p style="text-align:center;">Solo consulta interna.</p></div>`; }
             
             if(isPreview) { let b = document.getElementById('modal-cuerpo'); if(b) b.innerHTML = htmlFinal; } 
@@ -1283,6 +1409,9 @@
                             } else if(authStr === "ALTA VOLUNTARIA"){
                                 ht += `<strong>Motivo:</strong> ${d.altaMotivo||'N/A'}<br>
                                        <strong>Dx Ingreso:</strong> ${d.altaDxIn||'N/A'} | <strong>Dx Egreso:</strong> ${d.altaDxOut||'N/A'}<br>`;
+                            } else if(authStr === "AUTORIZACIÓN DE PROCEDIMIENTO ANESTÉSICO Y QUIRÚRGICO"){
+                                ht += `<strong>Procedimientos:</strong> Anestésico [${d.anesProcA}] | Quirúrgico [${d.anesProcQ}]<br>
+                                       <strong>Domicilio:</strong> ${d.anesCalle||'*'} #${d.anesNumero||'*'} Col. ${d.anesColonia||'*'}<br>`;
                             }
                             ht += `</div></div>`;
                         });
@@ -1430,7 +1559,7 @@
                     resumen[usr].tickets.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));
                     
                     ht+=`<div class="tarjeta-info tarjeta-info-click" style="border-left:4px solid #0caeb9; cursor:pointer; margin-bottom:10px;" onclick="window.abrirModalDesgloseUsuario('${usr}')">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:${tipo==='expediente'?'0':'10px'};">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:${tipo==='expediente'?'0':'10px'}; gap:10px; flex-wrap:wrap;">
                             <strong style="font-size:1.2em;color:#0caeb9;">👨‍⚕️ ${usr}</strong>
                             <span style="font-size:0.8em; background:#e0f7fa; color:#0caeb9; padding:4px 8px; border-radius:10px;">Ver detalle ▼</span>
                         </div>`; 
@@ -1460,7 +1589,7 @@
         window.abrirModalDesgloseUsuario = function(usr) {
             if(!window.ultimoResumenAgrupado || !window.ultimoResumenAgrupado[usr]) return;
             let data = window.ultimoResumenAgrupado[usr];
-            let html = `<h3 style="color:#0caeb9; margin-top:0;">👨‍⚕️ Cajero/Médico: ${usr}</h3><hr style="border-top:1px dashed #ccc; margin-bottom:15px;">`;
+            let html = `<h3 style="color:#0caeb9; margin-top:0;">👨‍⚕️️ Cajero/Médico: ${usr}</h3><hr style="border-top:1px dashed #ccc; margin-bottom:15px;">`;
             
             if(data.tickets && data.tickets.length > 0) {
                 data.tickets.forEach(t => {
@@ -1615,7 +1744,7 @@
 
         window.seleccionarItemEntrada = function(item) {
             if(item.tipoArticulo === 'Servicio Médico') {
-                alert("⚠️ Los servicios médicos no requieren ingreso de stock físico.");
+                alert("⚠️️ Los servicios médicos no requieren ingreso de stock físico.");
                 document.getElementById('buscador-entrada').value = '';
                 return;
             }
@@ -1829,7 +1958,7 @@
             let mr = document.getElementById('monto-reembolso-baja'); let rMonto=mr?parseFloat(mr.value)||0:0; 
             let met = document.getElementById('metodo-reembolso-baja'); let rMet=met?met.value:'Efectivo';
             
-            if(!n||!c)return alert("⚠️️ Llena producto y cantidad."); 
+            if(!n||!c)return alert("⚠ Llena producto y cantidad."); 
             window.db.collection("Inventario").doc(n).get().then(doc=>{ 
                 if(doc.exists){
                     if(doc.data().tipoArticulo==='Servicio Médico')return alert("❌ Es un servicio, no inventario físico."); 
