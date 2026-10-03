@@ -912,7 +912,13 @@
 
         // 8. VENTA GENERAL
         window.seleccionarItemPos = function(item) { 
-            const p = document.getElementById('precio-pos'); if(p){ p.readOnly = (item.tipoArticulo !== 'Servicio Médico'); p.value = item.precioVenta||0; p.style.background = p.readOnly ? "#e9ecef" : "#fff"; if(!p.readOnly) p.focus(); } 
+            const p = document.getElementById('precio-pos'); 
+            if(p){ 
+                // CORRECCIÓN: Bloquea el precio siempre que el ítem venga de la base de datos, sin importar si es producto o servicio.
+                p.readOnly = true; 
+                p.value = item.precioVenta||0; 
+                p.style.background = "#e9ecef"; // Le pone el fondo gris para indicar que está bloqueado
+            } 
             let lu = document.getElementById('lbl-unidad-venta'); if(lu) lu.innerText = item.unidad ? `(${item.unidad})` : ''; 
             let sd = document.getElementById('stock-disp-venta'); 
             if(sd) { 
