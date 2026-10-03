@@ -941,7 +941,7 @@
             let p = parseFloat(pInp?.value) || 0;
             let c = parseFloat(cInp?.value) || 1;
 
-            if(!v) return alert("⚠️️ Escribe un producto o concepto."); 
+            if(!v) return alert("⚠ Escribe un producto o concepto."); 
 
             const item = inventarioGlobal.find(i => i.medicamento.toLowerCase() === v.toLowerCase());
 
@@ -950,7 +950,7 @@
                     p = parseFloat(item.precioVenta) || 0;
                     let cantEnCarrito = carrito.filter(x => x.nombre.toLowerCase() === item.medicamento.toLowerCase()).reduce((s, x) => s + x.cantidad, 0);
                     if (cantEnCarrito + c > item.cantidad) {
-                        alert(`⚠️️ ¡Stock Insuficiente!\nSolo quedan ${item.cantidad} ${item.unidad||''} de este producto en el inventario.`);
+                        alert(`⚠ ¡Stock Insuficiente!\nSolo quedan ${item.cantidad} ${item.unidad||''} de este producto en el inventario.`);
                         return;
                     }
                 } else {
@@ -1216,14 +1216,21 @@
         };
 
         // 9. FORMATOS HOSPITALARIOS Y LECTURA
+        // ---> INICIO CORRECCIÓN 5: LIMPIEZA DE CAMPOS DE HOSPITALIZACIÓN
         window.abrirHospitalizacion = function() { 
             window.cambiarPantalla('pantalla-menu', 'pantalla-hospitalizacion'); 
             document.getElementById('zona-firmas-oculta')?.classList.add('oculto'); 
             document.getElementById('btn-leer-firmar')?.classList.add('oculto'); 
             window.limpiarFirma('cliente'); canvasActivo=false; 
+            
+            // Vaciar todos los inputs y selects de esta pantalla específica
+            document.querySelectorAll('#pantalla-hospitalizacion input, #pantalla-hospitalizacion textarea').forEach(i => i.value = '');
+            document.querySelectorAll('#pantalla-hospitalizacion select').forEach(s => s.value = '');
+
             let sfl = document.getElementById('select-formato-legal'); if(sfl) sfl.value=""; 
             window.mostrarCamposDinamicos(); window.initFirmas(); 
         };
+        // <--- FIN CORRECCIÓN 5
         
         window.mostrarCamposDinamicos = function() { 
             let sEl = document.getElementById('select-formato-legal'); if(!sEl) return; const s = sEl.value; 
