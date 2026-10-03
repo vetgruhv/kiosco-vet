@@ -914,10 +914,11 @@
         window.seleccionarItemPos = function(item) { 
             const p = document.getElementById('precio-pos'); 
             if(p){ 
-                // CORRECCIÓN: Bloquea el precio siempre que el ítem venga de la base de datos, sin importar si es producto o servicio.
+                // ---> INICIO CORRECCIÓN 3: BLOQUEO DE PRECIO PARA TODOS LOS ÍTEMS BUSCADOS (Servicios y Productos)
                 p.readOnly = true; 
                 p.value = item.precioVenta||0; 
-                p.style.background = "#e9ecef"; // Le pone el fondo gris para indicar que está bloqueado
+                p.style.background = "#e9ecef"; // Color gris de bloqueado
+                // <--- FIN CORRECCIÓN 3
             } 
             let lu = document.getElementById('lbl-unidad-venta'); if(lu) lu.innerText = item.unidad ? `(${item.unidad})` : ''; 
             let sd = document.getElementById('stock-disp-venta'); 
@@ -940,7 +941,7 @@
             let p = parseFloat(pInp?.value) || 0;
             let c = parseFloat(cInp?.value) || 1;
 
-            if(!v) return alert("⚠️ Escribe un producto o concepto."); 
+            if(!v) return alert("⚠️️ Escribe un producto o concepto."); 
 
             const item = inventarioGlobal.find(i => i.medicamento.toLowerCase() === v.toLowerCase());
 
@@ -949,11 +950,11 @@
                     p = parseFloat(item.precioVenta) || 0;
                     let cantEnCarrito = carrito.filter(x => x.nombre.toLowerCase() === item.medicamento.toLowerCase()).reduce((s, x) => s + x.cantidad, 0);
                     if (cantEnCarrito + c > item.cantidad) {
-                        alert(`⚠️ ¡Stock Insuficiente!\nSolo quedan ${item.cantidad} ${item.unidad||''} de este producto en el inventario.`);
+                        alert(`⚠️️ ¡Stock Insuficiente!\nSolo quedan ${item.cantidad} ${item.unidad||''} de este producto en el inventario.`);
                         return;
                     }
                 } else {
-                    if (p <= 0) return alert("⚠️️ Ingresa un precio válido."); 
+                    if (p <= 0) return alert("⚠ Ingresa un precio válido."); 
                 }
                 carrito.push({nombre: item.medicamento, precio: p, cantidad: c, total: Math.round((p*c)*100)/100, tipo: item.tipoArticulo, unidad: item.unidad || ''});
             } else {
@@ -976,7 +977,7 @@
             let c = cInp?.value.trim() || "Cargo Extra Manual";
             let m = parseFloat(mInp?.value) || 0;
 
-            if(m <= 0) return alert("⚠️️ Ingresa un monto mayor a $0 para el cargo extra.");
+            if(m <= 0) return alert("⚠ Ingresa un monto mayor a $0 para el cargo extra.");
 
             carrito.push({nombre: c, precio: m, cantidad: 1, total: Math.round(m*100)/100, tipo: 'Servicio Médico', unidad: 'u'});
             window.actualizarCarritoUI();
@@ -1104,6 +1105,7 @@
             let ce = document.getElementById('concepto-extra'); if(ce) ce.value = '';
             let me = document.getElementById('monto-extra'); if(me) me.value = '';
 
+            // ---> INICIO CORRECCIÓN 1: LIMPIEZA FORZADA DE CAMPOS DE DESCUENTO Y PAGOS
             let vd = document.getElementById('valor-descuento'); if(vd) vd.value = '';
             let mp1 = document.getElementById('monto-pago-1'); if(mp1) mp1.value = '';
             let mp2 = document.getElementById('monto-pago-2'); if(mp2) mp2.value = '';
@@ -1112,6 +1114,7 @@
             let met2 = document.getElementById('metodo-pago-2'); if(met2) met2.selectedIndex = 0;
             let met3 = document.getElementById('metodo-pago-3'); if(met3) met3.selectedIndex = 0;
             let tc = document.getElementById('texto-cambio'); if(tc) tc.classList.add('oculto');
+            // <--- FIN CORRECCIÓN 1
         };
         
         window.toggleMostrador = function() { 
@@ -1175,6 +1178,7 @@
                 return alert(`⚠️ Faltan fondos. Los montos de pago no suman el Total ($${sumaPagos.toFixed(2)} de $${totalCobroCalculado.toFixed(2)})`); 
             }
 
+            // ---> INICIO CORRECCIÓN 2: BLOQUEO VISUAL DEL BOTÓN DE COBRO
             guardandoBloqueo = true; document.body.style.cursor='wait';
             let btnImprimir = document.querySelector('#pantalla-registro-baja .btn-guardar');
             let btnTextOriginal = "";
@@ -1183,6 +1187,7 @@
                 btnImprimir.innerHTML = "⏳ Guardando... (No recargar)";
                 btnImprimir.style.background = "#6c757d";
             }
+            // <--- FIN CORRECCIÓN 2
 
             let vData = { atendio:window.usuarioLogueado.nombre, paciente:pe, dueno:du, telefono:"N/A", articulos:carrito, subtotal:carrito.reduce((s,i)=>s+i.total,0), valorDescuento:desc, totalCobrado:totalCobroCalculado, pagos:pagos, metodoPago: pagos.map(p=>p.metodo).join(' y '), ventaMostrador:window.esVentaMostrador, fechaTexto:new Date().toLocaleString('es-MX'), timestamp:Date.now() };
             
@@ -1190,6 +1195,7 @@
                 carrito.forEach(i=>{if(i.tipo!=='Servicio Médico'){let sN=String(i.nombre).replace(/\//g,'-');window.db.collection("Inventario").doc(sN).get().then(d=>{if(d.exists)window.db.collection("Inventario").doc(sN).update({cantidad:d.data().cantidad-i.cantidad});});}}); 
                 if(imprimir) window.imprimirTicketBoucher(vData); else alert("✅ Venta OK."); 
                 
+                // ---> INICIO CORRECCIÓN 2b: BARRIDO Y LIMPIEZA POST-VENTA
                 window.cancelarVolver();
                 
                 if(btnImprimir) {
@@ -1198,6 +1204,7 @@
                 }
                 guardandoBloqueo=false; document.body.style.cursor='default';
                 window.cerrarSesion(); 
+                // <--- FIN CORRECCIÓN 2b
             }).catch(e=>{
                 alert("Error: "+e.message); 
                 if(btnImprimir) {
@@ -1282,7 +1289,7 @@
         window.procesarHospitalizacion = function(imprimir) {
             if(guardandoBloqueo) return; 
             let f = document.getElementById('select-formato-legal')?.value;
-            if(!f && imprimir!=='historial') return alert("⚠️️ Selecciona un Formato Legal.");
+            if(!f && imprimir!=='historial') return alert("⚠ Selecciona un Formato Legal.");
             if(f && !window.validarCamposHosp()) return;
             
             let hD = window.recopilarDatosHosp(); 
@@ -1402,9 +1409,10 @@
                     }
                 };
 
+                // ---> INICIO CORRECCIÓN 4: SEPARACIÓN DE EXPEDIENTE CLÍNICO
                 if(tipo === 'caja' || tipo === 'ventas') cobros.forEach(doc => processDoc(doc, 'cobro'));
                 if(tipo === 'ventas' || tipo === 'expediente') hosp.forEach(doc => processDoc(doc, 'hospitalizacion'));
-                if(tipo === 'expediente') cobros.forEach(doc => processDoc(doc, 'cobro'));
+                // <--- FIN CORRECCIÓN 4
                 
                 window.ultimoResumenAgrupado = resumen; 
                 
@@ -1455,7 +1463,9 @@
                         let cT = resumen[usr].total - resumen[usr].devoluciones; 
                         ht+=`<div style="display:flex;justify-content:space-between;margin-top:10px;font-size:1.1em;color:${cT<0?'#dc3545':'#198754'}"><span>Total Neto Vendido:</span><strong>$${Number(cT||0).toFixed(2)}</strong></div>`; 
                     } else if(tipo === 'expediente') {
-                        ht += `<div style="font-size:0.9em; color:#666; margin-top:5px;">${resumen[usr].tickets.length} registros clínicos / ventas</div>`;
+                        // ---> INICIO CORRECCIÓN 4b: AJUSTE DE TEXTO EN EXPEDIENTE
+                        ht += `<div style="font-size:0.9em; color:#666; margin-top:5px;">${resumen[usr].tickets.length} registros clínicos</div>`;
+                        // <--- FIN CORRECCIÓN 4b
                     }
                     ht += `</div>`;
                 } 
@@ -1575,7 +1585,7 @@
             let c = parseFloat(cInp?.value) || 0;
 
             if(!v || !window.itemSeleccionadoEntrada || v !== window.itemSeleccionadoEntrada.medicamento) return alert("⚠️ Busca y selecciona un producto válido de la lista.");
-            if(c <= 0) return alert("⚠️️ Ingresa una cantidad mayor a 0.");
+            if(c <= 0) return alert("⚠ Ingresa una cantidad mayor a 0.");
 
             let item = window.itemSeleccionadoEntrada;
             let existente = carritoEntrada.find(x => x.nombre === item.medicamento);
@@ -1655,7 +1665,7 @@
                     let esServicio = (d.tipoArticulo === 'Servicio Médico');
                     let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); 
                     let isB=(!esServicio && min>0 && d.cantidad<=min); 
-                    let btn=(window.usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"><button class="btn-exp-action" onclick="window.editarProducto('${d.idDoc}')">✏️️ Editar</button>${(window.usuarioLogueado.rol==='Gerente'||window.usuarioLogueado.rol==='Sub-Gerente'||window.usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('Inventario','${d.idDoc}')">🗑️ Eliminar</button>`:''}</div>`:''; 
+                    let btn=(window.usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"><button class="btn-exp-action" onclick="window.editarProducto('${d.idDoc}')">✏ Editar</button>${(window.usuarioLogueado.rol==='Gerente'||window.usuarioLogueado.rol==='Sub-Gerente'||window.usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('Inventario','${d.idDoc}')">🗑️ Eliminar</button>`:''}</div>`:''; 
                     
                     let cantText = esServicio ? 'Ilimitado' : `${d.cantidad} <span style="font-size:0.5em;color:#666">${d.unidad||'U.'}</span>`;
                     let icon = esServicio ? '🩺' : '📦';
