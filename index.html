@@ -201,8 +201,8 @@
         <div class="menu-grid">
             <button class="btn-menu oculto" id="btn-movimiento" onclick="window.abrirFormulario()"><span>🛒 Venta General</span></button>
             <button class="btn-menu oculto" id="btn-hospitalizacion" onclick="window.abrirHospitalizacion()"><span>🏥 Formatos Hospitalarios</span></button>
-            <button class="btn-menu oculto" id="btn-ver-formatos-hoy" onclick="window.abrirFormatosHoy()" style="background:#fff3cd; border-color:#ffeeba; color:#856404;"><span>📄 Ver Formatos de Hoy</span></button>
-            <button class="btn-menu oculto" id="btn-expediente" onclick="window.abrirVistaAgrupada('expediente', 'dia')"><span>🗂️️ Expediente Clínico</span></button>
+            <button class="btn-menu oculto" id="btn-ver-formatos" onclick="window.abrirHistorialFormatos()" style="background:#fff3cd; border-color:#ffeeba; color:#856404;"><span>📄 Historial de Formatos</span></button>
+            <button class="btn-menu oculto" id="btn-expediente" onclick="window.abrirVistaAgrupada('expediente', 'dia')"><span>🗂 Expediente Clínico</span></button>
         </div>
         
         <h4 id="titulo-gerencia" class="oculto" style="color:#adb5bd;margin:25px 0 15px 0;text-transform:uppercase;font-size:0.85em;letter-spacing:1px">Administración (Gerencia)</h4>
@@ -231,7 +231,7 @@
                 <button id="filtro-agrupado-mes" class="btn-filtro" onclick="window.cambiarFiltroAgrupado('mes')">Mes Actual</button>
                 <input type="month" id="filtro-agrupado-mes-exacto" class="btn-filtro" style="padding: 8px;" onchange="window.cambiarFiltroAgrupado('mes-exacto')">
             </div>
-            <div class="grupo-formulario busqueda-ancha" style="margin-top:10px;">
+            <div class="grupo-formulario busqueda-ancha" style="margin-top:10px; margin-bottom:0;">
                 <input type="text" id="buscador-agrupado" class="input-buscador oculto" placeholder="Buscar Dueño/Paciente/Tel..." oninput="window.filtrarBusquedaAgrupada()">
             </div>
         </div>
@@ -491,10 +491,24 @@
         </div>
     </div>
 
-    <!-- ================== 8B.- VISUALIZAR FORMATOS DE HOY ================== -->
-    <div id="pantalla-formatos-hoy" class="contenedor contenedor-ancho oculto">
-        <h2 style="color:#856404;margin-top:0;">📄 Formatos Hospitalarios (Hoy)</h2>
-        <div id="lista-formatos-hoy" class="lista-vertical"></div>
+    <!-- ================== 8B.- HISTORIAL DE FORMATOS ================== -->
+    <div id="pantalla-historial-formatos" class="contenedor contenedor-ancho oculto">
+        <h2 style="color:#856404;margin-top:0;">📄 Historial de Formatos</h2>
+        
+        <div class="panel-busqueda" style="margin-bottom:20px; padding:15px; background:#fffbe6; border-color:#ffeeba;">
+            <div class="filtros-scroll">
+                <button id="filtro-fmt-hoy" class="btn-filtro activo" style="border-color:#ffdf7e;" onclick="window.cambiarFiltroFormatos('hoy')">Hoy</button>
+                <button id="filtro-fmt-ayer" class="btn-filtro" style="border-color:#ffdf7e;" onclick="window.cambiarFiltroFormatos('ayer')">Ayer</button>
+                <button id="filtro-fmt-semana" class="btn-filtro" style="border-color:#ffdf7e;" onclick="window.cambiarFiltroFormatos('semana')">Semana</button>
+                <button id="filtro-fmt-mes" class="btn-filtro" style="border-color:#ffdf7e;" onclick="window.cambiarFiltroFormatos('mes')">Mes</button>
+                <input type="month" id="filtro-fmt-mes-exacto" class="btn-filtro" style="padding: 8px; border-color:#ffdf7e;" onchange="window.cambiarFiltroFormatos('mes-exacto')">
+            </div>
+            <div class="grupo-formulario busqueda-ancha" style="margin-top:15px; margin-bottom:0;">
+                <input type="text" id="buscador-formatos" class="input-buscador" style="border-color:#ffc107 !important;" placeholder="Buscar Dueño, Paciente o Teléfono..." oninput="window.cargarFormatosFiltrados()">
+            </div>
+        </div>
+
+        <div id="lista-historial-formatos" class="lista-vertical"></div>
     </div>
 
     <!-- ================== 9.- VER INVENTARIO ================== -->
@@ -699,7 +713,7 @@
                     
                     document.getElementById('btn-movimiento')?.classList.remove('oculto'); 
                     document.getElementById('btn-hospitalizacion')?.classList.remove('oculto');
-                    document.getElementById('btn-ver-formatos-hoy')?.classList.remove('oculto'); 
+                    document.getElementById('btn-ver-formatos')?.classList.remove('oculto'); 
                     
                     if(r === "Doctor") { 
                         document.getElementById('btn-ver-inventario')?.classList.remove('oculto'); 
@@ -1363,18 +1377,41 @@
         
         window.limpiarFirma = function(id) { let cv = document.getElementById('canvas-'+id); if(cv) cv.getContext('2d').clearRect(0,0,cv.width,cv.height); firmaCapturada = false; };
 
-        // ================== 18B.- JS: VISUALIZAR FORMATOS DE HOY ================== 
-        window.abrirFormatosHoy = function() {
-            window.cambiarPantalla('pantalla-menu', 'pantalla-formatos-hoy');
-            let lista = document.getElementById('lista-formatos-hoy');
-            lista.innerHTML = '<div style="text-align:center; padding:40px;">⏳ Cargando formatos de hoy...</div>';
+        // ================== 18B.- JS: HISTORIAL DE FORMATOS ================== 
+        window.filtroActivoFormatos = 'hoy';
 
-            let hoyInicio = new Date().setHours(0,0,0,0);
-            let hoyFin = new Date().setHours(23,59,59,999);
+        window.abrirHistorialFormatos = function() {
+            window.cambiarPantalla('pantalla-menu', 'pantalla-historial-formatos');
+            window.cambiarFiltroFormatos('hoy');
+        };
+
+        window.cambiarFiltroFormatos = function(f) {
+            window.filtroActivoFormatos = f;
+            document.querySelectorAll('#pantalla-historial-formatos .btn-filtro').forEach(b=>b.classList.remove('activo')); 
+            let fd = document.getElementById(`filtro-fmt-${f}`); if(fd) fd.classList.add('activo');
+            window.cargarFormatosFiltrados();
+        };
+
+        window.cargarFormatosFiltrados = function() {
+            let lista = document.getElementById('lista-historial-formatos');
+            if(!lista) return;
+            lista.innerHTML = '<div style="text-align:center; padding:40px;">⏳ Cargando formatos...</div>';
+
+            let p = window.filtroActivoFormatos;
+            let limIn=0, limOut=Date.now(); 
+            let selM = document.getElementById('filtro-fmt-mes-exacto'); 
+            
+            if(p==='hoy'){limIn=new Date().setHours(0,0,0,0);}
+            else if(p==='ayer'){limIn=new Date().setHours(0,0,0,0)-86400000; limOut=new Date().setHours(0,0,0,0)-1;}
+            else if(p==='semana'){limIn=Date.now()-604800000;}
+            else if(p==='mes'){limIn=new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime(); limOut=new Date(new Date().getFullYear(), new Date().getMonth()+1, 0, 23, 59, 59).getTime();}
+            else if(p==='mes-exacto'&&selM&&selM.value){let [y,m]=selM.value.split('-'); limIn=new Date(y,m-1,1).getTime(); limOut=new Date(y,m,0,23,59,59).getTime();} 
+
+            let term = document.getElementById('buscador-formatos')?.value.toLowerCase().trim() || "";
 
             window.db.collection("Historial_Hospitalizacion")
-                .where("timestamp", ">=", hoyInicio)
-                .where("timestamp", "<=", hoyFin)
+                .where("timestamp", ">=", limIn)
+                .where("timestamp", "<=", limOut)
                 .get()
                 .then((q) => {
                     let ht = '';
@@ -1383,8 +1420,15 @@
 
                     formatos.sort((a,b) => b.timestamp - a.timestamp);
 
+                    if(term !== "") {
+                        formatos = formatos.filter(d => {
+                            let tx = (d.paciente||'') + ' ' + (d.dueno||'') + ' ' + (d.telefono||'');
+                            return tx.toLowerCase().includes(term);
+                        });
+                    }
+
                     if(formatos.length === 0) {
-                        ht = '<p style="text-align:center; color:#888;">No hay formatos registrados el día de hoy.</p>';
+                        ht = '<p style="text-align:center; color:#888;">No hay formatos registrados en este periodo.</p>';
                     } else {
                         formatos.forEach(d => {
                             let authStr = d.formatoLegal || "Formato";
@@ -1412,13 +1456,16 @@
                             } else if(authStr === "AUTORIZACIÓN DE PROCEDIMIENTO ANESTÉSICO Y QUIRÚRGICO"){
                                 ht += `<strong>Procedimientos:</strong> Anestésico [${d.anesProcA}] | Quirúrgico [${d.anesProcQ}]<br>
                                        <strong>Domicilio:</strong> ${d.anesCalle||'*'} #${d.anesNumero||'*'} Col. ${d.anesColonia||'*'}<br>`;
+                            } else if(authStr === "ALTA MÉDICA"){
+                                let fEgreso = d.altaMedFecha && d.altaMedFecha !== '*' ? d.altaMedFecha : d.fechaTexto.split(',')[0];
+                                ht += `<strong>Fecha Egreso Médico:</strong> ${fEgreso}<br>`;
                             }
                             ht += `</div></div>`;
                         });
                     }
                     lista.innerHTML = ht;
                 }).catch(e => {
-                    lista.innerHTML = '<p style="color:red; text-align:center;">Error al cargar datos.</p>';
+                    lista.innerHTML = '<p style="color:red; text-align:center;">Error al cargar datos: ' + e.message + '</p>';
                 });
         };
 
@@ -1448,7 +1495,7 @@
                 panelResumen.classList.remove('oculto');
                 subtitulo.innerText = "Desglose de Movimientos por Cajero:";
             } else if(tipo === 'expediente') {
-                titulo.innerText = "🗂️ Expediente Clínico";
+                titulo.innerText = "🗂 Expediente Clínico";
                 txtBuscar.classList.remove('oculto');
                 panelResumen.classList.add('oculto'); 
                 subtitulo.innerText = "Registros Clínicos por Médico Atendente:";
@@ -1589,7 +1636,7 @@
         window.abrirModalDesgloseUsuario = function(usr) {
             if(!window.ultimoResumenAgrupado || !window.ultimoResumenAgrupado[usr]) return;
             let data = window.ultimoResumenAgrupado[usr];
-            let html = `<h3 style="color:#0caeb9; margin-top:0;">👨‍⚕️️ Cajero/Médico: ${usr}</h3><hr style="border-top:1px dashed #ccc; margin-bottom:15px;">`;
+            let html = `<h3 style="color:#0caeb9; margin-top:0;">👨‍⚕ Cajero/Médico: ${usr}</h3><hr style="border-top:1px dashed #ccc; margin-bottom:15px;">`;
             
             if(data.tickets && data.tickets.length > 0) {
                 data.tickets.forEach(t => {
@@ -1744,7 +1791,7 @@
 
         window.seleccionarItemEntrada = function(item) {
             if(item.tipoArticulo === 'Servicio Médico') {
-                alert("⚠️️ Los servicios médicos no requieren ingreso de stock físico.");
+                alert("⚠️ Los servicios médicos no requieren ingreso de stock físico.");
                 document.getElementById('buscador-entrada').value = '';
                 return;
             }
