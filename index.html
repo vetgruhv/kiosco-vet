@@ -1286,7 +1286,7 @@
                 <p>8.- Estoy consciente que pasado 10 días después de la fecha pactada de salida, si el propietario no recoge a su mascota, VETGRU podrá entregarlo a los servicios municipales correspondientes, con la consiguiente denuncia por abandono ante las autoridades competentes, sin por ello renunciar a la reclamación de cantidades adeudadas hasta la fecha.</p>
                 <p>9.- VETGRU no se hace responsable de la pérdida o daño de ningún artículo personal o juguete que haya dejado con su Mascota. Para seguridad de todos, las Mascotas deben de ser traídas a las instalaciones con correa.</p>
                 <p>10.- Deberá traer la comida para su mascota. Sugerimos traer alimento de más. Recomendamos traer el alimento separado en bolsas por ración y/o marcar en el bulto del alimento, la ración diaria que debamos suministrar. Favor de informar a VETGRU en caso de que su perro tenga algún tipo de alergias (<u>${hosp.penAlergias||'*'}</u>), en caso de no informar, el propietario está consciente de que VETGRU no se puede hacer responsable por ello. En caso de que su mascota se quede sin comida, favor de confirmar cuál opción prefiere: <u>${hosp.penSinComida||'*'}</u></p>
-                <p>11.- Si por alguna razón consideramos que su mascota puede causar daño, será separado de inmediato. Comprendiendo que mi mascota será llevado a un área polivalente en caso de no tener un comportamiento socialmente aceptable.</p>
+                <p>11.- Si por alguna razón consideramos que su mascota puede causar daño, será separado de inmediato. Comprending que mi mascota será llevado a un área polivalente en caso de no tener un comportamiento socialmente aceptable.</p>
                 </div></div>
                 <div class="receta-print" style="page-break-before: always;"><div class="cuerpo-texto">
                 <p>Esto no significa que su mascota haya sido castigada, simplemente hay veces que algunos perros tienen más energía que otros, pero por motivos de seguridad debemos de mantener un ambiente tranquilo.</p>
@@ -1932,7 +1932,7 @@
         };
 
         window.abrirVerInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-ver-inventario'); let bi = document.getElementById('busqueda-inv-texto'); if(bi) bi.value=''; window.cargarInventarioVista(); };
-
+        
         window.cargarInventarioVista = function() { 
             const l=document.getElementById('lista-stock-firebase'); if(!l)return; 
             l.innerHTML='<div style="text-align:center">⏳</div>'; 
@@ -1956,14 +1956,14 @@
                     let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); 
                     let isB=(!esServicio && min>0 && d.cantidad<=min); 
                     
-                    // CORRECCIÓN: Se usa btoa() (Base64) para evitar que los apóstrofes o caracteres especiales rompan el HTML del onclick
+                    // CORRECCIÓN CON BASE64 PARA EVITAR CONFLICTOS CON APÓSTROFES EN NOMBRES DE PRODUCTOS
                     let idDocBase64 = btoa(unescape(encodeURIComponent(d.idDoc)));
 
-                    let btn = (window.usuarioLogueado.rol!=='Doctor') ? 
+                    let btn=(window.usuarioLogueado.rol!=='Doctor')?
                         `<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
                             <button class="btn-exp-action" onclick="window.editarProductoBase64('${idDocBase64}')">✏ Editar</button>
-                            ${(window.usuarioLogueado.rol==='Gerente'||window.usuarioLogueado.rol==='Sub-Gerente'||window.usuarioLogueado.rol==='Sistemas') ? `<button class="btn-borrar-historial" onclick="window.borrarRegistro('Inventario','${d.idDoc}')">🗑️ Eliminar</button>` : ''}
-                         </div>` : ''; 
+                            ${(window.usuarioLogueado.rol==='Gerente'||window.usuarioLogueado.rol==='Sub-Gerente'||window.usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('Inventario','${d.idDoc}')">🗑️ Eliminar</button>`:''}
+                         </div>`:''; 
                     
                     let cantText = esServicio ? 'Ilimitado' : `${d.cantidad} <span style="font-size:0.5em;color:#666">${d.unidad||'U.'}</span>`;
                     let icon = esServicio ? '🩺' : '📦';
@@ -1981,6 +1981,16 @@
                 l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; 
                 window.filtrarInventario(); 
             }); 
+        };
+
+        window.editarProductoBase64 = function(idBase64) {
+            try {
+                let idDocReal = decodeURIComponent(escape(atob(idBase64)));
+                window.editarProducto(idDocReal);
+            } catch(e) {
+                console.error("Error al decodificar ID:", e);
+                alert("Hubo un error al intentar abrir este insumo para edición.");
+            }
         };
         
         window.filtrarInventario = function() { 
@@ -2031,7 +2041,6 @@
         
         window.editarProducto = function(idDoc) { window.db.collection("Inventario").doc(String(idDoc)).get().then(doc=>{ if(!doc.exists)return; let i=doc.data(); modoEdicion=true; window.productoEnEdicionOriginal=idDoc; window.cambiarPantalla('pantalla-ver-inventario','pantalla-inventario'); let ti = document.getElementById('titulo-pantalla-inventario'); if(ti) ti.innerText="✏️ Editar Producto"; let itp = document.getElementById('inv-tipo-prod'); if(itp) itp.value=i.tipoArticulo||'Medicamento/Producto'; window.toggleServicio(); let inN = document.getElementById('inv-nombre'); if(inN) { inN.value=i.medicamento; inN.readOnly=false; } let ip = document.getElementById('inv-precio'); if(ip) ip.value=i.precioVenta||''; let ci = document.getElementById('cantidad-inventario'); if(ci) ci.value=i.cantidad||''; let mi = document.getElementById('min-inventario'); if(mi) mi.value=i.minimo!==undefined?i.minimo:''; let ma = document.getElementById('max-inventario'); if(ma) ma.value=i.maximo||''; let iu = document.getElementById('inv-unidad'); if(iu) iu.value=i.unidad||'Piezas'; let ipr = document.getElementById('inv-proveedor'); if(ipr) ipr.value=i.proveedor||''; let ide = document.getElementById('inv-descripcion'); if(ide) ide.value=i.descripcion||''; let ipe = document.getElementById('inv-presentacion'); if(ipe) ipe.value=i.presentacion||''; let bgi = document.getElementById('btn-guardar-inventario'); if(bgi) bgi.innerText="Guardar Cambios"; }); };
         
-        // CORRECCIÓN CLAVE: Se asegura que al guardar una edición se utilice el ID de documento correcto o se cree sanitizado adecuadamente, previniendo errores de bloqueo en insumos.
         window.guardarEnInventario = function() { 
             let inN = document.getElementById('inv-nombre'); 
             let n = inN ? inN.value.trim().replace(/\//g,'-') : ''; 
