@@ -1932,6 +1932,7 @@
         };
 
         window.abrirVerInventario = function() { window.cambiarPantalla('pantalla-menu','pantalla-ver-inventario'); let bi = document.getElementById('busqueda-inv-texto'); if(bi) bi.value=''; window.cargarInventarioVista(); };
+
         window.cargarInventarioVista = function() { 
             const l=document.getElementById('lista-stock-firebase'); if(!l)return; 
             l.innerHTML='<div style="text-align:center">⏳</div>'; 
@@ -1954,12 +1955,28 @@
                     let esServicio = (d.tipoArticulo === 'Servicio Médico');
                     let min=isNaN(parseInt(d.minimo))?5:parseInt(d.minimo); 
                     let isB=(!esServicio && min>0 && d.cantidad<=min); 
-                    let btn=(window.usuarioLogueado.rol!=='Doctor')?`<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"><button class="btn-exp-action" onclick="window.editarProducto('${d.idDoc}')">✏ Editar</button>${(window.usuarioLogueado.rol==='Gerente'||window.usuarioLogueado.rol==='Sub-Gerente'||window.usuarioLogueado.rol==='Sistemas')?`<button class="btn-borrar-historial" onclick="window.borrarRegistro('Inventario','${d.idDoc}')">🗑️ Eliminar</button>`:''}</div>`:''; 
+                    
+                    // CORRECCIÓN: Se usa btoa() (Base64) para evitar que los apóstrofes o caracteres especiales rompan el HTML del onclick
+                    let idDocBase64 = btoa(unescape(encodeURIComponent(d.idDoc)));
+
+                    let btn = (window.usuarioLogueado.rol!=='Doctor') ? 
+                        `<div class="th-pie" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+                            <button class="btn-exp-action" onclick="window.editarProductoBase64('${idDocBase64}')">✏ Editar</button>
+                            ${(window.usuarioLogueado.rol==='Gerente'||window.usuarioLogueado.rol==='Sub-Gerente'||window.usuarioLogueado.rol==='Sistemas') ? `<button class="btn-borrar-historial" onclick="window.borrarRegistro('Inventario','${d.idDoc}')">🗑️ Eliminar</button>` : ''}
+                         </div>` : ''; 
                     
                     let cantText = esServicio ? 'Ilimitado' : `${d.cantidad} <span style="font-size:0.5em;color:#666">${d.unidad||'U.'}</span>`;
                     let icon = esServicio ? '🩺' : '📦';
 
-                    ht+=`<div class="tarjeta-info ${isB?'stock-alerta':'stock-ok'}" data-tipo="${esServicio?'servicio':'producto'}"><div class="th-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;"><strong style="flex:1; text-align:left;">${icon} ${d.medicamento}</strong><span style="font-size:1.3em; font-weight:900; color:${isB?'#dc3545':'#198754'}; text-align:right;">${cantText}</span></div><div class="th-cuerpo">$${Number(d.precioVenta||0).toFixed(2)}</div>${isB?'<div style="color:#dc3545;font-weight:bold;text-align:center;margin-top:5px">¡Bajo Stock!</div>':''}${btn}</div>`; 
+                    ht+=`<div class="tarjeta-info ${isB?'stock-alerta':'stock-ok'}" data-tipo="${esServicio?'servicio':'producto'}">
+                        <div class="th-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                            <strong style="flex:1; text-align:left;">${icon} ${d.medicamento}</strong>
+                            <span style="font-size:1.3em; font-weight:900; color:${isB?'#dc3545':'#198754'}; text-align:right;">${cantText}</span>
+                        </div>
+                        <div class="th-cuerpo">$${Number(d.precioVenta||0).toFixed(2)}</div>
+                        ${isB?'<div style="color:#dc3545;font-weight:bold;text-align:center;margin-top:5px">¡Bajo Stock!</div>':''}
+                        ${btn}
+                    </div>`; 
                 }); 
                 l.innerHTML=ht||'<p style="text-align:center">Vacio</p>'; 
                 window.filtrarInventario(); 
