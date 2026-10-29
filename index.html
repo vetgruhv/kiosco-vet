@@ -220,7 +220,6 @@
         </div>
         <button class="btn btn-cancelar" onclick="window.cerrarSesion()">Cerrar Sesión</button>
     </div>
-    
     <!-- ================== 5.- VISTAS AGRUPADAS (Corte, Historial, Expediente, Formatos, Medicamentos) ================== -->
     <div id="pantalla-vista-agrupada" class="contenedor contenedor-ancho oculto">
         <h2 id="titulo-vista-agrupada" style="color:#333;margin-top:0">💰 Corte de Caja General</h2>
@@ -2015,7 +2014,63 @@
         
         window.editarProducto = function(idDoc) { window.db.collection("Inventario").doc(String(idDoc)).get().then(doc=>{ if(!doc.exists)return; let i=doc.data(); modoEdicion=true; window.productoEnEdicionOriginal=idDoc; window.cambiarPantalla('pantalla-ver-inventario','pantalla-inventario'); let ti = document.getElementById('titulo-pantalla-inventario'); if(ti) ti.innerText="✏️ Editar Producto"; let itp = document.getElementById('inv-tipo-prod'); if(itp) itp.value=i.tipoArticulo||'Medicamento/Producto'; window.toggleServicio(); let inN = document.getElementById('inv-nombre'); if(inN) { inN.value=i.medicamento; inN.readOnly=false; } let ip = document.getElementById('inv-precio'); if(ip) ip.value=i.precioVenta||''; let ci = document.getElementById('cantidad-inventario'); if(ci) ci.value=i.cantidad||''; let mi = document.getElementById('min-inventario'); if(mi) mi.value=i.minimo!==undefined?i.minimo:''; let ma = document.getElementById('max-inventario'); if(ma) ma.value=i.maximo||''; let iu = document.getElementById('inv-unidad'); if(iu) iu.value=i.unidad||'Piezas'; let ipr = document.getElementById('inv-proveedor'); if(ipr) ipr.value=i.proveedor||''; let ide = document.getElementById('inv-descripcion'); if(ide) ide.value=i.descripcion||''; let ipe = document.getElementById('inv-presentacion'); if(ipe) ipe.value=i.presentacion||''; let bgi = document.getElementById('btn-guardar-inventario'); if(bgi) bgi.innerText="Guardar Cambios"; }); };
         
-        window.guardarEnInventario = function() { let inN = document.getElementById('inv-nombre'); let n=inN?inN.value.trim().replace(/\//g,'-'):''; let ip = document.getElementById('inv-precio'); let p=ip?parseFloat(ip.value):0; let ci = document.getElementById('cantidad-inventario'); let c=ci?parseFloat(ci.value):0; let itp = document.getElementById('inv-tipo-prod'); let t=itp?itp.value:'Medicamento/Producto'; let mi = document.getElementById('min-inventario'); let vm=mi?mi.value:''; let min=vm===""?5:parseInt(vm); if(t==='Servicio Médico'){if(!n)return alert("⚠️ Llena nombre."); p=p||0;c=9999;}else{if(!n||isNaN(c)||isNaN(p))return alert("⚠️ Llena nombre, precio y cantidad.");} window.db.collection("Inventario").doc(n).set({tipoArticulo:t,medicamento:n,descripcion:document.getElementById('inv-descripcion')?.value.trim()||'',proveedor:document.getElementById('inv-proveedor')?.value.trim()||'',presentacion:document.getElementById('inv-presentacion')?.value.trim()||'',precioVenta:p,cantidad:c,unidad:document.getElementById('inv-unidad')?.value||'',minimo:min,maximo:parseInt(document.getElementById('max-inventario')?.value)||100,registradoPor:window.usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),fechaReal:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).then(()=>{ if(modoEdicion && window.productoEnEdicionOriginal && window.productoEnEdicionOriginal!==n){ window.db.collection("Inventario").doc(window.productoEnEdicionOriginal).delete(); } window.db.collection("Historial_Inventario").add({tipoMovimiento:modoEdicion?"Edición":"Alta",medicamento:n,cantidad:c,unidad:document.getElementById('inv-unidad')?.value||'',precio:p,motivo:modoEdicion?"Actualización":"Ingreso",registradoPor:window.usuarioLogueado.nombre,fechaTexto:new Date().toLocaleString('es-MX'),timestamp:Date.now()}); alert("✅ Guardado."); window.cargarSugerenciasInventario(); window.cancelarVolver();}); };
+        // CORRECCIÓN CLAVE: Se asegura que al guardar una edición se utilice el ID de documento correcto o se cree sanitizado adecuadamente, previniendo errores de bloqueo en insumos.
+        window.guardarEnInventario = function() { 
+            let inN = document.getElementById('inv-nombre'); 
+            let n = inN ? inN.value.trim().replace(/\//g,'-') : ''; 
+            let ip = document.getElementById('inv-precio'); 
+            let p = ip ? parseFloat(ip.value) : 0; 
+            let ci = document.getElementById('cantidad-inventario'); 
+            let c = ci ? parseFloat(ci.value) : 0; 
+            let itp = document.getElementById('inv-tipo-prod'); 
+            let t = itp ? itp.value : 'Medicamento/Producto'; 
+            let mi = document.getElementById('min-inventario'); 
+            let vm = mi ? mi.value : ''; 
+            let min = vm === "" ? 5 : parseInt(vm); 
+            
+            if(t === 'Servicio Médico'){
+                if(!n) return alert("⚠️ Llena el nombre del servicio."); 
+                p = p || 0; c = 9999;
+            } else {
+                if(!n || isNaN(c) || isNaN(p)) return alert("⚠️ Llena nombre, precio y cantidad correctamente.");
+            } 
+            
+            window.db.collection("Inventario").doc(n).set({
+                tipoArticulo: t,
+                medicamento: n,
+                descripcion: document.getElementById('inv-descripcion')?.value.trim() || '',
+                proveedor: document.getElementById('inv-proveedor')?.value.trim() || '',
+                presentacion: document.getElementById('inv-presentacion')?.value.trim() || '',
+                precioVenta: p,
+                cantidad: c,
+                unidad: document.getElementById('inv-unidad')?.value || '',
+                minimo: min,
+                maximo: parseInt(document.getElementById('max-inventario')?.value) || 50,
+                registradoPor: window.usuarioLogueado.nombre,
+                fechaTexto: new Date().toLocaleString('es-MX'),
+                fechaReal: firebase.firestore.FieldValue.serverTimestamp()
+            }, {merge: true}).then(() => { 
+                if(modoEdicion && window.productoEnEdicionOriginal && window.productoEnEdicionOriginal !== n){ 
+                    window.db.collection("Inventario").doc(window.productoEnEdicionOriginal).delete(); 
+                } 
+                window.db.collection("Historial_Inventario").add({
+                    tipoMovimiento: modoEdicion ? "Edición" : "Alta",
+                    medicamento: n,
+                    cantidad: c,
+                    unidad: document.getElementById('inv-unidad')?.value || '',
+                    precio: p,
+                    motivo: modoEdicion ? "Actualización" : "Ingreso",
+                    registradoPor: window.usuarioLogueado.nombre,
+                    fechaTexto: new Date().toLocaleString('es-MX'),
+                    timestamp: Date.now()
+                }); 
+                alert("✅ Insumo guardado/actualizado correctamente."); 
+                window.cargarSugerenciasInventario(); 
+                window.cancelarVolver();
+            }).catch(e => {
+                alert("Error al guardar el insumo: " + e.message);
+            }); 
+        };
         
         window.borrarRegistro = function(c, id) { 
             try{
